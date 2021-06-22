@@ -1,0 +1,74 @@
+version: '3.6'
+
+services:
+  ctfd:
+    build: .
+    user: root
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - UPLOAD_FOLDER=/var/uploads
+      - DATABASE_URL=postgres://postgres:ctfd@postgres:5432/postgres
+      - REDIS_URL=redis://cache:6379
+      - WORKERS=1
+      - LOG_FOLDER=/var/log/CTFd
+      - ACCESS_LOG=-
+      - ERROR_LOG=-
+      - REVERSE_PROXY=true
+    volumes:
+      - .data/CTFd/logs:/var/log/CTFd
+      - .data/CTFd/uploads:/var/uploads
+    depends_on:
+      - postgres
+    networks:
+      default:
+      internal:
+
+  nginx:
+    image: nginx:1.17
+    restart: always
+    volumes:
+      - ./ctfd/conf/nginx/http.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    depends_on:
+      - ctfd
+
+  cache:
+    image: redis:4
+    restart: always
+    volumes:
+    - .data/redis:/data
+    networks:
+        internal:
+  postgres:
+    image: postgres:12
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ctfd
+  graphql-engine:
+    image: hasura/graphql-engine:v1.3.3
+    ports:
+      - "8001:8080"
+    depends_on:
+      - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:ctfd@postgres:5432/postgres
+      ## enable the console served by server
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      ## enable debugging mode. It is recommended to disable this in production
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      ## uncomment next line to set an admin secret
+      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+volumes:
+  db_data:
+
+networks:
+    default:
+    internal:
+        internal: true
