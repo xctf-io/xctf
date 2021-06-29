@@ -1,5 +1,6 @@
 version: 3
-# run hasura-cli with docker-compose exec graphql hasura-cli ...
+# run hasura-cli in the same container as the dev hasura instance
+# there is an alias for this in .envrc
 endpoint: http://localhost:8080
 metadata_directory: metadata
 actions:
