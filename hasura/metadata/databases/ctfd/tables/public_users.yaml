@@ -14,6 +14,35 @@ object_relationships:
 - name: team
   using:
     foreign_key_constraint_on: team_id
+array_relationships:
+- name: comments
+  using:
+    foreign_key_constraint_on:
+      column: author_id
+      table:
+        name: comments
+        schema: public
+- name: commentsByUserId
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: comments
+        schema: public
+- name: solves
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: solves
+        schema: public
+- name: submissions
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: submissions
+        schema: public
 select_permissions:
 - permission:
     columns:

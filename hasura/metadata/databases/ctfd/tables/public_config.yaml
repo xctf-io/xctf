@@ -1,0 +1,8 @@
+table:
+  name: config
+  schema: public
+select_permissions:
+- permission:
+    columns: []
+    filter: {}
+  role: user

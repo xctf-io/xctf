@@ -6,12 +6,33 @@ object_relationships:
   using:
     foreign_key_constraint_on: captain_id
 array_relationships:
+- name: comments
+  using:
+    foreign_key_constraint_on:
+      column: team_id
+      table:
+        name: comments
+        schema: public
 - name: members
   using:
     foreign_key_constraint_on:
       column: team_id
       table:
         name: users
+        schema: public
+- name: solves
+  using:
+    foreign_key_constraint_on:
+      column: team_id
+      table:
+        name: solves
+        schema: public
+- name: submissions
+  using:
+    foreign_key_constraint_on:
+      column: team_id
+      table:
+        name: submissions
         schema: public
 select_permissions:
 - permission:

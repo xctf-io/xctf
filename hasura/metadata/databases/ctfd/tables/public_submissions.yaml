@@ -1,0 +1,20 @@
+table:
+  name: submissions
+  schema: public
+object_relationships:
+- name: challenge
+  using:
+    foreign_key_constraint_on: challenge_id
+- name: solve
+  using:
+    foreign_key_constraint_on:
+      column: id
+      table:
+        name: solves
+        schema: public
+- name: team
+  using:
+    foreign_key_constraint_on: team_id
+- name: user
+  using:
+    foreign_key_constraint_on: user_id

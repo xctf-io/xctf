@@ -1,0 +1,16 @@
+table:
+  name: comments
+  schema: public
+object_relationships:
+- name: challenge
+  using:
+    foreign_key_constraint_on: challenge_id
+- name: team
+  using:
+    foreign_key_constraint_on: team_id
+- name: user
+  using:
+    foreign_key_constraint_on: author_id
+- name: userByUserId
+  using:
+    foreign_key_constraint_on: user_id
