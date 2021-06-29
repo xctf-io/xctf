@@ -42,6 +42,12 @@ update_permissions:
     - name
     - website
     filter:
-      captain_id:
-        _eq: X-Hasura-User-Id
+      _and:
+      - captain_id:
+          _eq: X-Hasura-User-Id
+      - _and:
+        - banned:
+            _ne: true
+        - hidden:
+            _ne: true
   role: user
