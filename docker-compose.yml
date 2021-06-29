@@ -59,10 +59,10 @@ services:
       - postgres
     restart: always
     volumes:
-      - ./hasura/metadata:/metadata
-      - ./hasura/config.yaml:/config.yaml:ro
+      - ./hasura:/hasura
     environment:
-      HASURA_GRAPHQL_METADATA_DIR: /metadata
+      HASURA_GRAPHQL_METADATA_DIR: /hasura/metadata
+      HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura/migrations
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:ctfd@postgres:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: 'true'
       HASURA_GRAPHQL_DEV_MODE: 'true'
