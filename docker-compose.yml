@@ -52,14 +52,19 @@ services:
     networks:
       internal:
   graphql:
-    image: hasura/graphql-engine:v1.3.3
+    image: hasura/graphql-engine:v2.0.0-beta.2.cli-migrations-v3
     ports:
       - "8001:8080"
     depends_on:
       - "postgres"
     restart: always
+    volumes:
+      - ./hasura/metadata:/metadata
+      - ./hasura/migrations:/migrations
+      - ./hasura/config.yaml:/config.yaml:ro
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:ctfd@postgres:5432/postgres
+      HASURA_GRAPHQL_MIGRATIONS_DIR: /migrations
+      HASURA_GRAPHQL_METADATA_DIR: /metadata
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production
