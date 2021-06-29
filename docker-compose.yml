@@ -60,10 +60,8 @@ services:
     restart: always
     volumes:
       - ./hasura/metadata:/metadata
-      - ./hasura/migrations:/migrations
       - ./hasura/config.yaml:/config.yaml:ro
     environment:
-      HASURA_GRAPHQL_MIGRATIONS_DIR: /migrations
       HASURA_GRAPHQL_METADATA_DIR: /metadata
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console

@@ -15,3 +15,12 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
   * sensible exposed tables
 * extend ctfd with hasura mutations / secondary graphql service
 * extend ctfd with frontend pages written with apollo/react/redwood
+
+
+## doing hasura
+```
+docker-compose up -d
+# configure hasura on localhost:8001
+hasura metadata export
+git commit hasura/
+```
