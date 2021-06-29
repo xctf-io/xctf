@@ -57,6 +57,8 @@ services:
       - 127.0.0.1:8001:8080
     depends_on:
       - postgres
+      # let ctfd populate the db before we run any migrations
+      - ctfd
     restart: always
     volumes:
       - ./hasura:/hasura
