@@ -50,7 +50,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ctfd
     ports:
-      - 11432:5432
+      - "127.0.0.1:11432:5432"
     networks:
       internal:
       default:
