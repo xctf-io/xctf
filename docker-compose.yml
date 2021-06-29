@@ -1,12 +1,11 @@
 version: '3.6'
-
 services:
   ctfd:
     build: .
     user: root
     restart: always
     ports:
-      - "8000:8000"
+      - 8000:8000
     environment:
       - UPLOAD_FOLDER=/var/uploads
       - DATABASE_URL=postgres://postgres:ctfd@postgres:5432/postgres
@@ -24,7 +23,6 @@ services:
     networks:
       default:
       internal:
-
   nginx:
     image: nginx:1.17
     restart: always
@@ -34,7 +32,6 @@ services:
       - 80:80
     depends_on:
       - ctfd
-
   cache:
     image: redis:4
     restart: always
@@ -50,38 +47,34 @@ services:
     environment:
       POSTGRES_PASSWORD: ctfd
     ports:
-      - "127.0.0.1:11432:5432"
+      - 127.0.0.1:11432:5432
     networks:
       internal:
-      default:
+      access:
   graphql:
     image: hasura/graphql-engine:v2.0.0-beta.2.cli-migrations-v3
     ports:
-      - "127.0.0.1:8001:8080"
+      - 127.0.0.1:8001:8080
     depends_on:
-      - "postgres"
+      - postgres
     restart: always
     volumes:
       - ./hasura/metadata:/metadata
       - ./hasura/config.yaml:/config.yaml:ro
     environment:
       HASURA_GRAPHQL_METADATA_DIR: /metadata
-      ## enable the console served by server
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:ctfd@postgres:5432/postgres
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
-      ## enable debugging mode. It is recommended to disable this in production
-      HASURA_GRAPHQL_DEV_MODE: "true"
-      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
-      ## uncomment next line to set an admin secret
-      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_ENABLE_CONSOLE: 'true'
+      HASURA_GRAPHQL_DEV_MODE: 'true'
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log,
+        query-log
     networks:
-      default:
       internal:
-
+      access:
 volumes:
   db_data:
-
 networks:
   default:
   internal:
     internal: true
+  access:
