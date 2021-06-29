@@ -1,1 +1,2 @@
-[]
+- "!include public_teams.yaml"
+- "!include public_users.yaml"

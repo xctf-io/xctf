@@ -64,6 +64,7 @@ services:
     environment:
       HASURA_GRAPHQL_METADATA_DIR: /metadata
       ## enable the console served by server
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:ctfd@postgres:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production
       HASURA_GRAPHQL_DEV_MODE: "true"

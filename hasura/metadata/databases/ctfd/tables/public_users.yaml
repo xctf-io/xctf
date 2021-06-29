@@ -1,0 +1,39 @@
+table:
+  name: users
+  schema: public
+object_relationships:
+- name: captain_of
+  using:
+    manual_configuration:
+      column_mapping:
+        id: captain_id
+      insertion_order: null
+      remote_table:
+        name: teams
+        schema: public
+- name: team
+  using:
+    foreign_key_constraint_on: team_id
+select_permissions:
+- permission:
+    columns:
+    - affiliation
+    - banned
+    - bracket
+    - country
+    - created
+    - email
+    - id
+    - name
+    - oauth_id
+    - team_id
+    - type
+    - verified
+    - website
+    filter:
+      _and:
+      - hidden:
+          _ne: true
+      - banned:
+          _ne: true
+  role: user

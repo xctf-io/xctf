@@ -1,0 +1,32 @@
+table:
+  name: teams
+  schema: public
+object_relationships:
+- name: captain
+  using:
+    foreign_key_constraint_on: captain_id
+array_relationships:
+- name: members
+  using:
+    foreign_key_constraint_on:
+      column: team_id
+      table:
+        name: users
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - affiliation
+    - bracket
+    - country
+    - created
+    - id
+    - name
+    - website
+    filter:
+      _and:
+      - banned:
+          _ne: true
+      - hidden:
+          _ne: true
+  role: user
