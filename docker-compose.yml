@@ -49,12 +49,15 @@ services:
       - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ctfd
+    ports:
+      - 11432:5432
     networks:
       internal:
+      default:
   graphql:
     image: hasura/graphql-engine:v2.0.0-beta.2.cli-migrations-v3
     ports:
-      - "8001:8080"
+      - "127.0.0.1:8001:8080"
     depends_on:
       - "postgres"
     restart: always

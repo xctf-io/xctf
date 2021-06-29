@@ -7,7 +7,7 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
 * [x] authorization rules in hasura
 * [x] get identity to hasura
 * [ ] frontend, codegen
-  * [ ] populate `hasura/metadata/actions.graphql` with `apollo-codegen` output
+  * [ ] populate `hasura/metadata/allow_list.yaml` with `apollo-codegen` output
 
 ## vision
 * integrate hasura with ctfd
