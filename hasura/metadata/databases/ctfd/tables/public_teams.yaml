@@ -30,3 +30,18 @@ select_permissions:
       - hidden:
           _ne: true
   role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - affiliation
+    - bracket
+    - captain_id
+    - country
+    - email
+    - name
+    - website
+    filter:
+      captain_id:
+        _eq: X-Hasura-User-Id
+  role: user
