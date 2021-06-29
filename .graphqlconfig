@@ -1,0 +1,23 @@
+{
+  "name": "CTFg GraphQL Schema",
+  "schemaPath": "schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "Role: admin": {
+        "url": "http://localhost:8001/v1/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": true
+      },
+      "Role: user": {
+        "url": "http://localhost:8001/v1/graphql",
+        "headers": {
+          "X-Hasura-User-Id": "1",
+          "X-Hasura-User-Role": "user"
+        },
+        "introspect": false
+      }
+    }
+  }
+}
