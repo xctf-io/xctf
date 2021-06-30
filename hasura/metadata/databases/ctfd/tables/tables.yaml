@@ -1,6 +1,7 @@
 - "!include public_challenges.yaml"
 - "!include public_comments.yaml"
 - "!include public_config.yaml"
+- "!include public_flags.yaml"
 - "!include public_solves.yaml"
 - "!include public_submissions.yaml"
 - "!include public_teams.yaml"

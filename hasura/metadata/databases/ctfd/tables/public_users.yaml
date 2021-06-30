@@ -51,12 +51,9 @@ select_permissions:
     - bracket
     - country
     - created
-    - email
     - id
     - name
-    - oauth_id
     - team_id
-    - type
     - verified
     - website
     filter:
