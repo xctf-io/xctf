@@ -38,6 +38,23 @@ select_permissions:
 - permission:
     columns:
     - affiliation
+    - banned
+    - bracket
+    - captain_id
+    - country
+    - created
+    - email
+    - hidden
+    - id
+    - name
+    - oauth_id
+    - secret
+    - website
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - affiliation
     - bracket
     - country
     - created

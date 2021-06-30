@@ -18,6 +18,16 @@ array_relationships:
 select_permissions:
 - permission:
     columns:
+    - id
+    - type
+    - challenge_id
+    - content
+    - cost
+    - requirements
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
     - type
     - challenge_id
     - cost

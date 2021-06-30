@@ -55,6 +55,19 @@ select_permissions:
 - permission:
     columns:
     - category
+    - name
+    - state
+    - type
+    - id
+    - max_attempts
+    - value
+    - requirements
+    - description
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - category
     - description
     - id
     - max_attempts
@@ -66,3 +79,18 @@ select_permissions:
       state:
         _eq: visible
   role: ctfd_user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - category
+    - name
+    - state
+    - type
+    - id
+    - max_attempts
+    - value
+    - requirements
+    - description
+    filter: {}
+  role: ctfd_admin

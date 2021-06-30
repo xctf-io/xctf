@@ -5,3 +5,38 @@ object_relationships:
 - name: challenge
   using:
     foreign_key_constraint_on: challenge_id
+- name: page
+  using:
+    foreign_key_constraint_on: page_id
+select_permissions:
+- permission:
+    columns:
+    - type
+    - challenge_id
+    - id
+    - page_id
+    - location
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - id
+    - type
+    - location
+    - challenge_id
+    - page_id
+    filter:
+      _or:
+      - _and:
+        - challenge:
+            id: {}
+        - challenge:
+            state:
+              _eq: visible
+      - _and:
+        - page:
+            id: {}
+        - page:
+            hidden:
+              _ne: true
+  role: ctfd_user

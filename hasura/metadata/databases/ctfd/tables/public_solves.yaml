@@ -17,6 +17,14 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
+    - id
+    - challenge_id
+    - user_id
+    - team_id
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
     - challenge_id
     - id
     - team_id
