@@ -71,6 +71,22 @@ select_permissions:
   role: ctfd_user
 update_permissions:
 - permission:
+    check: {}
+    columns:
+    - affiliation
+    - banned
+    - bracket
+    - captain_id
+    - country
+    - email
+    - hidden
+    - name
+    - password
+    - secret
+    - website
+    filter: {}
+  role: ctfd_admin
+- permission:
     check: null
     columns:
     - affiliation

@@ -82,3 +82,12 @@ select_permissions:
       - id:
           _eq: X-Hasura-User-Id
   role: ctfd_user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - banned
+    - hidden
+    - team_id
+    filter: {}
+  role: ctfd_admin
