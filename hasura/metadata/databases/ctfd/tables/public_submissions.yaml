@@ -24,7 +24,6 @@ select_permissions:
     - challenge_id
     - date
     - id
-    - provided
     - team_id
     - type
     - user_id
