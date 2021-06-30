@@ -45,11 +45,12 @@ select_permissions:
     - name
     - website
     filter:
-      _and:
-      - banned:
-          _ne: true
+      _or:
       - hidden:
           _ne: true
+      - members:
+          id:
+            _eq: X-Hasura-User-Id
   role: ctfd_user
 update_permissions:
 - permission:
