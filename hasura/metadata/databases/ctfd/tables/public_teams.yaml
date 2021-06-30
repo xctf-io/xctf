@@ -50,7 +50,7 @@ select_permissions:
           _ne: true
       - hidden:
           _ne: true
-  role: user
+  role: ctfd_user
 update_permissions:
 - permission:
     check: null
@@ -71,4 +71,4 @@ update_permissions:
             _ne: true
         - hidden:
             _ne: true
-  role: user
+  role: ctfd_user

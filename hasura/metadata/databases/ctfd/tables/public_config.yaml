@@ -5,4 +5,4 @@ select_permissions:
 - permission:
     columns: []
     filter: {}
-  role: user
+  role: ctfd_user

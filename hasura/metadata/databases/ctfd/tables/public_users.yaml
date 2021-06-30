@@ -62,4 +62,4 @@ select_permissions:
           _ne: true
       - banned:
           _ne: true
-  role: user
+  role: ctfd_user
