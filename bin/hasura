@@ -1,9 +1,0 @@
-#!/bin/bash
-set -euo pipefail
-if [ "${1:-}" = "console" ]; then
-  docker-compose up -d graphql
-  CONSOLE_URL="http://localhost:8001"
-  xdg-open $CONSOLE_URL || open $CONSOLE_URL || true
-  exit
-fi
-docker-compose exec -w /hasura -e "EDITOR=$EDITOR" -u $UID graphql hasura-cli "$@"

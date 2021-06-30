@@ -54,7 +54,7 @@ services:
   graphql:
     build: docker/hasura
     ports:
-      - 127.0.0.1:8001:8080
+      - 127.0.0.1:8080:8080
     depends_on:
       - postgres
       # let ctfd populate the db before we run any migrations

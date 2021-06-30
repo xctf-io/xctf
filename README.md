@@ -20,8 +20,7 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
 
 ## doing hasura
 ```
-docker-compose up -d
-# configure hasura on localhost:8001
-hasura metadata export
+cd hasura; hasura console --address 127.0.0.1
+# use http://127.0.0.1:9695/    
 git commit hasura/
 ```
