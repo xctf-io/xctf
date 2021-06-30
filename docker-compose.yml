@@ -52,7 +52,7 @@ services:
       internal:
       access:
   graphql:
-    build: docker/hasura
+    image: hasura/graphql-engine:v2.0.0-beta.2.cli-migrations-v3
     ports:
       - 127.0.0.1:8080:8080
     depends_on:
