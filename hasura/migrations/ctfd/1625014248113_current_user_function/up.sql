@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION public.get_current_user(hasura_session json)
+CREATE OR REPLACE FUNCTION public.current_user(hasura_session json)
  RETURNS users
  LANGUAGE sql
  STABLE

@@ -1,1 +1,1 @@
-drop function public.get_current_user;
+drop function public.current_user;
