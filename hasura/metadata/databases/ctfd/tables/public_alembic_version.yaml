@@ -1,0 +1,3 @@
+table:
+  name: alembic_version
+  schema: public

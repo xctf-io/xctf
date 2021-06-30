@@ -9,12 +9,26 @@ array_relationships:
       table:
         name: comments
         schema: public
+- name: files
+  using:
+    foreign_key_constraint_on:
+      column: challenge_id
+      table:
+        name: files
+        schema: public
 - name: flags
   using:
     foreign_key_constraint_on:
       column: challenge_id
       table:
         name: flags
+        schema: public
+- name: hints
+  using:
+    foreign_key_constraint_on:
+      column: challenge_id
+      table:
+        name: hints
         schema: public
 - name: solves
   using:
@@ -29,6 +43,13 @@ array_relationships:
       column: challenge_id
       table:
         name: submissions
+        schema: public
+- name: tags
+  using:
+    foreign_key_constraint_on:
+      column: challenge_id
+      table:
+        name: tags
         schema: public
 select_permissions:
 - permission:

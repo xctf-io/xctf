@@ -1,0 +1,46 @@
+table:
+  name: hints
+  schema: public
+object_relationships:
+- name: challenge
+  using:
+    foreign_key_constraint_on: challenge_id
+array_relationships:
+- name: unlocks
+  using:
+    manual_configuration:
+      column_mapping:
+        id: target
+      insertion_order: null
+      remote_table:
+        name: unlocks
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - type
+    - challenge_id
+    - cost
+    - id
+    - requirements
+    - content
+    filter:
+      _exists:
+        _table:
+          name: unlocks
+          schema: public
+        _where:
+          _and:
+          - type:
+              _eq: hints
+          - _or:
+            - team:
+                members:
+                  id:
+                    _eq: X-Hasura-User-Id
+            - user:
+                id:
+                  _eq: X-Hasura-User-Id
+            - target:
+                _eq: id
+  role: ctfd_user

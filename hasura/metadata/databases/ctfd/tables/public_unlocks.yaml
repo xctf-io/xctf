@@ -1,0 +1,19 @@
+table:
+  name: unlocks
+  schema: public
+object_relationships:
+- name: target_hint
+  using:
+    manual_configuration:
+      column_mapping:
+        target: id
+      insertion_order: null
+      remote_table:
+        name: hints
+        schema: public
+- name: team
+  using:
+    foreign_key_constraint_on: team_id
+- name: user
+  using:
+    foreign_key_constraint_on: user_id

@@ -1,0 +1,7 @@
+table:
+  name: tags
+  schema: public
+object_relationships:
+- name: challenge
+  using:
+    foreign_key_constraint_on: challenge_id
