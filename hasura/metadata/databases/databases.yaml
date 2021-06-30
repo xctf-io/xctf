@@ -6,3 +6,4 @@
       isolation_level: read-committed
       use_prepared_statements: false
   tables: "!include ctfd/tables/tables.yaml"
+  functions: "!include ctfd/functions/functions.yaml"
