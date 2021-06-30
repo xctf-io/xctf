@@ -34,6 +34,9 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
   * [ ] scoreboard
     * team + score view and user + score view [blog](https://hasura.io/blog/hasura-authorization-system-through-examples/#:~:text=view%20raw-,flatten-roles.sql,-hosted%20with%20%E2%9D%A4%20by)
     * need to account for awards, solves
+    * view for score over time
+  * [ ] prerequsite challenge auth table
+    * same blog post
 * [ ] frontend, codegen
   * [ ] react
   * [ ] apollo
@@ -43,9 +46,27 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
   * [ ] submit flag
   * [ ] buy hint
   * [ ] register
+    * email allowlist
+    * verify emails
+  * [ ] create team
+    * max number of teams
+  * [ ] disband team
+    * disableable, check config
   * [ ] generate api key
   * [ ] update user (confirm email)
 
+### phase 2
+* [ ] build ui reads
+* [ ] build ui writes
+* [ ] logic
+  * [ ] start
+  * [ ] stop
+  * [ ] freeze
+  
+
+### phase 3
+* [ ] create init db migration at epoch with ctfd schema
+* [ ] remove ctfd dependency
   
 
 ## vision
@@ -55,8 +76,6 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
   * sensible exposed tables
 * extend ctfd with hasura mutations / secondary graphql service
 * extend ctfd with frontend pages that use codegen + graphql schema for all types
-  
-
 
 ## doing hasura
 ```
