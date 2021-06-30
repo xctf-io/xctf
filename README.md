@@ -28,6 +28,9 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
   * [x] unlocks
   * [x] users
 * [ ] postgres views for ctfd functionality
+  * [ ] available hints
+    * view with hint id, chal id, relationship only
+    * return a subset of columns before purchasing unlock
   * [ ] scoreboard
     * team + score view and user + score view [blog](https://hasura.io/blog/hasura-authorization-system-through-examples/#:~:text=view%20raw-,flatten-roles.sql,-hosted%20with%20%E2%9D%A4%20by)
     * need to account for awards, tokens, hints
