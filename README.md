@@ -15,7 +15,7 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
   * [ ] fields
   * [x] files
   * [x] flags
-  * [ ] hints
+  * [x] hints
     * unlocked by `unlocks`
   * [x] notifications
   * [x] pages

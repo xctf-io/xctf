@@ -35,22 +35,13 @@ select_permissions:
     - requirements
     - content
     filter:
-      _exists:
-        _table:
-          name: unlocks
-          schema: public
-        _where:
-          _and:
-          - type:
-              _eq: hints
-          - _or:
-            - team:
-                members:
-                  id:
-                    _eq: X-Hasura-User-Id
-            - user:
-                id:
-                  _eq: X-Hasura-User-Id
-            - target:
-                _eq: id
+      unlocks:
+        _or:
+        - team:
+            members:
+              id:
+                _eq: X-Hasura-User-Id
+        - user:
+            id:
+              _eq: X-Hasura-User-Id
   role: ctfd_user
