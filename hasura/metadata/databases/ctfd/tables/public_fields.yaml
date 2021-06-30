@@ -1,3 +1,11 @@
 table:
   name: fields
   schema: public
+array_relationships:
+- name: field_entries
+  using:
+    foreign_key_constraint_on:
+      column: field_id
+      table:
+        name: field_entries
+        schema: public

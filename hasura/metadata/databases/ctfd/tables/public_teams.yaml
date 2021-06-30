@@ -6,12 +6,26 @@ object_relationships:
   using:
     foreign_key_constraint_on: captain_id
 array_relationships:
+- name: awards
+  using:
+    foreign_key_constraint_on:
+      column: team_id
+      table:
+        name: awards
+        schema: public
 - name: comments
   using:
     foreign_key_constraint_on:
       column: team_id
       table:
         name: comments
+        schema: public
+- name: field_entries
+  using:
+    foreign_key_constraint_on:
+      column: team_id
+      table:
+        name: field_entries
         schema: public
 - name: members
   using:

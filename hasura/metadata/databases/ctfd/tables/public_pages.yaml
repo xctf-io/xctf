@@ -1,6 +1,14 @@
 table:
   name: pages
   schema: public
+array_relationships:
+- name: comments
+  using:
+    foreign_key_constraint_on:
+      column: page_id
+      table:
+        name: comments
+        schema: public
 select_permissions:
 - permission:
     columns:

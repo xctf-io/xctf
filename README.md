@@ -5,14 +5,14 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
 ## todo
 * [x] configure hasura with yaml from repo
 * [x] get identity to hasura
-* [x] authorization rules in hasura
-  * [ ] awards
+* [x] authorization rules in hasura (at least read only)
+  * [x] awards
   * [x] challenges
-  * [ ] comments
+  * [x] comments
   * [x] config
   * [x] dynamic_challenge
-  * [ ] field_entries
-  * [ ] fields
+  * [x] field_entries
+  * [x] fields
   * [x] files
   * [x] flags
   * [x] hints
@@ -23,7 +23,7 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
   * [x] submissions
   * [x] tags
   * [x] teams
-  * [ ] tokens
+  * [x] tokens
   * [x] tracking
   * [x] unlocks
   * [x] users
@@ -33,7 +33,7 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
     * return a subset of columns before purchasing unlock
   * [ ] scoreboard
     * team + score view and user + score view [blog](https://hasura.io/blog/hasura-authorization-system-through-examples/#:~:text=view%20raw-,flatten-roles.sql,-hosted%20with%20%E2%9D%A4%20by)
-    * need to account for awards, solves, tokens(?)
+    * need to account for awards, solves
 * [ ] frontend, codegen
   * [ ] react
   * [ ] apollo
@@ -43,6 +43,7 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
   * [ ] submit flag
   * [ ] buy hint
   * [ ] register
+  * [ ] generate api key
   * [ ] update user (confirm email)
 
   

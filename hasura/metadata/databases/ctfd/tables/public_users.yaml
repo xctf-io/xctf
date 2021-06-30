@@ -15,6 +15,13 @@ object_relationships:
   using:
     foreign_key_constraint_on: team_id
 array_relationships:
+- name: awards
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: awards
+        schema: public
 - name: comments
   using:
     foreign_key_constraint_on:
@@ -29,6 +36,13 @@ array_relationships:
       table:
         name: comments
         schema: public
+- name: field_entries
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: field_entries
+        schema: public
 - name: solves
   using:
     foreign_key_constraint_on:
@@ -42,6 +56,20 @@ array_relationships:
       column: user_id
       table:
         name: submissions
+        schema: public
+- name: tokens
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: tokens
+        schema: public
+- name: trackings
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: tracking
         schema: public
 - name: unlocks
   using:
