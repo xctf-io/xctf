@@ -4,14 +4,14 @@
   "extensions": {
     "endpoints": {
       "No Identity": {
-        "url": "http://localhost:8001/v1/graphql",
+        "url": "http://localhost:8080/v1/graphql",
         "introspect": true
       },
       "Role: user 1": {
-        "url": "http://localhost:8001/v1/graphql",
+        "url": "http://localhost:8080/v1/graphql",
         "headers": {
           "X-Hasura-User-Id": "1",
-          "X-Hasura-User-Role": "user"
+          "X-Hasura-User-Role": "ctfd_user"
         },
         "introspect": true
       }

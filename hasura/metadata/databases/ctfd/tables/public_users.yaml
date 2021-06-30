@@ -57,9 +57,12 @@ select_permissions:
     - verified
     - website
     filter:
-      _and:
-      - hidden:
-          _ne: true
-      - banned:
-          _ne: true
+      _or:
+      - _and:
+        - hidden:
+            _ne: true
+        - banned:
+            _ne: true
+      - id:
+          _eq: X-Hasura-User-Id
   role: ctfd_user
