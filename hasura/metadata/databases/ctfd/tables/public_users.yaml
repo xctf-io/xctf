@@ -43,6 +43,13 @@ array_relationships:
       table:
         name: submissions
         schema: public
+- name: unlocks
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: unlocks
+        schema: public
 select_permissions:
 - permission:
     columns:
@@ -66,7 +73,6 @@ select_permissions:
 - permission:
     columns:
     - affiliation
-    - banned
     - bracket
     - country
     - created

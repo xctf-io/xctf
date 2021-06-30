@@ -34,6 +34,13 @@ array_relationships:
       table:
         name: submissions
         schema: public
+- name: unlocks
+  using:
+    foreign_key_constraint_on:
+      column: team_id
+      table:
+        name: unlocks
+        schema: public
 select_permissions:
 - permission:
     columns:
