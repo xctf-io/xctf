@@ -3,3 +3,5 @@ function:
   schema: public
 configuration:
   session_argument: hasura_session
+permissions:
+- role: ctfd_user
