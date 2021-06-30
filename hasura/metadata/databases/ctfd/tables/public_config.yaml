@@ -3,6 +3,11 @@ table:
   schema: public
 select_permissions:
 - permission:
-    columns: []
-    filter: {}
+    columns:
+    - id
+    - key
+    - value
+    filter:
+      key:
+        _iregex: (ctf|user_mode|start|end|visibility|freeze)
   role: ctfd_user
