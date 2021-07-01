@@ -1,19 +1,17 @@
 {
   "name": "CTFg GraphQL Schema",
-  "schemaPath": "schema.graphql",
+  "schemaPath": "frontend/src/graphql.schema.json",
   "extensions": {
     "endpoints": {
       "No Identity": {
-        "url": "http://localhost:8080/v1/graphql",
-        "introspect": true
+        "url": "http://localhost:8080/v1/graphql"
       },
       "Role: user 1": {
         "url": "http://localhost:8080/v1/graphql",
         "headers": {
           "X-Hasura-User-Id": "1",
           "X-Hasura-User-Role": "ctfd_user"
-        },
-        "introspect": true
+        }
       }
     }
   }
