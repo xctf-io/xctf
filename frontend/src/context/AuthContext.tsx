@@ -14,6 +14,9 @@ const QUERY = gql`
       bracket
       website
       verified
+      captain_of {
+        id
+      }
       team {
         id
         name

@@ -25,6 +25,7 @@
   },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"yarn generate --watch\"",
+    "lint": "prettier -cw .",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -46,7 +47,12 @@
       "prettier"
     ],
     "rules": {
-      "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "(_)?QUERY$" }]
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "varsIgnorePattern": "(_)?QUERY$"
+        }
+      ]
     }
   },
   "browserslist": {
