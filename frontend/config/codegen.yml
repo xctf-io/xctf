@@ -6,7 +6,7 @@ documents:
   - ./src/**/*.{js,jsx,ts,tsx}
 overwrite: true
 generates:
-  ./src/generated/graphql.tsx:
+  src/generated/graphql.tsx:
     plugins:
       - typescript
       - typescript-operations
@@ -16,9 +16,9 @@ generates:
       withHooks: true
       withHOC: false
       withComponent: false
-  ./graphql.schema.json:
+  src/generated/graphql.schema.json:
     plugins:
       - introspection
-  ./schema.graphql:
+  schema.graphql:
     plugins:
       - schema-ast
