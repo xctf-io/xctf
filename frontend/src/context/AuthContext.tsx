@@ -28,7 +28,7 @@ const QUERY = gql`
 
 `;
 
-export const AuthContext = React.createContext<AuthContextQuery|undefined>(undefined);
+export const AuthContext = React.createContext<AuthContextQuery["current_user"][0]|undefined>(undefined);
 
 type ChildrenProps = {
     children?: React.ReactNode;
@@ -46,5 +46,5 @@ export function AuthContextWrapper({children} : ChildrenProps) {
         return <>{children}</>;
     }
 
-    return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={data?.current_user[0]}>{children}</AuthContext.Provider>;
 }

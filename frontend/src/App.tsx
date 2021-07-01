@@ -10,9 +10,9 @@ function App() {
         <div className="App">
             <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo"/>
-                {authContext?.current_user[0] ?
+                {authContext ?
                     <p>
-                        Hello, <code>{authContext?.current_user[0]?.name}</code>
+                        Hello, <code>{authContext?.name}</code>
                     </p>
                     :
                     <p>
