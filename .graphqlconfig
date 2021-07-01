@@ -1,6 +1,6 @@
 {
   "name": "CTFg GraphQL Schema",
-  "schemaPath": "frontend/graphql.schema.json",
+  "schemaPath": "frontend/schema.graphql",
   "extensions": {
     "endpoints": {
       "No Identity": {

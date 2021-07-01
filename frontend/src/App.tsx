@@ -5,25 +5,31 @@ import './App.css';
 import {AuthContext, useAuthContext} from "./context/AuthContext";
 
 function App() {
-  const authContext = useAuthContext();
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Hello, <code>{authContext?.current_user[0]?.name}</code>
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const authContext = useAuthContext();
+    return (
+        <div className="App">
+            <header className="App-header">
+                <img src={logo} className="App-logo" alt="logo"/>
+                {authContext?.current_user[0] ?
+                    <p>
+                        Hello, <code>{authContext?.current_user[0]?.name}</code>
+                    </p>
+                    :
+                    <p>
+                        You are anonymous.
+                    </p>
+                }
+                <a
+                    className="App-link"
+                    href="https://reactjs.org"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Learn React
+                </a>
+            </header>
+        </div>
+    );
 }
 
 export default App;
