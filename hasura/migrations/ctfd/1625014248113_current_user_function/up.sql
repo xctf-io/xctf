@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION public.current_user(hasura_session json)
- RETURNS users
+ RETURNS SETOF users
  LANGUAGE sql
  STABLE
 AS $function$

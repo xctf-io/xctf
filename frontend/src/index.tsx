@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {AuthContextProvider} from "./AuthContext";
+import {AuthContextWrapper} from "./context/AuthContext";
 import {
     ApolloClient,
     InMemoryCache,
@@ -18,9 +18,9 @@ const client = new ApolloClient({
 ReactDOM.render(
     <React.StrictMode>
         <ApolloProvider client={client}>
-            <AuthContextProvider>
+            <AuthContextWrapper>
                 <App/>
-            </AuthContextProvider>
+            </AuthContextWrapper>
         </ApolloProvider>,
     </React.StrictMode>,
     document.getElementById('root')

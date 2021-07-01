@@ -1,5 +1,5 @@
 import {gql} from "@apollo/client";
-import {AuthContextQuery, useAuthContextQuery} from "./generated/graphql";
+import {AuthContextQuery, useAuthContextQuery} from "../generated/graphql";
 import React from "react";
 
 const QUERY = gql`
@@ -28,13 +28,17 @@ const QUERY = gql`
 
 `;
 
-const AuthContext = React.createContext<AuthContextQuery|undefined>(undefined);
+export const AuthContext = React.createContext<AuthContextQuery|undefined>(undefined);
 
-type AuthContextProviderProps = {
+type ChildrenProps = {
     children?: React.ReactNode;
 }
 
-export function AuthContextProvider({children} : AuthContextProviderProps) {
+export function useAuthContext() {
+    return React.useContext(AuthContext)
+}
+
+export function AuthContextWrapper({children} : ChildrenProps) {
     const { data, loading, error } = useAuthContextQuery();
 
     if (loading || error) {
