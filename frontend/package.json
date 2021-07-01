@@ -23,7 +23,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate": "graphql-codegen --config config/codegen.js"
+    "generate": "graphql-codegen --config config/codegen.yml"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.20.1",

@@ -37,9 +37,9 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
     * view for score over time
   * [ ] prerequsite challenge auth table
     * same blog post
-* [ ] frontend, codegen
-  * [ ] react
-  * [ ] apollo
+* [x] frontend, codegen
+  * [x] react
+  * [x] apollo
   * [ ] [uniforms](https://uniforms.tools/docs/api-bridges#graphqlbridge)
   * [ ] populate `hasura/metadata/allow_list.yaml` with `apollo-codegen` output
 * [ ] mutation service
