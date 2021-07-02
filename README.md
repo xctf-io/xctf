@@ -77,8 +77,19 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
 * extend ctfd with hasura mutations / secondary graphql service
 * extend ctfd with frontend pages that use codegen + graphql schema for all types
 
-## doing hasura
+## dev environment setup
+### frontend
 ```
+cd frontend
+# start docker, code generation, and dev server in watch mode
+yarn start 
+# (optional) populate the ctfd database with some fake data
+yarn fakedata
+```
+
+### hasura
+```
+docker-compose up -d
 cd hasura; hasura console --address 127.0.0.1
 # use http://127.0.0.1:9695/    
 git commit hasura/
