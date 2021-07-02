@@ -20,6 +20,7 @@ services:
       - .data/CTFd/uploads:/var/uploads
     depends_on:
       - postgres
+      - cache
     networks:
       default:
       internal:

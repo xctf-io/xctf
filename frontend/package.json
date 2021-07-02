@@ -25,6 +25,7 @@
   },
   "scripts": {
     "start": "(cd ../; docker-compose up -d) && concurrently \"react-scripts start\" \"yarn generate --watch\"",
+    "fakedata": "docker-compose exec ctfd bash -c \"pip install faker; python /opt/CTFd/populate.py\"",
     "lint": "prettier -cw .",
     "build": "react-scripts build",
     "test": "react-scripts test",
