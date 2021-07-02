@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
-import { useTeamCaptainFormLazyQuery } from "./generated/graphql";
-import { useAuthContext } from "./context/AuthContext";
+import { useTeamCaptainFormLazyQuery } from "generated/graphql";
+import { useAuthContext } from "context/AuthContext";
 import { useEffect } from "react";
 
 gql`

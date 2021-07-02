@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { AuthContextQuery, useAuthContextQuery } from "../generated/graphql";
+import { AuthContextQuery, useAuthContextQuery } from "generated/graphql";
 import React from "react";
 
 gql`
