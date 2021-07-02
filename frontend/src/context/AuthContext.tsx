@@ -2,8 +2,7 @@ import { gql } from "@apollo/client";
 import { AuthContextQuery, useAuthContextQuery } from "../generated/graphql";
 import React from "react";
 
-//
-const QUERY = gql`
+gql`
   query AuthContext {
     current_user {
       id

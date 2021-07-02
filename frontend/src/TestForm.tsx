@@ -3,20 +3,20 @@ import { useTeamCaptainFormLazyQuery } from "./generated/graphql";
 import { useAuthContext } from "./context/AuthContext";
 import { useEffect } from "react";
 
-const FORM_QUERY = gql`
-    query TeamCaptainForm($id: Int = 0) {
-        teams_by_pk(id: $id) {
-            affiliation
-            bracket
-            captain {
-                id
-            }
-            country
-            email
-            name
-            website
-        }
+gql`
+  query TeamCaptainForm($id: Int = 0) {
+    teams_by_pk(id: $id) {
+      affiliation
+      bracket
+      captain {
+        id
+      }
+      country
+      email
+      name
+      website
     }
+  }
 `;
 
 /*
@@ -54,11 +54,12 @@ const bridge = new GraphQLBridge(
 
 export function TestForm() {
   const authContext = useAuthContext();
-  const [loadTeamForm, { data, loading, error, called }] = useTeamCaptainFormLazyQuery({
-    variables: {
-      id: authContext?.id,
-    },
-  });
+  const [loadTeamForm, { data, loading, error, called }] =
+    useTeamCaptainFormLazyQuery({
+      variables: {
+        id: authContext?.id,
+      },
+    });
   useEffect(() => {
     if (authContext?.captain_of?.id) loadTeamForm();
   }, [authContext, loadTeamForm]);
