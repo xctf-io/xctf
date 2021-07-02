@@ -45,15 +45,7 @@
       "react-app",
       "react-app/jest",
       "prettier"
-    ],
-    "rules": {
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          "varsIgnorePattern": "(_)?QUERY$"
-        }
-      ]
-    }
+    ]
   },
   "browserslist": {
     "production": [
