@@ -24,7 +24,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"yarn generate --watch\"",
+    "start": "(cd ../; docker-compose up -d) && concurrently \"react-scripts start\" \"yarn generate --watch\"",
     "lint": "prettier -cw .",
     "build": "react-scripts build",
     "test": "react-scripts test",
