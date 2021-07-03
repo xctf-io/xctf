@@ -1,4 +1,3 @@
-import { usePublicAccessCheck } from "../util/auth";
 import { gql } from "@apollo/client";
 import { GQLHooks } from "../generated/hasura/react";
 
@@ -13,7 +12,6 @@ gql`
 `;
 
 export default function Teams() {
-  usePublicAccessCheck("account_visibility");
   const { data } = GQLHooks.Fragments.TeamList.useQueryObjects({
     variables: { limit: 10 },
   });

@@ -1,16 +1,18 @@
 import { useAuthContext } from "../context/AuthContext";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
+import React from "react";
+
+type AccessCheckProps = {
+  configKey: string,
+  children?: React.ReactNode
+}
 
 /*
-this function checks if a user can access a resource based on a config key.
-the config key must be added to the authcontext query for it to be available
-authz will be performed on the server as well. users are redirected for
-convenience.
+this component will redirect the user if they do not match the acl
  */
-export function usePublicAccessCheck(key: string) {
+export function AccessCheck({ configKey, children }: AccessCheckProps) {
   const { loading: authLoading, current_user, config } = useAuthContext();
-  const { push } = useHistory();
-
-  if (!authLoading && !current_user?.id && config[key] !== "public")
-    push("/login");
+  if (!authLoading && !current_user?.id && config[configKey] !== "public")
+    return <Redirect to={"/login"} />;
+  return <>{children}</>;
 }
