@@ -36,11 +36,12 @@ gql`
 type AuthContextType = {
   loading: boolean;
   current_user?: AuthContextQuery["current_user"][0];
-  config?: { [key: string]: string };
+  config: { [key: string]: string };
 };
 
 export const AuthContext = React.createContext<AuthContextType>({
   loading: true,
+  config: {},
 });
 
 type ChildrenProps = {
@@ -59,14 +60,13 @@ export function AuthContextProvider({ children }: ChildrenProps) {
     return <>{children}</>;
   }
 
-  const config = { test: "test" };
-
   return (
     <AuthContext.Provider
       value={{
         loading,
         current_user: data?.current_user[0],
-        config,
+        // @ts-ignore this doesnt work
+        config: Object.fromEntries(data.config),
       }}
     >
       {children}

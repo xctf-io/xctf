@@ -69,13 +69,13 @@ export default function PageLayout({ children }: PageLayoutProps) {
           })}
         >
           <AppNavBar
-            title="CTFg"
+            title={authContext?.config["ctf_name"] || "CTFg"}
             mainItems={mainItems}
             onMainItemSelect={handleMainItemSelect}
             onUserItemSelect={(item) => console.log("user", item)}
-            userItems={authContext?.current_user[0]?.id ? userItems : undefined}
-            username={authContext?.current_user[0]?.name || undefined}
-            userImgUrl={authContext?.current_user[0]?.name ? "" : undefined}
+            userItems={authContext?.current_user?.id ? userItems : undefined}
+            username={authContext?.current_user?.name || undefined}
+            userImgUrl={authContext?.current_user?.name ? "" : undefined}
           />
         </div>
       </Layer>

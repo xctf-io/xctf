@@ -57,11 +57,11 @@ export function TestForm() {
   const [loadTeamForm, { data, loading, error, called }] =
     useTeamCaptainFormLazyQuery({
       variables: {
-        id: authContext?.current_user[0]?.id,
+        id: authContext?.current_user?.id,
       },
     });
   useEffect(() => {
-    if (authContext?.current_user[0]?.captain_of?.id) loadTeamForm();
+    if (authContext?.current_user?.captain_of?.id) loadTeamForm();
   }, [authContext, loadTeamForm]);
   return <p>{JSON.stringify(data)}</p>;
 }
