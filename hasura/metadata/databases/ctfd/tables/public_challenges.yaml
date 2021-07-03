@@ -55,6 +55,31 @@ select_permissions:
 - permission:
     columns:
     - category
+    - description
+    - id
+    - max_attempts
+    - name
+    - requirements
+    - type
+    - value
+    filter:
+      _and:
+      - state:
+          _eq: visible
+      - _exists:
+          _table:
+            name: config
+            schema: public
+          _where:
+            _and:
+            - key:
+                _eq: challenge_visibility
+            - value:
+                _eq: public
+  role: ctfd_
+- permission:
+    columns:
+    - category
     - name
     - state
     - type

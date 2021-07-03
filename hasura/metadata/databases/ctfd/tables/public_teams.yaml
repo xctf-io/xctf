@@ -66,8 +66,19 @@ select_permissions:
     - name
     - website
     filter:
-      id:
-        _is_null: true
+      _and:
+      - _exists:
+          _table:
+            name: config
+            schema: public
+          _where:
+            _and:
+            - key:
+                _eq: account_visibility
+            - value:
+                _eq: public
+      - hidden:
+          _ne: true
   role: ctfd_
 - permission:
     columns:

@@ -1,5 +1,9 @@
 import { gql } from "@apollo/client";
-import { AuthContextQuery, useAuthContextQuery } from "generated";
+import {
+  AuthContextDocument,
+  AuthContextQuery,
+  useAuthContextQuery,
+} from "generated";
 import React from "react";
 
 gql`
@@ -27,7 +31,19 @@ gql`
         website
       }
     }
-    config(where: { key: { _in: ["ctf_name"] } }) {
+    config(
+      where: {
+        key: {
+          _in: [
+            "challenge_visibility"
+            "registration_visibility"
+            "score_visibility"
+            "account_visibility"
+            "ctf_name"
+          ]
+        }
+      }
+    ) {
       key
       value
     }
@@ -44,6 +60,7 @@ const massageConfig = (res: AuthContextQuery["config"]) => {
   }, acc);
 };
 
+console.log(AuthContextDocument);
 type AuthContextType = {
   loading: boolean;
   current_user?: AuthContextQuery["current_user"][0];

@@ -8,6 +8,27 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
+    - id
+    - challenge_id
+    - value
+    filter:
+      _and:
+      - challenge:
+          state:
+            _eq: visible
+      - _exists:
+          _table:
+            name: config
+            schema: public
+          _where:
+            _and:
+            - key:
+                _eq: challenge_visibility
+            - value:
+                _eq: public
+  role: ctfd_
+- permission:
+    columns:
     - value
     - challenge_id
     - id

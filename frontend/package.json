@@ -38,7 +38,7 @@
     "uniforms-bridge-graphql": "^3.5.1"
   },
   "scripts": {
-    "start": "(cd ../; docker-compose up -d) && react-scripts start",
+    "start": "concurrently \"(cd ../; docker-compose up -d)\" \"yarn generate\" && react-scripts start",
     "fakedata": "docker-compose exec ctfd bash -c \"pip install faker; python /opt/CTFd/populate.py\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "lint": "prettier -cw .",

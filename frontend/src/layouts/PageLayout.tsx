@@ -113,7 +113,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
                     </sub>
                   </>
                 ) : (
-                  <H5 display={"inline"} >CTFg</H5>
+                  <H5 display={"inline"}>CTFg</H5>
                 )}
               </a>
             }
@@ -126,10 +126,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
           />
         </div>
       </Layer>
-      <Block
-        height={["80px"]}
-        backgroundColor="background"
-      />
+      <Block height={["80px"]} backgroundColor="background" />
 
       {children}
     </React.Fragment>
