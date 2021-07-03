@@ -77,8 +77,18 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
 * extend ctfd with hasura mutations / secondary graphql service
 * extend ctfd with frontend pages that use codegen + graphql schema for all types
 
-## dev environment setup
+## dev environment
+### docker
+#### setup
+```
+docker-compose up -d
+```
+#### delete including volumes
+```
+docker-compose down -v
+```
 ### frontend
+#### setup
 ```
 cd frontend
 # start docker, code generation, and dev server in watch mode
@@ -86,6 +96,9 @@ yarn start
 # (optional) populate the ctfd database with some fake data
 yarn fakedata
 ```
+#### fetching data
+When you add a `gql` tagged query to a source file, graphql-codegen will automatically generate typed Hooks for performing the query in `generated/graphql.tsx`.
+
 
 ### hasura
 ```
