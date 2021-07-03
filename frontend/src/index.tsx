@@ -4,8 +4,9 @@ import { AuthContextProvider } from "./context/AuthContext";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { Provider as StyletronProvider } from "styletron-react";
-import { LightTheme, BaseProvider, styled } from "baseui";
+import { LightTheme, BaseProvider, styled, createTheme } from "baseui";
 import Router from "./Router";
+import "@fontsource/lato";
 
 const engine = new Styletron();
 
@@ -14,11 +15,16 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+
+const theme = createTheme({
+  primaryFontFamily: 'Lato, LatoOffline, sans-serif',
+}, {});
+
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <StyletronProvider value={engine}>
-        <BaseProvider theme={LightTheme}>
+        <BaseProvider theme={theme}>
           <AuthContextProvider>
             <Router />
           </AuthContextProvider>
