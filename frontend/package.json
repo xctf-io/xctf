@@ -35,14 +35,14 @@
     "uniforms-bridge-graphql": "^3.5.1"
   },
   "scripts": {
-    "start": "(cd ../; docker-compose up -d) && concurrently \"react-scripts start\" \"yarn generate --watch\"",
+    "start": "(cd ../; docker-compose up -d) && react-scripts start",
     "fakedata": "docker-compose exec ctfd bash -c \"pip install faker; python /opt/CTFd/populate.py\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "lint": "prettier -cw .",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate": "graphql-codegen --config config/codegen.yml"
+    "generate": "graphql-codegen --config config/1_introspect.yml; graphql-codegen --config config/2_hasura.yml && graphql-codegen --config config/3_final.yml"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.20.1",

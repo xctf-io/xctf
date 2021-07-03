@@ -1,0 +1,26 @@
+schema:
+  - schema.graphql
+overwrite: true
+config:
+  scalars:
+    DateTime: Date
+    JSON: "{ [key: string]: any }"
+documents:
+  - ./src/**/*.tsx
+  - ./src/**/*.ts
+generates:
+  ./src/generated/hasura/gql.ts:
+    plugins:
+      - graphql-codegen-hasura-gql
+    config:
+      reactApolloVersion: 3
+      typescriptCodegenOutputPath: ../
+      trimString:
+      withQueries: true
+      withSubscriptions: true
+      withInserts: true
+      withUpdates: true
+      withDeletes: true
+  schema.graphql:
+    plugins:
+      - schema-ast

@@ -1,15 +1,15 @@
 schema:
-  - http://localhost:8080/v1/graphql:
-      headers:
-        user-agent: codegen
+  - schema.graphql
+overwrite: true
 config:
   scalars:
     DateTime: Date
     JSON: "{ [key: string]: any }"
+documents:
+  - ./src/**/*.tsx
+  - ./src/**/*.ts
 generates:
   ./src/generated/hasura/ts.ts:
-    documents:
-      - ./src/customFragments.ts
     plugins:
       - graphql-codegen-hasura-typescript
     config:
@@ -23,8 +23,6 @@ generates:
       withUpdates: true
       withDeletes: true
   ./src/generated/hasura/react.ts:
-    documents:
-      - ./src/customFragments.ts
     plugins:
       - graphql-codegen-hasura-react
     config:
@@ -37,8 +35,6 @@ generates:
       withUpdates: true
       withDeletes: true
   ./src/generated/hasura/config.ts:
-    documents:
-      - ./src/customFragments.ts
     plugins:
       - graphql-codegen-hasura-client-config
     config:
@@ -50,31 +46,13 @@ generates:
       withCombinedTypePolicyObject: false
       withCacheRedirects: true
       withCombinedCacheRedirectObject: true
-  ./src/generated/hasura/gql.ts:
-    plugins:
-      - graphql-codegen-hasura-gql
-    documents:
-      - ./src/customFragments.ts
-    config:
-      reactApolloVersion: 3
-      typescriptCodegenOutputPath: ../
-      trimString:
-      withQueries: true
-      withSubscriptions: true
-      withInserts: true
-      withUpdates: true
-      withDeletes: true
   ./src/generated/graphql.schema.json:
     plugins:
       - introspection
-  schema.graphql:
-    plugins:
-      - schema-ast
   ./src/generated/index.tsx:
     documents:
       - ./src/**/*.tsx
       - ./src/**/*.ts
-      - ./src/generated/hasura/gql.ts
     plugins:
       - typescript
       - typescript-operations

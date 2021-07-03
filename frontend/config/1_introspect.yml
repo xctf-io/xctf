@@ -1,0 +1,9 @@
+schema:
+  - http://localhost:8080/v1/graphql:
+      headers:
+        user-agent: codegen
+overwrite: true
+generates:
+  schema.graphql:
+    plugins:
+      - schema-ast
