@@ -4,9 +4,9 @@ import { AuthContextProvider } from "./context/AuthContext";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { Provider as StyletronProvider } from "styletron-react";
-import { LightTheme, BaseProvider, styled, createTheme } from "baseui";
-import Router from "./Router";
+import { BaseProvider, createTheme } from "baseui";
 import "@fontsource/lato";
+import Router from "./Router";
 
 const engine = new Styletron();
 

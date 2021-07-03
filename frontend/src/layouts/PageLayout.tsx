@@ -5,6 +5,8 @@ import { Layer } from "baseui/layer";
 import { ChevronDown, Delete, Overflow, Upload } from "baseui/icon";
 import { AppNavBar, setItemActive, NavItemT } from "baseui/app-nav-bar";
 import { useAuthContext } from "../context/AuthContext";
+import { useHistory, useLocation } from "react-router-dom";
+import { NavItem } from "baseui/side-navigation";
 
 type PageLayoutProps = {
   children?: React.ReactNode;
@@ -12,24 +14,32 @@ type PageLayoutProps = {
 
 export default function PageLayout({ children }: PageLayoutProps) {
   const [css] = useStyletron();
-  const [mainItems, setMainItems] = React.useState<NavItemT[]>([
-    { icon: Upload, label: "Primary A" },
-    { icon: Upload, label: "Primary B" },
+  const { push } = useHistory();
+  const { pathname } = useLocation();
+  const authContext = useAuthContext();
+
+  const controlledNavItem = (label: string, route: string, overrides?: NavItemT): NavItemT => (
     {
+      label: label,
+      active: route === pathname,
+      info: {
+        route,
+      },
+      ...overrides,
+    }
+  );
+
+  var navItems = [
+    controlledNavItem("Users", "/users"),
+    controlledNavItem("Teams", "/teams"),
+    controlledNavItem("Scoreboard", "/scoreboard"),
+    controlledNavItem("Challenges", "/challenges"),
+  ]
+
+  if (authContext.current_user?.type === "admin") {
+    navItems.push({
       icon: ChevronDown,
-      label: "Primary C",
-      navExitIcon: Delete,
-      children: [
-        { icon: Upload, label: "Secondary A" },
-        { icon: Upload, label: "Secondary B" },
-        { icon: Upload, label: "Secondary C" },
-        { icon: Upload, label: "Secondary D" },
-      ],
-    },
-    {
-      icon: ChevronDown,
-      label: "Primary D",
-      navExitIcon: Delete,
+      label: "Admin",
       children: [
         {
           icon: ChevronDown,
@@ -41,8 +51,9 @@ export default function PageLayout({ children }: PageLayoutProps) {
         },
         { icon: Upload, label: "Secondary F" },
       ],
-    },
-  ]);
+    })
+  }
+  const [mainItems, setMainItems] = React.useState<NavItemT[]>(navItems);
   const userItems = [
     { icon: Overflow, label: "Account item1" },
     { icon: Overflow, label: "Account item2" },
@@ -51,10 +62,12 @@ export default function PageLayout({ children }: PageLayoutProps) {
   ];
 
   function handleMainItemSelect(item: NavItemT) {
-    setMainItems((prev) => setItemActive(prev, item));
+    if (item.info?.route) {
+      push(item.info.route);
+    }else{
+      setMainItems((prev) => setItemActive(prev, item));
+    }
   }
-
-  const authContext = useAuthContext();
 
   return (
     <React.Fragment>

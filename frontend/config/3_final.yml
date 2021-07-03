@@ -8,6 +8,7 @@ config:
 documents:
   - ./src/**/*.tsx
   - ./src/**/*.ts
+  - '!./src/generated/**/*'
 generates:
   ./src/generated/hasura/ts.ts:
     plugins:

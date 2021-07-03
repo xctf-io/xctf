@@ -13,6 +13,7 @@ gql`
       bracket
       website
       verified
+      type
       captain_of {
         id
       }
