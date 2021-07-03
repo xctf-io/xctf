@@ -17,16 +17,16 @@ gql`
   }
 `;
 
-export function MyTeam() {
+export function TestForm() {
   const authContext = useAuthContext();
-  const [loadTeamForm, { data }] =
+  const [loadTeamForm, { data, called }] =
     GQLHooks.Fragments.TeamAsCaptain.useQueryByIdLazy({
       teamsId: authContext.current_user?.captain_of?.id || 0,
     });
 
   useEffect(() => {
-    if (authContext?.current_user?.captain_of?.id) loadTeamForm({});
-  }, [authContext, loadTeamForm]);
+    if (authContext?.current_user?.captain_of?.id && !called) loadTeamForm({});
+  }, [authContext, loadTeamForm, called]);
 
   return <p>{JSON.stringify(data)}</p>;
 }
