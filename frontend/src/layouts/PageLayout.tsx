@@ -113,7 +113,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
                     </sub>
                   </>
                 ) : (
-                  "CTFg"
+                  <H5 display={"inline"} >CTFg</H5>
                 )}
               </a>
             }
@@ -127,8 +127,8 @@ export default function PageLayout({ children }: PageLayoutProps) {
         </div>
       </Layer>
       <Block
-        height={["20px", "40px", "80px", "160px"]}
-        backgroundColor="primary200"
+        height={["80px"]}
+        backgroundColor="background"
       />
 
       {children}
