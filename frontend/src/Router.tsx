@@ -28,16 +28,16 @@ export default function Router() {
         </Route>
         <Route path="/scoreboard">
           <AccessCheck configKey={"score_visibility"}>
-          <PageLayout>
-            <Scoreboard />
-          </PageLayout>
+            <PageLayout>
+              <Scoreboard />
+            </PageLayout>
           </AccessCheck>
         </Route>
         <Route path="/challenges">
           <AccessCheck configKey={"challenge_visibility"}>
-          <PageLayout>
-            <Challenges />
-          </PageLayout>
+            <PageLayout>
+              <Challenges />
+            </PageLayout>
           </AccessCheck>
         </Route>
         <Route path="/">

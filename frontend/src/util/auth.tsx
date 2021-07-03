@@ -3,9 +3,9 @@ import { Redirect } from "react-router-dom";
 import React from "react";
 
 type AccessCheckProps = {
-  configKey: string,
-  children?: React.ReactNode
-}
+  configKey: string;
+  children?: React.ReactNode;
+};
 
 /*
 this component will redirect the user if they do not match the acl
