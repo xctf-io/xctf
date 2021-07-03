@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { GQLHooks } from "../generated/hasura/react";
 
 gql`
   fragment UserList on users {
@@ -11,5 +12,8 @@ gql`
 `;
 
 export default function Users() {
-  return <p>users</p>;
+  const { data } = GQLHooks.Fragments.UserList.useQueryObjects({
+    variables: { limit: 10 },
+  });
+  return <p>{JSON.stringify(data)}</p>;
 }

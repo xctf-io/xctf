@@ -33,7 +33,6 @@ ReactDOM.render(
         </BaseProvider>
       </StyletronProvider>
     </ApolloProvider>
-    ,
   </React.StrictMode>,
   document.getElementById("root"),
 );

@@ -14,6 +14,7 @@ import {
   faBell,
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import { Block } from "baseui/block";
 
 type PageLayoutProps = {
   children?: React.ReactNode;
@@ -125,6 +126,10 @@ export default function PageLayout({ children }: PageLayoutProps) {
           />
         </div>
       </Layer>
+      <Block
+        height={["20px", "40px", "80px", "160px"]}
+        backgroundColor="primary200"
+      />
 
       {children}
     </React.Fragment>
