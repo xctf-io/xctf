@@ -1,20 +1,10 @@
-import { StatefulInput } from "baseui/input";
-import { styled } from "baseui";
 import React from "react";
 
 import { useStyletron } from "baseui";
-import { Button } from "baseui/button";
 import { Layer } from "baseui/layer";
 import { ChevronDown, Delete, Overflow, Upload } from "baseui/icon";
 import { AppNavBar, setItemActive, NavItemT } from "baseui/app-nav-bar";
 import { useAuthContext } from "../context/AuthContext";
-
-const Centered = styled("div", {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "100%",
-});
 
 type ChildrenProps = {
   children?: React.ReactNode;
