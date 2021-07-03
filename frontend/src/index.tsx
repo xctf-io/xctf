@@ -15,10 +15,12 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-
-const theme = createTheme({
-  primaryFontFamily: 'Lato, LatoOffline, sans-serif',
-}, {});
+const theme = createTheme(
+  {
+    primaryFontFamily: "Lato, LatoOffline, sans-serif",
+  },
+  {},
+);
 
 ReactDOM.render(
   <React.StrictMode>
