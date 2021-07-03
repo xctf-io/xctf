@@ -11,10 +11,16 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/styletron-engine-atomic": "^1.1.1",
+    "@types/styletron-react": "^5.0.3",
+    "@types/styletron-standard": "^2.0.2",
+    "baseui": "^9.116.2",
     "graphql": "^15.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
+    "styletron-engine-atomic": "^1.4.8",
+    "styletron-react": "^6.0.1",
     "typescript": "^4.1.2",
     "uniforms": "^3.5.1",
     "uniforms-bridge-graphql": "^3.5.1"
@@ -37,17 +43,26 @@
     "@graphql-codegen/typescript-operations": "^1.17.14",
     "@graphql-codegen/typescript-react-apollo": "^2.2.1",
     "concurrently": "^6.2.0",
-    "source-map-explorer": "^2.5.2",
-    "prettier": "^2.3.2",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0"
+    "eslint-plugin-baseui": "^9.116.2",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.2",
+    "source-map-explorer": "^2.5.2"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest",
       "prettier"
-    ]
+    ],
+    "plugins": [
+      "baseui"
+    ],
+    "rules": {
+      "baseui/deprecated-theme-api": "warn",
+      "baseui/deprecated-component-api": "warn",
+      "baseui/no-deep-imports": "warn"
+    }
   },
   "browserslist": {
     "production": [
