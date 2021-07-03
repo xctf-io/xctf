@@ -82,6 +82,22 @@ select_permissions:
 - permission:
     columns:
     - affiliation
+    - bracket
+    - country
+    - created
+    - id
+    - name
+    - team_id
+    - type
+    - verified
+    - website
+    filter:
+      id:
+        _is_null: true
+  role: ctfd_
+- permission:
+    columns:
+    - affiliation
     - banned
     - bracket
     - country
@@ -107,6 +123,7 @@ select_permissions:
     - id
     - name
     - team_id
+    - type
     - verified
     - website
     filter:

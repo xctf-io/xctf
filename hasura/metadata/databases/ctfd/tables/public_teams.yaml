@@ -59,6 +59,19 @@ select_permissions:
 - permission:
     columns:
     - affiliation
+    - bracket
+    - country
+    - created
+    - id
+    - name
+    - website
+    filter:
+      id:
+        _is_null: true
+  role: ctfd_
+- permission:
+    columns:
+    - affiliation
     - banned
     - bracket
     - captain_id

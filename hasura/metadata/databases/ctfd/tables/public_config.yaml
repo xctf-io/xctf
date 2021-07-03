@@ -15,6 +15,15 @@ select_permissions:
     - id
     - key
     - value
+    filter:
+      key:
+        _iregex: (ctf|user_mode|start|end|visibility|freeze)
+  role: ctfd_
+- permission:
+    columns:
+    - id
+    - key
+    - value
     filter: {}
   role: ctfd_admin
 - permission:
