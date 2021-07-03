@@ -1,6 +1,5 @@
 import React from "react";
 import logo from "./logo.svg";
-import "./App.css";
 
 import { useAuthContext } from "./context/AuthContext";
 import { TestForm } from "./TestForm";

@@ -41,7 +41,7 @@ export function useAuthContext() {
   return React.useContext(AuthContext);
 }
 
-export function AuthContextWrapper({ children }: ChildrenProps) {
+export function AuthContextProvider({ children }: ChildrenProps) {
   const { data, loading, error } = useAuthContextQuery();
 
   if (loading || error) {
