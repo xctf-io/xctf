@@ -73,9 +73,9 @@ export default function PageLayout({ children }: PageLayoutProps) {
             mainItems={mainItems}
             onMainItemSelect={handleMainItemSelect}
             onUserItemSelect={(item) => console.log("user", item)}
-            userItems={authContext?.id ? userItems : undefined}
-            username={authContext?.name || undefined}
-            userImgUrl={authContext?.name ? "" : undefined}
+            userItems={authContext?.current_user[0]?.id ? userItems : undefined}
+            username={authContext?.current_user[0]?.name || undefined}
+            userImgUrl={authContext?.current_user[0]?.name ? "" : undefined}
           />
         </div>
       </Layer>

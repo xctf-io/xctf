@@ -26,12 +26,22 @@ gql`
         website
       }
     }
+    config(where: { key: { _in: ["ctf_name"] } }) {
+      key
+      value
+    }
   }
 `;
 
-export const AuthContext = React.createContext<
-  AuthContextQuery["current_user"][0] | undefined
->(undefined);
+type AuthContextType = {
+  loading: boolean;
+  current_user?: AuthContextQuery["current_user"][0];
+  config?: { [key: string]: string };
+};
+
+export const AuthContext = React.createContext<AuthContextType>({
+  loading: true,
+});
 
 type ChildrenProps = {
   children?: React.ReactNode;
@@ -49,8 +59,16 @@ export function AuthContextProvider({ children }: ChildrenProps) {
     return <>{children}</>;
   }
 
+  const config = { test: "test" };
+
   return (
-    <AuthContext.Provider value={data?.current_user[0]}>
+    <AuthContext.Provider
+      value={{
+        loading,
+        current_user: data?.current_user[0],
+        config,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
