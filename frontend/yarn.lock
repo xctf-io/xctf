@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@apollo/client@^3.3.20":
+"@apollo/client@^3.3.20", "@apollo/client@^3.3.7":
   version "3.3.20"
   resolved "https://registry.npmjs.org/@apollo/client/-/client-3.3.20.tgz"
   integrity sha512-hS7UmBwJweudw/J3M0RAcusMHNiRuGqkRH6g91PM2ev8cXScIMdXr/++9jo7wD1nAITMCMF4HQQ3LFaw/Or0Bw==
@@ -6488,6 +6488,43 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.6.tgz"
   integrity sha512-nTnJ528pbqxYanhpDYsi4Rd8MAeaBA67+RZ10CM1m3bTAVFEDcd5AuA4a6W5YkGZ1iNXHzZz8T6TBKLeBuNriQ==
 
+graphql-codegen-hasura-client-config@^4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/graphql-codegen-hasura-client-config/-/graphql-codegen-hasura-client-config-4.10.0.tgz#b977a71d42a1b1cd4585e41cc72f5f0680ed819f"
+  integrity sha512-/6qiS0hmgbb6EObeEMoHSvW/L0xtkqIggArkNpIlJRO+yGcDS3JPqAdTxOzB9lUTl2Mq61/XFE6NZkxowPmAUg==
+
+graphql-codegen-hasura-core@^4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/graphql-codegen-hasura-core/-/graphql-codegen-hasura-core-4.10.0.tgz#923516fbd5fc48ef545c0799b1c96730c6d4f7ee"
+  integrity sha512-nYxUpRdGDjB204zOmubA8o7XW7TgBt+0p0a82F8antu9CScbdHlwpF9U48Jh7sKzx+lfdY6lWr39SyMMtw10DA==
+  dependencies:
+    "@apollo/client" "^3.3.7"
+    "@types/react" "^17.0.0"
+    react "^17.0.1"
+    react-dom "^17.0.1"
+
+graphql-codegen-hasura-gql@^4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/graphql-codegen-hasura-gql/-/graphql-codegen-hasura-gql-4.10.0.tgz#36936d33ab1727b7e7ccc5e1cb8470371fd7f2d0"
+  integrity sha512-iowzDmcpK+SLus+GTGVVbGQgP51egadK4K4XfMvfsb/6bRLuY+Jb64eEFfJ64+besOlpLjJ873r7+4aHryFa9A==
+
+graphql-codegen-hasura-react@^4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/graphql-codegen-hasura-react/-/graphql-codegen-hasura-react-4.10.0.tgz#0171e7f3d25edea9df6a844a70336b45150596c3"
+  integrity sha512-4yFQl0yGrmBfQZJwgLmB0zLDI+cx3soAyI7wmU5FB0t2Fj5ZCAWj/TENBI7htC61C4x7CSzrBqcUqtnGS6fIcw==
+
+graphql-codegen-hasura-shared@^4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/graphql-codegen-hasura-shared/-/graphql-codegen-hasura-shared-4.10.0.tgz#08c207e6620fb8dfb0023b8a1d422d622beeb97c"
+  integrity sha512-mk5rAAyDsDNmBImOFvKmdVoQEHIwTEGSRenmv0w5FuOzx+SMX4XfKYv6QKtIo5imjhiFuRC0JOoZyAnIJR+6kw==
+  dependencies:
+    change-case "^4.1.2"
+
+graphql-codegen-hasura-typescript@^4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/graphql-codegen-hasura-typescript/-/graphql-codegen-hasura-typescript-4.10.0.tgz#5db211f8d439a7f179dfbdc90aec853d0d2ae1e5"
+  integrity sha512-xeG4d3/t9yW3uSIPMabmoOGRHqKBpeDQPBxnC0fiAZhMCNtX+mudXxwNL2Y5Oypvnm0CL7q6Xv/v8JCLkwclpA==
+
 graphql-config@^3.3.0:
   version "3.3.0"
   resolved "https://registry.npmjs.org/graphql-config/-/graphql-config-3.3.0.tgz"
@@ -10808,7 +10845,7 @@ react-dev-utils@^11.0.3:
     strip-ansi "6.0.0"
     text-table "0.2.0"
 
-react-dom@^17.0.2:
+react-dom@^17.0.1, react-dom@^17.0.2:
   version "17.0.2"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-17.0.2.tgz"
   integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
@@ -11016,7 +11053,7 @@ react-window@^1.8.5:
     "@babel/runtime" "^7.0.0"
     memoize-one ">=3.1.1 <6"
 
-react@^17.0.2:
+react@^17.0.1, react@^17.0.2:
   version "17.0.2"
   resolved "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
