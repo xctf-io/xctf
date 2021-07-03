@@ -34,6 +34,16 @@ gql`
   }
 `;
 
+const massageConfig = (res: AuthContextQuery["config"]) => {
+  let acc: { [key: string]: string } = {};
+  return res.reduce((acc, ci) => {
+    return {
+      ...acc,
+      [ci.key || ""]: ci.value || "",
+    };
+  }, acc);
+};
+
 type AuthContextType = {
   loading: boolean;
   current_user?: AuthContextQuery["current_user"][0];
@@ -45,13 +55,13 @@ export const AuthContext = React.createContext<AuthContextType>({
   config: {},
 });
 
-type ChildrenProps = {
-  children?: React.ReactNode;
-};
-
 export function useAuthContext() {
   return React.useContext(AuthContext);
 }
+
+type ChildrenProps = {
+  children?: React.ReactNode;
+};
 
 export function AuthContextProvider({ children }: ChildrenProps) {
   const { data, loading, error } = useAuthContextQuery();
@@ -66,8 +76,7 @@ export function AuthContextProvider({ children }: ChildrenProps) {
       value={{
         loading,
         current_user: data?.current_user[0],
-        // @ts-ignore this doesnt work
-        config: Object.fromEntries(data.config),
+        config: data?.config ? massageConfig(data.config) : {},
       }}
     >
       {children}
