@@ -6,11 +6,11 @@ import { ChevronDown, Delete, Overflow, Upload } from "baseui/icon";
 import { AppNavBar, setItemActive, NavItemT } from "baseui/app-nav-bar";
 import { useAuthContext } from "../context/AuthContext";
 
-type ChildrenProps = {
+type PageLayoutProps = {
   children?: React.ReactNode;
 };
 
-export default function PageLayout({ children }: ChildrenProps) {
+export default function PageLayout({ children }: PageLayoutProps) {
   const [css] = useStyletron();
   const [mainItems, setMainItems] = React.useState<NavItemT[]>([
     { icon: Upload, label: "Primary A" },
