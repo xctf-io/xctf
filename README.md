@@ -2,6 +2,45 @@
 
 Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL API.
 
+## vision
+* integrate hasura with ctfd
+  * authentication
+  * authorization
+  * sensible exposed tables
+* extend ctfd with hasura mutations / secondary graphql service
+* extend ctfd with frontend pages that use codegen + graphql schema for all types
+
+## dev environment
+### docker
+#### setup
+```
+docker-compose up -d
+```
+#### delete including volumes
+```
+docker-compose down -v
+```
+### frontend
+#### setup
+```
+cd frontend
+# start docker, code generation, and dev server in watch mode
+yarn start 
+# (optional) populate the ctfd database with some fake data
+yarn fakedata
+```
+#### fetching data
+When you add a `gql` tagged query to a source file, graphql-codegen will automatically generate typed Hooks for performing the query in `generated/graphql.tsx`.
+
+
+### hasura
+```
+docker-compose up -d
+cd hasura; hasura console --address 127.0.0.1
+# use http://127.0.0.1:9695/    
+git commit hasura/
+```
+
 ## todo
 * [x] configure hasura with yaml from repo
 * [x] get identity to hasura
@@ -62,48 +101,8 @@ Configuration for running CTFd with PostgreSQL and Hasura to expose a GraphQL AP
   * [ ] start
   * [ ] stop
   * [ ] freeze
-  
+
 
 ### phase 3
 * [ ] create init db migration at epoch with ctfd schema
 * [ ] remove ctfd dependency
-  
-
-## vision
-* integrate hasura with ctfd
-  * authentication
-  * authorization
-  * sensible exposed tables
-* extend ctfd with hasura mutations / secondary graphql service
-* extend ctfd with frontend pages that use codegen + graphql schema for all types
-
-## dev environment
-### docker
-#### setup
-```
-docker-compose up -d
-```
-#### delete including volumes
-```
-docker-compose down -v
-```
-### frontend
-#### setup
-```
-cd frontend
-# start docker, code generation, and dev server in watch mode
-yarn start 
-# (optional) populate the ctfd database with some fake data
-yarn fakedata
-```
-#### fetching data
-When you add a `gql` tagged query to a source file, graphql-codegen will automatically generate typed Hooks for performing the query in `generated/graphql.tsx`.
-
-
-### hasura
-```
-docker-compose up -d
-cd hasura; hasura console --address 127.0.0.1
-# use http://127.0.0.1:9695/    
-git commit hasura/
-```
