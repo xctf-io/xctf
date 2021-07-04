@@ -7,8 +7,8 @@ import { Button } from "baseui/button";
 import { Challenges as ChallengesType } from "../generated";
 
 type ChallengeCardProps = {
-  challenge: RecursivePartial<ChallengesType>
-}
+  challenge: RecursivePartial<ChallengesType>;
+};
 
 export function ChallengeCard({ challenge }: ChallengeCardProps) {
   return (
@@ -16,11 +16,7 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
       title={
         <>
           {challenge.name}{" "}
-          <Tag
-            closeable={false}
-            kind={KIND.positive}
-            variant={VARIANT.solid}
-          >
+          <Tag closeable={false} kind={KIND.positive} variant={VARIANT.solid}>
             <Icon>
               <FontAwesomeIcon icon={faTrophy} />
             </Icon>{" "}
@@ -29,7 +25,9 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
         </>
       }
     >
-      <StyledBody>{challenge.category} {challenge.solved}</StyledBody>
+      <StyledBody>
+        {challenge.category} {challenge.solved}
+      </StyledBody>
       <StyledAction>
         <Button overrides={{ BaseButton: { style: { width: "100%" } } }}>
           Button Label
