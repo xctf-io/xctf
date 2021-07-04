@@ -4,6 +4,7 @@
     <plugin id="NodeJS" />
     <plugin id="Pythonid" />
     <plugin id="com.intellij.database" />
+    <plugin id="com.intellij.lang.jsgraphql" />
     <plugin id="com.jetbrains.sh" />
     <plugin id="ideanginx9" />
     <plugin id="intellij.prettierJS" />
