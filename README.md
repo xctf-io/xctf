@@ -67,15 +67,14 @@ git commit hasura/
   * [x] unlocks
   * [x] users
 * [ ] postgres views for ctfd functionality
-  * [ ] available hints
+  * [x] available hints
     * view with hint id, chal id, relationship only
     * return a subset of columns before purchasing unlock
-  * [ ] scoreboard
+  * [x] scoreboard
     * team + score view and user + score view [blog](https://hasura.io/blog/hasura-authorization-system-through-examples/#:~:text=view%20raw-,flatten-roles.sql,-hosted%20with%20%E2%9D%A4%20by)
     * need to account for awards, solves
     * view for score over time
-  * [ ] prerequsite challenge auth table
-    * same blog post
+  * [ ] prerequsite challenge auth
 * [x] frontend, codegen
   * [x] react
   * [x] apollo
