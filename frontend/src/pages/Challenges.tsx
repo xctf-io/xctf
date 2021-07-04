@@ -57,6 +57,7 @@ export default function Challenges() {
                 <Icon>
                   <FontAwesomeIcon icon={faTrophy} />
                 </Icon>
+                {" "}
                 {chal.value}
               </Tag>
             </>
