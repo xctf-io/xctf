@@ -5,6 +5,16 @@ object_relationships:
 - name: challenge
   using:
     foreign_key_constraint_on: challenge_id
+insert_permissions:
+- permission:
+    backend_only: false
+    check: {}
+    columns:
+    - challenge_id
+    - content
+    - data
+    - type
+  role: ctfd_admin
 select_permissions:
 - permission:
     columns:
@@ -13,5 +23,19 @@ select_permissions:
     - type
     - content
     - data
+    filter: {}
+  role: ctfd_admin
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - challenge_id
+    - content
+    - data
+    - type
+    filter: {}
+  role: ctfd_admin
+delete_permissions:
+- permission:
     filter: {}
   role: ctfd_admin

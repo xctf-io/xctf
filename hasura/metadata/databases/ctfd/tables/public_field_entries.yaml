@@ -32,9 +32,8 @@ select_permissions:
     - team_id
     filter:
       _or:
-      - user:
-          id:
-            _eq: X-Hasura-User-Id
+      - user_id:
+          _eq: X-Hasura-User-Id
       - team:
           members:
             id:
@@ -54,23 +53,56 @@ update_permissions:
   role: ctfd_admin
 - permission:
     check:
-      _or:
-      - user:
-          id:
+      _and:
+      - _or:
+        - user_id:
             _eq: X-Hasura-User-Id
-      - team:
-          captain:
-            id:
-              _eq: X-Hasura-User-Id
+        - team:
+            captain:
+              id:
+                _eq: X-Hasura-User-Id
+      - field:
+          _and:
+          - editable:
+              _eq: true
+          - public:
+              _eq: true
     columns:
     - value
     filter:
-      _or:
-      - user:
-          id:
+      _and:
+      - _or:
+        - user_id:
             _eq: X-Hasura-User-Id
-      - team:
-          captain:
-            id:
-              _eq: X-Hasura-User-Id
+        - team:
+            captain:
+              id:
+                _eq: X-Hasura-User-Id
+      - field:
+          _and:
+          - editable:
+              _eq: true
+          - public:
+              _eq: true
+  role: ctfd_user
+delete_permissions:
+- permission:
+    filter: {}
+  role: ctfd_admin
+- permission:
+    filter:
+      _and:
+      - _or:
+        - user_id:
+            _eq: X-Hasura-User-Id
+        - team:
+            captain:
+              id:
+                _eq: X-Hasura-User-Id
+      - field:
+          _and:
+          - editable:
+              _eq: true
+          - public:
+              _eq: true
   role: ctfd_user

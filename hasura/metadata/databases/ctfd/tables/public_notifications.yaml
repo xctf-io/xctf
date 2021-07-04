@@ -38,7 +38,6 @@ select_permissions:
           members:
             id:
               _eq: X-Hasura-User-Id
-      - user:
-          id:
-            _eq: X-Hasura-User-Id
+      - user_id:
+          _eq: X-Hasura-User-Id
   role: ctfd_user

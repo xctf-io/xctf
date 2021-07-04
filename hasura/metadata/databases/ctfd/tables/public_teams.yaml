@@ -110,9 +110,20 @@ select_permissions:
       _or:
       - hidden:
           _ne: true
-      - members:
-          id:
-            _eq: X-Hasura-User-Id
+      - _or:
+        - members:
+            id:
+              _eq: X-Hasura-User-Id
+        - _exists:
+            _table:
+              name: config
+              schema: public
+            _where:
+              _and:
+              - key:
+                  _eq: account_visibility
+              - value:
+                  _ne: admins
   role: ctfd_user
 update_permissions:
 - permission:

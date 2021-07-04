@@ -9,3 +9,60 @@ array_relationships:
       table:
         name: field_entries
         schema: public
+insert_permissions:
+- permission:
+    backend_only: false
+    check: {}
+    columns:
+    - description
+    - editable
+    - field_type
+    - name
+    - public
+    - required
+    - type
+  role: ctfd_admin
+select_permissions:
+- permission:
+    columns:
+    - id
+    - name
+    - type
+    - field_type
+    - description
+    - required
+    - public
+    - editable
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - description
+    - editable
+    - field_type
+    - id
+    - name
+    - public
+    - required
+    - type
+    filter:
+      public:
+        _eq: true
+  role: ctfd_user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - description
+    - editable
+    - field_type
+    - name
+    - public
+    - required
+    - type
+    filter: {}
+  role: ctfd_admin
+delete_permissions:
+- permission:
+    filter: {}
+  role: ctfd_admin

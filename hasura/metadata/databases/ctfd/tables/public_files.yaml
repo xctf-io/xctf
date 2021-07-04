@@ -11,6 +11,42 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
+    - id
+    - type
+    - location
+    - challenge_id
+    - page_id
+    filter:
+      _or:
+      - _and:
+        - challenge:
+            id: {}
+        - challenge:
+            state:
+              _eq: visible
+        - _not:
+            _exists:
+              _table:
+                name: config
+                schema: public
+              _where:
+                _and:
+                - key:
+                    _eq: challenge_visibility
+                - value:
+                    _eq: private
+      - _and:
+        - page:
+            id: {}
+        - page:
+            hidden:
+              _ne: true
+        - page:
+            auth_required:
+              _ne: true
+  role: ctfd_
+- permission:
+    columns:
     - type
     - challenge_id
     - id
