@@ -1,5 +1,4 @@
--- todo consider changing to materialized with refresh triggers and have the running total in here
-CREATE VIEW score_events AS
+CREATE MATERIALIZED VIEW public.score_events AS
 SELECT team_id, user_id, submissions.date as event_time, c.value as event_value
 FROM public.submissions
          left join challenges c on submissions.challenge_id = c.id
@@ -7,6 +6,31 @@ where submissions.type = 'correct'
 UNION all
 select team_id, user_id, awards.date, awards.value
 from public.awards;
+
+-- triggers for score events
+CREATE OR REPLACE FUNCTION refresh_score_events()
+    RETURNS TRIGGER LANGUAGE plpgsql
+AS $$
+BEGIN
+    REFRESH MATERIALIZED VIEW public.score_events;
+    RETURN NULL;
+END $$;
+
+CREATE TRIGGER refresh_score_events
+    AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
+    ON public.solves
+    FOR EACH STATEMENT
+EXECUTE PROCEDURE refresh_score_events();
+
+CREATE TRIGGER refresh_score_events
+    AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
+    ON public.awards
+    FOR EACH STATEMENT
+EXECUTE PROCEDURE refresh_score_events();
+
+-- end triggers for score events
+
+CREATE INDEX score_events_time_user_team_idx ON score_events (event_time, team_id, user_id);
 
 CREATE VIEW public.score_timeline_user AS
 SELECT score_events.event_time,
