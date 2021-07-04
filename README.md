@@ -73,7 +73,7 @@ git commit hasura/
   * [x] scoreboard
     * team + score view and user + score view [blog](https://hasura.io/blog/hasura-authorization-system-through-examples/#:~:text=view%20raw-,flatten-roles.sql,-hosted%20with%20%E2%9D%A4%20by)
     * need to account for awards, solves
-    * view for score over time
+  * [ ] view for score over time - score_timeline
   * [ ] prerequsite challenge auth
 * [x] frontend, codegen
   * [x] react
