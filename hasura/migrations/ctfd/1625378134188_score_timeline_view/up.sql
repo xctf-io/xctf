@@ -13,14 +13,14 @@ SELECT score_events.event_time,
        score_events.team_id,
        score_events.user_id,
        sum(score_events.event_value)
-       over (partition by team_id, user_id order by score_events.event_time rows between unbounded preceding and current row) as total
+       over (partition by team_id, user_id order by score_events.event_time rows between unbounded preceding and current row) as score
 FROM score_events;
 
 CREATE VIEW public.score_timeline AS
 SELECT score_events.event_time,
        score_events.team_id,
        sum(score_events.event_value)
-       over (partition by team_id order by score_events.event_time rows between unbounded preceding and current row) as total
+       over (partition by team_id order by score_events.event_time rows between unbounded preceding and current row) as score
 FROM score_events;
 
 -- todo how does ctfd do this calculation exactly? need timestamps

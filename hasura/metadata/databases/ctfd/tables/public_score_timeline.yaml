@@ -16,7 +16,7 @@ select_permissions:
     columns:
     - event_time
     - team_id
-    - total
+    - score
     filter:
       _exists:
         _table:
@@ -31,7 +31,7 @@ select_permissions:
   role: ctfd_
 - permission:
     columns:
-    - total
+    - score
     - team_id
     - event_time
     filter: {}
@@ -40,7 +40,7 @@ select_permissions:
     columns:
     - event_time
     - team_id
-    - total
+    - score
     filter:
       _or:
       - _exists:

@@ -34,6 +34,15 @@ array_relationships:
       table:
         name: users
         schema: public
+- name: score_timeline
+  using:
+    manual_configuration:
+      column_mapping:
+        id: team_id
+      insertion_order: null
+      remote_table:
+        name: score_timeline
+        schema: public
 - name: solves
   using:
     foreign_key_constraint_on:
