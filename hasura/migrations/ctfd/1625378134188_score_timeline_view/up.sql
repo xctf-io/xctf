@@ -67,7 +67,7 @@ EXECUTE PROCEDURE refresh_score_events();
 CREATE TRIGGER refresh_score_events
     AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
     ON public.submissions
-    FOR EACH STATEMENT WHEN ( submissions.type = 'correct' )
+    FOR EACH STATEMENT
 EXECUTE PROCEDURE refresh_score_events();
 
 -- end triggers for score events
