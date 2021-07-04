@@ -29,7 +29,7 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
         </>
       }
     >
-      <StyledBody>{challenge.category}</StyledBody>
+      <StyledBody>{challenge.category} {challenge.solved}</StyledBody>
       <StyledAction>
         <Button overrides={{ BaseButton: { style: { width: "100%" } } }}>
           Button Label

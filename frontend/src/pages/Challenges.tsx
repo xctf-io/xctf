@@ -31,6 +31,7 @@ gql`
             value
         }
         type
+        solved
     }
 `;
 

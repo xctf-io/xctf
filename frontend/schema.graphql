@@ -727,6 +727,11 @@ type challenges {
     path: String
   ): json
 
+  """
+  A computed field, executes function "challenges_solved"
+  """
+  solved: Boolean
+
   """An array relationship"""
   solves(
     """distinct select on columns"""
