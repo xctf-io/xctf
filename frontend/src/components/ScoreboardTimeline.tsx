@@ -3,8 +3,10 @@ import {
   ScoreboardTimelineQuery,
 } from "../generated";
 import {
-  XYPlot, XAxis, YAxis, HorizontalGridLines, LineSeries, LineSeriesProps, LineSeriesPoint,
+  FlexibleXYPlot, XAxis, YAxis, HorizontalGridLines, LineSeries, LineSeriesProps, LineSeriesPoint,
 } from "react-vis";
+import '../../node_modules/react-vis/dist/style.css';
+import { AspectRatioBox } from "baseui/aspect-ratio-box";
 
 type ScoreboardTimelineProps = {
   scoreboard?: ScoreboardTimelineQuery["score_timeline"]
@@ -32,31 +34,30 @@ export function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
 
   return (
     <>
+        <FlexibleXYPlot
+          height={500}
+        >
+          <XAxis
+            attr="x"
+            attrAxis="y"
+            orientation="bottom"
+            tickFormat={function tickFormat(d){return new Date(d).toLocaleDateString()}}
+            tickLabelAngle={0}
+          />
+          <HorizontalGridLines />
+          {Object.keys(timelineData).map((team) => (
+            <LineSeries
+              curve={undefined}
+              key={team}
+              data={timelineData[team]}
+              opacity={1}
+              strokeStyle="solid"
+              style={{}}
+            >
+            </LineSeries>
+          ))}
 
-      <XYPlot
-        width={1200}
-        height={600}
-      >
-        <XAxis
-          attr="x"
-          attrAxis="y"
-          orientation="bottom"
-          tickFormat={function tickFormat(d){return new Date(d).toLocaleDateString()}}
-          tickLabelAngle={0}
-        />
-        <HorizontalGridLines />
-        {Object.keys(timelineData).map((team) => (
-          <LineSeries
-            curve={undefined}
-            key={team}
-            data={timelineData[team]}
-            opacity={1}
-            strokeStyle="solid"
-          >
-          </LineSeries>
-        ))}
-
-      </XYPlot>
+        </FlexibleXYPlot>
     </>
 
 
