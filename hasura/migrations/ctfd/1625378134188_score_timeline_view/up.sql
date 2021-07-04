@@ -64,6 +64,12 @@ CREATE TRIGGER refresh_score_events
     FOR EACH STATEMENT
 EXECUTE PROCEDURE refresh_score_events();
 
+CREATE TRIGGER refresh_score_events
+    AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
+    ON public.submissions
+    FOR EACH STATEMENT WHEN ( submissions.type = 'correct' )
+EXECUTE PROCEDURE refresh_score_events();
+
 -- end triggers for score events
 
 CREATE UNIQUE INDEX score_events_all_uniq_idx ON score_events (event_time, team_id, user_id, event_value);
