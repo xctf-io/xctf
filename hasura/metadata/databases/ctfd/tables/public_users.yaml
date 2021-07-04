@@ -87,6 +87,12 @@ array_relationships:
       table:
         name: unlocks
         schema: public
+computed_fields:
+- definition:
+    function:
+      name: user_score
+      schema: public
+  name: score
 select_permissions:
 - permission:
     columns:
@@ -100,6 +106,8 @@ select_permissions:
     - type
     - verified
     - website
+    computed_fields:
+    - score
     filter:
       _exists:
         _table:
@@ -129,6 +137,8 @@ select_permissions:
     - type
     - verified
     - website
+    computed_fields:
+    - score
     filter: {}
   role: ctfd_admin
 - permission:
@@ -143,6 +153,8 @@ select_permissions:
     - type
     - verified
     - website
+    computed_fields:
+    - score
     filter:
       _or:
       - hidden:
