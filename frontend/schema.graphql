@@ -3510,6 +3510,9 @@ type hints {
   ): json
   type: String
 
+  """An object relationship"""
+  unlocked_content: hints_content
+
   """An array relationship"""
   unlocks(
     """distinct select on columns"""
@@ -3629,6 +3632,7 @@ input hints_bool_exp {
   id: Int_comparison_exp
   requirements: json_comparison_exp
   type: String_comparison_exp
+  unlocked_content: hints_content_bool_exp
   unlocks: unlocks_bool_exp
 }
 
@@ -3638,6 +3642,166 @@ unique or primary key constraints on table "hints"
 enum hints_constraint {
   """unique or primary key constraint"""
   hints_pkey
+}
+
+"""
+columns and relationships of "hints_content"
+"""
+type hints_content {
+  content: String
+
+  """An object relationship"""
+  hint: hints
+  id: Int
+}
+
+"""
+aggregated selection of "hints_content"
+"""
+type hints_content_aggregate {
+  aggregate: hints_content_aggregate_fields
+  nodes: [hints_content!]!
+}
+
+"""
+aggregate fields of "hints_content"
+"""
+type hints_content_aggregate_fields {
+  avg: hints_content_avg_fields
+  count(columns: [hints_content_select_column!], distinct: Boolean): Int!
+  max: hints_content_max_fields
+  min: hints_content_min_fields
+  stddev: hints_content_stddev_fields
+  stddev_pop: hints_content_stddev_pop_fields
+  stddev_samp: hints_content_stddev_samp_fields
+  sum: hints_content_sum_fields
+  var_pop: hints_content_var_pop_fields
+  var_samp: hints_content_var_samp_fields
+  variance: hints_content_variance_fields
+}
+
+"""aggregate avg on columns"""
+type hints_content_avg_fields {
+  id: Float
+}
+
+"""
+Boolean expression to filter rows from the table "hints_content". All fields are combined with a logical 'AND'.
+"""
+input hints_content_bool_exp {
+  _and: [hints_content_bool_exp!]
+  _not: hints_content_bool_exp
+  _or: [hints_content_bool_exp!]
+  content: String_comparison_exp
+  hint: hints_bool_exp
+  id: Int_comparison_exp
+}
+
+"""
+input type for incrementing numeric columns in table "hints_content"
+"""
+input hints_content_inc_input {
+  id: Int
+}
+
+"""
+input type for inserting data into table "hints_content"
+"""
+input hints_content_insert_input {
+  content: String
+  hint: hints_obj_rel_insert_input
+  id: Int
+}
+
+"""aggregate max on columns"""
+type hints_content_max_fields {
+  content: String
+  id: Int
+}
+
+"""aggregate min on columns"""
+type hints_content_min_fields {
+  content: String
+  id: Int
+}
+
+"""
+response of any mutation on the table "hints_content"
+"""
+type hints_content_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [hints_content!]!
+}
+
+"""
+input type for inserting object relation for remote table "hints_content"
+"""
+input hints_content_obj_rel_insert_input {
+  data: hints_content_insert_input!
+}
+
+"""Ordering options when selecting data from "hints_content"."""
+input hints_content_order_by {
+  content: order_by
+  hint: hints_order_by
+  id: order_by
+}
+
+"""
+select columns of table "hints_content"
+"""
+enum hints_content_select_column {
+  """column name"""
+  content
+
+  """column name"""
+  id
+}
+
+"""
+input type for updating data in table "hints_content"
+"""
+input hints_content_set_input {
+  content: String
+  id: Int
+}
+
+"""aggregate stddev on columns"""
+type hints_content_stddev_fields {
+  id: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type hints_content_stddev_pop_fields {
+  id: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type hints_content_stddev_samp_fields {
+  id: Float
+}
+
+"""aggregate sum on columns"""
+type hints_content_sum_fields {
+  id: Int
+}
+
+"""aggregate var_pop on columns"""
+type hints_content_var_pop_fields {
+  id: Float
+}
+
+"""aggregate var_samp on columns"""
+type hints_content_var_samp_fields {
+  id: Float
+}
+
+"""aggregate variance on columns"""
+type hints_content_variance_fields {
+  id: Float
 }
 
 """
@@ -3660,6 +3824,7 @@ input hints_insert_input {
   id: Int
   requirements: json
   type: String
+  unlocked_content: hints_content_obj_rel_insert_input
   unlocks: unlocks_arr_rel_insert_input
 }
 
@@ -3742,6 +3907,7 @@ input hints_order_by {
   id: order_by
   requirements: order_by
   type: order_by
+  unlocked_content: hints_content_order_by
   unlocks_aggregate: unlocks_aggregate_order_by
 }
 
@@ -4068,6 +4234,14 @@ type mutation_root {
   delete single row from the table: "hints"
   """
   delete_hints_by_pk(id: Int!): hints
+
+  """
+  delete data from the table: "hints_content"
+  """
+  delete_hints_content(
+    """filter the rows which have to be deleted"""
+    where: hints_content_bool_exp!
+  ): hints_content_mutation_response
 
   """
   delete data from the table: "notifications"
@@ -4407,6 +4581,22 @@ type mutation_root {
     """on conflict condition"""
     on_conflict: hints_on_conflict
   ): hints_mutation_response
+
+  """
+  insert data into the table: "hints_content"
+  """
+  insert_hints_content(
+    """the rows to be inserted"""
+    objects: [hints_content_insert_input!]!
+  ): hints_content_mutation_response
+
+  """
+  insert a single row into the table: "hints_content"
+  """
+  insert_hints_content_one(
+    """the row to be inserted"""
+    object: hints_content_insert_input!
+  ): hints_content
 
   """
   insert a single row into the table: "hints"
@@ -4898,6 +5088,20 @@ type mutation_root {
     _set: hints_set_input
     pk_columns: hints_pk_columns_input!
   ): hints
+
+  """
+  update data of the table: "hints_content"
+  """
+  update_hints_content(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: hints_content_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: hints_content_set_input
+
+    """filter the rows which have to be updated"""
+    where: hints_content_bool_exp!
+  ): hints_content_mutation_response
 
   """
   update data of the table: "notifications"
@@ -6195,6 +6399,46 @@ type query_root {
 
   """fetch data from the table: "hints" using primary key columns"""
   hints_by_pk(id: Int!): hints
+
+  """
+  fetch data from the table: "hints_content"
+  """
+  hints_content(
+    """distinct select on columns"""
+    distinct_on: [hints_content_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [hints_content_order_by!]
+
+    """filter the rows returned"""
+    where: hints_content_bool_exp
+  ): [hints_content!]!
+
+  """
+  fetch aggregated fields from the table: "hints_content"
+  """
+  hints_content_aggregate(
+    """distinct select on columns"""
+    distinct_on: [hints_content_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [hints_content_order_by!]
+
+    """filter the rows returned"""
+    where: hints_content_bool_exp
+  ): hints_content_aggregate!
 
   """
   fetch data from the table: "notifications"
@@ -7907,6 +8151,46 @@ type subscription_root {
 
   """fetch data from the table: "hints" using primary key columns"""
   hints_by_pk(id: Int!): hints
+
+  """
+  fetch data from the table: "hints_content"
+  """
+  hints_content(
+    """distinct select on columns"""
+    distinct_on: [hints_content_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [hints_content_order_by!]
+
+    """filter the rows returned"""
+    where: hints_content_bool_exp
+  ): [hints_content!]!
+
+  """
+  fetch aggregated fields from the table: "hints_content"
+  """
+  hints_content_aggregate(
+    """distinct select on columns"""
+    distinct_on: [hints_content_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [hints_content_order_by!]
+
+    """filter the rows returned"""
+    where: hints_content_bool_exp
+  ): hints_content_aggregate!
 
   """
   fetch data from the table: "notifications"
