@@ -25,6 +25,14 @@ input Boolean_comparison_exp {
   _nin: [Boolean!]
 }
 
+type CreateUserOutput {
+  id: Int!
+  token: String!
+
+  """An object relationship"""
+  user: users!
+}
+
 """
 Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
 """
@@ -38,6 +46,14 @@ input Int_comparison_exp {
   _lte: Int
   _neq: Int
   _nin: [Int!]
+}
+
+type JsonWebToken {
+  token: String!
+}
+
+type LogoutResponse {
+  success: Boolean
 }
 
 """
@@ -91,6 +107,17 @@ input String_comparison_exp {
 
   """does the column match the given SQL regular expression"""
   _similar: String
+}
+
+type SubmitAttemptMutationOutput {
+  id: Int!
+}
+
+type UnlockMutationOutput {
+  id: Int!
+
+  """An object relationship"""
+  unlock: unlocks!
 }
 
 """
@@ -567,6 +594,23 @@ input awards_variance_order_by {
   team_id: order_by
   user_id: order_by
   value: order_by
+}
+
+scalar bigint
+
+"""
+Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'.
+"""
+input bigint_comparison_exp {
+  _eq: bigint
+  _gt: bigint
+  _gte: bigint
+  _in: [bigint!]
+  _is_null: Boolean
+  _lt: bigint
+  _lte: bigint
+  _neq: bigint
+  _nin: [bigint!]
 }
 
 """
@@ -4110,6 +4154,12 @@ input json_comparison_exp {
 
 """mutation root"""
 type mutation_root {
+  Login(captcha: String, name: String!, password: String!): JsonWebToken
+  Logout: LogoutResponse
+  Signup(captcha: String, name: String!, password: String!): CreateUserOutput
+  SubmitAttemptMutation(challenge_id: Int, provided: String): SubmitAttemptMutationOutput
+  UnlockMutation(target: Int, type: String): UnlockMutationOutput
+
   """
   delete data from the table: "awards"
   """
@@ -6531,6 +6581,202 @@ type query_root {
   """fetch data from the table: "pages" using primary key columns"""
   pages_by_pk(id: Int!): pages
 
+  """
+  fetch data from the table: "score_events"
+  """
+  score_events(
+    """distinct select on columns"""
+    distinct_on: [score_events_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_events_order_by!]
+
+    """filter the rows returned"""
+    where: score_events_bool_exp
+  ): [score_events!]!
+
+  """
+  fetch aggregated fields from the table: "score_events"
+  """
+  score_events_aggregate(
+    """distinct select on columns"""
+    distinct_on: [score_events_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_events_order_by!]
+
+    """filter the rows returned"""
+    where: score_events_bool_exp
+  ): score_events_aggregate!
+
+  """An array relationship"""
+  score_timeline(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_bool_exp
+  ): [score_timeline!]!
+
+  """An aggregate relationship"""
+  score_timeline_aggregate(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_bool_exp
+  ): score_timeline_aggregate!
+
+  """
+  fetch data from the table: "score_timeline_user"
+  """
+  score_timeline_user(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_user_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_user_bool_exp
+  ): [score_timeline_user!]!
+
+  """
+  fetch aggregated fields from the table: "score_timeline_user"
+  """
+  score_timeline_user_aggregate(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_user_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_user_bool_exp
+  ): score_timeline_user_aggregate!
+
+  """
+  fetch data from the table: "scoreboard"
+  """
+  scoreboard(
+    """distinct select on columns"""
+    distinct_on: [scoreboard_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [scoreboard_order_by!]
+
+    """filter the rows returned"""
+    where: scoreboard_bool_exp
+  ): [scoreboard!]!
+
+  """
+  fetch aggregated fields from the table: "scoreboard"
+  """
+  scoreboard_aggregate(
+    """distinct select on columns"""
+    distinct_on: [scoreboard_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [scoreboard_order_by!]
+
+    """filter the rows returned"""
+    where: scoreboard_bool_exp
+  ): scoreboard_aggregate!
+
+  """
+  fetch data from the table: "scoreboard_user"
+  """
+  scoreboard_user(
+    """distinct select on columns"""
+    distinct_on: [scoreboard_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [scoreboard_user_order_by!]
+
+    """filter the rows returned"""
+    where: scoreboard_user_bool_exp
+  ): [scoreboard_user!]!
+
+  """
+  fetch aggregated fields from the table: "scoreboard_user"
+  """
+  scoreboard_user_aggregate(
+    """distinct select on columns"""
+    distinct_on: [scoreboard_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [scoreboard_user_order_by!]
+
+    """filter the rows returned"""
+    where: scoreboard_user_bool_exp
+  ): scoreboard_user_aggregate!
+
   """An array relationship"""
   solves(
     """distinct select on columns"""
@@ -6854,6 +7100,967 @@ type query_root {
 
   """fetch data from the table: "users" using primary key columns"""
   users_by_pk(id: Int!): users
+}
+
+"""
+columns and relationships of "score_events"
+"""
+type score_events {
+  event_time: timestamp
+  event_value: Int
+  team_id: Int
+  user_id: Int
+}
+
+"""
+aggregated selection of "score_events"
+"""
+type score_events_aggregate {
+  aggregate: score_events_aggregate_fields
+  nodes: [score_events!]!
+}
+
+"""
+aggregate fields of "score_events"
+"""
+type score_events_aggregate_fields {
+  avg: score_events_avg_fields
+  count(columns: [score_events_select_column!], distinct: Boolean): Int!
+  max: score_events_max_fields
+  min: score_events_min_fields
+  stddev: score_events_stddev_fields
+  stddev_pop: score_events_stddev_pop_fields
+  stddev_samp: score_events_stddev_samp_fields
+  sum: score_events_sum_fields
+  var_pop: score_events_var_pop_fields
+  var_samp: score_events_var_samp_fields
+  variance: score_events_variance_fields
+}
+
+"""aggregate avg on columns"""
+type score_events_avg_fields {
+  event_value: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+Boolean expression to filter rows from the table "score_events". All fields are combined with a logical 'AND'.
+"""
+input score_events_bool_exp {
+  _and: [score_events_bool_exp!]
+  _not: score_events_bool_exp
+  _or: [score_events_bool_exp!]
+  event_time: timestamp_comparison_exp
+  event_value: Int_comparison_exp
+  team_id: Int_comparison_exp
+  user_id: Int_comparison_exp
+}
+
+"""aggregate max on columns"""
+type score_events_max_fields {
+  event_time: timestamp
+  event_value: Int
+  team_id: Int
+  user_id: Int
+}
+
+"""aggregate min on columns"""
+type score_events_min_fields {
+  event_time: timestamp
+  event_value: Int
+  team_id: Int
+  user_id: Int
+}
+
+"""Ordering options when selecting data from "score_events"."""
+input score_events_order_by {
+  event_time: order_by
+  event_value: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""
+select columns of table "score_events"
+"""
+enum score_events_select_column {
+  """column name"""
+  event_time
+
+  """column name"""
+  event_value
+
+  """column name"""
+  team_id
+
+  """column name"""
+  user_id
+}
+
+"""aggregate stddev on columns"""
+type score_events_stddev_fields {
+  event_value: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type score_events_stddev_pop_fields {
+  event_value: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type score_events_stddev_samp_fields {
+  event_value: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate sum on columns"""
+type score_events_sum_fields {
+  event_value: Int
+  team_id: Int
+  user_id: Int
+}
+
+"""aggregate var_pop on columns"""
+type score_events_var_pop_fields {
+  event_value: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate var_samp on columns"""
+type score_events_var_samp_fields {
+  event_value: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate variance on columns"""
+type score_events_variance_fields {
+  event_value: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+columns and relationships of "score_timeline"
+"""
+type score_timeline {
+  event_time: timestamp
+  score: bigint
+
+  """An object relationship"""
+  team: teams
+  team_id: Int
+}
+
+"""
+aggregated selection of "score_timeline"
+"""
+type score_timeline_aggregate {
+  aggregate: score_timeline_aggregate_fields
+  nodes: [score_timeline!]!
+}
+
+"""
+aggregate fields of "score_timeline"
+"""
+type score_timeline_aggregate_fields {
+  avg: score_timeline_avg_fields
+  count(columns: [score_timeline_select_column!], distinct: Boolean): Int!
+  max: score_timeline_max_fields
+  min: score_timeline_min_fields
+  stddev: score_timeline_stddev_fields
+  stddev_pop: score_timeline_stddev_pop_fields
+  stddev_samp: score_timeline_stddev_samp_fields
+  sum: score_timeline_sum_fields
+  var_pop: score_timeline_var_pop_fields
+  var_samp: score_timeline_var_samp_fields
+  variance: score_timeline_variance_fields
+}
+
+"""
+order by aggregate values of table "score_timeline"
+"""
+input score_timeline_aggregate_order_by {
+  avg: score_timeline_avg_order_by
+  count: order_by
+  max: score_timeline_max_order_by
+  min: score_timeline_min_order_by
+  stddev: score_timeline_stddev_order_by
+  stddev_pop: score_timeline_stddev_pop_order_by
+  stddev_samp: score_timeline_stddev_samp_order_by
+  sum: score_timeline_sum_order_by
+  var_pop: score_timeline_var_pop_order_by
+  var_samp: score_timeline_var_samp_order_by
+  variance: score_timeline_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "score_timeline"
+"""
+input score_timeline_arr_rel_insert_input {
+  data: [score_timeline_insert_input!]!
+}
+
+"""aggregate avg on columns"""
+type score_timeline_avg_fields {
+  score: Float
+  team_id: Float
+}
+
+"""
+order by avg() on columns of table "score_timeline"
+"""
+input score_timeline_avg_order_by {
+  score: order_by
+  team_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "score_timeline". All fields are combined with a logical 'AND'.
+"""
+input score_timeline_bool_exp {
+  _and: [score_timeline_bool_exp!]
+  _not: score_timeline_bool_exp
+  _or: [score_timeline_bool_exp!]
+  event_time: timestamp_comparison_exp
+  score: bigint_comparison_exp
+  team: teams_bool_exp
+  team_id: Int_comparison_exp
+}
+
+"""
+input type for inserting data into table "score_timeline"
+"""
+input score_timeline_insert_input {
+  event_time: timestamp
+  score: bigint
+  team: teams_obj_rel_insert_input
+  team_id: Int
+}
+
+"""aggregate max on columns"""
+type score_timeline_max_fields {
+  event_time: timestamp
+  score: bigint
+  team_id: Int
+}
+
+"""
+order by max() on columns of table "score_timeline"
+"""
+input score_timeline_max_order_by {
+  event_time: order_by
+  score: order_by
+  team_id: order_by
+}
+
+"""aggregate min on columns"""
+type score_timeline_min_fields {
+  event_time: timestamp
+  score: bigint
+  team_id: Int
+}
+
+"""
+order by min() on columns of table "score_timeline"
+"""
+input score_timeline_min_order_by {
+  event_time: order_by
+  score: order_by
+  team_id: order_by
+}
+
+"""Ordering options when selecting data from "score_timeline"."""
+input score_timeline_order_by {
+  event_time: order_by
+  score: order_by
+  team: teams_order_by
+  team_id: order_by
+}
+
+"""
+select columns of table "score_timeline"
+"""
+enum score_timeline_select_column {
+  """column name"""
+  event_time
+
+  """column name"""
+  score
+
+  """column name"""
+  team_id
+}
+
+"""aggregate stddev on columns"""
+type score_timeline_stddev_fields {
+  score: Float
+  team_id: Float
+}
+
+"""
+order by stddev() on columns of table "score_timeline"
+"""
+input score_timeline_stddev_order_by {
+  score: order_by
+  team_id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type score_timeline_stddev_pop_fields {
+  score: Float
+  team_id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "score_timeline"
+"""
+input score_timeline_stddev_pop_order_by {
+  score: order_by
+  team_id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type score_timeline_stddev_samp_fields {
+  score: Float
+  team_id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "score_timeline"
+"""
+input score_timeline_stddev_samp_order_by {
+  score: order_by
+  team_id: order_by
+}
+
+"""aggregate sum on columns"""
+type score_timeline_sum_fields {
+  score: bigint
+  team_id: Int
+}
+
+"""
+order by sum() on columns of table "score_timeline"
+"""
+input score_timeline_sum_order_by {
+  score: order_by
+  team_id: order_by
+}
+
+"""
+columns and relationships of "score_timeline_user"
+"""
+type score_timeline_user {
+  event_time: timestamp
+  score: bigint
+
+  """An object relationship"""
+  team: teams
+  team_id: Int
+  user_id: Int
+}
+
+"""
+aggregated selection of "score_timeline_user"
+"""
+type score_timeline_user_aggregate {
+  aggregate: score_timeline_user_aggregate_fields
+  nodes: [score_timeline_user!]!
+}
+
+"""
+aggregate fields of "score_timeline_user"
+"""
+type score_timeline_user_aggregate_fields {
+  avg: score_timeline_user_avg_fields
+  count(columns: [score_timeline_user_select_column!], distinct: Boolean): Int!
+  max: score_timeline_user_max_fields
+  min: score_timeline_user_min_fields
+  stddev: score_timeline_user_stddev_fields
+  stddev_pop: score_timeline_user_stddev_pop_fields
+  stddev_samp: score_timeline_user_stddev_samp_fields
+  sum: score_timeline_user_sum_fields
+  var_pop: score_timeline_user_var_pop_fields
+  var_samp: score_timeline_user_var_samp_fields
+  variance: score_timeline_user_variance_fields
+}
+
+"""
+order by aggregate values of table "score_timeline_user"
+"""
+input score_timeline_user_aggregate_order_by {
+  avg: score_timeline_user_avg_order_by
+  count: order_by
+  max: score_timeline_user_max_order_by
+  min: score_timeline_user_min_order_by
+  stddev: score_timeline_user_stddev_order_by
+  stddev_pop: score_timeline_user_stddev_pop_order_by
+  stddev_samp: score_timeline_user_stddev_samp_order_by
+  sum: score_timeline_user_sum_order_by
+  var_pop: score_timeline_user_var_pop_order_by
+  var_samp: score_timeline_user_var_samp_order_by
+  variance: score_timeline_user_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "score_timeline_user"
+"""
+input score_timeline_user_arr_rel_insert_input {
+  data: [score_timeline_user_insert_input!]!
+}
+
+"""aggregate avg on columns"""
+type score_timeline_user_avg_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+order by avg() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_avg_order_by {
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "score_timeline_user". All fields are combined with a logical 'AND'.
+"""
+input score_timeline_user_bool_exp {
+  _and: [score_timeline_user_bool_exp!]
+  _not: score_timeline_user_bool_exp
+  _or: [score_timeline_user_bool_exp!]
+  event_time: timestamp_comparison_exp
+  score: bigint_comparison_exp
+  team: teams_bool_exp
+  team_id: Int_comparison_exp
+  user_id: Int_comparison_exp
+}
+
+"""
+input type for inserting data into table "score_timeline_user"
+"""
+input score_timeline_user_insert_input {
+  event_time: timestamp
+  score: bigint
+  team: teams_obj_rel_insert_input
+  team_id: Int
+  user_id: Int
+}
+
+"""aggregate max on columns"""
+type score_timeline_user_max_fields {
+  event_time: timestamp
+  score: bigint
+  team_id: Int
+  user_id: Int
+}
+
+"""
+order by max() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_max_order_by {
+  event_time: order_by
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""aggregate min on columns"""
+type score_timeline_user_min_fields {
+  event_time: timestamp
+  score: bigint
+  team_id: Int
+  user_id: Int
+}
+
+"""
+order by min() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_min_order_by {
+  event_time: order_by
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""Ordering options when selecting data from "score_timeline_user"."""
+input score_timeline_user_order_by {
+  event_time: order_by
+  score: order_by
+  team: teams_order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""
+select columns of table "score_timeline_user"
+"""
+enum score_timeline_user_select_column {
+  """column name"""
+  event_time
+
+  """column name"""
+  score
+
+  """column name"""
+  team_id
+
+  """column name"""
+  user_id
+}
+
+"""aggregate stddev on columns"""
+type score_timeline_user_stddev_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+order by stddev() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_stddev_order_by {
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type score_timeline_user_stddev_pop_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_stddev_pop_order_by {
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type score_timeline_user_stddev_samp_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_stddev_samp_order_by {
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""aggregate sum on columns"""
+type score_timeline_user_sum_fields {
+  score: bigint
+  team_id: Int
+  user_id: Int
+}
+
+"""
+order by sum() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_sum_order_by {
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""aggregate var_pop on columns"""
+type score_timeline_user_var_pop_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+order by var_pop() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_var_pop_order_by {
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type score_timeline_user_var_samp_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+order by var_samp() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_var_samp_order_by {
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""aggregate variance on columns"""
+type score_timeline_user_variance_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+order by variance() on columns of table "score_timeline_user"
+"""
+input score_timeline_user_variance_order_by {
+  score: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
+"""aggregate var_pop on columns"""
+type score_timeline_var_pop_fields {
+  score: Float
+  team_id: Float
+}
+
+"""
+order by var_pop() on columns of table "score_timeline"
+"""
+input score_timeline_var_pop_order_by {
+  score: order_by
+  team_id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type score_timeline_var_samp_fields {
+  score: Float
+  team_id: Float
+}
+
+"""
+order by var_samp() on columns of table "score_timeline"
+"""
+input score_timeline_var_samp_order_by {
+  score: order_by
+  team_id: order_by
+}
+
+"""aggregate variance on columns"""
+type score_timeline_variance_fields {
+  score: Float
+  team_id: Float
+}
+
+"""
+order by variance() on columns of table "score_timeline"
+"""
+input score_timeline_variance_order_by {
+  score: order_by
+  team_id: order_by
+}
+
+"""
+columns and relationships of "scoreboard"
+"""
+type scoreboard {
+  max_time: timestamp
+  score: bigint
+
+  """An object relationship"""
+  team: teams
+  team_id: Int
+}
+
+"""
+aggregated selection of "scoreboard"
+"""
+type scoreboard_aggregate {
+  aggregate: scoreboard_aggregate_fields
+  nodes: [scoreboard!]!
+}
+
+"""
+aggregate fields of "scoreboard"
+"""
+type scoreboard_aggregate_fields {
+  avg: scoreboard_avg_fields
+  count(columns: [scoreboard_select_column!], distinct: Boolean): Int!
+  max: scoreboard_max_fields
+  min: scoreboard_min_fields
+  stddev: scoreboard_stddev_fields
+  stddev_pop: scoreboard_stddev_pop_fields
+  stddev_samp: scoreboard_stddev_samp_fields
+  sum: scoreboard_sum_fields
+  var_pop: scoreboard_var_pop_fields
+  var_samp: scoreboard_var_samp_fields
+  variance: scoreboard_variance_fields
+}
+
+"""aggregate avg on columns"""
+type scoreboard_avg_fields {
+  score: Float
+  team_id: Float
+}
+
+"""
+Boolean expression to filter rows from the table "scoreboard". All fields are combined with a logical 'AND'.
+"""
+input scoreboard_bool_exp {
+  _and: [scoreboard_bool_exp!]
+  _not: scoreboard_bool_exp
+  _or: [scoreboard_bool_exp!]
+  max_time: timestamp_comparison_exp
+  score: bigint_comparison_exp
+  team: teams_bool_exp
+  team_id: Int_comparison_exp
+}
+
+"""aggregate max on columns"""
+type scoreboard_max_fields {
+  max_time: timestamp
+  score: bigint
+  team_id: Int
+}
+
+"""aggregate min on columns"""
+type scoreboard_min_fields {
+  max_time: timestamp
+  score: bigint
+  team_id: Int
+}
+
+"""Ordering options when selecting data from "scoreboard"."""
+input scoreboard_order_by {
+  max_time: order_by
+  score: order_by
+  team: teams_order_by
+  team_id: order_by
+}
+
+"""
+select columns of table "scoreboard"
+"""
+enum scoreboard_select_column {
+  """column name"""
+  max_time
+
+  """column name"""
+  score
+
+  """column name"""
+  team_id
+}
+
+"""aggregate stddev on columns"""
+type scoreboard_stddev_fields {
+  score: Float
+  team_id: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type scoreboard_stddev_pop_fields {
+  score: Float
+  team_id: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type scoreboard_stddev_samp_fields {
+  score: Float
+  team_id: Float
+}
+
+"""aggregate sum on columns"""
+type scoreboard_sum_fields {
+  score: bigint
+  team_id: Int
+}
+
+"""
+columns and relationships of "scoreboard_user"
+"""
+type scoreboard_user {
+  max_time: timestamp
+  score: bigint
+
+  """An object relationship"""
+  team: teams
+  team_id: Int
+
+  """An object relationship"""
+  user: users
+  user_id: Int
+}
+
+"""
+aggregated selection of "scoreboard_user"
+"""
+type scoreboard_user_aggregate {
+  aggregate: scoreboard_user_aggregate_fields
+  nodes: [scoreboard_user!]!
+}
+
+"""
+aggregate fields of "scoreboard_user"
+"""
+type scoreboard_user_aggregate_fields {
+  avg: scoreboard_user_avg_fields
+  count(columns: [scoreboard_user_select_column!], distinct: Boolean): Int!
+  max: scoreboard_user_max_fields
+  min: scoreboard_user_min_fields
+  stddev: scoreboard_user_stddev_fields
+  stddev_pop: scoreboard_user_stddev_pop_fields
+  stddev_samp: scoreboard_user_stddev_samp_fields
+  sum: scoreboard_user_sum_fields
+  var_pop: scoreboard_user_var_pop_fields
+  var_samp: scoreboard_user_var_samp_fields
+  variance: scoreboard_user_variance_fields
+}
+
+"""aggregate avg on columns"""
+type scoreboard_user_avg_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""
+Boolean expression to filter rows from the table "scoreboard_user". All fields are combined with a logical 'AND'.
+"""
+input scoreboard_user_bool_exp {
+  _and: [scoreboard_user_bool_exp!]
+  _not: scoreboard_user_bool_exp
+  _or: [scoreboard_user_bool_exp!]
+  max_time: timestamp_comparison_exp
+  score: bigint_comparison_exp
+  team: teams_bool_exp
+  team_id: Int_comparison_exp
+  user: users_bool_exp
+  user_id: Int_comparison_exp
+}
+
+"""aggregate max on columns"""
+type scoreboard_user_max_fields {
+  max_time: timestamp
+  score: bigint
+  team_id: Int
+  user_id: Int
+}
+
+"""aggregate min on columns"""
+type scoreboard_user_min_fields {
+  max_time: timestamp
+  score: bigint
+  team_id: Int
+  user_id: Int
+}
+
+"""Ordering options when selecting data from "scoreboard_user"."""
+input scoreboard_user_order_by {
+  max_time: order_by
+  score: order_by
+  team: teams_order_by
+  team_id: order_by
+  user: users_order_by
+  user_id: order_by
+}
+
+"""
+select columns of table "scoreboard_user"
+"""
+enum scoreboard_user_select_column {
+  """column name"""
+  max_time
+
+  """column name"""
+  score
+
+  """column name"""
+  team_id
+
+  """column name"""
+  user_id
+}
+
+"""aggregate stddev on columns"""
+type scoreboard_user_stddev_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type scoreboard_user_stddev_pop_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type scoreboard_user_stddev_samp_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate sum on columns"""
+type scoreboard_user_sum_fields {
+  score: bigint
+  team_id: Int
+  user_id: Int
+}
+
+"""aggregate var_pop on columns"""
+type scoreboard_user_var_pop_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate var_samp on columns"""
+type scoreboard_user_var_samp_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate variance on columns"""
+type scoreboard_user_variance_fields {
+  score: Float
+  team_id: Float
+  user_id: Float
+}
+
+"""aggregate var_pop on columns"""
+type scoreboard_var_pop_fields {
+  score: Float
+  team_id: Float
+}
+
+"""aggregate var_samp on columns"""
+type scoreboard_var_samp_fields {
+  score: Float
+  team_id: Float
+}
+
+"""aggregate variance on columns"""
+type scoreboard_variance_fields {
+  score: Float
+  team_id: Float
 }
 
 """
@@ -8283,6 +9490,202 @@ type subscription_root {
   """fetch data from the table: "pages" using primary key columns"""
   pages_by_pk(id: Int!): pages
 
+  """
+  fetch data from the table: "score_events"
+  """
+  score_events(
+    """distinct select on columns"""
+    distinct_on: [score_events_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_events_order_by!]
+
+    """filter the rows returned"""
+    where: score_events_bool_exp
+  ): [score_events!]!
+
+  """
+  fetch aggregated fields from the table: "score_events"
+  """
+  score_events_aggregate(
+    """distinct select on columns"""
+    distinct_on: [score_events_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_events_order_by!]
+
+    """filter the rows returned"""
+    where: score_events_bool_exp
+  ): score_events_aggregate!
+
+  """An array relationship"""
+  score_timeline(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_bool_exp
+  ): [score_timeline!]!
+
+  """An aggregate relationship"""
+  score_timeline_aggregate(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_bool_exp
+  ): score_timeline_aggregate!
+
+  """
+  fetch data from the table: "score_timeline_user"
+  """
+  score_timeline_user(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_user_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_user_bool_exp
+  ): [score_timeline_user!]!
+
+  """
+  fetch aggregated fields from the table: "score_timeline_user"
+  """
+  score_timeline_user_aggregate(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_user_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_user_bool_exp
+  ): score_timeline_user_aggregate!
+
+  """
+  fetch data from the table: "scoreboard"
+  """
+  scoreboard(
+    """distinct select on columns"""
+    distinct_on: [scoreboard_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [scoreboard_order_by!]
+
+    """filter the rows returned"""
+    where: scoreboard_bool_exp
+  ): [scoreboard!]!
+
+  """
+  fetch aggregated fields from the table: "scoreboard"
+  """
+  scoreboard_aggregate(
+    """distinct select on columns"""
+    distinct_on: [scoreboard_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [scoreboard_order_by!]
+
+    """filter the rows returned"""
+    where: scoreboard_bool_exp
+  ): scoreboard_aggregate!
+
+  """
+  fetch data from the table: "scoreboard_user"
+  """
+  scoreboard_user(
+    """distinct select on columns"""
+    distinct_on: [scoreboard_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [scoreboard_user_order_by!]
+
+    """filter the rows returned"""
+    where: scoreboard_user_bool_exp
+  ): [scoreboard_user!]!
+
+  """
+  fetch aggregated fields from the table: "scoreboard_user"
+  """
+  scoreboard_user_aggregate(
+    """distinct select on columns"""
+    distinct_on: [scoreboard_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [scoreboard_user_order_by!]
+
+    """filter the rows returned"""
+    where: scoreboard_user_bool_exp
+  ): scoreboard_user_aggregate!
+
   """An array relationship"""
   solves(
     """distinct select on columns"""
@@ -9087,6 +10490,47 @@ type teams {
   name: String
   oauth_id: Int
   password: String
+
+  """
+  A computed field, executes function "team_score"
+  """
+  score: Int
+
+  """An array relationship"""
+  score_timeline(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_bool_exp
+  ): [score_timeline!]!
+
+  """An aggregate relationship"""
+  score_timeline_aggregate(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_bool_exp
+  ): score_timeline_aggregate!
   secret: String
 
   """An array relationship"""
@@ -9255,6 +10699,7 @@ input teams_bool_exp {
   name: String_comparison_exp
   oauth_id: Int_comparison_exp
   password: String_comparison_exp
+  score_timeline: score_timeline_bool_exp
   secret: String_comparison_exp
   solves: solves_bool_exp
   submissions: submissions_bool_exp
@@ -9309,6 +10754,7 @@ input teams_insert_input {
   name: String
   oauth_id: Int
   password: String
+  score_timeline: score_timeline_arr_rel_insert_input
   secret: String
   solves: solves_arr_rel_insert_input
   submissions: submissions_arr_rel_insert_input
@@ -9397,6 +10843,7 @@ input teams_order_by {
   name: order_by
   oauth_id: order_by
   password: order_by
+  score_timeline_aggregate: score_timeline_aggregate_order_by
   secret: order_by
   solves_aggregate: solves_aggregate_order_by
   submissions_aggregate: submissions_aggregate_order_by
@@ -10871,6 +12318,47 @@ type users {
   name: String
   oauth_id: Int
   password: String
+
+  """
+  A computed field, executes function "user_score"
+  """
+  score: Int
+
+  """An array relationship"""
+  score_timeline(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_user_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_user_bool_exp
+  ): [score_timeline_user!]!
+
+  """An aggregate relationship"""
+  score_timeline_aggregate(
+    """distinct select on columns"""
+    distinct_on: [score_timeline_user_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [score_timeline_user_order_by!]
+
+    """filter the rows returned"""
+    where: score_timeline_user_bool_exp
+  ): score_timeline_user_aggregate!
   secret: String
 
   """An array relationship"""
@@ -11152,6 +12640,7 @@ input users_bool_exp {
   name: String_comparison_exp
   oauth_id: Int_comparison_exp
   password: String_comparison_exp
+  score_timeline: score_timeline_user_bool_exp
   secret: String_comparison_exp
   solves: solves_bool_exp
   submissions: submissions_bool_exp
@@ -11211,6 +12700,7 @@ input users_insert_input {
   name: String
   oauth_id: Int
   password: String
+  score_timeline: score_timeline_user_arr_rel_insert_input
   secret: String
   solves: solves_arr_rel_insert_input
   submissions: submissions_arr_rel_insert_input
@@ -11344,6 +12834,7 @@ input users_order_by {
   name: order_by
   oauth_id: order_by
   password: order_by
+  score_timeline_aggregate: score_timeline_user_aggregate_order_by
   secret: order_by
   solves_aggregate: solves_aggregate_order_by
   submissions_aggregate: submissions_aggregate_order_by
