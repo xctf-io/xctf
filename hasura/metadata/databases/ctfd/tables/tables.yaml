@@ -8,6 +8,7 @@
 - "!include public_files.yaml"
 - "!include public_flags.yaml"
 - "!include public_hints.yaml"
+- "!include public_hints_content.yaml"
 - "!include public_notifications.yaml"
 - "!include public_pages.yaml"
 - "!include public_solves.yaml"

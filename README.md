@@ -106,3 +106,12 @@ git commit hasura/
 ### phase 3
 * [ ] create init db migration at epoch with ctfd schema
 * [ ] remove ctfd dependency
+
+
+
+
+
+
+
+
+view for hint content so can do separate rbac

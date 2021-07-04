@@ -5,6 +5,15 @@ object_relationships:
 - name: challenge
   using:
     foreign_key_constraint_on: challenge_id
+- name: unlocked_content
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: hints_content
+        schema: public
 array_relationships:
 - name: unlocks
   using:
@@ -15,33 +24,48 @@ array_relationships:
       remote_table:
         name: unlocks
         schema: public
-select_permissions:
+insert_permissions:
 - permission:
+    backend_only: false
+    check: {}
     columns:
-    - id
-    - type
     - challenge_id
     - content
     - cost
     - requirements
+    - type
+  role: ctfd_admin
+select_permissions:
+- permission:
+    columns:
+    - challenge_id
+    - cost
+    - id
+    - requirements
+    - type
     filter: {}
   role: ctfd_admin
 - permission:
     columns:
-    - type
     - challenge_id
     - cost
     - id
     - requirements
-    - content
-    filter:
-      unlocks:
-        _or:
-        - team:
-            members:
-              id:
-                _eq: X-Hasura-User-Id
-        - user:
-            id:
-              _eq: X-Hasura-User-Id
+    - type
+    filter: {}
   role: ctfd_user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - challenge_id
+    - content
+    - cost
+    - requirements
+    - type
+    filter: {}
+  role: ctfd_admin
+delete_permissions:
+- permission:
+    filter: {}
+  role: ctfd_admin
