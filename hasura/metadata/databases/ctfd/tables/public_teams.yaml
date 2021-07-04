@@ -64,6 +64,12 @@ array_relationships:
       table:
         name: unlocks
         schema: public
+computed_fields:
+- definition:
+    function:
+      name: team_score
+      schema: public
+  name: score
 select_permissions:
 - permission:
     columns:
