@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalDependencies">
+    <plugin id="NodeJS" />
+    <plugin id="Pythonid" />
+    <plugin id="com.intellij.database" />
+    <plugin id="com.jetbrains.sh" />
+    <plugin id="ideanginx9" />
+    <plugin id="intellij.prettierJS" />
+    <plugin id="org.intellij.plugins.markdown" />
+    <plugin id="org.jetbrains.plugins.go" />
+    <plugin id="org.jetbrains.plugins.yaml" />
+  </component>
+</project>
