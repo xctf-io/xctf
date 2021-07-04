@@ -1,42 +1,37 @@
 import { gql } from "@apollo/client";
 import { GQLHooks } from "../generated/hasura/react";
-import { Card, StyledAction, StyledBody } from "baseui/card";
-import { Button } from "baseui/button";
-import { KIND, Tag, VARIANT } from "baseui/tag";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrophy } from "@fortawesome/free-solid-svg-icons";
-import { Icon } from "baseui/icon";
 import { Grid } from "baseui/layout-grid";
 import { Order_By } from "../generated";
+import { ChallengeCard } from "../components/ChallengeCard";
 
 gql`
-  fragment ChallengeList on challenges {
-    id
-    name
-    category
-    description
-    value
-    max_attempts
-    files {
-      id
-      location
-      type
-    }
-    hints {
-      id
-      type
-      cost
-      unlocked_content {
+    fragment ChallengeList on challenges {
         id
-        content
-      }
+        name
+        category
+        description
+        value
+        max_attempts
+        files {
+            id
+            location
+            type
+        }
+        hints {
+            id
+            type
+            cost
+            unlocked_content {
+                id
+                content
+            }
+        }
+        tags {
+            id
+            value
+        }
+        type
     }
-    tags {
-      id
-      value
-    }
-    type
-  }
 `;
 
 export default function Challenges() {
@@ -52,31 +47,8 @@ export default function Challenges() {
   });
   return (
     <Grid>
-      {data?.challenges.map((chal) => (
-        <Card
-          title={
-            <>
-              {chal.name}{" "}
-              <Tag
-                closeable={false}
-                kind={KIND.positive}
-                variant={VARIANT.solid}
-              >
-                <Icon>
-                  <FontAwesomeIcon icon={faTrophy} />
-                </Icon>{" "}
-                {chal.value}
-              </Tag>
-            </>
-          }
-        >
-          <StyledBody>{chal.category}</StyledBody>
-          <StyledAction>
-            <Button overrides={{ BaseButton: { style: { width: "100%" } } }}>
-              Button Label
-            </Button>
-          </StyledAction>
-        </Card>
+      {data?.challenges.map((c) => (
+        <ChallengeCard challenge={c} />
       ))}
     </Grid>
   );
