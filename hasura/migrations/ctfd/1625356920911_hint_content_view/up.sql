@@ -1,1 +1,1 @@
-CREATE VIEW hints_content AS SELECT id, content, true as unlocked from hints;
+CREATE VIEW hints_content AS SELECT id, content from hints;

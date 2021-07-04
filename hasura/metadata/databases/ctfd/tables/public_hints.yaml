@@ -52,7 +52,10 @@ select_permissions:
     - id
     - requirements
     - type
-    filter: {}
+    filter:
+      challenge:
+        state:
+          _eq: visible
   role: ctfd_user
 update_permissions:
 - permission:
