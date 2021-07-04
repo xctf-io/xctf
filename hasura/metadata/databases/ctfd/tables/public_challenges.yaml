@@ -51,6 +51,14 @@ array_relationships:
       table:
         name: tags
         schema: public
+computed_fields:
+- definition:
+    function:
+      name: challenges_solved
+      schema: public
+    session_argument: hasura_session
+    table_argument: challenge_row
+  name: solved
 select_permissions:
 - permission:
     columns:
@@ -62,6 +70,8 @@ select_permissions:
     - requirements
     - type
     - value
+    computed_fields:
+    - solved
     filter:
       _and:
       - state:
@@ -88,6 +98,8 @@ select_permissions:
     - value
     - requirements
     - description
+    computed_fields:
+    - solved
     filter: {}
   role: ctfd_admin
 - permission:
@@ -100,6 +112,8 @@ select_permissions:
     - requirements
     - type
     - value
+    computed_fields:
+    - solved
     filter:
       state:
         _eq: visible
