@@ -1,0 +1,3 @@
+table:
+  name: score_timeline
+  schema: public

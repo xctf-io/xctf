@@ -14,7 +14,7 @@ group by score_events.team_id, score_events.user_id
 order by score desc, min_award, min_solve;
 
 CREATE VIEW public.scoreboard AS
-SELECT scoreboard_user.team_id, sum(score) as score, min(min_award) as min_award, min(min_solve) as min_solve,
+SELECT scoreboard_user.team_id, sum(score) as score, min(min_award) as min_award, min(min_solve) as min_solve
 FROM scoreboard_user
 group by scoreboard_user.team_id
 order by score desc, min_award, min_solve;
