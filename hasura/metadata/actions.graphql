@@ -1,0 +1,71 @@
+type Mutation {
+  Login (
+    name: String!
+    password: String!
+    captcha: String
+  ): JsonWebToken
+}
+
+type Mutation {
+  Logout : LogoutResponse
+}
+
+type Mutation {
+  Signup (
+    name: String!
+    password: String!
+    captcha: String
+  ): CreateUserOutput
+}
+
+type Mutation {
+  SubmitAttemptMutation (
+    challenge_id: Int
+    provided: String
+  ): SubmitAttemptMutationOutput
+}
+
+type Mutation {
+  UnlockMutation (
+    target: Int
+    type: String
+  ): UnlockMutationOutput
+}
+
+type SubmitFlagMutationOutput {
+  id : Int!
+}
+
+type PurchaseUnlockableOutput {
+  id : Int!
+}
+
+type PurchaseUnlockableMutationOutput {
+  id : Int!
+}
+
+type UnlockMutationOutput {
+  id : Int!
+}
+
+type JsonWebToken {
+  token : String!
+}
+
+type CreateUserOutput {
+  id : Int!
+  token : String!
+}
+
+type LogoutResponse {
+  success : Boolean
+}
+
+type SubmitMutationOutput {
+  id : Int!
+}
+
+type SubmitAttemptMutationOutput {
+  id : Int!
+}
+

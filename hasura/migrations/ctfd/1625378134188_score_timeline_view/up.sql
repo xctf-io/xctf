@@ -1,4 +1,4 @@
--- todo consider changing to materialized with refresh triggers
+-- todo consider changing to materialized with refresh triggers and have the running total in here
 CREATE VIEW score_events AS
 SELECT team_id, user_id, submissions.date as event_time, c.value as event_value
 FROM public.submissions

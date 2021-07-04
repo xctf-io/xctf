@@ -80,6 +80,7 @@ git commit hasura/
   * [x] apollo
   * [ ] [uniforms](https://uniforms.tools/docs/api-bridges#graphqlbridge)
   * [ ] populate `hasura/metadata/allow_list.yaml` with `apollo-codegen` output
+* [ ] set up hasura action codegen and go service
 * [ ] mutation service
   * [ ] submit flag
   * [ ] buy hint
