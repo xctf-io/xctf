@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client";
 import { GQLHooks } from "../generated/hasura/react";
-import { Card, StyledBody, StyledAction } from "baseui/card";
+import { Card, StyledAction, StyledBody } from "baseui/card";
 import { Button } from "baseui/button";
-import { Tag, KIND, VARIANT } from "baseui/tag";
+import { KIND, Tag, VARIANT } from "baseui/tag";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrophy } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "baseui/icon";
 import { Grid } from "baseui/layout-grid";
+import { Order_By } from "../generated";
 
 gql`
   fragment ChallengeList on challenges {
@@ -40,7 +41,14 @@ gql`
 
 export default function Challenges() {
   const { data } = GQLHooks.Fragments.ChallengeList.useQueryObjects({
-    variables: { limit: 10 },
+    variables: {
+      limit: 100,
+      order_by: {
+        category: Order_By.Asc,
+        value: Order_By.Desc,
+        name: Order_By.Asc,
+      },
+    },
   });
   return (
     <Grid>
@@ -56,14 +64,13 @@ export default function Challenges() {
               >
                 <Icon>
                   <FontAwesomeIcon icon={faTrophy} />
-                </Icon>
-                {" "}
+                </Icon>{" "}
                 {chal.value}
               </Tag>
             </>
           }
         >
-          <StyledBody></StyledBody>
+          <StyledBody>{chal.category}</StyledBody>
           <StyledAction>
             <Button overrides={{ BaseButton: { style: { width: "100%" } } }}>
               Button Label
