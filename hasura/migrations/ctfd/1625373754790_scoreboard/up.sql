@@ -1,5 +1,5 @@
 CREATE VIEW public.scoreboard_user AS
-SELECT score_events.team_id, score_events.user_id, sum(score_events.event_value) as score, max(id) as tiebreaker
+SELECT score_events.team_id, score_events.user_id, sum(score_events.event_value) as score, min(id) as tiebreaker
 FROM (
          SELECT team_id, user_id, solves.id as id, c.value as event_value
          FROM solves
@@ -12,7 +12,7 @@ group by score_events.team_id, score_events.user_id
 order by score desc, tiebreaker;
 
 CREATE VIEW public.scoreboard AS
-SELECT scoreboard_user.team_id, sum(score) as score, max(tiebreaker) as tiebreaker
+SELECT scoreboard_user.team_id, sum(score) as score, min(tiebreaker) as tiebreaker
 FROM scoreboard_user
 group by scoreboard_user.team_id
 order by score desc, tiebreaker;
