@@ -5,7 +5,7 @@ FROM (
          FROM solves
                   left join challenges c on solves.challenge_id = c.id
          UNION all
-         select team_id, user_id, 0, awards.value
+         select team_id, user_id, NULL, awards.value
          from public.awards
      ) score_events
 group by score_events.team_id, score_events.user_id
