@@ -7,12 +7,48 @@ UNION all
 select team_id, user_id, awards.date, awards.value
 from public.awards;
 
+CREATE MATERIALIZED VIEW public.score_timeline_user AS
+SELECT score_events.event_time,
+       score_events.team_id,
+       score_events.user_id,
+       sum(score_events.event_value)
+       over (partition by team_id, user_id order by score_events.event_time rows between unbounded preceding and current row) as score
+FROM score_events;
+
+CREATE MATERIALIZED VIEW public.score_timeline AS
+SELECT score_events.event_time,
+       score_events.team_id,
+       sum(score_events.event_value)
+       over (partition by team_id order by score_events.event_time rows between unbounded preceding and current row) as score
+FROM score_events;
+
+-- todo how does ctfd do this calculation exactly? need timestamps
+--  this is close enough to get the data model down
+CREATE MATERIALIZED VIEW public.scoreboard_user AS
+SELECT score_events.team_id,
+       score_events.user_id,
+       sum(score_events.event_value) as score,
+       max(score_events.event_time)  as max_time
+FROM score_events
+group by score_events.team_id, score_events.user_id
+order by score desc, max_time;
+
+CREATE MATERIALIZED VIEW public.scoreboard AS
+SELECT score_events.team_id, sum(score_events.event_value) as score, max(score_events.event_time) as max_time
+FROM score_events
+group by score_events.team_id
+order by score desc, max_time;
+
 -- triggers for score events
 CREATE OR REPLACE FUNCTION refresh_score_events()
     RETURNS TRIGGER LANGUAGE plpgsql
 AS $$
 BEGIN
     REFRESH MATERIALIZED VIEW public.score_events;
+    REFRESH MATERIALIZED VIEW public.score_timeline_user;
+    REFRESH MATERIALIZED VIEW public.score_timeline;
+    REFRESH MATERIALIZED VIEW public.scoreboard_user;
+    REFRESH MATERIALIZED VIEW public.scoreboard;
     RETURN NULL;
 END $$;
 
@@ -30,40 +66,9 @@ EXECUTE PROCEDURE refresh_score_events();
 
 -- end triggers for score events
 
-CREATE INDEX score_events_time_user_team_idx ON score_events (event_time, team_id, user_id);
+CREATE UNIQUE INDEX score_events_all_uniq_idx ON score_events (event_time, team_id, user_id, event_value);
 
-CREATE VIEW public.score_timeline_user AS
-SELECT score_events.event_time,
-       score_events.team_id,
-       score_events.user_id,
-       sum(score_events.event_value)
-       over (partition by team_id, user_id order by score_events.event_time rows between unbounded preceding and current row) as score
-FROM score_events;
-
-CREATE VIEW public.score_timeline AS
-SELECT score_events.event_time,
-       score_events.team_id,
-       sum(score_events.event_value)
-       over (partition by team_id order by score_events.event_time rows between unbounded preceding and current row) as score
-FROM score_events;
-
--- todo how does ctfd do this calculation exactly? need timestamps
---  this is close enough to get the data model down
-CREATE VIEW public.scoreboard_user AS
-SELECT score_events.team_id,
-       score_events.user_id,
-       sum(score_events.event_value) as score,
-       max(score_events.event_time)  as max_time
-FROM score_events
-group by score_events.team_id, score_events.user_id
-order by score desc, max_time;
-
-CREATE VIEW public.scoreboard AS
-SELECT score_events.team_id, sum(score_events.event_value) as score, max(score_events.event_time) as max_time
-FROM score_events
-group by score_events.team_id
-order by score desc, max_time;
-
+-- score attribute functions
 CREATE OR REPLACE FUNCTION public.team_score(team_row teams)
     RETURNS int
     LANGUAGE sql
