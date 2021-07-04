@@ -15,6 +15,7 @@ import {
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { Block } from "baseui/block";
+import { Cell, Grid } from "baseui/layout-grid";
 
 type PageLayoutProps = {
   children?: React.ReactNode;
@@ -127,8 +128,12 @@ export default function PageLayout({ children }: PageLayoutProps) {
         </div>
       </Layer>
       <Block height={["80px"]} backgroundColor="background" />
+      <Grid>
+        <Cell skip={[0, 1, 1]} span={[4, 6, 10]}>
+          {children}
+        </Cell>
+      </Grid>
 
-      {children}
     </React.Fragment>
   );
 }

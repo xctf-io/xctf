@@ -4325,6 +4325,46 @@ type mutation_root {
   delete_pages_by_pk(id: Int!): pages
 
   """
+  delete data from the table: "score_events"
+  """
+  delete_score_events(
+    """filter the rows which have to be deleted"""
+    where: score_events_bool_exp!
+  ): score_events_mutation_response
+
+  """
+  delete data from the table: "score_timeline"
+  """
+  delete_score_timeline(
+    """filter the rows which have to be deleted"""
+    where: score_timeline_bool_exp!
+  ): score_timeline_mutation_response
+
+  """
+  delete data from the table: "score_timeline_user"
+  """
+  delete_score_timeline_user(
+    """filter the rows which have to be deleted"""
+    where: score_timeline_user_bool_exp!
+  ): score_timeline_user_mutation_response
+
+  """
+  delete data from the table: "scoreboard"
+  """
+  delete_scoreboard(
+    """filter the rows which have to be deleted"""
+    where: scoreboard_bool_exp!
+  ): scoreboard_mutation_response
+
+  """
+  delete data from the table: "scoreboard_user"
+  """
+  delete_scoreboard_user(
+    """filter the rows which have to be deleted"""
+    where: scoreboard_user_bool_exp!
+  ): scoreboard_user_mutation_response
+
+  """
   delete data from the table: "solves"
   """
   delete_solves(
@@ -4707,6 +4747,92 @@ type mutation_root {
     """on conflict condition"""
     on_conflict: pages_on_conflict
   ): pages
+
+  """
+  insert data into the table: "score_events"
+  """
+  insert_score_events(
+    """the rows to be inserted"""
+    objects: [score_events_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: score_events_on_conflict
+  ): score_events_mutation_response
+
+  """
+  insert a single row into the table: "score_events"
+  """
+  insert_score_events_one(
+    """the row to be inserted"""
+    object: score_events_insert_input!
+
+    """on conflict condition"""
+    on_conflict: score_events_on_conflict
+  ): score_events
+
+  """
+  insert data into the table: "score_timeline"
+  """
+  insert_score_timeline(
+    """the rows to be inserted"""
+    objects: [score_timeline_insert_input!]!
+  ): score_timeline_mutation_response
+
+  """
+  insert a single row into the table: "score_timeline"
+  """
+  insert_score_timeline_one(
+    """the row to be inserted"""
+    object: score_timeline_insert_input!
+  ): score_timeline
+
+  """
+  insert data into the table: "score_timeline_user"
+  """
+  insert_score_timeline_user(
+    """the rows to be inserted"""
+    objects: [score_timeline_user_insert_input!]!
+  ): score_timeline_user_mutation_response
+
+  """
+  insert a single row into the table: "score_timeline_user"
+  """
+  insert_score_timeline_user_one(
+    """the row to be inserted"""
+    object: score_timeline_user_insert_input!
+  ): score_timeline_user
+
+  """
+  insert data into the table: "scoreboard"
+  """
+  insert_scoreboard(
+    """the rows to be inserted"""
+    objects: [scoreboard_insert_input!]!
+  ): scoreboard_mutation_response
+
+  """
+  insert a single row into the table: "scoreboard"
+  """
+  insert_scoreboard_one(
+    """the row to be inserted"""
+    object: scoreboard_insert_input!
+  ): scoreboard
+
+  """
+  insert data into the table: "scoreboard_user"
+  """
+  insert_scoreboard_user(
+    """the rows to be inserted"""
+    objects: [scoreboard_user_insert_input!]!
+  ): scoreboard_user_mutation_response
+
+  """
+  insert a single row into the table: "scoreboard_user"
+  """
+  insert_scoreboard_user_one(
+    """the row to be inserted"""
+    object: scoreboard_user_insert_input!
+  ): scoreboard_user
 
   """
   insert data into the table: "solves"
@@ -5209,6 +5335,76 @@ type mutation_root {
     _set: pages_set_input
     pk_columns: pages_pk_columns_input!
   ): pages
+
+  """
+  update data of the table: "score_events"
+  """
+  update_score_events(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: score_events_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: score_events_set_input
+
+    """filter the rows which have to be updated"""
+    where: score_events_bool_exp!
+  ): score_events_mutation_response
+
+  """
+  update data of the table: "score_timeline"
+  """
+  update_score_timeline(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: score_timeline_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: score_timeline_set_input
+
+    """filter the rows which have to be updated"""
+    where: score_timeline_bool_exp!
+  ): score_timeline_mutation_response
+
+  """
+  update data of the table: "score_timeline_user"
+  """
+  update_score_timeline_user(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: score_timeline_user_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: score_timeline_user_set_input
+
+    """filter the rows which have to be updated"""
+    where: score_timeline_user_bool_exp!
+  ): score_timeline_user_mutation_response
+
+  """
+  update data of the table: "scoreboard"
+  """
+  update_scoreboard(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: scoreboard_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: scoreboard_set_input
+
+    """filter the rows which have to be updated"""
+    where: scoreboard_bool_exp!
+  ): scoreboard_mutation_response
+
+  """
+  update data of the table: "scoreboard_user"
+  """
+  update_scoreboard_user(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: scoreboard_user_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: scoreboard_user_set_input
+
+    """filter the rows which have to be updated"""
+    where: scoreboard_user_bool_exp!
+  ): scoreboard_user_mutation_response
 
   """
   update data of the table: "solves"
@@ -7157,6 +7353,33 @@ input score_events_bool_exp {
   user_id: Int_comparison_exp
 }
 
+"""
+unique or primary key constraints on table "score_events"
+"""
+enum score_events_constraint {
+  """unique or primary key constraint"""
+  score_events_all_uniq_idx
+}
+
+"""
+input type for incrementing numeric columns in table "score_events"
+"""
+input score_events_inc_input {
+  event_value: Int
+  team_id: Int
+  user_id: Int
+}
+
+"""
+input type for inserting data into table "score_events"
+"""
+input score_events_insert_input {
+  event_time: timestamp
+  event_value: Int
+  team_id: Int
+  user_id: Int
+}
+
 """aggregate max on columns"""
 type score_events_max_fields {
   event_time: timestamp
@@ -7171,6 +7394,26 @@ type score_events_min_fields {
   event_value: Int
   team_id: Int
   user_id: Int
+}
+
+"""
+response of any mutation on the table "score_events"
+"""
+type score_events_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [score_events!]!
+}
+
+"""
+on conflict condition type for table "score_events"
+"""
+input score_events_on_conflict {
+  constraint: score_events_constraint!
+  update_columns: [score_events_update_column!]! = []
+  where: score_events_bool_exp
 }
 
 """Ordering options when selecting data from "score_events"."""
@@ -7196,6 +7439,16 @@ enum score_events_select_column {
 
   """column name"""
   user_id
+}
+
+"""
+input type for updating data in table "score_events"
+"""
+input score_events_set_input {
+  event_time: timestamp
+  event_value: Int
+  team_id: Int
+  user_id: Int
 }
 
 """aggregate stddev on columns"""
@@ -7224,6 +7477,23 @@ type score_events_sum_fields {
   event_value: Int
   team_id: Int
   user_id: Int
+}
+
+"""
+update columns of table "score_events"
+"""
+enum score_events_update_column {
+  """column name"""
+  event_time
+
+  """column name"""
+  event_value
+
+  """column name"""
+  team_id
+
+  """column name"""
+  user_id
 }
 
 """aggregate var_pop on columns"""
@@ -7336,6 +7606,14 @@ input score_timeline_bool_exp {
 }
 
 """
+input type for incrementing numeric columns in table "score_timeline"
+"""
+input score_timeline_inc_input {
+  score: bigint
+  team_id: Int
+}
+
+"""
 input type for inserting data into table "score_timeline"
 """
 input score_timeline_insert_input {
@@ -7377,6 +7655,17 @@ input score_timeline_min_order_by {
   team_id: order_by
 }
 
+"""
+response of any mutation on the table "score_timeline"
+"""
+type score_timeline_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [score_timeline!]!
+}
+
 """Ordering options when selecting data from "score_timeline"."""
 input score_timeline_order_by {
   event_time: order_by
@@ -7397,6 +7686,15 @@ enum score_timeline_select_column {
 
   """column name"""
   team_id
+}
+
+"""
+input type for updating data in table "score_timeline"
+"""
+input score_timeline_set_input {
+  event_time: timestamp
+  score: bigint
+  team_id: Int
 }
 
 """aggregate stddev on columns"""
@@ -7548,6 +7846,15 @@ input score_timeline_user_bool_exp {
 }
 
 """
+input type for incrementing numeric columns in table "score_timeline_user"
+"""
+input score_timeline_user_inc_input {
+  score: bigint
+  team_id: Int
+  user_id: Int
+}
+
+"""
 input type for inserting data into table "score_timeline_user"
 """
 input score_timeline_user_insert_input {
@@ -7594,6 +7901,17 @@ input score_timeline_user_min_order_by {
   user_id: order_by
 }
 
+"""
+response of any mutation on the table "score_timeline_user"
+"""
+type score_timeline_user_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [score_timeline_user!]!
+}
+
 """Ordering options when selecting data from "score_timeline_user"."""
 input score_timeline_user_order_by {
   event_time: order_by
@@ -7618,6 +7936,16 @@ enum score_timeline_user_select_column {
 
   """column name"""
   user_id
+}
+
+"""
+input type for updating data in table "score_timeline_user"
+"""
+input score_timeline_user_set_input {
+  event_time: timestamp
+  score: bigint
+  team_id: Int
+  user_id: Int
 }
 
 """aggregate stddev on columns"""
@@ -7830,6 +8158,24 @@ input scoreboard_bool_exp {
   team_id: Int_comparison_exp
 }
 
+"""
+input type for incrementing numeric columns in table "scoreboard"
+"""
+input scoreboard_inc_input {
+  score: bigint
+  team_id: Int
+}
+
+"""
+input type for inserting data into table "scoreboard"
+"""
+input scoreboard_insert_input {
+  max_time: timestamp
+  score: bigint
+  team: teams_obj_rel_insert_input
+  team_id: Int
+}
+
 """aggregate max on columns"""
 type scoreboard_max_fields {
   max_time: timestamp
@@ -7842,6 +8188,17 @@ type scoreboard_min_fields {
   max_time: timestamp
   score: bigint
   team_id: Int
+}
+
+"""
+response of any mutation on the table "scoreboard"
+"""
+type scoreboard_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [scoreboard!]!
 }
 
 """Ordering options when selecting data from "scoreboard"."""
@@ -7864,6 +8221,15 @@ enum scoreboard_select_column {
 
   """column name"""
   team_id
+}
+
+"""
+input type for updating data in table "scoreboard"
+"""
+input scoreboard_set_input {
+  max_time: timestamp
+  score: bigint
+  team_id: Int
 }
 
 """aggregate stddev on columns"""
@@ -7953,6 +8319,27 @@ input scoreboard_user_bool_exp {
   user_id: Int_comparison_exp
 }
 
+"""
+input type for incrementing numeric columns in table "scoreboard_user"
+"""
+input scoreboard_user_inc_input {
+  score: bigint
+  team_id: Int
+  user_id: Int
+}
+
+"""
+input type for inserting data into table "scoreboard_user"
+"""
+input scoreboard_user_insert_input {
+  max_time: timestamp
+  score: bigint
+  team: teams_obj_rel_insert_input
+  team_id: Int
+  user: users_obj_rel_insert_input
+  user_id: Int
+}
+
 """aggregate max on columns"""
 type scoreboard_user_max_fields {
   max_time: timestamp
@@ -7967,6 +8354,17 @@ type scoreboard_user_min_fields {
   score: bigint
   team_id: Int
   user_id: Int
+}
+
+"""
+response of any mutation on the table "scoreboard_user"
+"""
+type scoreboard_user_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [scoreboard_user!]!
 }
 
 """Ordering options when selecting data from "scoreboard_user"."""
@@ -7994,6 +8392,16 @@ enum scoreboard_user_select_column {
 
   """column name"""
   user_id
+}
+
+"""
+input type for updating data in table "scoreboard_user"
+"""
+input scoreboard_user_set_input {
+  max_time: timestamp
+  score: bigint
+  team_id: Int
+  user_id: Int
 }
 
 """aggregate stddev on columns"""
