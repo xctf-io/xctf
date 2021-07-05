@@ -18,6 +18,7 @@ gql`
       website
       verified
       type
+      avatar
       captain_of {
         id
       }

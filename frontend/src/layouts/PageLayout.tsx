@@ -136,7 +136,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
             onUserItemSelect={handleUserItemSelect}
             userItems={authContext?.current_user?.id ? userItems : undefined}
             username={authContext?.current_user?.name || undefined}
-            userImgUrl={authContext?.current_user?.name ? "" : undefined}
+            userImgUrl={authContext?.current_user?.avatar || undefined}
           />
         </div>
       </Layer>

@@ -12570,6 +12570,11 @@ columns and relationships of "users"
 type users {
   affiliation: String
 
+  """
+  A computed field, executes function "user_avatar"
+  """
+  avatar: String
+
   """An array relationship"""
   awards(
     """distinct select on columns"""
