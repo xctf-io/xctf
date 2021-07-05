@@ -16,8 +16,8 @@ type ChallengeCardProps = {
 };
 
 gql`
-    mutation SubmitFlag {
-        SubmitAttemptMutation(provided: "", challenge_id: 0) {
+    mutation SubmitFlag($provided: String!, $challenge_id: Int!) {
+        SubmitAttemptMutation(provided: $provided, challenge_id: $challenge_id) {
             id
         }
     }
