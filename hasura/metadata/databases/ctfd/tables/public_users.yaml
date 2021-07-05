@@ -90,6 +90,11 @@ array_relationships:
 computed_fields:
 - definition:
     function:
+      name: user_avatar
+      schema: public
+  name: avatar
+- definition:
+    function:
       name: user_score
       schema: public
   name: score
@@ -107,6 +112,7 @@ select_permissions:
     - verified
     - website
     computed_fields:
+    - avatar
     - score
     filter:
       _exists:
@@ -138,6 +144,7 @@ select_permissions:
     - verified
     - website
     computed_fields:
+    - avatar
     - score
     filter: {}
   role: ctfd_admin
@@ -154,6 +161,7 @@ select_permissions:
     - verified
     - website
     computed_fields:
+    - avatar
     - score
     filter:
       _or:
