@@ -38,9 +38,6 @@ export default function ScoreboardTimeline({
   };
 
   const timelineData = generateScoreboardTimeline();
-  const [css] = useStyletron();
-
-  console.log(timelineData);
 
   return (
     <FlexibleXYPlot xType={"time"}>
