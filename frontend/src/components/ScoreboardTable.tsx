@@ -9,9 +9,9 @@ type ScoreboardTableProps = {
 export function ScoreboardTable({ scoreboard }: ScoreboardTableProps) {
   const generateScoreboard = () => {
     const result: Array<Array<ReactNode>> = [];
-    scoreboard?.map((item, idx) => {
-      result.push([idx + 1, item?.team?.name, item?.score, item?.team?.id]);
-    });
+    scoreboard?.map((item, idx) =>
+      result.push([idx + 1, item?.team?.name, item?.score, item?.team?.id])
+    );
     return result;
   };
 

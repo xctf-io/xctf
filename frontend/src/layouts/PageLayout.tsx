@@ -103,7 +103,14 @@ export default function PageLayout({ children }: PageLayoutProps) {
         >
           <AppNavBar
             title={
-              <a onClick={() => push("/")}>
+              <a href={'/'} onClick={(e) => {
+                e.stopPropagation();
+                push("/");
+              }} className={css({
+                userSelect: 'none',
+                textDecoration: 'inherit',
+                textColor: 'inherit',
+              })}>
                 {authContext?.config["ctf_name"] ? (
                   <>
                     <H5 display={"inline"} marginRight={"scale500"}>
