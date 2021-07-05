@@ -3,7 +3,6 @@ import {
   FlexibleXYPlot,
   HorizontalGridLines,
   LineSeries,
-  LineSeriesPoint,
   XAxis,
   YAxis,
 } from "react-vis";
