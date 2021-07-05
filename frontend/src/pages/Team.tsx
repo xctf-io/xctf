@@ -4,16 +4,11 @@ import { useParams } from "react-router-dom";
 import { Display2, Display4, H1 } from "baseui/typography";
 import { Block } from "baseui/block";
 import { TeamMember } from "../components/TeamMember";
-import {
-  FlexibleXYPlot,
-  HorizontalGridLines,
-  LineSeries,
-  XAxis,
-  YAxis,
-} from "react-vis";
 import "../../node_modules/react-vis/dist/style.css";
-import React, { Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 import { StyledSpinnerNext } from "baseui/spinner";
+
+const TeamTimeline = lazy(() => import("../components/TeamTimeline"));
 
 gql`
   fragment SingleTeam on teams {
@@ -79,17 +74,7 @@ export default function Team() {
         minHeight={"200px"}
       >
         <Suspense fallback={<StyledSpinnerNext />}>
-          <FlexibleXYPlot xType={"time"}>
-            <XAxis />
-            <YAxis />
-            <HorizontalGridLines />
-            <LineSeries
-              data={t?.score_timeline.map((st) => ({
-                x: new Date(st.event_time || 0).getTime(),
-                y: st.score,
-              }))}
-            />
-          </FlexibleXYPlot>
+          <TeamTimeline timeline={t?.score_timeline} />
         </Suspense>
       </Block>
     </>
