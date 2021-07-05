@@ -16,7 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Block } from "baseui/block";
 import { Cell, Grid } from "baseui/layout-grid";
-import { Spinner } from "baseui/spinner";
+import { Spinner, StyledSpinnerNext } from "baseui/spinner";
 
 type PageLayoutProps = {
   children?: React.ReactNode;
@@ -142,7 +142,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
       <Block height={["80px"]} backgroundColor="background" />
       <Grid>
         <Cell skip={[0, 1, 1]} span={[4, 6, 10]}>
-          <Suspense fallback={<Spinner />}>{children}</Suspense>
+          <Suspense fallback={<StyledSpinnerNext />}>{children}</Suspense>
         </Cell>
       </Grid>
     </React.Fragment>

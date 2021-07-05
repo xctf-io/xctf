@@ -6,7 +6,7 @@ type ScoreboardTableProps = {
   scoreboard?: ScoreboardQuery["scoreboard"];
 };
 
-export function ScoreboardTable({ scoreboard }: ScoreboardTableProps) {
+export default function ScoreboardTable({ scoreboard }: ScoreboardTableProps) {
   const generateScoreboard = () => {
     const result: Array<Array<ReactNode>> = [];
     scoreboard?.map((item, idx) =>

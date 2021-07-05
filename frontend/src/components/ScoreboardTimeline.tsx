@@ -14,7 +14,7 @@ type ScoreboardTimelineProps = {
   scoreboard?: ScoreboardTimelineQuery["score_timeline"];
 };
 
-export function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
+export default function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
   const generateScoreboardTimeline = () => {
     const result: { [key: string]: Array<LineSeriesPoint> } = {};
 
@@ -41,11 +41,6 @@ export function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
   console.log(timelineData);
 
   return (
-    <div
-      className={css({
-        height: "25vh",
-      })}
-    >
       <FlexibleXYPlot xType={"time"}>
         <XAxis />
         <YAxis />
@@ -61,6 +56,5 @@ export function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
           />
         ))}
       </FlexibleXYPlot>
-    </div>
   );
 }

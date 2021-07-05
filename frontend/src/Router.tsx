@@ -5,9 +5,10 @@ import App from "./App";
 import Users from "./pages/Users";
 import Teams from "./pages/Teams";
 import Challenges from "./pages/Challenges";
+import Scoreboard from "./pages/Scoreboard";
 import { AccessCheck } from "./util/auth";
 
-const Scoreboard = lazy(() => import("./pages/Scoreboard"));
+
 
 export default function Router() {
   return (
