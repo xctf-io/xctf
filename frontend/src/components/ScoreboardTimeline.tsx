@@ -14,6 +14,7 @@ type ScoreboardTimelineProps = {
   scoreboard?: ScoreboardTimelineQuery["score_timeline"];
 };
 
+
 export default function ScoreboardTimeline({
   scoreboard,
 }: ScoreboardTimelineProps) {
