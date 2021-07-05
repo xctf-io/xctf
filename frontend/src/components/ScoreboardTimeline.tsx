@@ -1,5 +1,11 @@
 import { ScoreboardTimelineQuery } from "../generated";
-import { FlexibleXYPlot, HorizontalGridLines, LineSeries, LineSeriesPoint, XAxis } from "react-vis";
+import {
+  FlexibleXYPlot,
+  HorizontalGridLines,
+  LineSeries,
+  LineSeriesPoint,
+  XAxis,
+} from "react-vis";
 import "../../node_modules/react-vis/dist/style.css";
 import { useStyletron } from "baseui";
 

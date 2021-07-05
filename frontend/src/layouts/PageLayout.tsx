@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 
 import { H5, Label4 } from "baseui/typography";
 import { useStyletron } from "baseui";
@@ -16,6 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Block } from "baseui/block";
 import { Cell, Grid } from "baseui/layout-grid";
+import { Spinner } from "baseui/spinner";
 
 type PageLayoutProps = {
   children?: React.ReactNode;
@@ -103,14 +104,18 @@ export default function PageLayout({ children }: PageLayoutProps) {
         >
           <AppNavBar
             title={
-              <a href={'/'} onClick={(e) => {
-                e.stopPropagation();
-                push("/");
-              }} className={css({
-                userSelect: 'none',
-                textDecoration: 'inherit',
-                textColor: 'inherit',
-              })}>
+              <a
+                href={"/"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  push("/");
+                }}
+                className={css({
+                  userSelect: "none",
+                  textDecoration: "inherit",
+                  textColor: "inherit",
+                })}
+              >
                 {authContext?.config["ctf_name"] ? (
                   <>
                     <H5 display={"inline"} marginRight={"scale500"}>
@@ -137,7 +142,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
       <Block height={["80px"]} backgroundColor="background" />
       <Grid>
         <Cell skip={[0, 1, 1]} span={[4, 6, 10]}>
-          {children}
+          <Suspense fallback={<Spinner />}>{children}</Suspense>
         </Cell>
       </Grid>
     </React.Fragment>

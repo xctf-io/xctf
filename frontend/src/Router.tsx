@@ -7,7 +7,7 @@ import Teams from "./pages/Teams";
 import Challenges from "./pages/Challenges";
 import { AccessCheck } from "./util/auth";
 
-const Scoreboard = lazy(() => import('./pages/Scoreboard'))
+const Scoreboard = lazy(() => import("./pages/Scoreboard"));
 
 export default function Router() {
   return (
@@ -30,7 +30,7 @@ export default function Router() {
         <Route path="/scoreboard">
           <AccessCheck configKey={"score_visibility"}>
             <PageLayout>
-              <Scoreboard/>
+              <Scoreboard />
             </PageLayout>
           </AccessCheck>
         </Route>
