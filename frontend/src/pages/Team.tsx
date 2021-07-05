@@ -57,12 +57,11 @@ export default function Team() {
       <H1>Score</H1>
       {JSON.stringify(t?.score_timeline)}
       <H1>Members</H1>
-      <Block display={"flex"}>
+      <Block display={"flex"} flexWrap={true}>
         {t?.members.map((u) => (
           <TeamMember user={u} />
         ))}
       </Block>
-      {JSON.stringify(data)}
     </>
   );
 }

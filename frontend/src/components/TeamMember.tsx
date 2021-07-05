@@ -39,6 +39,11 @@ export function TeamMember({ user }: TeamMemberProps) {
           {user?.score}
         </Tag>
       ) : null}
+      {user?.captain_of?.id ? (
+        <Tag closeable={false} kind={KIND.neutral}>
+          Captain
+        </Tag>
+      ) : null}
     </Block>
   );
 }

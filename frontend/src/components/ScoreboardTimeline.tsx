@@ -8,7 +8,6 @@ import {
   YAxis,
 } from "react-vis";
 import "../../node_modules/react-vis/dist/style.css";
-import { useStyletron } from "baseui";
 
 type ScoreboardTimelineProps = {
   scoreboard?: ScoreboardTimelineQuery["score_timeline"];
