@@ -4,7 +4,7 @@ import {
   HorizontalGridLines,
   LineSeries,
   LineSeriesPoint,
-  XAxis,
+  XAxis, YAxis,
 } from "react-vis";
 import "../../node_modules/react-vis/dist/style.css";
 import { useStyletron } from "baseui";
@@ -55,6 +55,7 @@ export function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
           }}
           tickLabelAngle={0}
         />
+        <YAxis/>
         <HorizontalGridLines />
         {Object.keys(timelineData).map((team) => (
           <LineSeries
