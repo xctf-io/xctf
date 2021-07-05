@@ -4,7 +4,8 @@ import {
   HorizontalGridLines,
   LineSeries,
   LineSeriesPoint,
-  XAxis, YAxis,
+  XAxis,
+  YAxis,
 } from "react-vis";
 import "../../node_modules/react-vis/dist/style.css";
 import { useStyletron } from "baseui";
@@ -45,17 +46,9 @@ export function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
         height: "25vh",
       })}
     >
-      <FlexibleXYPlot>
-        <XAxis
-          attr="x"
-          attrAxis="y"
-          orientation="bottom"
-          tickFormat={function tickFormat(d) {
-            return new Date(d).toLocaleDateString();
-          }}
-          tickLabelAngle={0}
-        />
-        <YAxis/>
+      <FlexibleXYPlot xType={"time"}>
+        <XAxis />
+        <YAxis />
         <HorizontalGridLines />
         {Object.keys(timelineData).map((team) => (
           <LineSeries
