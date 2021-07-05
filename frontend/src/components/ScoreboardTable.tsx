@@ -1,12 +1,10 @@
 import { ReactNode } from "react";
 import { SIZE, Table } from "baseui/table-semantic";
-import {
-  ScoreboardQuery,
-} from "../generated";
+import { ScoreboardQuery } from "../generated";
 
 type ScoreboardTableProps = {
-  scoreboard?: ScoreboardQuery["scoreboard"]
-}
+  scoreboard?: ScoreboardQuery["scoreboard"];
+};
 
 export function ScoreboardTable({ scoreboard }: ScoreboardTableProps) {
   const generateScoreboard = () => {
@@ -18,6 +16,10 @@ export function ScoreboardTable({ scoreboard }: ScoreboardTableProps) {
   };
 
   return (
-    <Table columns={["Place", "Team", "Score"]} data={generateScoreboard()} size={SIZE.spacious} />
+    <Table
+      columns={["Place", "Team", "Score"]}
+      data={generateScoreboard()}
+      size={SIZE.spacious}
+    />
   );
 }

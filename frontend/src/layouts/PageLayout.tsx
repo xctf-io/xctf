@@ -133,7 +133,6 @@ export default function PageLayout({ children }: PageLayoutProps) {
           {children}
         </Cell>
       </Grid>
-
     </React.Fragment>
   );
 }
