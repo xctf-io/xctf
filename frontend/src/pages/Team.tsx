@@ -54,14 +54,14 @@ export default function Team() {
       </Display2>
       <Display4>nth Place</Display4>
       <Display4>{t?.score_timeline?.slice(-1)[0]?.score} Points</Display4>
-      <H1>Score</H1>
-      {JSON.stringify(t?.score_timeline)}
       <H1>Members</H1>
       <Block display={"flex"} flexWrap={true}>
         {t?.members.map((u) => (
           <TeamMember user={u} />
         ))}
       </Block>
+      <H1>Score</H1>
+      {JSON.stringify(t?.score_timeline)}
     </>
   );
 }
