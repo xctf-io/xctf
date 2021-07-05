@@ -3,10 +3,19 @@ import {
   ScoreboardTimelineQuery,
 } from "../generated";
 import {
-  FlexibleXYPlot, XAxis, YAxis, HorizontalGridLines, LineSeries, LineSeriesProps, LineSeriesPoint,
+  FlexibleXYPlot,
+  XAxis,
+  YAxis,
+  HorizontalGridLines,
+  LineSeries,
+  LineSeriesProps,
+  LineSeriesPoint,
+  XYPlot,
+  FlexibleWidthXYPlot,
 } from "react-vis";
 import '../../node_modules/react-vis/dist/style.css';
 import { AspectRatioBox } from "baseui/aspect-ratio-box";
+import { useStyletron } from "baseui";
 
 type ScoreboardTimelineProps = {
   scoreboard?: ScoreboardTimelineQuery["score_timeline"]
@@ -29,14 +38,15 @@ export function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
   };
 
   const timelineData = generateScoreboardTimeline()
+  const [css] = useStyletron();
 
   console.log(timelineData);
 
   return (
-    <>
-        <FlexibleXYPlot
-          height={500}
-        >
+    <div className={css({
+      height: '25vh',
+    })}>
+        <FlexibleXYPlot>
           <XAxis
             attr="x"
             attrAxis="y"
@@ -58,8 +68,6 @@ export function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
           ))}
 
         </FlexibleXYPlot>
-    </>
-
-
+    </div>
   );
 }
