@@ -14,7 +14,9 @@ type ScoreboardTimelineProps = {
   scoreboard?: ScoreboardTimelineQuery["score_timeline"];
 };
 
-export default function ScoreboardTimeline({ scoreboard }: ScoreboardTimelineProps) {
+export default function ScoreboardTimeline({
+  scoreboard,
+}: ScoreboardTimelineProps) {
   const generateScoreboardTimeline = () => {
     const result: { [key: string]: Array<LineSeriesPoint> } = {};
 
@@ -41,20 +43,20 @@ export default function ScoreboardTimeline({ scoreboard }: ScoreboardTimelinePro
   console.log(timelineData);
 
   return (
-      <FlexibleXYPlot xType={"time"}>
-        <XAxis />
-        <YAxis />
-        <HorizontalGridLines />
-        {Object.keys(timelineData).map((team) => (
-          <LineSeries
-            curve={undefined}
-            key={team}
-            data={timelineData[team]}
-            opacity={1}
-            strokeStyle="solid"
-            style={{}}
-          />
-        ))}
-      </FlexibleXYPlot>
+    <FlexibleXYPlot xType={"time"}>
+      <XAxis />
+      <YAxis />
+      <HorizontalGridLines />
+      {Object.keys(timelineData).map((team) => (
+        <LineSeries
+          curve={undefined}
+          key={team}
+          data={timelineData[team]}
+          opacity={1}
+          strokeStyle="solid"
+          style={{}}
+        />
+      ))}
+    </FlexibleXYPlot>
   );
 }

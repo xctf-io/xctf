@@ -17,6 +17,7 @@ import {
 import { Block } from "baseui/block";
 import { Cell, Grid } from "baseui/layout-grid";
 import { Spinner, StyledSpinnerNext } from "baseui/spinner";
+import { Skeleton } from "baseui/skeleton";
 
 type PageLayoutProps = {
   children?: React.ReactNode;

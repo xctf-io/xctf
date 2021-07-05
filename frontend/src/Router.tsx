@@ -8,8 +8,6 @@ import Challenges from "./pages/Challenges";
 import Scoreboard from "./pages/Scoreboard";
 import { AccessCheck } from "./util/auth";
 
-
-
 export default function Router() {
   return (
     <BrowserRouter>
