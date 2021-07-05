@@ -2,7 +2,6 @@ import { gql } from "@apollo/client";
 import { useScoreboardQuery, useScoreboardTimelineQuery } from "../generated";
 import ScoreboardTable from "../components/ScoreboardTable";
 import React, { lazy, Suspense } from "react";
-import { useStyletron } from "baseui";
 import { StyledSpinnerNext } from "baseui/spinner";
 import { Block } from "baseui/block";
 
@@ -35,7 +34,6 @@ gql`
 export default function Scoreboard() {
   const scoreboardQuery = useScoreboardQuery();
   const timelineQuery = useScoreboardTimelineQuery();
-  const [css] = useStyletron();
 
   return (
     <>
