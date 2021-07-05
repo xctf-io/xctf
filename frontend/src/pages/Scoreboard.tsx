@@ -23,10 +23,16 @@ gql`
 
 gql`
   query ScoreboardTimeline {
-    score_timeline {
-      event_time
-      score
-      team_id
+    scoreboard {
+      team {
+        name
+        id
+        score_timeline {
+          event_time
+          score
+          team_id
+        }
+      }
     }
   }
 `;
@@ -45,9 +51,7 @@ export default function Scoreboard() {
         minHeight={"200px"}
       >
         <Suspense fallback={<StyledSpinnerNext />}>
-          <ScoreboardTimeline
-            scoreboard={timelineQuery?.data?.score_timeline}
-          />
+          <ScoreboardTimeline scoreboard={timelineQuery?.data?.scoreboard} />
         </Suspense>
       </Block>
       <ScoreboardTable scoreboard={scoreboardQuery?.data?.scoreboard} />

@@ -40,7 +40,7 @@ export function TeamMember({ user }: TeamMemberProps) {
                 style: {
                   position: "absolute",
                   bottom: 0,
-                  right: '-5px',
+                  right: "-5px",
                   zIndex: 1,
                   marginRight: 0,
                 },
@@ -63,7 +63,7 @@ export function TeamMember({ user }: TeamMemberProps) {
                 style: {
                   position: "absolute",
                   top: 0,
-                  right: '-5px',
+                  right: "-5px",
                   zIndex: 1,
                   marginRight: 0,
                 },
