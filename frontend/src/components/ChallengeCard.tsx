@@ -68,7 +68,6 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
         {challenge.category} {challenge.solved}
         <Accordion>
           <Panel title={"Solve"}>
-            {value}
             <Input
               value={value}
               onChange={e => {
