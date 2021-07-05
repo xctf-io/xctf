@@ -1,5 +1,5 @@
-import React, { lazy } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import PageLayout from "./layouts/PageLayout";
 import App from "./App";
 import Users from "./pages/Users";
@@ -7,6 +7,7 @@ import Teams from "./pages/Teams";
 import Challenges from "./pages/Challenges";
 import Scoreboard from "./pages/Scoreboard";
 import { AccessCheck } from "./util/auth";
+import Team from "./pages/Team";
 
 export default function Router() {
   return (
@@ -26,6 +27,17 @@ export default function Router() {
             </PageLayout>
           </AccessCheck>
         </Route>
+        <Route
+          path="/team/:id"
+          children={
+            <AccessCheck configKey={"account_visibility"}>
+              <PageLayout>
+                <Team />
+              </PageLayout>
+            </AccessCheck>
+          }
+        />
+
         <Route path="/scoreboard">
           <AccessCheck configKey={"score_visibility"}>
             <PageLayout>
