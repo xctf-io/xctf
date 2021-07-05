@@ -45,12 +45,8 @@ export default function ScoreboardTimeline({
       <HorizontalGridLines />
       {Object.keys(timelineData).map((team) => (
         <LineSeries
-          curve={undefined}
           key={team}
           data={timelineData[team]}
-          opacity={1}
-          strokeStyle="solid"
-          style={{}}
         />
       ))}
     </FlexibleXYPlot>

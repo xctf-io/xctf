@@ -7,6 +7,7 @@ import { Icon } from "baseui/icon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Label1 } from "baseui/typography";
 import { faTrophy } from "@fortawesome/free-solid-svg-icons/faTrophy";
+import { faCrown } from "@fortawesome/free-solid-svg-icons/faCrown";
 
 type TeamMemberProps = {
   user: SingleTeamFragment["members"][0];
@@ -39,9 +40,9 @@ export function TeamMember({ user }: TeamMemberProps) {
                 style: {
                   position: "absolute",
                   bottom: 0,
-                  right: 0,
+                  right: '-5px',
                   zIndex: 1,
-                  marginRight: -10,
+                  marginRight: 0,
                 },
               },
             }}
@@ -52,17 +53,33 @@ export function TeamMember({ user }: TeamMemberProps) {
             {user?.score}
           </Tag>
         ) : null}
+        {user?.captain_of?.id ? (
+          <Tag
+            closeable={false}
+            kind={KIND.yellow}
+            variant={VARIANT.solid}
+            overrides={{
+              Root: {
+                style: {
+                  position: "absolute",
+                  top: 0,
+                  right: '-5px',
+                  zIndex: 1,
+                  marginRight: 0,
+                },
+              },
+            }}
+          >
+            <Icon>
+              <FontAwesomeIcon icon={faCrown} />
+            </Icon>
+          </Tag>
+        ) : null}
       </Block>
 
       <Label1>{user?.name} </Label1>
       {/* todo flag icon */}
       {user?.country ? user?.country : null}
-
-      {user?.captain_of?.id ? (
-        <Tag closeable={false} kind={KIND.neutral}>
-          Captain
-        </Tag>
-      ) : null}
     </Block>
   );
 }
