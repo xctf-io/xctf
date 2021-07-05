@@ -39,29 +39,19 @@ export default function Scoreboard() {
 
   return (
     <>
-      <div
-        className={css({
-          height: "25vh",
-          minHeight: "200px",
-        })}
+      <Block
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        height={"25vh"}
+        minHeight={"200px"}
       >
-        <Suspense
-          fallback={
-            <Block
-              display={"flex"}
-              justifyContent={"center"}
-              alignItems={"center"}
-              height={"100%"}
-            >
-              <StyledSpinnerNext />
-            </Block>
-          }
-        >
+        <Suspense fallback={<StyledSpinnerNext />}>
           <ScoreboardTimeline
             scoreboard={timelineQuery?.data?.score_timeline}
           />
         </Suspense>
-      </div>
+      </Block>
       <ScoreboardTable scoreboard={scoreboardQuery?.data?.scoreboard} />
     </>
   );
