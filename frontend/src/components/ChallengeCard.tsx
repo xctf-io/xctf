@@ -35,10 +35,8 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
     let parameters: any = {
       variables: { provided: value || "", challenge_id: challenge.id || -1 },
     };
-    console.log("fuck");
     submitFlag(parameters)
       .then((res) => {
-        console.log(res);
       })
       .catch((e) => {
         console.error(e);

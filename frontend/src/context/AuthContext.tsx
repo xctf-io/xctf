@@ -61,7 +61,6 @@ const massageConfig = (res: AuthContextQuery["config"]) => {
   }, acc);
 };
 
-console.log(AuthContextDocument);
 type AuthContextType = {
   loading: boolean;
   current_user?: AuthContextQuery["current_user"][0];
@@ -85,7 +84,6 @@ export function AuthContextProvider({ children }: ChildrenProps) {
   const { data, loading, error } = useAuthContextQuery();
 
   if (loading || error) {
-    console.log(error);
     return <>{children}</>;
   }
 
