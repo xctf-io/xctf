@@ -6,7 +6,8 @@ config:
     DateTime: Date
     JSON: "{ [key: string]: any }"
 documents:
-  - ./src/**/*.hasura.graphql
+  - ./src/**/*.tsx
+  - ./src/**/*.ts
   - "!./src/generated/**/*"
 generates:
   ./src/generated/hasura/gql.ts:

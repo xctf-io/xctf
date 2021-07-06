@@ -8,7 +8,6 @@ config:
 documents:
   - ./src/**/*.tsx
   - ./src/**/*.ts
-  - ./src/**/*.graphql
 generates:
   ./src/generated/hasura/ts.ts:
     plugins:
@@ -54,6 +53,7 @@ generates:
     documents:
       - ./src/**/*.tsx
       - ./src/**/*.ts
+      - ./src/**/*.type.graphql
     plugins:
       - typescript
       - typescript-operations
