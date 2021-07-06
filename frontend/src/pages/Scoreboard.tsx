@@ -21,13 +21,13 @@ gql`
     }
   }
   query Scoreboard {
-    scoreboard {
+    scoreboard(limit: 10) {
       ...ScoreboardAttrs
     }
   }
 
   subscription LiveScoreboard {
-    scoreboard {
+    scoreboard(limit: 10) {
       ...ScoreboardAttrs
     }
   }

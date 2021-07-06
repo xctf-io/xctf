@@ -1,5 +1,5 @@
 import { Grid } from "baseui/layout-grid";
-import { ChallengeCard } from "../components/ChallengeCard";
+import ChallengeCard from "../components/ChallengeCard";
 import { Order_By } from "../generated";
 import { GQLHooks } from "../generated/hasura/react";
 

@@ -25,7 +25,7 @@ gql`
   }
 `;
 
-export function ChallengeCard({ challenge }: ChallengeCardProps) {
+export default function ChallengeCard({ challenge }: ChallengeCardProps) {
   const [value, setValue] = useState("" as string);
 
   let [submitFlag] = useSubmitFlagMutation();
