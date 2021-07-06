@@ -35,6 +35,7 @@
     "react-vis": "^1.11.7",
     "styletron-engine-atomic": "^1.4.8",
     "styletron-react": "^6.0.1",
+    "subscriptions-transport-ws": "^0.9.19",
     "typescript": "^4.1.2",
     "uniforms": "^3.5.1",
     "uniforms-bridge-graphql": "^3.5.1"

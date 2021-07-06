@@ -53,6 +53,7 @@ generates:
     documents:
       - ./src/**/*.tsx
       - ./src/**/*.ts
+      - ./src/**/*.type.graphql
     plugins:
       - typescript
       - typescript-operations
