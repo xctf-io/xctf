@@ -9,26 +9,17 @@ const ScoreboardTimeline = lazy(
 );
 
 gql`
-  fragment ScoreboardAttrs on scoreboard {
-    team {
-      name
-      id
-      score_timeline {
-        event_time
-        score
-        team_id
-      }
-    }
-  }
   query Scoreboard {
     scoreboard(limit: 10) {
-      ...ScoreboardAttrs
+      ...ScoreboardTable
+      ...ScoreboardTimeline
     }
   }
 
   subscription LiveScoreboard {
     scoreboard(limit: 10) {
-      ...ScoreboardAttrs
+      ...ScoreboardTable
+      ...ScoreboardTimeline
     }
   }
 `;
