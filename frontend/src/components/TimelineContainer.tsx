@@ -18,6 +18,7 @@ export function TimelineContainer({ children }: TimelineContainerProps) {
       minHeight={"200px"}
       className={css({
         fontFamily: theme.typography.ParagraphMedium.fontFamily,
+        userSelect: "none",
       })}
     >
       <Suspense fallback={<StyledSpinnerNext />}>{children}</Suspense>

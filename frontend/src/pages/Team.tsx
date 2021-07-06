@@ -5,8 +5,7 @@ import { Display2, Display4, H1 } from "baseui/typography";
 import { Block } from "baseui/block";
 import { TeamMember } from "../components/TeamMember";
 import "../../node_modules/react-vis/dist/style.css";
-import React, { lazy, Suspense } from "react";
-import { StyledSpinnerNext } from "baseui/spinner";
+import React, { lazy } from "react";
 import { TimelineContainer } from "../components/TimelineContainer";
 
 const TeamTimeline = lazy(() => import("../components/TeamTimeline"));
