@@ -1,0 +1,30 @@
+fragment SingleTeam on teams {
+    id
+    name
+    affiliation
+    bracket
+    country
+    created
+    website
+    members {
+        id
+        name
+        affiliation
+        avatar
+        bracket
+        country
+        type
+        website
+        captain_of {
+            id
+        }
+    }
+    score_timeline {
+        event_time
+        score
+    }
+    scoreboard {
+        score
+        rank
+    }
+}
