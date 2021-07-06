@@ -1,7 +1,7 @@
-import React, { Suspense } from "react";
 import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
 import { StyledSpinnerNext } from "baseui/spinner";
+import React, { Suspense } from "react";
 
 type TimelineContainerProps = {
   children?: React.ReactNode;

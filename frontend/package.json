@@ -62,6 +62,7 @@
     "eslint-plugin-baseui": "^9.116.2",
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.3.2",
+    "prettier-plugin-organize-imports": "^2.2.0",
     "source-map-explorer": "^2.5.2"
   },
   "eslintConfig": {

@@ -1,8 +1,7 @@
-import { gql } from "@apollo/client";
-import { GQLHooks } from "../generated/hasura/react";
 import { Grid } from "baseui/layout-grid";
-import { Order_By } from "../generated";
 import { ChallengeCard } from "../components/ChallengeCard";
+import { Order_By } from "../generated";
+import { GQLHooks } from "../generated/hasura/react";
 
 export default function Challenges() {
   const { data } = GQLHooks.Fragments.ChallengeList.useQueryObjects({

@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import PageLayout from "./layouts/PageLayout";
 import App from "./App";
-import Users from "./pages/Users";
-import Teams from "./pages/Teams";
+import PageLayout from "./layouts/PageLayout";
 import Challenges from "./pages/Challenges";
 import Scoreboard from "./pages/Scoreboard";
-import { AccessCheck } from "./util/auth";
 import Team from "./pages/Team";
+import Teams from "./pages/Teams";
+import Users from "./pages/Users";
+import { AccessCheck } from "./util/auth";
 
 export default function Router() {
   return (

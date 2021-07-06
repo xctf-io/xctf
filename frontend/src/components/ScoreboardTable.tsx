@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
-import { SIZE, Table } from "baseui/table-semantic";
-import { ScoreboardTableFragment } from "../generated";
-import { Link } from "react-router-dom";
 import { gql } from "@apollo/client";
+import { SIZE, Table } from "baseui/table-semantic";
+import { ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { ScoreboardTableFragment } from "../generated";
 
 gql`
   fragment ScoreboardTable on scoreboard {

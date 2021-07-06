@@ -1,4 +1,4 @@
-import { ScoreboardTimelineFragment } from "../generated";
+import { gql } from "@apollo/client";
 import {
   FlexibleXYPlot,
   HorizontalGridLines,
@@ -7,7 +7,7 @@ import {
   YAxis,
 } from "react-vis";
 import "../../node_modules/react-vis/dist/style.css";
-import { gql } from "@apollo/client";
+import { ScoreboardTimelineFragment } from "../generated";
 
 gql`
   fragment ScoreboardTimeline on scoreboard {

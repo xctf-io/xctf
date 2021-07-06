@@ -1,12 +1,7 @@
-import { ReactNode } from "react";
-import { Maybe, UserListFragment } from "../generated";
-import {
-  StatefulDataTable,
-  NumericalColumn,
-  StringColumn,
-} from "baseui/data-table";
-import { useStyletron } from "baseui";
 import { gql } from "@apollo/client";
+import { useStyletron } from "baseui";
+import { StatefulDataTable, StringColumn } from "baseui/data-table";
+import { Maybe, UserListFragment } from "../generated";
 
 gql`
   fragment UserTable on users {

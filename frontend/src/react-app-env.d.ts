@@ -7,5 +7,3 @@ type RecursivePartial<T> = {
     ? RecursivePartial<T[P]>
     : T[P];
 };
-
-const useMountEffect = (fun) => useEffect(fun, []);

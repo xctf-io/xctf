@@ -1,22 +1,19 @@
-import React, { lazy, Suspense } from "react";
-
-import { H5, Label4 } from "baseui/typography";
-import { useStyletron } from "baseui";
-import { Layer } from "baseui/layer";
-import { ChevronDown, Upload } from "baseui/icon";
-import { AppNavBar, NavItemT, setItemActive } from "baseui/app-nav-bar";
-import { useAuthContext } from "../context/AuthContext";
-import { useHistory, useLocation } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons/faUserCircle";
-import { faUsers } from "@fortawesome/free-solid-svg-icons/faUsers";
 import { faBell } from "@fortawesome/free-solid-svg-icons/faBell";
 import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons/faSignOutAlt";
-
+import { faUserCircle } from "@fortawesome/free-solid-svg-icons/faUserCircle";
+import { faUsers } from "@fortawesome/free-solid-svg-icons/faUsers";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useStyletron } from "baseui";
+import { AppNavBar, NavItemT, setItemActive } from "baseui/app-nav-bar";
 import { Block } from "baseui/block";
+import { ChevronDown, Upload } from "baseui/icon";
+import { Layer } from "baseui/layer";
 import { Cell, Grid } from "baseui/layout-grid";
 import { StyledSpinnerNext } from "baseui/spinner";
+import { H5, Label4 } from "baseui/typography";
+import React, { Suspense } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 
 type PageLayoutProps = {
   children?: React.ReactNode;

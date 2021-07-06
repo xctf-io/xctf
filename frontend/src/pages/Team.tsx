@@ -1,13 +1,12 @@
-import { gql } from "@apollo/client";
-import { GQLHooks } from "../generated/hasura/react";
-import { useParams } from "react-router-dom";
-import { Display2, Display4, H1 } from "baseui/typography";
 import { Block } from "baseui/block";
-import { TeamMember } from "../components/TeamMember";
-import "../../node_modules/react-vis/dist/style.css";
-import React, { lazy } from "react";
-import { TimelineContainer } from "../components/TimelineContainer";
 import { Skeleton } from "baseui/skeleton";
+import { Display2, Display4, H1 } from "baseui/typography";
+import React, { lazy } from "react";
+import { useParams } from "react-router-dom";
+import "../../node_modules/react-vis/dist/style.css";
+import { TeamMember } from "../components/TeamMember";
+import { TimelineContainer } from "../components/TimelineContainer";
+import { GQLHooks } from "../generated/hasura/react";
 
 const TeamTimeline = lazy(() => import("../components/TeamTimeline"));
 

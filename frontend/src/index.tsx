@@ -1,6 +1,3 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { AuthContextProvider } from "./context/AuthContext";
 import {
   ApolloClient,
   ApolloProvider,
@@ -8,13 +5,16 @@ import {
   InMemoryCache,
   split,
 } from "@apollo/client";
-import { Client as Styletron } from "styletron-engine-atomic";
-import { Provider as StyletronProvider } from "styletron-react";
-import { BaseProvider, createTheme } from "baseui";
-import "@fontsource/lato";
-import Router from "./Router";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
+import "@fontsource/lato";
+import { BaseProvider, createTheme } from "baseui";
+import React from "react";
+import ReactDOM from "react-dom";
+import { Client as Styletron } from "styletron-engine-atomic";
+import { Provider as StyletronProvider } from "styletron-react";
+import { AuthContextProvider } from "./context/AuthContext";
+import Router from "./Router";
 
 const httpLink = new HttpLink({
   uri: "/v1/graphql",

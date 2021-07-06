@@ -1,3 +1,5 @@
+import { gql } from "@apollo/client";
+import React from "react";
 import {
   FlexibleXYPlot,
   HorizontalGridLines,
@@ -5,9 +7,7 @@ import {
   XAxis,
   YAxis,
 } from "react-vis";
-import React from "react";
 import { Maybe, TeamTimelineFragment } from "../generated";
-import { gql } from "@apollo/client";
 gql`
   fragment TeamTimeline on teams {
     score_timeline {

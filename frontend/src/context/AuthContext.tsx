@@ -1,9 +1,5 @@
 import { gql } from "@apollo/client";
-import {
-  AuthContextDocument,
-  AuthContextQuery,
-  useAuthContextQuery,
-} from "generated";
+import { AuthContextQuery, useAuthContextQuery } from "generated";
 import React from "react";
 
 gql`

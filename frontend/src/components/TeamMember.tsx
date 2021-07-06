@@ -1,14 +1,14 @@
-import { TeamMemberFragment } from "../generated";
-import { useStyletron } from "baseui";
-import { Block } from "baseui/block";
-import { Avatar } from "baseui/avatar";
-import { KIND, Tag, VARIANT } from "baseui/tag";
-import { Icon } from "baseui/icon";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Label1 } from "baseui/typography";
-import { faTrophy } from "@fortawesome/free-solid-svg-icons/faTrophy";
-import { faCrown } from "@fortawesome/free-solid-svg-icons/faCrown";
 import { gql } from "@apollo/client";
+import { faCrown } from "@fortawesome/free-solid-svg-icons/faCrown";
+import { faTrophy } from "@fortawesome/free-solid-svg-icons/faTrophy";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useStyletron } from "baseui";
+import { Avatar } from "baseui/avatar";
+import { Block } from "baseui/block";
+import { Icon } from "baseui/icon";
+import { KIND, Tag, VARIANT } from "baseui/tag";
+import { Label1 } from "baseui/typography";
+import { TeamMemberFragment } from "../generated";
 
 gql`
   fragment TeamMember on users {

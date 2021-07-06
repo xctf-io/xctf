@@ -1,18 +1,17 @@
-import { Card, StyledAction, StyledBody } from "baseui/card";
-import { KIND, Tag, VARIANT } from "baseui/tag";
-import { Icon } from "baseui/icon";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { gql } from "@apollo/client";
 import { faTrophy } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Accordion, Panel } from "baseui/accordion";
 import { Button } from "baseui/button";
-import { Accordion } from "baseui/accordion";
-import { Panel } from "baseui/accordion";
+import { Card, StyledBody } from "baseui/card";
+import { Icon } from "baseui/icon";
 import { Input } from "baseui/input";
+import { KIND, Tag, VARIANT } from "baseui/tag";
+import { useState } from "react";
 import {
   Challenges as ChallengesType,
   useSubmitFlagMutation,
 } from "../generated";
-import { useState } from "react";
-import { gql } from "@apollo/client";
 
 type ChallengeCardProps = {
   challenge: RecursivePartial<ChallengesType>;

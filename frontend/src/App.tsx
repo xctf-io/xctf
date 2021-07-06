@@ -1,7 +1,6 @@
 import React from "react";
-import logo from "./logo.svg";
-
 import { useAuthContext } from "./context/AuthContext";
+import logo from "./logo.svg";
 
 function App() {
   const authContext = useAuthContext();
