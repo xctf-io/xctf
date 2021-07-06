@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 
 import { H5, Label4 } from "baseui/typography";
 import { useStyletron } from "baseui";

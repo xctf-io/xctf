@@ -7,40 +7,41 @@ import { TeamMember } from "../components/TeamMember";
 import "../../node_modules/react-vis/dist/style.css";
 import React, { lazy } from "react";
 import { TimelineContainer } from "../components/TimelineContainer";
+import { Skeleton } from "baseui/skeleton";
 
 const TeamTimeline = lazy(() => import("../components/TeamTimeline"));
 
 gql`
-  fragment SingleTeam on teams {
-    id
-    name
-    affiliation
-    bracket
-    country
-    created
-    website
-    members {
-      id
-      name
-      affiliation
-      avatar
-      bracket
-      country
-      type
-      website
-      captain_of {
+    fragment SingleTeam on teams {
         id
-      }
+        name
+        affiliation
+        bracket
+        country
+        created
+        website
+        members {
+            id
+            name
+            affiliation
+            avatar
+            bracket
+            country
+            type
+            website
+            captain_of {
+                id
+            }
+        }
+        score_timeline {
+            event_time
+            score
+        }
+        scoreboard {
+            score
+            rank
+        }
     }
-    score_timeline {
-      event_time
-      score
-    }
-    scoreboard {
-      score
-      rank
-    }
-  }
 `;
 
 type TeamParams = {
@@ -49,11 +50,37 @@ type TeamParams = {
 
 export default function Team() {
   let { id }: TeamParams = useParams();
-  const { data } = GQLHooks.Fragments.SingleTeam.useQueryById({
+  const { data, loading } = GQLHooks.Fragments.SingleTeam.useQueryById({
     teamsId: parseInt(id),
   });
   const t = data?.teams_by_pk;
 
+  if (loading) {
+    return (
+      <>
+        <Skeleton height={"64px"} width={"400px"} animation />
+        <Skeleton height={"44px"} width={"300px"} animation/>
+        <Skeleton height={"44px"} width={"280px"} animation/>
+        <Block marginTop={"0.67em"} marginBottom={"0.67em"}>
+          <Skeleton height={"64px"} width={"150px"} animation />
+        </Block>
+        <Block display={"flex"}>
+          {Array.from(Array(5).keys()).map(() => (
+            <>
+              <Skeleton height={"120px"} width={"112px"} animation />
+              <Block width={"12px"} />
+            </>
+          ))}
+        </Block>
+        <Block marginTop={"0.67em"} marginBottom={"0.67em"}>
+          <Skeleton height={"64px"} width={"150px"} animation />
+        </Block>
+        <TimelineContainer>
+          <Skeleton height={"100%"} width={"100%"} animation />
+        </TimelineContainer>
+      </>
+    );
+  }
   return (
     <>
       <Display2>
