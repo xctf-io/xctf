@@ -80,6 +80,8 @@ select_permissions:
     - id
     - name
     - website
+    computed_fields:
+    - score
     filter:
       _and:
       - _exists:
@@ -110,6 +112,8 @@ select_permissions:
     - oauth_id
     - secret
     - website
+    computed_fields:
+    - score
     filter: {}
   role: ctfd_admin
 - permission:
@@ -121,6 +125,8 @@ select_permissions:
     - id
     - name
     - website
+    computed_fields:
+    - score
     filter:
       _or:
       - hidden:

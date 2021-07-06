@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { useScoreboardQuery, useScoreboardTimelineQuery } from "../generated";
+import { useScoreboardQuery } from "../generated";
 import ScoreboardTable from "../components/ScoreboardTable";
 import React, { lazy, Suspense } from "react";
 import { StyledSpinnerNext } from "baseui/spinner";
@@ -11,18 +11,6 @@ const ScoreboardTimeline = lazy(
 
 gql`
   query Scoreboard {
-    scoreboard {
-      score
-      team {
-        name
-        id
-      }
-    }
-  }
-`;
-
-gql`
-  query ScoreboardTimeline {
     scoreboard {
       team {
         name
@@ -38,8 +26,7 @@ gql`
 `;
 
 export default function Scoreboard() {
-  const scoreboardQuery = useScoreboardQuery();
-  const timelineQuery = useScoreboardTimelineQuery();
+  const { data } = useScoreboardQuery();
 
   return (
     <>
@@ -51,10 +38,10 @@ export default function Scoreboard() {
         minHeight={"200px"}
       >
         <Suspense fallback={<StyledSpinnerNext />}>
-          <ScoreboardTimeline scoreboard={timelineQuery?.data?.scoreboard} />
+          <ScoreboardTimeline scoreboard={data?.scoreboard} />
         </Suspense>
       </Block>
-      <ScoreboardTable scoreboard={scoreboardQuery?.data?.scoreboard} />
+      <ScoreboardTable scoreboard={data?.scoreboard} />
     </>
   );
 }

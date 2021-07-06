@@ -14,7 +14,7 @@ export default function ScoreboardTable({ scoreboard }: ScoreboardTableProps) {
       result.push([
         idx + 1,
         <Link to={"/team/" + item?.team?.id}>{item?.team?.name}</Link>,
-        item?.score,
+        item?.team?.score_timeline?.slice(-1)[0]?.score,
         item?.team?.id,
       ]),
     );

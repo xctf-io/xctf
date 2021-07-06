@@ -1,4 +1,4 @@
-import { ScoreboardTimelineQuery } from "../generated";
+import { ScoreboardQuery } from "../generated";
 import {
   FlexibleXYPlot,
   HorizontalGridLines,
@@ -9,7 +9,7 @@ import {
 import "../../node_modules/react-vis/dist/style.css";
 
 type ScoreboardTimelineProps = {
-  scoreboard?: ScoreboardTimelineQuery["scoreboard"];
+  scoreboard?: ScoreboardQuery["scoreboard"];
 };
 
 export default function ScoreboardTimeline({
