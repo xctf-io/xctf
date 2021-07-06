@@ -1,10 +1,8 @@
 package action
 
 import (
-	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -13,11 +11,11 @@ type SubmitAttemptMutationActionPayload struct {
 	Input            SubmitAttemptMutationArgs `json:"input"`
 }
 
-type GraphQLError struct {
+type graphQLErrorSubmitAttemptMutation struct {
 	Message string `json:"message"`
 }
 
-func makeHandler(logic SubmitAttemptMutationLogic) func(w http.ResponseWriter, r *http.Request) {
+func makeSubmitAttemptMutationHandler(logic SubmitAttemptMutationLogic) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// set the response header as JSON
@@ -39,7 +37,7 @@ func makeHandler(logic SubmitAttemptMutationLogic) func(w http.ResponseWriter, r
 		}
 
 		// Send the request params to the Action's generated handler function
-		result, err := SubmitAttemptMutation(actionPayload.Input)
+		result, err := logic.SubmitAttemptMutation(actionPayload.Input)
 
 		// throw if an error happens
 		if err != nil {
@@ -60,9 +58,15 @@ func makeHandler(logic SubmitAttemptMutationLogic) func(w http.ResponseWriter, r
 }
 
 // Auto-generated function that takes the Action parameters and must return it's response type
+func SubmitAttemptMutation(args SubmitAttemptMutationArgs) (response SubmitAttemptMutationOutput, err error) {
+	response = SubmitAttemptMutationOutput{
+		Id: 1111,
+	}
+	return response, nil
+}
 
 // HTTP server for the handler
 
 type SubmitAttemptMutationLogic interface {
-	// Auto-generated function that takes the Action parameters and must return it's response type
+	SubmitAttemptMutation(args SubmitAttemptMutationArgs) (response SubmitAttemptMutationOutput, err error)
 }
