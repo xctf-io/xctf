@@ -32,7 +32,7 @@ export default function Scoreboard() {
   useMountEffect(() => {
     subscribeToMore({
       document: LiveScoreboardDocument,
-      updateQuery: (_, { subscriptionData }) => subscriptionData.data,
+      updateQuery: (_, n) => n.subscriptionData.data,
     });
   });
 
