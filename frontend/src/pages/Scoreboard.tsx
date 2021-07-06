@@ -33,6 +33,7 @@ gql`
   }
 `;
 
+// eslint-disable-next-line
 const useMountEffect = (fun: any) => useEffect(fun, []);
 
 export default function Scoreboard() {
