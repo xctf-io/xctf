@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { useScoreboardQuery } from "../generated";
+import { useScoreboardSubscription } from "../generated";
 import ScoreboardTable from "../components/ScoreboardTable";
 import React, { lazy, Suspense } from "react";
 import { StyledSpinnerNext } from "baseui/spinner";
@@ -10,7 +10,7 @@ const ScoreboardTimeline = lazy(
 );
 
 gql`
-  query Scoreboard {
+  subscription Scoreboard {
     scoreboard {
       team {
         name
@@ -26,7 +26,7 @@ gql`
 `;
 
 export default function Scoreboard() {
-  const { data } = useScoreboardQuery();
+  const { data } = useScoreboardSubscription();
 
   return (
     <>
