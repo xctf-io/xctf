@@ -1,0 +1,13 @@
+fragment TeamMember on users {
+  id
+  name
+  affiliation
+  avatar
+  bracket
+  country
+  website
+  captain_of {
+    id
+  }
+  score
+}

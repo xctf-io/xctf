@@ -6,10 +6,10 @@ import {
   YAxis,
 } from "react-vis";
 import React from "react";
-import { SingleTeamFragment } from "../generated";
+import { Maybe, TeamTimelineFragment } from "../generated";
 
 type TeamTimelineProps = {
-  timeline?: SingleTeamFragment["score_timeline"];
+  timeline?: Maybe<TeamTimelineFragment>;
 };
 
 export default function TeamTimeline({ timeline }: TeamTimelineProps) {
@@ -19,7 +19,7 @@ export default function TeamTimeline({ timeline }: TeamTimelineProps) {
       <YAxis />
       <HorizontalGridLines />
       <LineSeries
-        data={timeline?.map((ti) => ({
+        data={timeline?.score_timeline?.map((ti) => ({
           x: new Date(ti.event_time || 0).getTime(),
           y: ti.score,
         }))}

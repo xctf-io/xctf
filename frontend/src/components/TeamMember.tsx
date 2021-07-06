@@ -1,4 +1,4 @@
-import { SingleTeamFragment } from "../generated";
+import { SingleTeamFragment, TeamMemberFragment } from "../generated";
 import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
 import { Avatar } from "baseui/avatar";
@@ -10,7 +10,7 @@ import { faTrophy } from "@fortawesome/free-solid-svg-icons/faTrophy";
 import { faCrown } from "@fortawesome/free-solid-svg-icons/faCrown";
 
 type TeamMemberProps = {
-  user: SingleTeamFragment["members"][0];
+  user: TeamMemberFragment;
 };
 
 export function TeamMember({ user }: TeamMemberProps) {

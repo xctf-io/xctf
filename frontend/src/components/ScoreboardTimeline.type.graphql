@@ -1,0 +1,10 @@
+fragment ScoreboardTimeline on scoreboard {
+  team {
+    id
+    name
+    score_timeline {
+      event_time
+      score
+    }
+  }
+}

@@ -74,7 +74,7 @@ export default function Team() {
         minHeight={"200px"}
       >
         <Suspense fallback={<StyledSpinnerNext />}>
-          <TeamTimeline timeline={t?.score_timeline} />
+          <TeamTimeline timeline={t} />
         </Suspense>
       </Block>
     </>

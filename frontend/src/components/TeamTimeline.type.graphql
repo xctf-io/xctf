@@ -1,0 +1,6 @@
+fragment TeamTimeline on teams {
+  score_timeline {
+    event_time
+    score
+  }
+}

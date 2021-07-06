@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 import { SIZE, Table } from "baseui/table-semantic";
-import { ScoreboardQuery } from "../generated";
+import { ScoreboardTableFragment } from "../generated";
 import { Link } from "react-router-dom";
 
 type ScoreboardTableProps = {
-  scoreboard?: ScoreboardQuery["scoreboard"];
+  scoreboard?: ScoreboardTableFragment[];
 };
 
 export default function ScoreboardTable({ scoreboard }: ScoreboardTableProps) {
