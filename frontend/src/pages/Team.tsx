@@ -31,11 +31,14 @@ gql`
       captain_of {
         id
       }
-      score
     }
     score_timeline {
       event_time
       score
+    }
+    scoreboard {
+      score
+      rank
     }
   }
 `;
@@ -57,8 +60,8 @@ export default function Team() {
         {t?.name} {/* todo flag icon */}
         {t?.country ? t?.country : null}
       </Display2>
-      <Display4>nth Place</Display4>
-      <Display4>{t?.score_timeline?.slice(-1)[0]?.score} Points</Display4>
+      <Display4>{t?.scoreboard?.rank} Place</Display4>
+      <Display4>{t?.scoreboard?.score} Points</Display4>
       <H1>Members</H1>
       <Block display={"flex"} flexWrap={true}>
         {t?.members.map((u) => (
