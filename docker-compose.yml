@@ -63,6 +63,7 @@ services:
     restart: always
     volumes:
       - ./hasura:/hasura
+      - ~/.hasura/actions-codegen-assets:/srv/console-assets/common/codegen:ro
     environment:
       HASURA_GRAPHQL_METADATA_DIR: /hasura/metadata
       HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura/migrations

@@ -16,4 +16,4 @@ actions:
   handler_webhook_baseurl: http://localhost:3000
   codegen:
     framework: go-serve-mux
-    output_dir: ../actions/
+    output_dir: .tmp

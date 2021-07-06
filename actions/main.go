@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	actionsfx "github.com/CTFg/CTFg/actions/fx"
-	"github.com/CTFg/CTFg/actions/gql"
+	"github.com/CTFg/CTFg/actions/gen/gql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"net/http"

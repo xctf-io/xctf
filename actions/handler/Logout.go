@@ -1,4 +1,6 @@
-package main
+package handler
+
+package action
 
 import (
   "bytes"
@@ -8,9 +10,9 @@ import (
   "net/http"
 )
 
-type ActionPayload struct {
+type LogoutActionPayload struct {
   SessionVariables map[string]interface{} `json:"session_variables"`
-  Input            SubmitAttemptMutationArgs `json:"input"`
+  Input            LogoutArgs `json:"input"`
 }
 
 type GraphQLError struct {
@@ -19,7 +21,7 @@ type GraphQLError struct {
 
 
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func makeHandler(logic LogoutLogic) func(w http.ResponseWriter, r *http.Request) { return func(w http.ResponseWriter, r *http.Request) {
 
   // set the response header as JSON
   w.Header().Set("Content-Type", "application/json")
@@ -32,7 +34,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
   }
 
   // parse the body as action payload
-  var actionPayload ActionPayload
+  var actionPayload LogoutActionPayload
   err = json.Unmarshal(reqBody, &actionPayload)
   if err != nil {
     http.Error(w, "invalid payload", http.StatusBadRequest)
@@ -40,7 +42,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
   }
 
   // Send the request params to the Action's generated handler function
-  result, err := SubmitAttemptMutation(actionPayload.Input)
+  result, err := Logout(actionPayload.Input)
 
   // throw if an error happens
   if err != nil {
@@ -55,24 +57,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
   // Write the response as JSON
   data, _ := json.Marshal(result)
-  w.Write(data)
+  w.Write(data)}
 
 }
 
 // Auto-generated function that takes the Action parameters and must return it's response type
-func SubmitAttemptMutation(args SubmitAttemptMutationArgs) (response SubmitAttemptMutationOutput, err error) {
-  response =  SubmitAttemptMutationOutput {
-    Id: 1111,
-  }
-  return response, nil
-}
-
-
-// HTTP server for the handler
-func main() {
-  mux := http.NewServeMux()
-  mux.HandleFunc("/SubmitAttemptMutation", handler)
-
-  err := http.ListenAndServe(":3000", mux)
-  log.Fatal(err)
-}

@@ -1,9 +1,9 @@
 model:
   package: gql
-  filename: ./gql/models_gen.go
+  filename: ./gen/gql/models_gen.go
 client:
   package: gql
-  filename: ./gql/client_gen.go
+  filename: ./gen/gql/client_gen.go
 models:
   Int:
     model: github.com/99designs/gqlgen/graphql.Int64

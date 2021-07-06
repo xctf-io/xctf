@@ -1,64 +1,61 @@
-
-
-
+package action
 
 type Mutation struct {
-    UnlockMutation *UnlockMutationOutput
+	UnlockMutation *UnlockMutationOutput
 }
 
 type SubmitFlagMutationOutput struct {
-    Id int
+	Id int
 }
 
 type PurchaseUnlockableOutput struct {
-    Id int
+	Id int
 }
 
 type PurchaseUnlockableMutationOutput struct {
-    Id int
+	Id int
 }
 
 type UnlockMutationOutput struct {
-    Id int
+	Id int
 }
 
 type JsonWebToken struct {
-    Token string
+	Token string
 }
 
 type CreateUserOutput struct {
-    Id int
-    Token string
+	Id    int
+	Token string
 }
 
 type LogoutResponse struct {
-    Success *bool
+	Success *bool
 }
 
 type SubmitMutationOutput struct {
-    Id int
+	Id int
 }
 
 type SubmitAttemptMutationOutput struct {
-    Id int
+	Id int
 }
 
 type LogoutArgs struct {
-    
 }
 
 type SignupArgs struct {
-    Name string
-    Password string
-    Captcha *string
+	Name     string
+	Password string
+	Captcha  *string
 }
 
 type SubmitAttemptMutationArgs struct {
-    Challenge_id *int
-    Provided *string
+	Challenge_id *int
+	Provided     *string
 }
 
 type UnlockMutationArgs struct {
-    Target *int
-    Type *string
+	Target *int
+	Type   *string
 }
