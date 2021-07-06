@@ -9,29 +9,28 @@ const ScoreboardTimeline = lazy(
 );
 
 gql`
-    fragment ScoreboardAttrs on scoreboard {
-        team {
-            name
-            id
-            score_timeline {
-                event_time
-                score
-                team_id
-            }
-        }
+  fragment ScoreboardAttrs on scoreboard {
+    team {
+      name
+      id
+      score_timeline {
+        event_time
+        score
+        team_id
+      }
     }
-    query Scoreboard {
-        scoreboard {
-            ...ScoreboardAttrs
-        }
+  }
+  query Scoreboard {
+    scoreboard {
+      ...ScoreboardAttrs
     }
+  }
 
-    subscription LiveScoreboard {
-        scoreboard {
-            ...ScoreboardAttrs
-        }
+  subscription LiveScoreboard {
+    scoreboard {
+      ...ScoreboardAttrs
     }
-
+  }
 `;
 
 export default function Scoreboard() {
@@ -42,7 +41,6 @@ export default function Scoreboard() {
     subscribeToMore({
       document: LiveScoreboardDocument,
       updateQuery: (prev, { subscriptionData }) => {
-
         console.log(subscriptionData);
         return prev;
       },

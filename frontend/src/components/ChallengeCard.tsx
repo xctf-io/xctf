@@ -36,8 +36,7 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
       variables: { provided: value || "", challenge_id: challenge.id || -1 },
     };
     submitFlag(parameters)
-      .then((res) => {
-      })
+      .then((res) => {})
       .catch((e) => {
         console.error(e);
       });

@@ -2,7 +2,6 @@ import React from "react";
 import logo from "./logo.svg";
 
 import { useAuthContext } from "./context/AuthContext";
-import { TestForm } from "./TestForm";
 
 function App() {
   const authContext = useAuthContext();
@@ -26,7 +25,6 @@ function App() {
           Learn React
         </a>
       </header>
-      <TestForm />
     </div>
   );
 }

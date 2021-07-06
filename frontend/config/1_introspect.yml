@@ -7,3 +7,6 @@ generates:
   schema.graphql:
     plugins:
       - schema-ast
+  ./src/generated/graphql.schema.json:
+    plugins:
+      - introspection

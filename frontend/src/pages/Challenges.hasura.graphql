@@ -1,0 +1,28 @@
+fragment ChallengeList on challenges {
+  id
+  name
+  category
+  description
+  value
+  max_attempts
+  files {
+    id
+    location
+    type
+  }
+  hints {
+    id
+    type
+    cost
+    unlocked_content {
+      id
+      content
+    }
+  }
+  tags {
+    id
+    value
+  }
+  type
+  solved
+}

@@ -2,6 +2,20 @@ import { ReactNode } from "react";
 import { SIZE, Table } from "baseui/table-semantic";
 import { ScoreboardTableFragment } from "../generated";
 import { Link } from "react-router-dom";
+import { gql } from "@apollo/client";
+
+gql`
+  fragment ScoreboardTable on scoreboard {
+    team {
+      id
+      name
+      score_timeline {
+        event_time
+        score
+      }
+    }
+  }
+`;
 
 type ScoreboardTableProps = {
   scoreboard?: ScoreboardTableFragment[];

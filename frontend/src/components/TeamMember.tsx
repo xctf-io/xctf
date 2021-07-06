@@ -8,6 +8,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Label1 } from "baseui/typography";
 import { faTrophy } from "@fortawesome/free-solid-svg-icons/faTrophy";
 import { faCrown } from "@fortawesome/free-solid-svg-icons/faCrown";
+import { gql } from "@apollo/client";
+
+gql`
+  fragment TeamMember on users {
+    id
+    name
+    affiliation
+    avatar
+    bracket
+    country
+    website
+    captain_of {
+      id
+    }
+    score
+  }
+`;
 
 type TeamMemberProps = {
   user: TeamMemberFragment;

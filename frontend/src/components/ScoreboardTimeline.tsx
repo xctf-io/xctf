@@ -7,7 +7,20 @@ import {
   YAxis,
 } from "react-vis";
 import "../../node_modules/react-vis/dist/style.css";
+import { gql } from "@apollo/client";
 
+gql`
+  fragment ScoreboardTimeline on scoreboard {
+    team {
+      id
+      name
+      score_timeline {
+        event_time
+        score
+      }
+    }
+  }
+`;
 type ScoreboardTimelineProps = {
   scoreboard?: ScoreboardTimelineFragment[];
 };

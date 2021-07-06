@@ -6,6 +6,17 @@ import {
   StringColumn,
 } from "baseui/data-table";
 import { useStyletron } from "baseui";
+import { gql } from "@apollo/client";
+
+gql`
+  fragment UserTable on users {
+    id
+    name
+    website
+    affiliation
+    country
+  }
+`;
 
 type UsersTableProps = {
   users?: Maybe<UserListFragment[]>;
@@ -36,7 +47,6 @@ export default function UsersTable({ users }: UsersTableProps) {
   const [css] = useStyletron();
 
   if (!users) return <p>loading</p>;
-
 
   return (
     <div className={css({ height: "800px" })}>

@@ -7,7 +7,6 @@ config:
     JSON: "{ [key: string]: any }"
 documents:
   - ./src/**/*.hasura.graphql
-  - "!./src/generated/**/*"
 generates:
   ./src/generated/hasura/gql.ts:
     plugins:
@@ -21,6 +20,3 @@ generates:
       withInserts: true
       withUpdates: true
       withDeletes: true
-  schema.graphql:
-    plugins:
-      - schema-ast

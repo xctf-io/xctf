@@ -6,9 +6,8 @@ config:
     DateTime: Date
     JSON: "{ [key: string]: any }"
 documents:
-  - ./src/**/*.tsx
-  - ./src/**/*.ts
-  - ./src/**/*.graphql
+  - ./src/**/*.hasura.graphql
+  - ./src/generated/hasura/gql.ts
 generates:
   ./src/generated/hasura/ts.ts:
     plugins:
@@ -47,11 +46,9 @@ generates:
       withCombinedTypePolicyObject: false
       withCacheRedirects: true
       withCombinedCacheRedirectObject: true
-  ./src/generated/graphql.schema.json:
-    plugins:
-      - introspection
   ./src/generated/index.tsx:
     documents:
+      - ./src/**/*.graphql
       - ./src/**/*.tsx
       - ./src/**/*.ts
     plugins:

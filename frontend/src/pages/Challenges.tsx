@@ -4,37 +4,6 @@ import { Grid } from "baseui/layout-grid";
 import { Order_By } from "../generated";
 import { ChallengeCard } from "../components/ChallengeCard";
 
-gql`
-  fragment ChallengeList on challenges {
-    id
-    name
-    category
-    description
-    value
-    max_attempts
-    files {
-      id
-      location
-      type
-    }
-    hints {
-      id
-      type
-      cost
-      unlocked_content {
-        id
-        content
-      }
-    }
-    tags {
-      id
-      value
-    }
-    type
-    solved
-  }
-`;
-
 export default function Challenges() {
   const { data } = GQLHooks.Fragments.ChallengeList.useQueryObjects({
     variables: {

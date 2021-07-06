@@ -7,7 +7,15 @@ import {
 } from "react-vis";
 import React from "react";
 import { Maybe, TeamTimelineFragment } from "../generated";
-
+import { gql } from "@apollo/client";
+gql`
+  fragment TeamTimeline on teams {
+    score_timeline {
+      event_time
+      score
+    }
+  }
+`;
 type TeamTimelineProps = {
   timeline?: Maybe<TeamTimelineFragment>;
 };

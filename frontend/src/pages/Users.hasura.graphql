@@ -1,7 +1,7 @@
 fragment UserList on users {
-    id
-    name
-    website
-    affiliation
-    country
+  id
+  name
+  website
+  affiliation
+  country
 }

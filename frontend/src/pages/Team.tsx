@@ -26,8 +26,8 @@ export default function Team() {
     return (
       <>
         <Skeleton height={"64px"} width={"400px"} animation />
-        <Skeleton height={"44px"} width={"300px"} animation/>
-        <Skeleton height={"44px"} width={"280px"} animation/>
+        <Skeleton height={"44px"} width={"300px"} animation />
+        <Skeleton height={"44px"} width={"280px"} animation />
         <Block marginTop={"0.67em"} marginBottom={"0.67em"}>
           <Skeleton height={"64px"} width={"150px"} animation />
         </Block>

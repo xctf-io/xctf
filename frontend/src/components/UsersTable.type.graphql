@@ -1,7 +1,0 @@
-fragment UserTable on users {
-  id
-  name
-  website
-  affiliation
-  country
-}
