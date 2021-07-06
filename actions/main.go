@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	actionsfx "github.com/CTFg/CTFg/actions/fx"
+	"github.com/CTFg/CTFg/actions/gql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"net/http"
@@ -137,6 +138,7 @@ func Register(mux *http.ServeMux, h http.Handler) {
 func main() {
 	app := fx.New(
 		actionsfx.Module,
+		gql.Module,
 		// Provide all the constructors we need, which teaches Fx how we'd like to
 		// construct the *log.Logger, http.Handler, and *http.ServeMux types.
 		// Remember that constructors are called lazily, so this block doesn't do
