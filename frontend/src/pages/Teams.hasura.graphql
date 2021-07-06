@@ -1,0 +1,7 @@
+fragment TeamList on teams {
+    id
+    name
+    website
+    affiliation
+    country
+}

@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { useScoreboardQuery } from "../generated";
+import { LiveScoreboardDocument, useScoreboardQuery } from "../generated";
 import ScoreboardTable from "../components/ScoreboardTable";
 import React, { lazy } from "react";
 import { TimelineContainer } from "../components/TimelineContainer";
@@ -9,24 +9,44 @@ const ScoreboardTimeline = lazy(
 );
 
 gql`
-  query Scoreboard {
-    scoreboard {
-      team {
-        name
-        id
-        score_timeline {
-          event_time
-          score
-          team_id
+    fragment ScoreboardAttrs on scoreboard {
+        team {
+            name
+            id
+            score_timeline {
+                event_time
+                score
+                team_id
+            }
         }
-      }
     }
-  }
+    query Scoreboard {
+        scoreboard {
+            ...ScoreboardAttrs
+        }
+    }
+
+    subscription LiveScoreboard {
+        scoreboard {
+            ...ScoreboardAttrs
+        }
+    }
+
 `;
 
 export default function Scoreboard() {
-  const { data } = useScoreboardQuery({
+  const { data, subscribeToMore } = useScoreboardQuery({
     pollInterval: 10000,
+  });
+  useMountEffect(() => {
+    subscribeToMore({
+      document: LiveScoreboardDocument,
+      updateQuery: (prev, { subscriptionData }) => {
+
+        console.log(subscriptionData);
+        return prev;
+      },
+    });
   });
 
   return (

@@ -11,39 +11,6 @@ import { Skeleton } from "baseui/skeleton";
 
 const TeamTimeline = lazy(() => import("../components/TeamTimeline"));
 
-gql`
-    fragment SingleTeam on teams {
-        id
-        name
-        affiliation
-        bracket
-        country
-        created
-        website
-        members {
-            id
-            name
-            affiliation
-            avatar
-            bracket
-            country
-            type
-            website
-            captain_of {
-                id
-            }
-        }
-        score_timeline {
-            event_time
-            score
-        }
-        scoreboard {
-            score
-            rank
-        }
-    }
-`;
-
 type TeamParams = {
   id: string;
 };
