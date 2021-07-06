@@ -1,4 +1,4 @@
-import { SingleTeamFragment, TeamMemberFragment } from "../generated";
+import { TeamMemberFragment } from "../generated";
 import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
 import { Avatar } from "baseui/avatar";

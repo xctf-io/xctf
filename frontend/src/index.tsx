@@ -1,19 +1,49 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { AuthContextProvider } from "./context/AuthContext";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+  split,
+} from "@apollo/client";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { Provider as StyletronProvider } from "styletron-react";
 import { BaseProvider, createTheme } from "baseui";
 import "@fontsource/lato";
 import Router from "./Router";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 
-const engine = new Styletron();
+const httpLink = new HttpLink({
+  uri: "/v1/graphql",
+});
+const wsLink = new WebSocketLink({
+  uri: "ws://localhost/v1/graphql",
+  options: {
+    reconnect: true,
+  },
+});
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    );
+  },
+  wsLink,
+  httpLink,
+);
 
 const client = new ApolloClient({
-  uri: "/v1/graphql",
+  link: splitLink,
   cache: new InMemoryCache(),
 });
+
+const engine = new Styletron();
 
 const theme = createTheme(
   {
