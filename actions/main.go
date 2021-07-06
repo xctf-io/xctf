@@ -2,12 +2,10 @@ package main
 
 import (
 	"context"
-	"log"
-	"net/http"
-	"time"
-
 	actionsfx "github.com/CTFg/CTFg/actions/fx"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
+	"net/http"
 )
 
 // NewHandler constructs a simple HTTP handler. Since it returns an
@@ -38,10 +36,10 @@ import (
 // constructors for a single type, NewHandlerAndLogger would be called at most
 // once, and both the handler and the logger would be cached and reused as
 // necessary.
-func NewHandler(logger *log.Logger) (http.Handler, error) {
-	logger.Print("Executing NewHandler.")
+func NewHandler(logger *zap.Logger) (http.Handler, error) {
+	logger.Info("Executing NewHandler.")
 	return http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
-		logger.Print("Got a request.")
+		logger.Info("Got a request.")
 	}), nil
 }
 
@@ -73,8 +71,8 @@ func NewHandler(logger *log.Logger) (http.Handler, error) {
 // constructors are called lazily, we know that NewMux won't be called unless
 // some other function wants to register a handler. This makes it easy to use
 // Fx's Lifecycle to start an HTTP server only if we have handlers registered.
-func NewMux(lc fx.Lifecycle, logger *log.Logger) *http.ServeMux {
-	logger.Print("Executing NewMux.")
+func NewMux(lc fx.Lifecycle, logger *zap.Logger) *http.ServeMux {
+	logger.Info("Executing NewMux.")
 	// First, we construct the mux and server. We don't want to start the server
 	// until all handlers are registered.
 	mux := http.NewServeMux()
@@ -102,14 +100,14 @@ func NewMux(lc fx.Lifecycle, logger *log.Logger) *http.ServeMux {
 		// default, hooks have a total of 15 seconds to complete. Timeouts are
 		// passed via Go's usual context.Context.
 		OnStart: func(context.Context) error {
-			logger.Print("Starting HTTP server.")
+			logger.Info("Starting HTTP server.")
 			// In production, we'd want to separate the Listen and Serve phases for
 			// better error-handling.
 			go server.ListenAndServe()
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
-			logger.Print("Stopping HTTP server.")
+			logger.Info("Stopping HTTP server.")
 			return server.Shutdown(ctx)
 		},
 	})
@@ -156,23 +154,5 @@ func main() {
 		fx.Invoke(Register),
 	)
 
-	// In a typical application, we could just use app.Run() here. Since we
-	// don't want this example to run forever, we'll use the more-explicit Start
-	// and Stop.
-	startCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-	if err := app.Start(startCtx); err != nil {
-		log.Fatal(err)
-	}
-
-	// Normally, we'd block here with <-app.Done(). Instead, we'll make an HTTP
-	// request to demonstrate that our server is running.
-	http.Get("http://localhost:8080/")
-
-	stopCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-	if err := app.Stop(stopCtx); err != nil {
-		log.Fatal(err)
-	}
-
+	app.Run()
 }

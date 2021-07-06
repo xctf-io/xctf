@@ -5,12 +5,12 @@ import (
 	"go.uber.org/zap"
 )
 
-const loggingConfigKey = "log"
+const configKey = "log"
 
 func New(config config.Provider) (*zap.Logger, error) {
 	cfg := zap.NewDevelopmentConfig()
 
-	err := config.Get(loggingConfigKey).Populate(&cfg)
+	err := config.Get(configKey).Populate(&cfg)
 	if err != nil {
 		return nil, err
 	}

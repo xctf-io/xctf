@@ -1,0 +1,21 @@
+model:
+  package: gql
+  filename: ./gql/models_gen.go
+client:
+  package: gql
+  filename: ./gql/client_gen.go
+models:
+  Int:
+    model: github.com/99designs/gqlgen/graphql.Int64
+  Date:
+    model: github.com/99designs/gqlgen/graphql.Time
+  bigint:
+    model: github.com/99designs/gqlgen/graphql.Int64
+  timestamptz:
+    model: github.com/99designs/gqlgen/graphql.Time
+  timestamp:
+    model: github.com/99designs/gqlgen/graphql.Time
+schema:
+  - "../frontend/schema.graphql"
+query:
+  - ./query/*.gql
