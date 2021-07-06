@@ -37,7 +37,7 @@ services:
     image: redis:4
     restart: always
     volumes:
-      - .data/redis:/data
+      - redis_data:/data
     networks:
       internal:
   postgres:
@@ -80,6 +80,7 @@ services:
       access:
 volumes:
   db_data:
+  redis_data:
 networks:
   default:
   internal:

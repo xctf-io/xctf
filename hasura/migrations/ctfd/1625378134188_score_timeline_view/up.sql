@@ -25,19 +25,23 @@ FROM score_events;
 -- todo how does ctfd do this calculation exactly? need timestamps
 --  this is close enough to get the data model down
 CREATE MATERIALIZED VIEW public.scoreboard_user AS
-SELECT score_events.team_id,
-       score_events.user_id,
-       sum(score_events.event_value) as score,
-       max(score_events.event_time)  as max_time
-FROM score_events
-group by score_events.team_id, score_events.user_id
-order by score desc, max_time;
+SELECT se.*, row_number() over (order by score desc, max_time) as rank
+from (
+         SELECT score_events.team_id,
+                score_events.user_id,
+                sum(score_events.event_value) as score,
+                max(score_events.event_time)  as max_time
+         FROM score_events
+         group by score_events.team_id, score_events.user_id) se;
 
 CREATE MATERIALIZED VIEW public.scoreboard AS
-SELECT score_events.team_id, sum(score_events.event_value) as score, max(score_events.event_time) as max_time
-FROM score_events
-group by score_events.team_id
-order by score desc, max_time;
+SELECT se.*, row_number() over (order by score desc, max_time) as rank
+from (
+         SELECT score_events.team_id,
+                sum(score_events.event_value) as score,
+                max(score_events.event_time)  as max_time
+         FROM score_events
+         group by score_events.team_id) se;
 
 -- triggers for score events
 CREATE OR REPLACE FUNCTION refresh_score_events()

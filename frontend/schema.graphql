@@ -8107,6 +8107,7 @@ columns and relationships of "scoreboard"
 """
 type scoreboard {
   max_time: timestamp
+  rank: bigint
   score: bigint
 
   """An object relationship"""
@@ -8141,6 +8142,7 @@ type scoreboard_aggregate_fields {
 
 """aggregate avg on columns"""
 type scoreboard_avg_fields {
+  rank: Float
   score: Float
   team_id: Float
 }
@@ -8153,6 +8155,7 @@ input scoreboard_bool_exp {
   _not: scoreboard_bool_exp
   _or: [scoreboard_bool_exp!]
   max_time: timestamp_comparison_exp
+  rank: bigint_comparison_exp
   score: bigint_comparison_exp
   team: teams_bool_exp
   team_id: Int_comparison_exp
@@ -8162,6 +8165,7 @@ input scoreboard_bool_exp {
 input type for incrementing numeric columns in table "scoreboard"
 """
 input scoreboard_inc_input {
+  rank: bigint
   score: bigint
   team_id: Int
 }
@@ -8171,6 +8175,7 @@ input type for inserting data into table "scoreboard"
 """
 input scoreboard_insert_input {
   max_time: timestamp
+  rank: bigint
   score: bigint
   team: teams_obj_rel_insert_input
   team_id: Int
@@ -8179,6 +8184,7 @@ input scoreboard_insert_input {
 """aggregate max on columns"""
 type scoreboard_max_fields {
   max_time: timestamp
+  rank: bigint
   score: bigint
   team_id: Int
 }
@@ -8186,6 +8192,7 @@ type scoreboard_max_fields {
 """aggregate min on columns"""
 type scoreboard_min_fields {
   max_time: timestamp
+  rank: bigint
   score: bigint
   team_id: Int
 }
@@ -8201,9 +8208,17 @@ type scoreboard_mutation_response {
   returning: [scoreboard!]!
 }
 
+"""
+input type for inserting object relation for remote table "scoreboard"
+"""
+input scoreboard_obj_rel_insert_input {
+  data: scoreboard_insert_input!
+}
+
 """Ordering options when selecting data from "scoreboard"."""
 input scoreboard_order_by {
   max_time: order_by
+  rank: order_by
   score: order_by
   team: teams_order_by
   team_id: order_by
@@ -8217,6 +8232,9 @@ enum scoreboard_select_column {
   max_time
 
   """column name"""
+  rank
+
+  """column name"""
   score
 
   """column name"""
@@ -8228,30 +8246,35 @@ input type for updating data in table "scoreboard"
 """
 input scoreboard_set_input {
   max_time: timestamp
+  rank: bigint
   score: bigint
   team_id: Int
 }
 
 """aggregate stddev on columns"""
 type scoreboard_stddev_fields {
+  rank: Float
   score: Float
   team_id: Float
 }
 
 """aggregate stddev_pop on columns"""
 type scoreboard_stddev_pop_fields {
+  rank: Float
   score: Float
   team_id: Float
 }
 
 """aggregate stddev_samp on columns"""
 type scoreboard_stddev_samp_fields {
+  rank: Float
   score: Float
   team_id: Float
 }
 
 """aggregate sum on columns"""
 type scoreboard_sum_fields {
+  rank: bigint
   score: bigint
   team_id: Int
 }
@@ -8261,6 +8284,7 @@ columns and relationships of "scoreboard_user"
 """
 type scoreboard_user {
   max_time: timestamp
+  rank: bigint
   score: bigint
 
   """An object relationship"""
@@ -8299,6 +8323,7 @@ type scoreboard_user_aggregate_fields {
 
 """aggregate avg on columns"""
 type scoreboard_user_avg_fields {
+  rank: Float
   score: Float
   team_id: Float
   user_id: Float
@@ -8312,6 +8337,7 @@ input scoreboard_user_bool_exp {
   _not: scoreboard_user_bool_exp
   _or: [scoreboard_user_bool_exp!]
   max_time: timestamp_comparison_exp
+  rank: bigint_comparison_exp
   score: bigint_comparison_exp
   team: teams_bool_exp
   team_id: Int_comparison_exp
@@ -8323,6 +8349,7 @@ input scoreboard_user_bool_exp {
 input type for incrementing numeric columns in table "scoreboard_user"
 """
 input scoreboard_user_inc_input {
+  rank: bigint
   score: bigint
   team_id: Int
   user_id: Int
@@ -8333,6 +8360,7 @@ input type for inserting data into table "scoreboard_user"
 """
 input scoreboard_user_insert_input {
   max_time: timestamp
+  rank: bigint
   score: bigint
   team: teams_obj_rel_insert_input
   team_id: Int
@@ -8343,6 +8371,7 @@ input scoreboard_user_insert_input {
 """aggregate max on columns"""
 type scoreboard_user_max_fields {
   max_time: timestamp
+  rank: bigint
   score: bigint
   team_id: Int
   user_id: Int
@@ -8351,6 +8380,7 @@ type scoreboard_user_max_fields {
 """aggregate min on columns"""
 type scoreboard_user_min_fields {
   max_time: timestamp
+  rank: bigint
   score: bigint
   team_id: Int
   user_id: Int
@@ -8367,9 +8397,17 @@ type scoreboard_user_mutation_response {
   returning: [scoreboard_user!]!
 }
 
+"""
+input type for inserting object relation for remote table "scoreboard_user"
+"""
+input scoreboard_user_obj_rel_insert_input {
+  data: scoreboard_user_insert_input!
+}
+
 """Ordering options when selecting data from "scoreboard_user"."""
 input scoreboard_user_order_by {
   max_time: order_by
+  rank: order_by
   score: order_by
   team: teams_order_by
   team_id: order_by
@@ -8383,6 +8421,9 @@ select columns of table "scoreboard_user"
 enum scoreboard_user_select_column {
   """column name"""
   max_time
+
+  """column name"""
+  rank
 
   """column name"""
   score
@@ -8399,6 +8440,7 @@ input type for updating data in table "scoreboard_user"
 """
 input scoreboard_user_set_input {
   max_time: timestamp
+  rank: bigint
   score: bigint
   team_id: Int
   user_id: Int
@@ -8406,6 +8448,7 @@ input scoreboard_user_set_input {
 
 """aggregate stddev on columns"""
 type scoreboard_user_stddev_fields {
+  rank: Float
   score: Float
   team_id: Float
   user_id: Float
@@ -8413,6 +8456,7 @@ type scoreboard_user_stddev_fields {
 
 """aggregate stddev_pop on columns"""
 type scoreboard_user_stddev_pop_fields {
+  rank: Float
   score: Float
   team_id: Float
   user_id: Float
@@ -8420,6 +8464,7 @@ type scoreboard_user_stddev_pop_fields {
 
 """aggregate stddev_samp on columns"""
 type scoreboard_user_stddev_samp_fields {
+  rank: Float
   score: Float
   team_id: Float
   user_id: Float
@@ -8427,6 +8472,7 @@ type scoreboard_user_stddev_samp_fields {
 
 """aggregate sum on columns"""
 type scoreboard_user_sum_fields {
+  rank: bigint
   score: bigint
   team_id: Int
   user_id: Int
@@ -8434,6 +8480,7 @@ type scoreboard_user_sum_fields {
 
 """aggregate var_pop on columns"""
 type scoreboard_user_var_pop_fields {
+  rank: Float
   score: Float
   team_id: Float
   user_id: Float
@@ -8441,6 +8488,7 @@ type scoreboard_user_var_pop_fields {
 
 """aggregate var_samp on columns"""
 type scoreboard_user_var_samp_fields {
+  rank: Float
   score: Float
   team_id: Float
   user_id: Float
@@ -8448,6 +8496,7 @@ type scoreboard_user_var_samp_fields {
 
 """aggregate variance on columns"""
 type scoreboard_user_variance_fields {
+  rank: Float
   score: Float
   team_id: Float
   user_id: Float
@@ -8455,18 +8504,21 @@ type scoreboard_user_variance_fields {
 
 """aggregate var_pop on columns"""
 type scoreboard_var_pop_fields {
+  rank: Float
   score: Float
   team_id: Float
 }
 
 """aggregate var_samp on columns"""
 type scoreboard_var_samp_fields {
+  rank: Float
   score: Float
   team_id: Float
 }
 
 """aggregate variance on columns"""
 type scoreboard_variance_fields {
+  rank: Float
   score: Float
   team_id: Float
 }
@@ -10939,6 +10991,9 @@ type teams {
     """filter the rows returned"""
     where: score_timeline_bool_exp
   ): score_timeline_aggregate!
+
+  """An object relationship"""
+  scoreboard: scoreboard
   secret: String
 
   """An array relationship"""
@@ -11108,6 +11163,7 @@ input teams_bool_exp {
   oauth_id: Int_comparison_exp
   password: String_comparison_exp
   score_timeline: score_timeline_bool_exp
+  scoreboard: scoreboard_bool_exp
   secret: String_comparison_exp
   solves: solves_bool_exp
   submissions: submissions_bool_exp
@@ -11163,6 +11219,7 @@ input teams_insert_input {
   oauth_id: Int
   password: String
   score_timeline: score_timeline_arr_rel_insert_input
+  scoreboard: scoreboard_obj_rel_insert_input
   secret: String
   solves: solves_arr_rel_insert_input
   submissions: submissions_arr_rel_insert_input
@@ -11252,6 +11309,7 @@ input teams_order_by {
   oauth_id: order_by
   password: order_by
   score_timeline_aggregate: score_timeline_aggregate_order_by
+  scoreboard: scoreboard_order_by
   secret: order_by
   solves_aggregate: solves_aggregate_order_by
   submissions_aggregate: submissions_aggregate_order_by
@@ -12772,6 +12830,9 @@ type users {
     """filter the rows returned"""
     where: score_timeline_user_bool_exp
   ): score_timeline_user_aggregate!
+
+  """An object relationship"""
+  scoreboard: scoreboard_user
   secret: String
 
   """An array relationship"""
@@ -13054,6 +13115,7 @@ input users_bool_exp {
   oauth_id: Int_comparison_exp
   password: String_comparison_exp
   score_timeline: score_timeline_user_bool_exp
+  scoreboard: scoreboard_user_bool_exp
   secret: String_comparison_exp
   solves: solves_bool_exp
   submissions: submissions_bool_exp
@@ -13114,6 +13176,7 @@ input users_insert_input {
   oauth_id: Int
   password: String
   score_timeline: score_timeline_user_arr_rel_insert_input
+  scoreboard: scoreboard_user_obj_rel_insert_input
   secret: String
   solves: solves_arr_rel_insert_input
   submissions: submissions_arr_rel_insert_input
@@ -13248,6 +13311,7 @@ input users_order_by {
   oauth_id: order_by
   password: order_by
   score_timeline_aggregate: score_timeline_user_aggregate_order_by
+  scoreboard: scoreboard_user_order_by
   secret: order_by
   solves_aggregate: solves_aggregate_order_by
   submissions_aggregate: submissions_aggregate_order_by

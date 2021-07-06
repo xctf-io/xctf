@@ -1,16 +1,15 @@
 import { gql } from "@apollo/client";
-import { useScoreboardSubscription } from "../generated";
+import { useScoreboardQuery } from "../generated";
 import ScoreboardTable from "../components/ScoreboardTable";
-import React, { lazy, Suspense } from "react";
-import { StyledSpinnerNext } from "baseui/spinner";
-import { Block } from "baseui/block";
+import React, { lazy } from "react";
+import { TimelineContainer } from "../components/TimelineContainer";
 
 const ScoreboardTimeline = lazy(
   () => import("../components/ScoreboardTimeline"),
 );
 
 gql`
-  subscription Scoreboard {
+  query Scoreboard {
     scoreboard {
       team {
         name
@@ -26,21 +25,15 @@ gql`
 `;
 
 export default function Scoreboard() {
-  const { data } = useScoreboardSubscription();
+  const { data } = useScoreboardQuery({
+    pollInterval: 10000,
+  });
 
   return (
     <>
-      <Block
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        height={"25vh"}
-        minHeight={"200px"}
-      >
-        <Suspense fallback={<StyledSpinnerNext />}>
-          <ScoreboardTimeline scoreboard={data?.scoreboard} />
-        </Suspense>
-      </Block>
+      <TimelineContainer>
+        <ScoreboardTimeline scoreboard={data?.scoreboard} />
+      </TimelineContainer>
       <ScoreboardTable scoreboard={data?.scoreboard} />
     </>
   );
