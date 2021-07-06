@@ -1,66 +1,54 @@
 import { ReactNode } from "react";
-import { QueryUserListObjectsQuery } from "../generated";
+import { Maybe, UserListFragment } from "../generated";
 import {
   StatefulDataTable,
   NumericalColumn,
   StringColumn,
-} from 'baseui/data-table';
+} from "baseui/data-table";
 import { useStyletron } from "baseui";
 
-type ScoreboardTableProps = {
-  users?: Array<any>;
+type UsersTableProps = {
+  users?: Maybe<UserListFragment[]>;
 };
 
-
-
-export default function UsersTable({ users }: ScoreboardTableProps) {
-  console.log(users);
-  const generateUsersTable = () => {
-    const result: Array<Array<ReactNode>> = [];
-    users?.map((item, idx) =>{
-        let userData: any = { name: item?.name, website: item?.website, affiliation: item?.affiliation, country: item?.country};
-        result.push(userData)
-      }
-    );
-    return result;
-  };
-
-  type rowData = [
-    number,
-    string,
-    string,
-    string,
-    string,
-  ];
+export default function UsersTable({ users }: UsersTableProps) {
+  type rowData = [number, string, string, string, string];
 
   const columns = [
-    NumericalColumn({
-      title: 'ID',
+    StringColumn({
+      title: "Name",
       mapDataToValue: (data: rowData) => data[0],
     }),
     StringColumn({
-      title: 'Name',
+      title: "Website",
       mapDataToValue: (data: rowData) => data[1],
     }),
     StringColumn({
-      title: 'Website',
+      title: "Affiliation",
       mapDataToValue: (data: rowData) => data[2],
     }),
     StringColumn({
-      title: 'Affiliation',
+      title: "Country",
       mapDataToValue: (data: rowData) => data[3],
-    }),
-    StringColumn({
-      title: 'Country',
-      mapDataToValue: (data: rowData) => data[4],
     }),
   ];
 
   const [css] = useStyletron();
 
+  if (!users) return <p>loading</p>;
+
+
   return (
-    <div className={css({height: '800px'})}>
-      <StatefulDataTable columns={columns} rows={generateUsersTable()} />
+    <div className={css({ height: "800px" })}>
+      <StatefulDataTable
+        filterable={false}
+        searchable={false}
+        columns={columns}
+        rows={users.map((item, idx) => ({
+          id: item?.id,
+          data: [item?.name, item?.website, item?.affiliation, item?.country],
+        }))}
+      />
     </div>
   );
 }

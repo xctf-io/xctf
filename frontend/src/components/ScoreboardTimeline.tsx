@@ -12,7 +12,6 @@ type ScoreboardTimelineProps = {
   scoreboard?: ScoreboardTimelineFragment[];
 };
 
-
 export default function ScoreboardTimeline({
   scoreboard,
 }: ScoreboardTimelineProps) {

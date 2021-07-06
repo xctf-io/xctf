@@ -17,5 +17,5 @@ export default function Users() {
     variables: { limit: 10 },
   });
 
-  return <UsersTable users={[...data?.users]}> </UsersTable>;
+  return <UsersTable users={data?.users} />;
 }
