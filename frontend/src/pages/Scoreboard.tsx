@@ -1,10 +1,8 @@
 import { gql } from "@apollo/client";
 import { useScoreboardQuery } from "../generated";
 import ScoreboardTable from "../components/ScoreboardTable";
-import React, { lazy, Suspense } from "react";
-import { StyledSpinnerNext } from "baseui/spinner";
-import { Block } from "baseui/block";
-import { useAuthContext } from "../context/AuthContext";
+import React, { lazy } from "react";
+import { TimelineContainer } from "../components/TimelineContainer";
 
 const ScoreboardTimeline = lazy(
   () => import("../components/ScoreboardTimeline"),
@@ -33,17 +31,9 @@ export default function Scoreboard() {
 
   return (
     <>
-      <Block
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        height={"25vh"}
-        minHeight={"200px"}
-      >
-        <Suspense fallback={<StyledSpinnerNext />}>
-          <ScoreboardTimeline scoreboard={data?.scoreboard} />
-        </Suspense>
-      </Block>
+      <TimelineContainer>
+        <ScoreboardTimeline scoreboard={data?.scoreboard} />
+      </TimelineContainer>
       <ScoreboardTable scoreboard={data?.scoreboard} />
     </>
   );

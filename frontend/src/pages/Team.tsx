@@ -7,6 +7,7 @@ import { TeamMember } from "../components/TeamMember";
 import "../../node_modules/react-vis/dist/style.css";
 import React, { lazy, Suspense } from "react";
 import { StyledSpinnerNext } from "baseui/spinner";
+import { TimelineContainer } from "../components/TimelineContainer";
 
 const TeamTimeline = lazy(() => import("../components/TeamTimeline"));
 
@@ -69,17 +70,9 @@ export default function Team() {
         ))}
       </Block>
       <H1>Score</H1>
-      <Block
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        height={"25vh"}
-        minHeight={"200px"}
-      >
-        <Suspense fallback={<StyledSpinnerNext />}>
-          <TeamTimeline timeline={t} />
-        </Suspense>
-      </Block>
+      <TimelineContainer>
+        <TeamTimeline timeline={t} />
+      </TimelineContainer>
     </>
   );
 }
