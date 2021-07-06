@@ -15,6 +15,7 @@ fragment SingleTeam on teams {
     country
     type
     website
+    score
     captain_of {
       id
     }
