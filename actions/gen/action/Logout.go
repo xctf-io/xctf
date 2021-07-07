@@ -75,7 +75,7 @@ func NewLogout(l LogoutLogic) (NewLogoutResult, error) {
 	}
 	return NewLogoutResult{
 		HTTPHandlerFuncPatternPair: types.HTTPHandlerFuncPatternPair{
-			Pattern:     "/your/pattern",
+			Pattern:     "/Logout",
 			HandlerFunc: makeLogoutHandler(l),
 		},
 	}, nil

@@ -144,7 +144,7 @@ func main() {
 		// construct the *log.Logger, http.Handler, and *http.ServeMux types.
 		// Remember that constructors are called lazily, so this block doesn't do
 		// much on its own.
-		fx.Provide(gen.NewSubmitAttemptMutation)
+		fx.Provide(gen.NewSubmitAttemptMutation),
 		fx.Provide(
 			NewHandler,
 			NewMux,

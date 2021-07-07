@@ -75,7 +75,7 @@ func NewSubmitAttemptMutation(l SubmitAttemptMutationLogic) (NewSubmitAttemptMut
 	}
 	return NewSubmitAttemptMutationResult{
 		HTTPHandlerFuncPatternPair: types.HTTPHandlerFuncPatternPair{
-			Pattern:     "/your/pattern",
+			Pattern:     "/SubmitAttemptMutation",
 			HandlerFunc: makeSubmitAttemptMutationHandler(l),
 		},
 	}, nil
