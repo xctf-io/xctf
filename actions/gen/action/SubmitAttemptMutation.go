@@ -19,7 +19,7 @@ type SubmitAttemptMutationPayload struct {
 	Input            SubmitAttemptMutationArgs `json:"input"`
 }
 
-func makeSubmitAttemptMutationHandler(l SubmitAttemptMutationLogic) func(w http.ResponseWriter, r *http.Request) {
+func makeSubmitAttemptMutationHandler(l SubmitAttemptMutationLogic) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// set the response header as JSON

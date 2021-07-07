@@ -19,7 +19,7 @@ type LogoutPayload struct {
 	Input            LogoutArgs             `json:"input"`
 }
 
-func makeLogoutHandler(l LogoutLogic) func(w http.ResponseWriter, r *http.Request) {
+func makeLogoutHandler(l LogoutLogic) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// set the response header as JSON
