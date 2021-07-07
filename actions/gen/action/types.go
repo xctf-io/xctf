@@ -1,59 +1,59 @@
 package action
 
 type Mutation struct {
-	Unlock *UnlockMutationOutput
+	Unlock *UnlockMutationOutput `json:"unlock"`
 }
 
 type SubmitFlagMutationOutput struct {
-	Id int
+	Id int `json:"id"`
 }
 
 type PurchaseUnlockableOutput struct {
-	Id int
+	Id int `json:"id"`
 }
 
 type PurchaseUnlockableMutationOutput struct {
-	Id int
+	Id int `json:"id"`
 }
 
 type UnlockMutationOutput struct {
-	Id int
+	Id int `json:"id"`
 }
 
 type JsonWebToken struct {
-	Token string
+	Token string `json:"token"`
 }
 
 type CreateUserOutput struct {
-	Id    int
-	Token string
+	Id    int    `json:"id"`
+	Token string `json:"token"`
 }
 
 type LogoutResponse struct {
-	Success *bool
+	Success *bool `json:"success"`
 }
 
 type SubmitMutationOutput struct {
-	Id int
+	Id int `json:"id"`
 }
 
 type SubmitAttemptMutationOutput struct {
-	Id int
+	Id int `json:"id"`
 }
 
 type RegisterOutput struct {
-	Id    int
-	Token string
+	Id    int    `json:"id"`
+	Token string `json:"token"`
 }
 
 type SubmitArgs struct {
-	Challenge_id int
-	Provided     string
+	Challenge_id int    `json:"challenge_id"`
+	Provided     string `json:"provided"`
 }
 
 type UnlockArgs struct {
-	Target *int
-	Type   *string
+	Target *int    `json:"target"`
+	Type   *string `json:"type"`
 }
 
 type GraphQLError struct {
