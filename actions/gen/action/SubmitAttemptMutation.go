@@ -1,13 +1,18 @@
-package gen
+package action
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"github.com/go-masonry/mortar/providers/types"
 	"go.uber.org/fx"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
+
+var _ = bytes.MinRead
+var _ = log.Ldate
 
 type SubmitAttemptMutationPayload struct {
 	SessionVariables map[string]interface{}    `json:"session_variables"`

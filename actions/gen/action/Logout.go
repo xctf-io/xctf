@@ -1,4 +1,4 @@
-package gen
+package action
 
 import (
 	"bytes"
@@ -10,6 +10,9 @@ import (
 	"log"
 	"net/http"
 )
+
+var _ = bytes.MinRead
+var _ = log.Ldate
 
 type LogoutPayload struct {
 	SessionVariables map[string]interface{} `json:"session_variables"`

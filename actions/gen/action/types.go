@@ -1,4 +1,4 @@
-package gen
+package action
 
 type Mutation struct {
 	UnlockMutation *UnlockMutationOutput
