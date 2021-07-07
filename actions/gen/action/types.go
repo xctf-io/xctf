@@ -1,4 +1,4 @@
-package action
+package gen
 
 type Mutation struct {
 	UnlockMutation *UnlockMutationOutput
@@ -58,4 +58,8 @@ type SubmitAttemptMutationArgs struct {
 type UnlockMutationArgs struct {
 	Target *int
 	Type   *string
+}
+
+type GraphQLError struct {
+	Message string `"message"`
 }

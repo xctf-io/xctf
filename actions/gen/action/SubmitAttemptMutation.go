@@ -1,21 +1,20 @@
-package action
+package gen
 
 import (
 	"encoding/json"
+	"errors"
+	"github.com/go-masonry/mortar/providers/types"
+	"go.uber.org/fx"
 	"io/ioutil"
 	"net/http"
 )
 
-type SubmitAttemptMutationActionPayload struct {
+type SubmitAttemptMutationPayload struct {
 	SessionVariables map[string]interface{}    `json:"session_variables"`
 	Input            SubmitAttemptMutationArgs `json:"input"`
 }
 
-type graphQLErrorSubmitAttemptMutation struct {
-	Message string `json:"message"`
-}
-
-func makeSubmitAttemptMutationHandler(logic SubmitAttemptMutationLogic) func(w http.ResponseWriter, r *http.Request) {
+func makeSubmitAttemptMutationHandler(l SubmitAttemptMutationLogic) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// set the response header as JSON
@@ -29,7 +28,7 @@ func makeSubmitAttemptMutationHandler(logic SubmitAttemptMutationLogic) func(w h
 		}
 
 		// parse the body as action payload
-		var actionPayload SubmitAttemptMutationActionPayload
+		var actionPayload SubmitAttemptMutationPayload
 		err = json.Unmarshal(reqBody, &actionPayload)
 		if err != nil {
 			http.Error(w, "invalid payload", http.StatusBadRequest)
@@ -37,7 +36,7 @@ func makeSubmitAttemptMutationHandler(logic SubmitAttemptMutationLogic) func(w h
 		}
 
 		// Send the request params to the Action's generated handler function
-		result, err := logic.SubmitAttemptMutation(actionPayload.Input)
+		result, err := l.SubmitAttemptMutation(r, actionPayload.Input)
 
 		// throw if an error happens
 		if err != nil {
@@ -54,19 +53,25 @@ func makeSubmitAttemptMutationHandler(logic SubmitAttemptMutationLogic) func(w h
 		data, _ := json.Marshal(result)
 		w.Write(data)
 	}
-
 }
-
-// Auto-generated function that takes the Action parameters and must return it's response type
-func SubmitAttemptMutation(args SubmitAttemptMutationArgs) (response SubmitAttemptMutationOutput, err error) {
-	response = SubmitAttemptMutationOutput{
-		Id: 1111,
-	}
-	return response, nil
-}
-
-// HTTP server for the handler
 
 type SubmitAttemptMutationLogic interface {
-	SubmitAttemptMutation(args SubmitAttemptMutationArgs) (response SubmitAttemptMutationOutput, err error)
+	SubmitAttemptMutation(r *http.Request, args SubmitAttemptMutationArgs) (response SubmitAttemptMutationOutput, err error)
+}
+
+type NewSubmitAttemptMutationResult struct {
+	fx.Out
+	types.HTTPHandlerFuncPatternPair `group:"externalHttpHandlerFunctions"`
+}
+
+func NewSubmitAttemptMutation(l SubmitAttemptMutationLogic) (NewSubmitAttemptMutationResult, error) {
+	if l == nil {
+		return NewSubmitAttemptMutationResult{}, errors.New("need SubmitAttemptMutationLogic")
+	}
+	return NewSubmitAttemptMutationResult{
+		HTTPHandlerFuncPatternPair: types.HTTPHandlerFuncPatternPair{
+			Pattern:     "/your/pattern",
+			HandlerFunc: makeSubmitAttemptMutationHandler(l),
+		},
+	}, nil
 }

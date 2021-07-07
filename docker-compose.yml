@@ -65,6 +65,7 @@ services:
       - ./hasura:/hasura
       - ~/.hasura/actions-codegen-assets:/srv/console-assets/common/codegen:ro
     environment:
+      HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: /srv/console-assets
       HASURA_GRAPHQL_METADATA_DIR: /hasura/metadata
       HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura/migrations
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:ctfd@postgres:5432/postgres

@@ -17,3 +17,4 @@ actions:
   codegen:
     framework: go-serve-mux
     output_dir: .tmp
+    uri: ../../.hasura/actions-codegen-assets/go-serve-mux/actions-codegen.js
