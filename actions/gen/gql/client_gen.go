@@ -3,6 +3,7 @@
 package gql
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Yamashou/gqlgenc/client"
@@ -242,4 +243,27 @@ type MutationRoot struct {
 	UpdateUnlocksByPk          *Unlocks                           "json:\"update_unlocks_by_pk\" graphql:\"update_unlocks_by_pk\""
 	UpdateUsers                *UsersMutationResponse             "json:\"update_users\" graphql:\"update_users\""
 	UpdateUsersByPk            *Users                             "json:\"update_users_by_pk\" graphql:\"update_users_by_pk\""
+}
+type ExecuteSubmitAttemptMutation struct {
+	InsertSubmissionsOne *struct {
+		ID int64 "json:\"id\" graphql:\"id\""
+	} "json:\"insert_submissions_one\" graphql:\"insert_submissions_one\""
+}
+
+const ExecuteSubmitAttemptMutationQuery = `mutation ExecuteSubmitAttemptMutation {
+	insert_submissions_one(object: {}) {
+		id
+	}
+}
+`
+
+func (c *Client) ExecuteSubmitAttemptMutation(ctx context.Context, httpRequestOptions ...client.HTTPRequestOption) (*ExecuteSubmitAttemptMutation, error) {
+	vars := map[string]interface{}{}
+
+	var res ExecuteSubmitAttemptMutation
+	if err := c.Client.Post(ctx, "ExecuteSubmitAttemptMutation", ExecuteSubmitAttemptMutationQuery, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }

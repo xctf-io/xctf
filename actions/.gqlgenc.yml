@@ -18,4 +18,5 @@ models:
 schema:
   - "../frontend/schema.graphql"
 query:
-  - ./query/*.gql
+  - ./**/*.gql
+  - ./**/*.graphql
