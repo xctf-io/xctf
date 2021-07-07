@@ -1,5 +1,0 @@
-mutation ExecuteSubmitAttemptMutation {
-  insert_submissions_one(TODO: {}) {
-    TODO
-  }
-}

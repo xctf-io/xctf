@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	actionsfx "github.com/CTFg/CTFg/actions/fx"
-	gen "github.com/CTFg/CTFg/actions/gen/action"
 	"github.com/CTFg/CTFg/actions/gen/gql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -144,7 +143,6 @@ func main() {
 		// construct the *log.Logger, http.Handler, and *http.ServeMux types.
 		// Remember that constructors are called lazily, so this block doesn't do
 		// much on its own.
-		fx.Provide(gen.NewSubmitAttemptMutation),
 		fx.Provide(
 			NewHandler,
 			NewMux,

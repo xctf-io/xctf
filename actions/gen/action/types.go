@@ -1,7 +1,7 @@
 package action
 
 type Mutation struct {
-	UnlockMutation *UnlockMutationOutput
+	Unlock *UnlockMutationOutput
 }
 
 type SubmitFlagMutationOutput struct {
@@ -41,25 +41,21 @@ type SubmitAttemptMutationOutput struct {
 	Id int
 }
 
-type LogoutArgs struct {
+type RegisterOutput struct {
+	Id    int
+	Token string
 }
 
-type SignupArgs struct {
-	Name     string
-	Password string
-	Captcha  *string
+type SubmitArgs struct {
+	Challenge_id int
+	Provided     string
 }
 
-type SubmitAttemptMutationArgs struct {
-	Challenge_id *int
-	Provided     *string
-}
-
-type UnlockMutationArgs struct {
+type UnlockArgs struct {
 	Target *int
 	Type   *string
 }
 
 type GraphQLError struct {
-	Message string `"message"`
+	Message string `json:"message"`
 }
