@@ -22,10 +22,6 @@ type BooleanComparisonExp struct {
 	Nin    []bool `json:"_nin"`
 }
 
-type EchoOutput struct {
-	Message string `json:"message"`
-}
-
 // Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
 type IntComparisonExp struct {
 	Eq     *int64  `json:"_eq"`
@@ -37,11 +33,6 @@ type IntComparisonExp struct {
 	Lte    *int64  `json:"_lte"`
 	Neq    *int64  `json:"_neq"`
 	Nin    []int64 `json:"_nin"`
-}
-
-type RegisterOutput struct {
-	ID    int64  `json:"id"`
-	Token string `json:"token"`
 }
 
 // Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
@@ -75,16 +66,6 @@ type StringComparisonExp struct {
 	Regex *string `json:"_regex"`
 	// does the column match the given SQL regular expression
 	Similar *string `json:"_similar"`
-}
-
-type SubmitAttemptMutationOutput struct {
-	ID int64 `json:"id"`
-}
-
-type UnlockMutationOutput struct {
-	ID int64 `json:"id"`
-	// An object relationship
-	Unlock *Unlocks `json:"unlock"`
 }
 
 // columns and relationships of "awards"

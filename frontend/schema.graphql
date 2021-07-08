@@ -25,10 +25,6 @@ input Boolean_comparison_exp {
   _nin: [Boolean!]
 }
 
-type EchoOutput {
-  message: String!
-}
-
 """
 Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
 """
@@ -42,11 +38,6 @@ input Int_comparison_exp {
   _lte: Int
   _neq: Int
   _nin: [Int!]
-}
-
-type RegisterOutput {
-  id: Int!
-  token: String!
 }
 
 """
@@ -100,17 +91,6 @@ input String_comparison_exp {
 
   """does the column match the given SQL regular expression"""
   _similar: String
-}
-
-type SubmitAttemptMutationOutput {
-  id: Int!
-}
-
-type UnlockMutationOutput {
-  id: Int!
-
-  """An object relationship"""
-  unlock: unlocks!
 }
 
 """
@@ -4454,7 +4434,6 @@ type mutation_root {
   delete single row from the table: "users"
   """
   delete_users_by_pk(id: Int!): users
-  echo(message: String!): EchoOutput
 
   """
   insert data into the table: "awards"
@@ -4997,9 +4976,6 @@ type mutation_root {
     """on conflict condition"""
     on_conflict: users_on_conflict
   ): users
-  register(affiliation: String, bracket: String, country: String, email: String, name: String, password: String, website: String): RegisterOutput
-  submit(challenge_id: Int!, provided: String!): SubmitAttemptMutationOutput
-  unlock(target: Int, type: String): UnlockMutationOutput
 
   """
   update data of the table: "awards"
