@@ -22,11 +22,8 @@ type BooleanComparisonExp struct {
 	Nin    []bool `json:"_nin"`
 }
 
-type CreateUserOutput struct {
-	ID    int64  `json:"id"`
-	Token string `json:"token"`
-	// An object relationship
-	User *Users `json:"user"`
+type EchoOutput struct {
+	Message string `json:"message"`
 }
 
 // Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
@@ -42,12 +39,9 @@ type IntComparisonExp struct {
 	Nin    []int64 `json:"_nin"`
 }
 
-type JSONWebToken struct {
+type RegisterOutput struct {
+	ID    int64  `json:"id"`
 	Token string `json:"token"`
-}
-
-type LogoutResponse struct {
-	Success *bool `json:"success"`
 }
 
 // Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
@@ -3933,11 +3927,6 @@ type ScoreboardMutationResponse struct {
 	Returning []*Scoreboard `json:"returning"`
 }
 
-// input type for inserting object relation for remote table "scoreboard"
-type ScoreboardObjRelInsertInput struct {
-	Data *ScoreboardInsertInput `json:"data"`
-}
-
 // Ordering options when selecting data from "scoreboard".
 type ScoreboardOrderBy struct {
 	MaxTime *OrderBy      `json:"max_time"`
@@ -4082,11 +4071,6 @@ type ScoreboardUserMutationResponse struct {
 	AffectedRows int64 `json:"affected_rows"`
 	// data from the rows affected by the mutation
 	Returning []*ScoreboardUser `json:"returning"`
-}
-
-// input type for inserting object relation for remote table "scoreboard_user"
-type ScoreboardUserObjRelInsertInput struct {
-	Data *ScoreboardUserInsertInput `json:"data"`
 }
 
 // Ordering options when selecting data from "scoreboard_user".
@@ -5098,9 +5082,7 @@ type Teams struct {
 	ScoreTimeline []*ScoreTimeline `json:"score_timeline"`
 	// An aggregate relationship
 	ScoreTimelineAggregate *ScoreTimelineAggregate `json:"score_timeline_aggregate"`
-	// An object relationship
-	Scoreboard *Scoreboard `json:"scoreboard"`
-	Secret     *string     `json:"secret"`
+	Secret                 *string                 `json:"secret"`
 	// An array relationship
 	Solves []*Solves `json:"solves"`
 	// An aggregate relationship
@@ -5167,7 +5149,6 @@ type TeamsBoolExp struct {
 	OauthID       *IntComparisonExp       `json:"oauth_id"`
 	Password      *StringComparisonExp    `json:"password"`
 	ScoreTimeline *ScoreTimelineBoolExp   `json:"score_timeline"`
-	Scoreboard    *ScoreboardBoolExp      `json:"scoreboard"`
 	Secret        *StringComparisonExp    `json:"secret"`
 	Solves        *SolvesBoolExp          `json:"solves"`
 	Submissions   *SubmissionsBoolExp     `json:"submissions"`
@@ -5202,7 +5183,6 @@ type TeamsInsertInput struct {
 	OauthID       *int64                          `json:"oauth_id"`
 	Password      *string                         `json:"password"`
 	ScoreTimeline *ScoreTimelineArrRelInsertInput `json:"score_timeline"`
-	Scoreboard    *ScoreboardObjRelInsertInput    `json:"scoreboard"`
 	Secret        *string                         `json:"secret"`
 	Solves        *SolvesArrRelInsertInput        `json:"solves"`
 	Submissions   *SubmissionsArrRelInsertInput   `json:"submissions"`
@@ -5284,7 +5264,6 @@ type TeamsOrderBy struct {
 	OauthID                *OrderBy                       `json:"oauth_id"`
 	Password               *OrderBy                       `json:"password"`
 	ScoreTimelineAggregate *ScoreTimelineAggregateOrderBy `json:"score_timeline_aggregate"`
-	Scoreboard             *ScoreboardOrderBy             `json:"scoreboard"`
 	Secret                 *OrderBy                       `json:"secret"`
 	SolvesAggregate        *SolvesAggregateOrderBy        `json:"solves_aggregate"`
 	SubmissionsAggregate   *SubmissionsAggregateOrderBy   `json:"submissions_aggregate"`
@@ -6240,9 +6219,7 @@ type Users struct {
 	ScoreTimeline []*ScoreTimelineUser `json:"score_timeline"`
 	// An aggregate relationship
 	ScoreTimelineAggregate *ScoreTimelineUserAggregate `json:"score_timeline_aggregate"`
-	// An object relationship
-	Scoreboard *ScoreboardUser `json:"scoreboard"`
-	Secret     *string         `json:"secret"`
+	Secret                 *string                     `json:"secret"`
 	// An array relationship
 	Solves []*Solves `json:"solves"`
 	// An aggregate relationship
@@ -6350,7 +6327,6 @@ type UsersBoolExp struct {
 	OauthID          *IntComparisonExp         `json:"oauth_id"`
 	Password         *StringComparisonExp      `json:"password"`
 	ScoreTimeline    *ScoreTimelineUserBoolExp `json:"score_timeline"`
-	Scoreboard       *ScoreboardUserBoolExp    `json:"scoreboard"`
 	Secret           *StringComparisonExp      `json:"secret"`
 	Solves           *SolvesBoolExp            `json:"solves"`
 	Submissions      *SubmissionsBoolExp       `json:"submissions"`
@@ -6390,7 +6366,6 @@ type UsersInsertInput struct {
 	OauthID          *int64                              `json:"oauth_id"`
 	Password         *string                             `json:"password"`
 	ScoreTimeline    *ScoreTimelineUserArrRelInsertInput `json:"score_timeline"`
-	Scoreboard       *ScoreboardUserObjRelInsertInput    `json:"scoreboard"`
 	Secret           *string                             `json:"secret"`
 	Solves           *SolvesArrRelInsertInput            `json:"solves"`
 	Submissions      *SubmissionsArrRelInsertInput       `json:"submissions"`
@@ -6513,7 +6488,6 @@ type UsersOrderBy struct {
 	OauthID                   *OrderBy                           `json:"oauth_id"`
 	Password                  *OrderBy                           `json:"password"`
 	ScoreTimelineAggregate    *ScoreTimelineUserAggregateOrderBy `json:"score_timeline_aggregate"`
-	Scoreboard                *ScoreboardUserOrderBy             `json:"scoreboard"`
 	Secret                    *OrderBy                           `json:"secret"`
 	SolvesAggregate           *SolvesAggregateOrderBy            `json:"solves_aggregate"`
 	SubmissionsAggregate      *SubmissionsAggregateOrderBy       `json:"submissions_aggregate"`

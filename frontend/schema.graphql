@@ -25,12 +25,8 @@ input Boolean_comparison_exp {
   _nin: [Boolean!]
 }
 
-type CreateUserOutput {
-  id: Int!
-  token: String!
-
-  """An object relationship"""
-  user: users!
+type EchoOutput {
+  message: String!
 }
 
 """
@@ -48,12 +44,9 @@ input Int_comparison_exp {
   _nin: [Int!]
 }
 
-type JsonWebToken {
+type RegisterOutput {
+  id: Int!
   token: String!
-}
-
-type LogoutResponse {
-  success: Boolean
 }
 
 """
@@ -4154,12 +4147,6 @@ input json_comparison_exp {
 
 """mutation root"""
 type mutation_root {
-  Login(captcha: String, name: String!, password: String!): JsonWebToken
-  Logout: LogoutResponse
-  Signup(captcha: String, name: String!, password: String!): CreateUserOutput
-  SubmitAttemptMutation(challenge_id: Int, provided: String): SubmitAttemptMutationOutput
-  UnlockMutation(target: Int, type: String): UnlockMutationOutput
-
   """
   delete data from the table: "awards"
   """
@@ -4467,6 +4454,7 @@ type mutation_root {
   delete single row from the table: "users"
   """
   delete_users_by_pk(id: Int!): users
+  echo(message: String!): EchoOutput
 
   """
   insert data into the table: "awards"
@@ -5009,6 +4997,9 @@ type mutation_root {
     """on conflict condition"""
     on_conflict: users_on_conflict
   ): users
+  register(affiliation: String, bracket: String, country: String, email: String, name: String, password: String, website: String): RegisterOutput
+  submit(challenge_id: Int!, provided: String!): SubmitAttemptMutationOutput
+  unlock(target: Int, type: String): UnlockMutationOutput
 
   """
   update data of the table: "awards"
@@ -8208,13 +8199,6 @@ type scoreboard_mutation_response {
   returning: [scoreboard!]!
 }
 
-"""
-input type for inserting object relation for remote table "scoreboard"
-"""
-input scoreboard_obj_rel_insert_input {
-  data: scoreboard_insert_input!
-}
-
 """Ordering options when selecting data from "scoreboard"."""
 input scoreboard_order_by {
   max_time: order_by
@@ -8395,13 +8379,6 @@ type scoreboard_user_mutation_response {
 
   """data from the rows affected by the mutation"""
   returning: [scoreboard_user!]!
-}
-
-"""
-input type for inserting object relation for remote table "scoreboard_user"
-"""
-input scoreboard_user_obj_rel_insert_input {
-  data: scoreboard_user_insert_input!
 }
 
 """Ordering options when selecting data from "scoreboard_user"."""
@@ -10991,9 +10968,6 @@ type teams {
     """filter the rows returned"""
     where: score_timeline_bool_exp
   ): score_timeline_aggregate!
-
-  """An object relationship"""
-  scoreboard: scoreboard
   secret: String
 
   """An array relationship"""
@@ -11163,7 +11137,6 @@ input teams_bool_exp {
   oauth_id: Int_comparison_exp
   password: String_comparison_exp
   score_timeline: score_timeline_bool_exp
-  scoreboard: scoreboard_bool_exp
   secret: String_comparison_exp
   solves: solves_bool_exp
   submissions: submissions_bool_exp
@@ -11219,7 +11192,6 @@ input teams_insert_input {
   oauth_id: Int
   password: String
   score_timeline: score_timeline_arr_rel_insert_input
-  scoreboard: scoreboard_obj_rel_insert_input
   secret: String
   solves: solves_arr_rel_insert_input
   submissions: submissions_arr_rel_insert_input
@@ -11309,7 +11281,6 @@ input teams_order_by {
   oauth_id: order_by
   password: order_by
   score_timeline_aggregate: score_timeline_aggregate_order_by
-  scoreboard: scoreboard_order_by
   secret: order_by
   solves_aggregate: solves_aggregate_order_by
   submissions_aggregate: submissions_aggregate_order_by
@@ -12830,9 +12801,6 @@ type users {
     """filter the rows returned"""
     where: score_timeline_user_bool_exp
   ): score_timeline_user_aggregate!
-
-  """An object relationship"""
-  scoreboard: scoreboard_user
   secret: String
 
   """An array relationship"""
@@ -13115,7 +13083,6 @@ input users_bool_exp {
   oauth_id: Int_comparison_exp
   password: String_comparison_exp
   score_timeline: score_timeline_user_bool_exp
-  scoreboard: scoreboard_user_bool_exp
   secret: String_comparison_exp
   solves: solves_bool_exp
   submissions: submissions_bool_exp
@@ -13176,7 +13143,6 @@ input users_insert_input {
   oauth_id: Int
   password: String
   score_timeline: score_timeline_user_arr_rel_insert_input
-  scoreboard: scoreboard_user_obj_rel_insert_input
   secret: String
   solves: solves_arr_rel_insert_input
   submissions: submissions_arr_rel_insert_input
@@ -13311,7 +13277,6 @@ input users_order_by {
   oauth_id: order_by
   password: order_by
   score_timeline_aggregate: score_timeline_user_aggregate_order_by
-  scoreboard: scoreboard_user_order_by
   secret: order_by
   solves_aggregate: solves_aggregate_order_by
   submissions_aggregate: submissions_aggregate_order_by
