@@ -1,4 +1,10 @@
 type Mutation {
+  echo (
+    message: String!
+  ): EchoOutput
+}
+
+type Mutation {
   register (
     affiliation: String
     bracket: String
@@ -64,5 +70,13 @@ type SubmitAttemptMutationOutput {
 type RegisterOutput {
   id : Int!
   token : String!
+}
+
+type HelloOutput {
+  message : String!
+}
+
+type EchoOutput {
+  message : String!
 }
 

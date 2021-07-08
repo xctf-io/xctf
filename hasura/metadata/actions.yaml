@@ -1,17 +1,22 @@
 actions:
+- name: echo
+  definition:
+    kind: synchronous
+    handler: http://actions/echo
+    forward_client_headers: true
 - name: register
   definition:
     kind: synchronous
-    handler: http://localhost:3000
+    handler: http://actions/register
 - name: submit
   definition:
     kind: synchronous
-    handler: http://host.docker.internal:3000
+    handler: http://actions/submit
     forward_client_headers: true
 - name: unlock
   definition:
     kind: synchronous
-    handler: http://host.docker.internal:3000
+    handler: http://actions/unlock
     forward_client_headers: true
 custom_types:
   enums: []
@@ -54,4 +59,6 @@ custom_types:
   - name: SubmitMutationOutput
   - name: SubmitAttemptMutationOutput
   - name: RegisterOutput
+  - name: HelloOutput
+  - name: EchoOutput
   scalars: []
