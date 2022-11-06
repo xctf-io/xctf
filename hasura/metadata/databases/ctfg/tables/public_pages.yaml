@@ -1,0 +1,56 @@
+table:
+  name: pages
+  schema: public
+array_relationships:
+- name: comments
+  using:
+    foreign_key_constraint_on:
+      column: page_id
+      table:
+        name: comments
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - auth_required
+    - content
+    - format
+    - id
+    - route
+    - title
+    filter:
+      _and:
+      - hidden:
+          _ne: true
+      - draft:
+          _ne: true
+      - auth_required:
+          _ne: true
+  role: ctfd_
+- permission:
+    columns:
+    - id
+    - title
+    - route
+    - content
+    - draft
+    - hidden
+    - auth_required
+    - format
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - auth_required
+    - content
+    - format
+    - id
+    - route
+    - title
+    filter:
+      _and:
+      - hidden:
+          _ne: true
+      - draft:
+          _ne: true
+  role: ctfd_user

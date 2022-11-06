@@ -1,0 +1,181 @@
+table:
+  name: users
+  schema: public
+object_relationships:
+- name: captain_of
+  using:
+    manual_configuration:
+      column_mapping:
+        id: captain_id
+      insertion_order: null
+      remote_table:
+        name: teams
+        schema: public
+- name: team
+  using:
+    foreign_key_constraint_on: team_id
+array_relationships:
+- name: awards
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: awards
+        schema: public
+- name: comments
+  using:
+    foreign_key_constraint_on:
+      column: author_id
+      table:
+        name: comments
+        schema: public
+- name: commentsByUserId
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: comments
+        schema: public
+- name: field_entries
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: field_entries
+        schema: public
+- name: score_timeline
+  using:
+    manual_configuration:
+      column_mapping:
+        id: user_id
+      insertion_order: null
+      remote_table:
+        name: score_timeline_user
+        schema: public
+- name: solves
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: solves
+        schema: public
+- name: submissions
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: submissions
+        schema: public
+- name: tokens
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: tokens
+        schema: public
+- name: trackings
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: tracking
+        schema: public
+- name: unlocks
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: unlocks
+        schema: public
+computed_fields:
+- definition:
+    function:
+      name: user_avatar
+      schema: public
+  name: avatar
+- definition:
+    function:
+      name: user_score
+      schema: public
+  name: score
+select_permissions:
+- permission:
+    columns:
+    - affiliation
+    - bracket
+    - country
+    - created
+    - id
+    - name
+    - team_id
+    - type
+    - verified
+    - website
+    computed_fields:
+    - avatar
+    - score
+    filter:
+      _exists:
+        _table:
+          name: config
+          schema: public
+        _where:
+          _and:
+          - key:
+              _eq: account_visibility
+          - value:
+              _eq: public
+  role: ctfd_
+- permission:
+    columns:
+    - affiliation
+    - banned
+    - bracket
+    - country
+    - created
+    - email
+    - hidden
+    - id
+    - name
+    - oauth_id
+    - secret
+    - team_id
+    - type
+    - verified
+    - website
+    computed_fields:
+    - avatar
+    - score
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - affiliation
+    - bracket
+    - country
+    - created
+    - id
+    - name
+    - team_id
+    - type
+    - verified
+    - website
+    computed_fields:
+    - avatar
+    - score
+    filter:
+      _or:
+      - hidden:
+          _ne: true
+      - id:
+          _eq: X-Hasura-User-Id
+  role: ctfd_user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - banned
+    - hidden
+    - team_id
+    filter: {}
+  role: ctfd_admin

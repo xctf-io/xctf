@@ -8,6 +8,9 @@ schema {
 directive @cached(
   """measured in seconds"""
   ttl: Int! = 60
+
+  """refresh the cache entry"""
+  refresh: Boolean! = false
 ) on QUERY
 
 """
@@ -25,14 +28,6 @@ input Boolean_comparison_exp {
   _nin: [Boolean!]
 }
 
-type CreateUserOutput {
-  id: Int!
-  token: String!
-
-  """An object relationship"""
-  user: users!
-}
-
 """
 Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
 """
@@ -46,14 +41,6 @@ input Int_comparison_exp {
   _lte: Int
   _neq: Int
   _nin: [Int!]
-}
-
-type JsonWebToken {
-  token: String!
-}
-
-type LogoutResponse {
-  success: Boolean
 }
 
 """
@@ -107,17 +94,6 @@ input String_comparison_exp {
 
   """does the column match the given SQL regular expression"""
   _similar: String
-}
-
-type SubmitAttemptMutationOutput {
-  id: Int!
-}
-
-type UnlockMutationOutput {
-  id: Int!
-
-  """An object relationship"""
-  unlock: unlocks!
 }
 
 """
@@ -194,7 +170,7 @@ input type for inserting array relation for remote table "awards"
 input awards_arr_rel_insert_input {
   data: [awards_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: awards_on_conflict
 }
 
@@ -242,7 +218,9 @@ input awards_bool_exp {
 unique or primary key constraints on table "awards"
 """
 enum awards_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   awards_pkey
 }
 
@@ -347,7 +325,7 @@ type awards_mutation_response {
 }
 
 """
-on conflict condition type for table "awards"
+on_conflict condition type for table "awards"
 """
 input awards_on_conflict {
   constraint: awards_constraint!
@@ -654,6 +632,7 @@ type challenges {
     """filter the rows returned"""
     where: comments_bool_exp
   ): comments_aggregate!
+  connection_info: String
   description: String
 
   """An array relationship"""
@@ -766,6 +745,7 @@ type challenges {
   id: Int!
   max_attempts: Int
   name: String
+  next_id: Int
   requirements(
     """JSON select path"""
     path: String
@@ -917,6 +897,7 @@ type challenges_aggregate_fields {
 type challenges_avg_fields {
   id: Float
   max_attempts: Float
+  next_id: Float
   value: Float
 }
 
@@ -929,6 +910,7 @@ input challenges_bool_exp {
   _or: [challenges_bool_exp!]
   category: String_comparison_exp
   comments: comments_bool_exp
+  connection_info: String_comparison_exp
   description: String_comparison_exp
   files: files_bool_exp
   flags: flags_bool_exp
@@ -936,7 +918,9 @@ input challenges_bool_exp {
   id: Int_comparison_exp
   max_attempts: Int_comparison_exp
   name: String_comparison_exp
+  next_id: Int_comparison_exp
   requirements: json_comparison_exp
+  solved: Boolean_comparison_exp
   solves: solves_bool_exp
   state: String_comparison_exp
   submissions: submissions_bool_exp
@@ -949,7 +933,9 @@ input challenges_bool_exp {
 unique or primary key constraints on table "challenges"
 """
 enum challenges_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   challenges_pkey
 }
 
@@ -959,6 +945,7 @@ input type for incrementing numeric columns in table "challenges"
 input challenges_inc_input {
   id: Int
   max_attempts: Int
+  next_id: Int
   value: Int
 }
 
@@ -968,6 +955,7 @@ input type for inserting data into table "challenges"
 input challenges_insert_input {
   category: String
   comments: comments_arr_rel_insert_input
+  connection_info: String
   description: String
   files: files_arr_rel_insert_input
   flags: flags_arr_rel_insert_input
@@ -975,6 +963,7 @@ input challenges_insert_input {
   id: Int
   max_attempts: Int
   name: String
+  next_id: Int
   requirements: json
   solves: solves_arr_rel_insert_input
   state: String
@@ -987,10 +976,12 @@ input challenges_insert_input {
 """aggregate max on columns"""
 type challenges_max_fields {
   category: String
+  connection_info: String
   description: String
   id: Int
   max_attempts: Int
   name: String
+  next_id: Int
   state: String
   type: String
   value: Int
@@ -999,10 +990,12 @@ type challenges_max_fields {
 """aggregate min on columns"""
 type challenges_min_fields {
   category: String
+  connection_info: String
   description: String
   id: Int
   max_attempts: Int
   name: String
+  next_id: Int
   state: String
   type: String
   value: Int
@@ -1025,12 +1018,12 @@ input type for inserting object relation for remote table "challenges"
 input challenges_obj_rel_insert_input {
   data: challenges_insert_input!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: challenges_on_conflict
 }
 
 """
-on conflict condition type for table "challenges"
+on_conflict condition type for table "challenges"
 """
 input challenges_on_conflict {
   constraint: challenges_constraint!
@@ -1042,6 +1035,7 @@ input challenges_on_conflict {
 input challenges_order_by {
   category: order_by
   comments_aggregate: comments_aggregate_order_by
+  connection_info: order_by
   description: order_by
   files_aggregate: files_aggregate_order_by
   flags_aggregate: flags_aggregate_order_by
@@ -1049,7 +1043,9 @@ input challenges_order_by {
   id: order_by
   max_attempts: order_by
   name: order_by
+  next_id: order_by
   requirements: order_by
+  solved: order_by
   solves_aggregate: solves_aggregate_order_by
   state: order_by
   submissions_aggregate: submissions_aggregate_order_by
@@ -1071,6 +1067,9 @@ enum challenges_select_column {
   category
 
   """column name"""
+  connection_info
+
+  """column name"""
   description
 
   """column name"""
@@ -1081,6 +1080,9 @@ enum challenges_select_column {
 
   """column name"""
   name
+
+  """column name"""
+  next_id
 
   """column name"""
   requirements
@@ -1100,10 +1102,12 @@ input type for updating data in table "challenges"
 """
 input challenges_set_input {
   category: String
+  connection_info: String
   description: String
   id: Int
   max_attempts: Int
   name: String
+  next_id: Int
   requirements: json
   state: String
   type: String
@@ -1114,6 +1118,7 @@ input challenges_set_input {
 type challenges_stddev_fields {
   id: Float
   max_attempts: Float
+  next_id: Float
   value: Float
 }
 
@@ -1121,6 +1126,7 @@ type challenges_stddev_fields {
 type challenges_stddev_pop_fields {
   id: Float
   max_attempts: Float
+  next_id: Float
   value: Float
 }
 
@@ -1128,6 +1134,7 @@ type challenges_stddev_pop_fields {
 type challenges_stddev_samp_fields {
   id: Float
   max_attempts: Float
+  next_id: Float
   value: Float
 }
 
@@ -1135,6 +1142,7 @@ type challenges_stddev_samp_fields {
 type challenges_sum_fields {
   id: Int
   max_attempts: Int
+  next_id: Int
   value: Int
 }
 
@@ -1144,6 +1152,9 @@ update columns of table "challenges"
 enum challenges_update_column {
   """column name"""
   category
+
+  """column name"""
+  connection_info
 
   """column name"""
   description
@@ -1156,6 +1167,9 @@ enum challenges_update_column {
 
   """column name"""
   name
+
+  """column name"""
+  next_id
 
   """column name"""
   requirements
@@ -1174,6 +1188,7 @@ enum challenges_update_column {
 type challenges_var_pop_fields {
   id: Float
   max_attempts: Float
+  next_id: Float
   value: Float
 }
 
@@ -1181,6 +1196,7 @@ type challenges_var_pop_fields {
 type challenges_var_samp_fields {
   id: Float
   max_attempts: Float
+  next_id: Float
   value: Float
 }
 
@@ -1188,6 +1204,7 @@ type challenges_var_samp_fields {
 type challenges_variance_fields {
   id: Float
   max_attempts: Float
+  next_id: Float
   value: Float
 }
 
@@ -1269,7 +1286,7 @@ input type for inserting array relation for remote table "comments"
 input comments_arr_rel_insert_input {
   data: [comments_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: comments_on_conflict
 }
 
@@ -1322,7 +1339,9 @@ input comments_bool_exp {
 unique or primary key constraints on table "comments"
 """
 enum comments_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   comments_pkey
 }
 
@@ -1426,7 +1445,7 @@ type comments_mutation_response {
 }
 
 """
-on conflict condition type for table "comments"
+on_conflict condition type for table "comments"
 """
 input comments_on_conflict {
   constraint: comments_constraint!
@@ -1745,7 +1764,9 @@ input config_bool_exp {
 unique or primary key constraints on table "config"
 """
 enum config_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   config_pkey
 }
 
@@ -1791,7 +1812,7 @@ type config_mutation_response {
 }
 
 """
-on conflict condition type for table "config"
+on_conflict condition type for table "config"
 """
 input config_on_conflict {
   constraint: config_constraint!
@@ -1946,7 +1967,9 @@ input dynamic_challenge_bool_exp {
 unique or primary key constraints on table "dynamic_challenge"
 """
 enum dynamic_challenge_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   dynamic_challenge_pkey
 }
 
@@ -1999,7 +2022,7 @@ type dynamic_challenge_mutation_response {
 }
 
 """
-on conflict condition type for table "dynamic_challenge"
+on_conflict condition type for table "dynamic_challenge"
 """
 input dynamic_challenge_on_conflict {
   constraint: dynamic_challenge_constraint!
@@ -2192,7 +2215,7 @@ input type for inserting array relation for remote table "field_entries"
 input field_entries_arr_rel_insert_input {
   data: [field_entries_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: field_entries_on_conflict
 }
 
@@ -2236,7 +2259,9 @@ input field_entries_bool_exp {
 unique or primary key constraints on table "field_entries"
 """
 enum field_entries_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   field_entries_pkey
 }
 
@@ -2317,7 +2342,7 @@ type field_entries_mutation_response {
 }
 
 """
-on conflict condition type for table "field_entries"
+on_conflict condition type for table "field_entries"
 """
 input field_entries_on_conflict {
   constraint: field_entries_constraint!
@@ -2629,7 +2654,9 @@ input fields_bool_exp {
 unique or primary key constraints on table "fields"
 """
 enum fields_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   fields_pkey
 }
 
@@ -2690,12 +2717,12 @@ input type for inserting object relation for remote table "fields"
 input fields_obj_rel_insert_input {
   data: fields_insert_input!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: fields_on_conflict
 }
 
 """
-on conflict condition type for table "fields"
+on_conflict condition type for table "fields"
 """
 input fields_on_conflict {
   constraint: fields_constraint!
@@ -2892,7 +2919,7 @@ input type for inserting array relation for remote table "files"
 input files_arr_rel_insert_input {
   data: [files_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: files_on_conflict
 }
 
@@ -2932,7 +2959,9 @@ input files_bool_exp {
 unique or primary key constraints on table "files"
 """
 enum files_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   files_pkey
 }
 
@@ -3010,7 +3039,7 @@ type files_mutation_response {
 }
 
 """
-on conflict condition type for table "files"
+on_conflict condition type for table "files"
 """
 input files_on_conflict {
   constraint: files_constraint!
@@ -3258,7 +3287,7 @@ input type for inserting array relation for remote table "flags"
 input flags_arr_rel_insert_input {
   data: [flags_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: flags_on_conflict
 }
 
@@ -3295,7 +3324,9 @@ input flags_bool_exp {
 unique or primary key constraints on table "flags"
 """
 enum flags_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   flags_pkey
 }
 
@@ -3371,7 +3402,7 @@ type flags_mutation_response {
 }
 
 """
-on conflict condition type for table "flags"
+on_conflict condition type for table "flags"
 """
 input flags_on_conflict {
   constraint: flags_constraint!
@@ -3647,7 +3678,7 @@ input type for inserting array relation for remote table "hints"
 input hints_arr_rel_insert_input {
   data: [hints_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: hints_on_conflict
 }
 
@@ -3689,7 +3720,9 @@ input hints_bool_exp {
 unique or primary key constraints on table "hints"
 """
 enum hints_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   hints_pkey
 }
 
@@ -3934,12 +3967,12 @@ input type for inserting object relation for remote table "hints"
 input hints_obj_rel_insert_input {
   data: hints_insert_input!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: hints_on_conflict
 }
 
 """
-on conflict condition type for table "hints"
+on_conflict condition type for table "hints"
 """
 input hints_on_conflict {
   constraint: hints_constraint!
@@ -4154,12 +4187,6 @@ input json_comparison_exp {
 
 """mutation root"""
 type mutation_root {
-  Login(captcha: String, name: String!, password: String!): JsonWebToken
-  Logout: LogoutResponse
-  Signup(captcha: String, name: String!, password: String!): CreateUserOutput
-  SubmitAttemptMutation(challenge_id: Int, provided: String): SubmitAttemptMutationOutput
-  UnlockMutation(target: Int, type: String): UnlockMutationOutput
-
   """
   delete data from the table: "awards"
   """
@@ -4325,46 +4352,6 @@ type mutation_root {
   delete_pages_by_pk(id: Int!): pages
 
   """
-  delete data from the table: "score_events"
-  """
-  delete_score_events(
-    """filter the rows which have to be deleted"""
-    where: score_events_bool_exp!
-  ): score_events_mutation_response
-
-  """
-  delete data from the table: "score_timeline"
-  """
-  delete_score_timeline(
-    """filter the rows which have to be deleted"""
-    where: score_timeline_bool_exp!
-  ): score_timeline_mutation_response
-
-  """
-  delete data from the table: "score_timeline_user"
-  """
-  delete_score_timeline_user(
-    """filter the rows which have to be deleted"""
-    where: score_timeline_user_bool_exp!
-  ): score_timeline_user_mutation_response
-
-  """
-  delete data from the table: "scoreboard"
-  """
-  delete_scoreboard(
-    """filter the rows which have to be deleted"""
-    where: scoreboard_bool_exp!
-  ): scoreboard_mutation_response
-
-  """
-  delete data from the table: "scoreboard_user"
-  """
-  delete_scoreboard_user(
-    """filter the rows which have to be deleted"""
-    where: scoreboard_user_bool_exp!
-  ): scoreboard_user_mutation_response
-
-  """
   delete data from the table: "solves"
   """
   delete_solves(
@@ -4475,7 +4462,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [awards_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: awards_on_conflict
   ): awards_mutation_response
 
@@ -4486,7 +4473,7 @@ type mutation_root {
     """the row to be inserted"""
     object: awards_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: awards_on_conflict
   ): awards
 
@@ -4497,7 +4484,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [challenges_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: challenges_on_conflict
   ): challenges_mutation_response
 
@@ -4508,7 +4495,7 @@ type mutation_root {
     """the row to be inserted"""
     object: challenges_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: challenges_on_conflict
   ): challenges
 
@@ -4519,7 +4506,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [comments_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: comments_on_conflict
   ): comments_mutation_response
 
@@ -4530,7 +4517,7 @@ type mutation_root {
     """the row to be inserted"""
     object: comments_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: comments_on_conflict
   ): comments
 
@@ -4541,7 +4528,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [config_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: config_on_conflict
   ): config_mutation_response
 
@@ -4552,7 +4539,7 @@ type mutation_root {
     """the row to be inserted"""
     object: config_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: config_on_conflict
   ): config
 
@@ -4563,7 +4550,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [dynamic_challenge_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: dynamic_challenge_on_conflict
   ): dynamic_challenge_mutation_response
 
@@ -4574,7 +4561,7 @@ type mutation_root {
     """the row to be inserted"""
     object: dynamic_challenge_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: dynamic_challenge_on_conflict
   ): dynamic_challenge
 
@@ -4585,7 +4572,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [field_entries_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: field_entries_on_conflict
   ): field_entries_mutation_response
 
@@ -4596,7 +4583,7 @@ type mutation_root {
     """the row to be inserted"""
     object: field_entries_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: field_entries_on_conflict
   ): field_entries
 
@@ -4607,7 +4594,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [fields_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: fields_on_conflict
   ): fields_mutation_response
 
@@ -4618,7 +4605,7 @@ type mutation_root {
     """the row to be inserted"""
     object: fields_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: fields_on_conflict
   ): fields
 
@@ -4629,7 +4616,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [files_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: files_on_conflict
   ): files_mutation_response
 
@@ -4640,7 +4627,7 @@ type mutation_root {
     """the row to be inserted"""
     object: files_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: files_on_conflict
   ): files
 
@@ -4651,7 +4638,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [flags_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: flags_on_conflict
   ): flags_mutation_response
 
@@ -4662,7 +4649,7 @@ type mutation_root {
     """the row to be inserted"""
     object: flags_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: flags_on_conflict
   ): flags
 
@@ -4673,7 +4660,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [hints_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: hints_on_conflict
   ): hints_mutation_response
 
@@ -4700,7 +4687,7 @@ type mutation_root {
     """the row to be inserted"""
     object: hints_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: hints_on_conflict
   ): hints
 
@@ -4711,7 +4698,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [notifications_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: notifications_on_conflict
   ): notifications_mutation_response
 
@@ -4722,7 +4709,7 @@ type mutation_root {
     """the row to be inserted"""
     object: notifications_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: notifications_on_conflict
   ): notifications
 
@@ -4733,7 +4720,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [pages_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: pages_on_conflict
   ): pages_mutation_response
 
@@ -4744,95 +4731,9 @@ type mutation_root {
     """the row to be inserted"""
     object: pages_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: pages_on_conflict
   ): pages
-
-  """
-  insert data into the table: "score_events"
-  """
-  insert_score_events(
-    """the rows to be inserted"""
-    objects: [score_events_insert_input!]!
-
-    """on conflict condition"""
-    on_conflict: score_events_on_conflict
-  ): score_events_mutation_response
-
-  """
-  insert a single row into the table: "score_events"
-  """
-  insert_score_events_one(
-    """the row to be inserted"""
-    object: score_events_insert_input!
-
-    """on conflict condition"""
-    on_conflict: score_events_on_conflict
-  ): score_events
-
-  """
-  insert data into the table: "score_timeline"
-  """
-  insert_score_timeline(
-    """the rows to be inserted"""
-    objects: [score_timeline_insert_input!]!
-  ): score_timeline_mutation_response
-
-  """
-  insert a single row into the table: "score_timeline"
-  """
-  insert_score_timeline_one(
-    """the row to be inserted"""
-    object: score_timeline_insert_input!
-  ): score_timeline
-
-  """
-  insert data into the table: "score_timeline_user"
-  """
-  insert_score_timeline_user(
-    """the rows to be inserted"""
-    objects: [score_timeline_user_insert_input!]!
-  ): score_timeline_user_mutation_response
-
-  """
-  insert a single row into the table: "score_timeline_user"
-  """
-  insert_score_timeline_user_one(
-    """the row to be inserted"""
-    object: score_timeline_user_insert_input!
-  ): score_timeline_user
-
-  """
-  insert data into the table: "scoreboard"
-  """
-  insert_scoreboard(
-    """the rows to be inserted"""
-    objects: [scoreboard_insert_input!]!
-  ): scoreboard_mutation_response
-
-  """
-  insert a single row into the table: "scoreboard"
-  """
-  insert_scoreboard_one(
-    """the row to be inserted"""
-    object: scoreboard_insert_input!
-  ): scoreboard
-
-  """
-  insert data into the table: "scoreboard_user"
-  """
-  insert_scoreboard_user(
-    """the rows to be inserted"""
-    objects: [scoreboard_user_insert_input!]!
-  ): scoreboard_user_mutation_response
-
-  """
-  insert a single row into the table: "scoreboard_user"
-  """
-  insert_scoreboard_user_one(
-    """the row to be inserted"""
-    object: scoreboard_user_insert_input!
-  ): scoreboard_user
 
   """
   insert data into the table: "solves"
@@ -4841,7 +4742,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [solves_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: solves_on_conflict
   ): solves_mutation_response
 
@@ -4852,7 +4753,7 @@ type mutation_root {
     """the row to be inserted"""
     object: solves_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: solves_on_conflict
   ): solves
 
@@ -4863,7 +4764,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [submissions_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: submissions_on_conflict
   ): submissions_mutation_response
 
@@ -4874,7 +4775,7 @@ type mutation_root {
     """the row to be inserted"""
     object: submissions_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: submissions_on_conflict
   ): submissions
 
@@ -4885,7 +4786,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [tags_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: tags_on_conflict
   ): tags_mutation_response
 
@@ -4896,7 +4797,7 @@ type mutation_root {
     """the row to be inserted"""
     object: tags_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: tags_on_conflict
   ): tags
 
@@ -4907,7 +4808,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [teams_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: teams_on_conflict
   ): teams_mutation_response
 
@@ -4918,7 +4819,7 @@ type mutation_root {
     """the row to be inserted"""
     object: teams_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: teams_on_conflict
   ): teams
 
@@ -4929,7 +4830,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [tokens_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: tokens_on_conflict
   ): tokens_mutation_response
 
@@ -4940,7 +4841,7 @@ type mutation_root {
     """the row to be inserted"""
     object: tokens_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: tokens_on_conflict
   ): tokens
 
@@ -4951,7 +4852,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [tracking_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: tracking_on_conflict
   ): tracking_mutation_response
 
@@ -4962,7 +4863,7 @@ type mutation_root {
     """the row to be inserted"""
     object: tracking_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: tracking_on_conflict
   ): tracking
 
@@ -4973,7 +4874,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [unlocks_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: unlocks_on_conflict
   ): unlocks_mutation_response
 
@@ -4984,7 +4885,7 @@ type mutation_root {
     """the row to be inserted"""
     object: unlocks_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: unlocks_on_conflict
   ): unlocks
 
@@ -4995,7 +4896,7 @@ type mutation_root {
     """the rows to be inserted"""
     objects: [users_insert_input!]!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: users_on_conflict
   ): users_mutation_response
 
@@ -5006,7 +4907,7 @@ type mutation_root {
     """the row to be inserted"""
     object: users_insert_input!
 
-    """on conflict condition"""
+    """upsert condition"""
     on_conflict: users_on_conflict
   ): users
 
@@ -5337,76 +5238,6 @@ type mutation_root {
   ): pages
 
   """
-  update data of the table: "score_events"
-  """
-  update_score_events(
-    """increments the numeric columns with given value of the filtered values"""
-    _inc: score_events_inc_input
-
-    """sets the columns of the filtered rows to the given values"""
-    _set: score_events_set_input
-
-    """filter the rows which have to be updated"""
-    where: score_events_bool_exp!
-  ): score_events_mutation_response
-
-  """
-  update data of the table: "score_timeline"
-  """
-  update_score_timeline(
-    """increments the numeric columns with given value of the filtered values"""
-    _inc: score_timeline_inc_input
-
-    """sets the columns of the filtered rows to the given values"""
-    _set: score_timeline_set_input
-
-    """filter the rows which have to be updated"""
-    where: score_timeline_bool_exp!
-  ): score_timeline_mutation_response
-
-  """
-  update data of the table: "score_timeline_user"
-  """
-  update_score_timeline_user(
-    """increments the numeric columns with given value of the filtered values"""
-    _inc: score_timeline_user_inc_input
-
-    """sets the columns of the filtered rows to the given values"""
-    _set: score_timeline_user_set_input
-
-    """filter the rows which have to be updated"""
-    where: score_timeline_user_bool_exp!
-  ): score_timeline_user_mutation_response
-
-  """
-  update data of the table: "scoreboard"
-  """
-  update_scoreboard(
-    """increments the numeric columns with given value of the filtered values"""
-    _inc: scoreboard_inc_input
-
-    """sets the columns of the filtered rows to the given values"""
-    _set: scoreboard_set_input
-
-    """filter the rows which have to be updated"""
-    where: scoreboard_bool_exp!
-  ): scoreboard_mutation_response
-
-  """
-  update data of the table: "scoreboard_user"
-  """
-  update_scoreboard_user(
-    """increments the numeric columns with given value of the filtered values"""
-    _inc: scoreboard_user_inc_input
-
-    """sets the columns of the filtered rows to the given values"""
-    _set: scoreboard_user_set_input
-
-    """filter the rows which have to be updated"""
-    where: scoreboard_user_bool_exp!
-  ): scoreboard_user_mutation_response
-
-  """
   update data of the table: "solves"
   """
   update_solves(
@@ -5658,11 +5489,47 @@ type notifications_aggregate_fields {
   variance: notifications_variance_fields
 }
 
+"""
+order by aggregate values of table "notifications"
+"""
+input notifications_aggregate_order_by {
+  avg: notifications_avg_order_by
+  count: order_by
+  max: notifications_max_order_by
+  min: notifications_min_order_by
+  stddev: notifications_stddev_order_by
+  stddev_pop: notifications_stddev_pop_order_by
+  stddev_samp: notifications_stddev_samp_order_by
+  sum: notifications_sum_order_by
+  var_pop: notifications_var_pop_order_by
+  var_samp: notifications_var_samp_order_by
+  variance: notifications_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "notifications"
+"""
+input notifications_arr_rel_insert_input {
+  data: [notifications_insert_input!]!
+
+  """upsert condition"""
+  on_conflict: notifications_on_conflict
+}
+
 """aggregate avg on columns"""
 type notifications_avg_fields {
   id: Float
   team_id: Float
   user_id: Float
+}
+
+"""
+order by avg() on columns of table "notifications"
+"""
+input notifications_avg_order_by {
+  id: order_by
+  team_id: order_by
+  user_id: order_by
 }
 
 """
@@ -5686,7 +5553,9 @@ input notifications_bool_exp {
 unique or primary key constraints on table "notifications"
 """
 enum notifications_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   notifications_pkey
 }
 
@@ -5723,6 +5592,18 @@ type notifications_max_fields {
   user_id: Int
 }
 
+"""
+order by max() on columns of table "notifications"
+"""
+input notifications_max_order_by {
+  content: order_by
+  date: order_by
+  id: order_by
+  team_id: order_by
+  title: order_by
+  user_id: order_by
+}
+
 """aggregate min on columns"""
 type notifications_min_fields {
   content: String
@@ -5731,6 +5612,18 @@ type notifications_min_fields {
   team_id: Int
   title: String
   user_id: Int
+}
+
+"""
+order by min() on columns of table "notifications"
+"""
+input notifications_min_order_by {
+  content: order_by
+  date: order_by
+  id: order_by
+  team_id: order_by
+  title: order_by
+  user_id: order_by
 }
 
 """
@@ -5745,7 +5638,7 @@ type notifications_mutation_response {
 }
 
 """
-on conflict condition type for table "notifications"
+on_conflict condition type for table "notifications"
 """
 input notifications_on_conflict {
   constraint: notifications_constraint!
@@ -5812,11 +5705,29 @@ type notifications_stddev_fields {
   user_id: Float
 }
 
+"""
+order by stddev() on columns of table "notifications"
+"""
+input notifications_stddev_order_by {
+  id: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
 """aggregate stddev_pop on columns"""
 type notifications_stddev_pop_fields {
   id: Float
   team_id: Float
   user_id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "notifications"
+"""
+input notifications_stddev_pop_order_by {
+  id: order_by
+  team_id: order_by
+  user_id: order_by
 }
 
 """aggregate stddev_samp on columns"""
@@ -5826,11 +5737,29 @@ type notifications_stddev_samp_fields {
   user_id: Float
 }
 
+"""
+order by stddev_samp() on columns of table "notifications"
+"""
+input notifications_stddev_samp_order_by {
+  id: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
 """aggregate sum on columns"""
 type notifications_sum_fields {
   id: Int
   team_id: Int
   user_id: Int
+}
+
+"""
+order by sum() on columns of table "notifications"
+"""
+input notifications_sum_order_by {
+  id: order_by
+  team_id: order_by
+  user_id: order_by
 }
 
 """
@@ -5863,6 +5792,15 @@ type notifications_var_pop_fields {
   user_id: Float
 }
 
+"""
+order by var_pop() on columns of table "notifications"
+"""
+input notifications_var_pop_order_by {
+  id: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
 """aggregate var_samp on columns"""
 type notifications_var_samp_fields {
   id: Float
@@ -5870,11 +5808,29 @@ type notifications_var_samp_fields {
   user_id: Float
 }
 
+"""
+order by var_samp() on columns of table "notifications"
+"""
+input notifications_var_samp_order_by {
+  id: order_by
+  team_id: order_by
+  user_id: order_by
+}
+
 """aggregate variance on columns"""
 type notifications_variance_fields {
   id: Float
   team_id: Float
   user_id: Float
+}
+
+"""
+order by variance() on columns of table "notifications"
+"""
+input notifications_variance_order_by {
+  id: order_by
+  team_id: order_by
+  user_id: order_by
 }
 
 """column ordering options"""
@@ -6000,10 +5956,14 @@ input pages_bool_exp {
 unique or primary key constraints on table "pages"
 """
 enum pages_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   pages_pkey
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "route"
+  """
   pages_route_key
 }
 
@@ -6064,12 +6024,12 @@ input type for inserting object relation for remote table "pages"
 input pages_obj_rel_insert_input {
   data: pages_insert_input!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: pages_on_conflict
 }
 
 """
-on conflict condition type for table "pages"
+on_conflict condition type for table "pages"
 """
 input pages_on_conflict {
   constraint: pages_constraint!
@@ -7353,33 +7313,6 @@ input score_events_bool_exp {
   user_id: Int_comparison_exp
 }
 
-"""
-unique or primary key constraints on table "score_events"
-"""
-enum score_events_constraint {
-  """unique or primary key constraint"""
-  score_events_all_uniq_idx
-}
-
-"""
-input type for incrementing numeric columns in table "score_events"
-"""
-input score_events_inc_input {
-  event_value: Int
-  team_id: Int
-  user_id: Int
-}
-
-"""
-input type for inserting data into table "score_events"
-"""
-input score_events_insert_input {
-  event_time: timestamp
-  event_value: Int
-  team_id: Int
-  user_id: Int
-}
-
 """aggregate max on columns"""
 type score_events_max_fields {
   event_time: timestamp
@@ -7394,26 +7327,6 @@ type score_events_min_fields {
   event_value: Int
   team_id: Int
   user_id: Int
-}
-
-"""
-response of any mutation on the table "score_events"
-"""
-type score_events_mutation_response {
-  """number of rows affected by the mutation"""
-  affected_rows: Int!
-
-  """data from the rows affected by the mutation"""
-  returning: [score_events!]!
-}
-
-"""
-on conflict condition type for table "score_events"
-"""
-input score_events_on_conflict {
-  constraint: score_events_constraint!
-  update_columns: [score_events_update_column!]! = []
-  where: score_events_bool_exp
 }
 
 """Ordering options when selecting data from "score_events"."""
@@ -7439,16 +7352,6 @@ enum score_events_select_column {
 
   """column name"""
   user_id
-}
-
-"""
-input type for updating data in table "score_events"
-"""
-input score_events_set_input {
-  event_time: timestamp
-  event_value: Int
-  team_id: Int
-  user_id: Int
 }
 
 """aggregate stddev on columns"""
@@ -7477,23 +7380,6 @@ type score_events_sum_fields {
   event_value: Int
   team_id: Int
   user_id: Int
-}
-
-"""
-update columns of table "score_events"
-"""
-enum score_events_update_column {
-  """column name"""
-  event_time
-
-  """column name"""
-  event_value
-
-  """column name"""
-  team_id
-
-  """column name"""
-  user_id
 }
 
 """aggregate var_pop on columns"""
@@ -7606,14 +7492,6 @@ input score_timeline_bool_exp {
 }
 
 """
-input type for incrementing numeric columns in table "score_timeline"
-"""
-input score_timeline_inc_input {
-  score: bigint
-  team_id: Int
-}
-
-"""
 input type for inserting data into table "score_timeline"
 """
 input score_timeline_insert_input {
@@ -7655,17 +7533,6 @@ input score_timeline_min_order_by {
   team_id: order_by
 }
 
-"""
-response of any mutation on the table "score_timeline"
-"""
-type score_timeline_mutation_response {
-  """number of rows affected by the mutation"""
-  affected_rows: Int!
-
-  """data from the rows affected by the mutation"""
-  returning: [score_timeline!]!
-}
-
 """Ordering options when selecting data from "score_timeline"."""
 input score_timeline_order_by {
   event_time: order_by
@@ -7686,15 +7553,6 @@ enum score_timeline_select_column {
 
   """column name"""
   team_id
-}
-
-"""
-input type for updating data in table "score_timeline"
-"""
-input score_timeline_set_input {
-  event_time: timestamp
-  score: bigint
-  team_id: Int
 }
 
 """aggregate stddev on columns"""
@@ -7846,15 +7704,6 @@ input score_timeline_user_bool_exp {
 }
 
 """
-input type for incrementing numeric columns in table "score_timeline_user"
-"""
-input score_timeline_user_inc_input {
-  score: bigint
-  team_id: Int
-  user_id: Int
-}
-
-"""
 input type for inserting data into table "score_timeline_user"
 """
 input score_timeline_user_insert_input {
@@ -7901,17 +7750,6 @@ input score_timeline_user_min_order_by {
   user_id: order_by
 }
 
-"""
-response of any mutation on the table "score_timeline_user"
-"""
-type score_timeline_user_mutation_response {
-  """number of rows affected by the mutation"""
-  affected_rows: Int!
-
-  """data from the rows affected by the mutation"""
-  returning: [score_timeline_user!]!
-}
-
 """Ordering options when selecting data from "score_timeline_user"."""
 input score_timeline_user_order_by {
   event_time: order_by
@@ -7936,16 +7774,6 @@ enum score_timeline_user_select_column {
 
   """column name"""
   user_id
-}
-
-"""
-input type for updating data in table "score_timeline_user"
-"""
-input score_timeline_user_set_input {
-  event_time: timestamp
-  score: bigint
-  team_id: Int
-  user_id: Int
 }
 
 """aggregate stddev on columns"""
@@ -8162,15 +7990,6 @@ input scoreboard_bool_exp {
 }
 
 """
-input type for incrementing numeric columns in table "scoreboard"
-"""
-input scoreboard_inc_input {
-  rank: bigint
-  score: bigint
-  team_id: Int
-}
-
-"""
 input type for inserting data into table "scoreboard"
 """
 input scoreboard_insert_input {
@@ -8195,17 +8014,6 @@ type scoreboard_min_fields {
   rank: bigint
   score: bigint
   team_id: Int
-}
-
-"""
-response of any mutation on the table "scoreboard"
-"""
-type scoreboard_mutation_response {
-  """number of rows affected by the mutation"""
-  affected_rows: Int!
-
-  """data from the rows affected by the mutation"""
-  returning: [scoreboard!]!
 }
 
 """
@@ -8239,16 +8047,6 @@ enum scoreboard_select_column {
 
   """column name"""
   team_id
-}
-
-"""
-input type for updating data in table "scoreboard"
-"""
-input scoreboard_set_input {
-  max_time: timestamp
-  rank: bigint
-  score: bigint
-  team_id: Int
 }
 
 """aggregate stddev on columns"""
@@ -8345,29 +8143,6 @@ input scoreboard_user_bool_exp {
   user_id: Int_comparison_exp
 }
 
-"""
-input type for incrementing numeric columns in table "scoreboard_user"
-"""
-input scoreboard_user_inc_input {
-  rank: bigint
-  score: bigint
-  team_id: Int
-  user_id: Int
-}
-
-"""
-input type for inserting data into table "scoreboard_user"
-"""
-input scoreboard_user_insert_input {
-  max_time: timestamp
-  rank: bigint
-  score: bigint
-  team: teams_obj_rel_insert_input
-  team_id: Int
-  user: users_obj_rel_insert_input
-  user_id: Int
-}
-
 """aggregate max on columns"""
 type scoreboard_user_max_fields {
   max_time: timestamp
@@ -8384,24 +8159,6 @@ type scoreboard_user_min_fields {
   score: bigint
   team_id: Int
   user_id: Int
-}
-
-"""
-response of any mutation on the table "scoreboard_user"
-"""
-type scoreboard_user_mutation_response {
-  """number of rows affected by the mutation"""
-  affected_rows: Int!
-
-  """data from the rows affected by the mutation"""
-  returning: [scoreboard_user!]!
-}
-
-"""
-input type for inserting object relation for remote table "scoreboard_user"
-"""
-input scoreboard_user_obj_rel_insert_input {
-  data: scoreboard_user_insert_input!
 }
 
 """Ordering options when selecting data from "scoreboard_user"."""
@@ -8433,17 +8190,6 @@ enum scoreboard_user_select_column {
 
   """column name"""
   user_id
-}
-
-"""
-input type for updating data in table "scoreboard_user"
-"""
-input scoreboard_user_set_input {
-  max_time: timestamp
-  rank: bigint
-  score: bigint
-  team_id: Int
-  user_id: Int
 }
 
 """aggregate stddev on columns"""
@@ -8592,7 +8338,7 @@ input type for inserting array relation for remote table "solves"
 input solves_arr_rel_insert_input {
   data: [solves_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: solves_on_conflict
 }
 
@@ -8635,13 +8381,19 @@ input solves_bool_exp {
 unique or primary key constraints on table "solves"
 """
 enum solves_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "challenge_id", "team_id"
+  """
   solves_challenge_id_team_id_key
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "challenge_id", "user_id"
+  """
   solves_challenge_id_user_id_key
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   solves_pkey
 }
 
@@ -8722,12 +8474,12 @@ input type for inserting object relation for remote table "solves"
 input solves_obj_rel_insert_input {
   data: solves_insert_input!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: solves_on_conflict
 }
 
 """
-on conflict condition type for table "solves"
+on_conflict condition type for table "solves"
 """
 input solves_on_conflict {
   constraint: solves_constraint!
@@ -8935,7 +8687,7 @@ type submissions {
   provided: String
 
   """An object relationship"""
-  solve: solves!
+  solve: solves
 
   """An object relationship"""
   team: teams
@@ -8995,7 +8747,7 @@ input type for inserting array relation for remote table "submissions"
 input submissions_arr_rel_insert_input {
   data: [submissions_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: submissions_on_conflict
 }
 
@@ -9042,7 +8794,9 @@ input submissions_bool_exp {
 unique or primary key constraints on table "submissions"
 """
 enum submissions_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   submissions_pkey
 }
 
@@ -9143,12 +8897,12 @@ input type for inserting object relation for remote table "submissions"
 input submissions_obj_rel_insert_input {
   data: submissions_insert_input!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: submissions_on_conflict
 }
 
 """
-on conflict condition type for table "submissions"
+on_conflict condition type for table "submissions"
 """
 input submissions_on_conflict {
   constraint: submissions_constraint!
@@ -10530,7 +10284,7 @@ input type for inserting array relation for remote table "tags"
 input tags_arr_rel_insert_input {
   data: [tags_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: tags_on_conflict
 }
 
@@ -10565,7 +10319,9 @@ input tags_bool_exp {
 unique or primary key constraints on table "tags"
 """
 enum tags_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   tags_pkey
 }
 
@@ -10631,7 +10387,7 @@ type tags_mutation_response {
 }
 
 """
-on conflict condition type for table "tags"
+on_conflict condition type for table "tags"
 """
 input tags_on_conflict {
   constraint: tags_constraint!
@@ -11069,6 +10825,42 @@ type teams {
   ): submissions_aggregate!
 
   """An array relationship"""
+  teams(
+    """distinct select on columns"""
+    distinct_on: [notifications_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [notifications_order_by!]
+
+    """filter the rows returned"""
+    where: notifications_bool_exp
+  ): [notifications!]!
+
+  """An aggregate relationship"""
+  teams_aggregate(
+    """distinct select on columns"""
+    distinct_on: [notifications_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [notifications_order_by!]
+
+    """filter the rows returned"""
+    where: notifications_bool_exp
+  ): notifications_aggregate!
+
+  """An array relationship"""
   unlocks(
     """distinct select on columns"""
     distinct_on: [unlocks_select_column!]
@@ -11162,11 +10954,13 @@ input teams_bool_exp {
   name: String_comparison_exp
   oauth_id: Int_comparison_exp
   password: String_comparison_exp
+  score: Int_comparison_exp
   score_timeline: score_timeline_bool_exp
   scoreboard: scoreboard_bool_exp
   secret: String_comparison_exp
   solves: solves_bool_exp
   submissions: submissions_bool_exp
+  teams: notifications_bool_exp
   unlocks: unlocks_bool_exp
   website: String_comparison_exp
 }
@@ -11175,16 +10969,24 @@ input teams_bool_exp {
 unique or primary key constraints on table "teams"
 """
 enum teams_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "email"
+  """
   teams_email_key
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "oauth_id", "id"
+  """
   teams_id_oauth_id_key
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "oauth_id"
+  """
   teams_oauth_id_key
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   teams_pkey
 }
 
@@ -11223,6 +11025,7 @@ input teams_insert_input {
   secret: String
   solves: solves_arr_rel_insert_input
   submissions: submissions_arr_rel_insert_input
+  teams: notifications_arr_rel_insert_input
   unlocks: unlocks_arr_rel_insert_input
   website: String
 }
@@ -11276,12 +11079,12 @@ input type for inserting object relation for remote table "teams"
 input teams_obj_rel_insert_input {
   data: teams_insert_input!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: teams_on_conflict
 }
 
 """
-on conflict condition type for table "teams"
+on_conflict condition type for table "teams"
 """
 input teams_on_conflict {
   constraint: teams_constraint!
@@ -11308,11 +11111,13 @@ input teams_order_by {
   name: order_by
   oauth_id: order_by
   password: order_by
+  score: order_by
   score_timeline_aggregate: score_timeline_aggregate_order_by
   scoreboard: scoreboard_order_by
   secret: order_by
   solves_aggregate: solves_aggregate_order_by
   submissions_aggregate: submissions_aggregate_order_by
+  teams_aggregate: notifications_aggregate_order_by
   unlocks_aggregate: unlocks_aggregate_order_by
   website: order_by
 }
@@ -11565,7 +11370,7 @@ input type for inserting array relation for remote table "tokens"
 input tokens_arr_rel_insert_input {
   data: [tokens_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: tokens_on_conflict
 }
 
@@ -11603,10 +11408,14 @@ input tokens_bool_exp {
 unique or primary key constraints on table "tokens"
 """
 enum tokens_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   tokens_pkey
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "value"
+  """
   tokens_value_key
 }
 
@@ -11687,7 +11496,7 @@ type tokens_mutation_response {
 }
 
 """
-on conflict condition type for table "tokens"
+on_conflict condition type for table "tokens"
 """
 input tokens_on_conflict {
   constraint: tokens_constraint!
@@ -11929,7 +11738,7 @@ input type for inserting array relation for remote table "tracking"
 input tracking_arr_rel_insert_input {
   data: [tracking_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: tracking_on_conflict
 }
 
@@ -11966,7 +11775,9 @@ input tracking_bool_exp {
 unique or primary key constraints on table "tracking"
 """
 enum tracking_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   tracking_pkey
 }
 
@@ -12042,7 +11853,7 @@ type tracking_mutation_response {
 }
 
 """
-on conflict condition type for table "tracking"
+on_conflict condition type for table "tracking"
 """
 input tracking_on_conflict {
   constraint: tracking_constraint!
@@ -12283,7 +12094,7 @@ input type for inserting array relation for remote table "unlocks"
 input unlocks_arr_rel_insert_input {
   data: [unlocks_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: unlocks_on_conflict
 }
 
@@ -12327,7 +12138,9 @@ input unlocks_bool_exp {
 unique or primary key constraints on table "unlocks"
 """
 enum unlocks_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   unlocks_pkey
 }
 
@@ -12412,7 +12225,7 @@ type unlocks_mutation_response {
 }
 
 """
-on conflict condition type for table "unlocks"
+on_conflict condition type for table "unlocks"
 """
 input unlocks_on_conflict {
   constraint: unlocks_constraint!
@@ -12830,9 +12643,6 @@ type users {
     """filter the rows returned"""
     where: score_timeline_user_bool_exp
   ): score_timeline_user_aggregate!
-
-  """An object relationship"""
-  scoreboard: scoreboard_user
   secret: String
 
   """An array relationship"""
@@ -13071,7 +12881,7 @@ input type for inserting array relation for remote table "users"
 input users_arr_rel_insert_input {
   data: [users_insert_input!]!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: users_on_conflict
 }
 
@@ -13099,6 +12909,7 @@ input users_bool_exp {
   _not: users_bool_exp
   _or: [users_bool_exp!]
   affiliation: String_comparison_exp
+  avatar: String_comparison_exp
   awards: awards_bool_exp
   banned: Boolean_comparison_exp
   bracket: String_comparison_exp
@@ -13114,8 +12925,8 @@ input users_bool_exp {
   name: String_comparison_exp
   oauth_id: Int_comparison_exp
   password: String_comparison_exp
+  score: Int_comparison_exp
   score_timeline: score_timeline_user_bool_exp
-  scoreboard: scoreboard_user_bool_exp
   secret: String_comparison_exp
   solves: solves_bool_exp
   submissions: submissions_bool_exp
@@ -13133,16 +12944,24 @@ input users_bool_exp {
 unique or primary key constraints on table "users"
 """
 enum users_constraint {
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "email"
+  """
   users_email_key
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "oauth_id", "id"
+  """
   users_id_oauth_id_key
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "oauth_id"
+  """
   users_oauth_id_key
 
-  """unique or primary key constraint"""
+  """
+  unique or primary key constraint on columns "id"
+  """
   users_pkey
 }
 
@@ -13176,7 +12995,6 @@ input users_insert_input {
   oauth_id: Int
   password: String
   score_timeline: score_timeline_user_arr_rel_insert_input
-  scoreboard: scoreboard_user_obj_rel_insert_input
   secret: String
   solves: solves_arr_rel_insert_input
   submissions: submissions_arr_rel_insert_input
@@ -13279,12 +13097,12 @@ input type for inserting object relation for remote table "users"
 input users_obj_rel_insert_input {
   data: users_insert_input!
 
-  """on conflict condition"""
+  """upsert condition"""
   on_conflict: users_on_conflict
 }
 
 """
-on conflict condition type for table "users"
+on_conflict condition type for table "users"
 """
 input users_on_conflict {
   constraint: users_constraint!
@@ -13295,6 +13113,7 @@ input users_on_conflict {
 """Ordering options when selecting data from "users"."""
 input users_order_by {
   affiliation: order_by
+  avatar: order_by
   awards_aggregate: awards_aggregate_order_by
   banned: order_by
   bracket: order_by
@@ -13310,8 +13129,8 @@ input users_order_by {
   name: order_by
   oauth_id: order_by
   password: order_by
+  score: order_by
   score_timeline_aggregate: score_timeline_user_aggregate_order_by
-  scoreboard: scoreboard_user_order_by
   secret: order_by
   solves_aggregate: solves_aggregate_order_by
   submissions_aggregate: submissions_aggregate_order_by

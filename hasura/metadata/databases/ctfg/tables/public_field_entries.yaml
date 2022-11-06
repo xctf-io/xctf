@@ -1,0 +1,108 @@
+table:
+  name: field_entries
+  schema: public
+object_relationships:
+- name: field
+  using:
+    foreign_key_constraint_on: field_id
+- name: team
+  using:
+    foreign_key_constraint_on: team_id
+- name: user
+  using:
+    foreign_key_constraint_on: user_id
+select_permissions:
+- permission:
+    columns:
+    - type
+    - field_id
+    - id
+    - team_id
+    - user_id
+    - value
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - id
+    - type
+    - value
+    - field_id
+    - user_id
+    - team_id
+    filter:
+      _or:
+      - user_id:
+          _eq: X-Hasura-User-Id
+      - team:
+          members:
+            id:
+              _eq: X-Hasura-User-Id
+  role: ctfd_user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - type
+    - field_id
+    - id
+    - team_id
+    - user_id
+    - value
+    filter: {}
+  role: ctfd_admin
+- permission:
+    check:
+      _and:
+      - _or:
+        - user_id:
+            _eq: X-Hasura-User-Id
+        - team:
+            captain:
+              id:
+                _eq: X-Hasura-User-Id
+      - field:
+          _and:
+          - editable:
+              _eq: true
+          - public:
+              _eq: true
+    columns:
+    - value
+    filter:
+      _and:
+      - _or:
+        - user_id:
+            _eq: X-Hasura-User-Id
+        - team:
+            captain:
+              id:
+                _eq: X-Hasura-User-Id
+      - field:
+          _and:
+          - editable:
+              _eq: true
+          - public:
+              _eq: true
+  role: ctfd_user
+delete_permissions:
+- permission:
+    filter: {}
+  role: ctfd_admin
+- permission:
+    filter:
+      _and:
+      - _or:
+        - user_id:
+            _eq: X-Hasura-User-Id
+        - team:
+            captain:
+              id:
+                _eq: X-Hasura-User-Id
+      - field:
+          _and:
+          - editable:
+              _eq: true
+          - public:
+              _eq: true
+  role: ctfd_user

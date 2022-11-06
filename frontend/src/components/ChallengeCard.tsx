@@ -10,35 +10,20 @@ import { KIND, Tag, VARIANT } from "baseui/tag";
 import { useState } from "react";
 import {
   Challenges as ChallengesType,
-  useSubmitFlagMutation,
 } from "../generated";
 
 type ChallengeCardProps = {
   challenge: RecursivePartial<ChallengesType>;
 };
 
-gql`
-  mutation SubmitFlag($provided: String!, $challenge_id: Int!) {
-    SubmitAttemptMutation(provided: $provided, challenge_id: $challenge_id) {
-      id
-    }
-  }
-`;
-
 export default function ChallengeCard({ challenge }: ChallengeCardProps) {
   const [value, setValue] = useState("" as string);
-
-  let [submitFlag] = useSubmitFlagMutation();
 
   const handleSubmit = () => {
     let parameters: any = {
       variables: { provided: value || "", challenge_id: challenge.id || -1 },
     };
-    submitFlag(parameters)
-      .then((res) => {})
-      .catch((e) => {
-        console.error(e);
-      });
+    console.log(parameters);
   };
 
   return (

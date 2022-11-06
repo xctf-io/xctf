@@ -1,0 +1,41 @@
+table:
+  name: awards
+  schema: public
+object_relationships:
+- name: team
+  using:
+    foreign_key_constraint_on: team_id
+- name: user
+  using:
+    foreign_key_constraint_on: user_id
+select_permissions:
+- permission:
+    columns:
+    - category
+    - name
+    - type
+    - id
+    - team_id
+    - user_id
+    - value
+    - requirements
+    - description
+    - icon
+    - date
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - id
+    - user_id
+    - team_id
+    - name
+    - description
+    - date
+    - value
+    - category
+    - icon
+    - requirements
+    - type
+    filter: {}
+  role: ctfd_user

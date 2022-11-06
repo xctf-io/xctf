@@ -1,0 +1,44 @@
+table:
+  name: config
+  schema: public
+insert_permissions:
+- permission:
+    backend_only: false
+    check: {}
+    columns:
+    - key
+    - value
+  role: ctfd_admin
+select_permissions:
+- permission:
+    columns:
+    - id
+    - key
+    - value
+    filter:
+      key:
+        _iregex: (ctf|user_mode|start|end|visibility|freeze)
+  role: ctfd_
+- permission:
+    columns:
+    - id
+    - key
+    - value
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - id
+    - key
+    - value
+    filter:
+      key:
+        _iregex: (ctf|user_mode|start|end|visibility|freeze)
+  role: ctfd_user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - value
+    filter: {}
+  role: ctfd_admin

@@ -1,0 +1,3 @@
+table:
+  name: score_events
+  schema: public

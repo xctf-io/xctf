@@ -1,0 +1,43 @@
+table:
+  name: hints_content
+  schema: public
+object_relationships:
+- name: hint
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: hints
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - content
+    filter: {}
+  role: ctfd_admin
+- permission:
+    columns:
+    - id
+    - content
+    filter:
+      _or:
+      - hint:
+          _or:
+          - cost:
+              _lt: 1
+      - _exists:
+          _table:
+            name: unlocks
+            schema: public
+          _where:
+            _or:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - team:
+                members:
+                  id:
+                    _eq: X-Hasura-User-Id
+  role: ctfd_user

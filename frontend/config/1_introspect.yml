@@ -1,7 +1,10 @@
 schema:
-  - http://localhost:8080/v1/graphql:
+  - http://localhost:4455/v1/graphql:
       headers:
         user-agent: codegen
+        x-hasura-admin-secret: password
+#        x-hasura-role: user
+
 overwrite: true
 generates:
   schema.graphql:
