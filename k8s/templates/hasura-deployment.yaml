@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yaml -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.image-pull-secret: ghcr-pull-secret
+    kompose.version: 1.26.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: hasura
+  name: hasura
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: hasura
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose.yaml -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+        kompose.image-pull-secret: ghcr-pull-secret
+        kompose.version: 1.26.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: hasura
+    spec:
+      containers:
+        - env:
+            - name: HASURA_GRAPHQL_ADMIN_SECRET
+              value: myadminsecretkey
+            - name: HASURA_GRAPHQL_DATABASE_URL
+              value: postgres://postgres:postgrespassword@postgres:5432/lunatrace
+            - name: HASURA_GRAPHQL_DEV_MODE
+              value: "true"
+            - name: HASURA_GRAPHQL_ENABLED_LOG_TYPES
+              value: startup, http-log, webhook-log, websocket-log, query-log
+            - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+              value: "false"
+            - name: HASURA_GRAPHQL_ENABLE_REMOTE_SCHEMA_PERMISSIONS
+              value: "false"
+            - name: HASURA_GRAPHQL_JWT_SECRET
+              value: '{"type":"RS256","jwk_url":"http://oathkeeper:4456/.well-known/jwks.json","issuer":"http://oathkeeper:4455/"}'
+            - name: HASURA_GRAPHQL_LOG_LEVEL
+              value: debug
+            - name: HASURA_GRAPHQL_METADATA_DATABASE_URL
+              value: postgres://postgres:postgrespassword@postgres:5432/lunatrace
+            - name: HASURA_GRAPHQL_METADATA_DIR
+              value: /hasura/metadata
+            - name: HASURA_GRAPHQL_MIGRATIONS_DIR
+              value: /hasura/migrations
+          image: hasura/graphql-engine:v2.4.0
+          name: hasura
+          ports:
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - mountPath: /hasura
+              name: hasura-cm0
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            name: hasura-cm0
+          name: hasura-cm0
+status: {}

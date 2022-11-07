@@ -1,0 +1,61 @@
+serve:
+  proxy:
+    port: 4455 # run the proxy at port 4455
+  api:
+    port: 4456 # run the api at port 4456
+
+access_rules:
+  repositories:
+    - file:///config/generated/rules.yaml
+
+errors:
+  fallback:
+    - json
+  handlers:
+    json:
+      enabled: true
+      config:
+        verbose: true
+    redirect:
+      enabled: true
+      config:
+        to: https://www.ory.sh/docs
+
+mutators:
+  noop:
+    enabled: true
+
+  id_token:
+    enabled: true
+    config:
+      issuer_url: http://oathkeeper:4455/
+      jwks_url: file://jwks.dev.json
+      claims: |
+        {
+          "session": {{ .Extra | toJson }}
+          "X-Hasura-User-Id": {{ .Subject }}
+        }
+
+authorizers:
+  allow:
+    enabled: true
+  deny:
+    enabled: true
+
+authenticators:
+  anonymous:
+    enabled: true
+    config:
+      subject: guest
+
+  cookie_session:
+    enabled: true
+    config:
+      check_session_url: $OATHKEEPER_KRATOS_URL/sessions/whoami
+      preserve_path: true
+      extra_from: "@this"
+      subject_from: "identity.id"
+      only:
+        - ory_kratos_session
+log:
+  format: json

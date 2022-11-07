@@ -1,0 +1,24 @@
+version: '3.6'
+services:
+  frontend:
+    image: ghcr.io/ctfg/frontend
+    restart: always
+    ports:
+      - '80:80'
+
+  hasura:
+    image: hasura/graphql-engine:v2.9.0.cli-migrations-v3
+    labels:
+      kompose.image-pull-secret: "ghcr-pull-secret"
+
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: ctfg,ory
+    env_file:
+      - .env.prod
+    ports:
+      - '5432:5432'

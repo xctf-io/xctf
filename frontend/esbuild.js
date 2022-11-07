@@ -26,7 +26,10 @@ const init = () => {
         minify: false,
         sourcemap: 'inline',
         define: {
-          'process.env.NODE_ENV': '"production"',
+          'global': 'window',
+          'process': '{}',
+          'process.env': '{}',
+          'process.env.NODE_ENV': "'development'"
         },
       },
     )
@@ -43,7 +46,10 @@ const init = () => {
         minify: false,
         sourcemap: 'inline',
         define: {
-          'process.env.NODE_ENV': '"production"',
+          'global': 'window',
+          'process': '{}',
+          'process.env': '{}',
+          'process.env.NODE_ENV': "'development'"
         },
       });
   }

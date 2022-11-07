@@ -1,0 +1,135 @@
+- id: "ory:ctfg:hasura:graphql"
+  upstream:
+    preserve_host: true
+    url: $OATHKEEPER_HASURA_URL
+  match:
+    url: "$OATHKEEPER_MATCH_URL/v1/graphql"
+    methods:
+      - POST
+  authenticators:
+    - handler: cookie_session
+    - handler: anonymous
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: id_token
+      config:
+        issuer_url: http://oathkeeper:4455/
+        claims: |
+          {
+            "https://hasura.io/jwt/claims": {
+              "x-hasura-user-id": "{{ .Subject }}",
+              "x-hasura-allowed-roles": ["ctfd_user"],
+              "x-hasura-default-role": "ctfd_user"
+            }
+          }
+
+- id: "ory:ctfg:hasura:graphql:ws"
+  upstream:
+    preserve_host: true
+    url: ws://hasura:8080
+  match:
+    url: "ws://localhost:4455/v1/graphql"
+    methods:
+      - POST
+  authenticators:
+    - handler: cookie_session
+    - handler: anonymous
+  authorizer:
+    handler: allow
+
+  mutators:
+    - handler: id_token
+      config:
+        issuer_url: http://oathkeeper:4455/
+        claims: |
+          {
+            "https://hasura.io/jwt/claims": {
+              "x-hasura-user-id": "{{ .Subject }}",
+              "x-hasura-allowed-roles": ["user"],
+              "x-hasura-default-role": "user"
+            }
+          }
+- id: "ory:ctfg:hasura:graphql:service"
+  upstream:
+    preserve_host: true
+    url: $OATHKEEPER_HASURA_URL
+    strip_path: "/api/service"
+  match:
+    url: "$OATHKEEPER_MATCH_URL/api/service/v1/graphql"
+    methods:
+      - POST
+  authenticators:
+    - handler: anonymous
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: id_token
+      config:
+        issuer_url: http://oathkeeper:4455/
+        # backend can pretend to be a user if we want to check some auth stuff from the backend..so that role is allowed
+        claims: |
+          {
+            "https://hasura.io/jwt/claims": {
+              "x-hasura-user-id": "",
+              "x-hasura-allowed-roles": ["service", "user"], 
+              "x-hasura-default-role": "service"
+            }
+          }
+
+- id: "ory:ctfg:hasura:admin"
+  upstream:
+    preserve_host: true
+    strip_path: "/api/hasura"
+    url: $OATHKEEPER_HASURA_URL
+  match:
+    url: "$OATHKEEPER_MATCH_URL/api/hasura/<.*>"
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+  authenticators:
+    - handler: anonymous
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: noop
+
+- id: "ory:ctfg:kratos"
+  upstream:
+    preserve_host: true
+    url: $OATHKEEPER_KRATOS_URL
+    strip_path: "/api/kratos"
+  match:
+    url: "$OATHKEEPER_MATCH_URL/api/kratos/<.*>"
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+  authenticators:
+    - handler: anonymous
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: noop
+
+# This route is only for development. In production, this rule should never be used. The load balancer will have handled this route before oathkeeper is called.
+- id: "ory:ctfg:frontend:routes"
+  upstream:
+    preserve_host: true
+    url: $OATHKEEPER_FRONTEND_URL
+  match:
+    url: "$OATHKEEPER_MATCH_URL/<(?!api/).*>"
+    methods:
+      - GET
+  authenticators:
+    - handler: anonymous
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: noop
+

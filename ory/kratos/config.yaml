@@ -1,0 +1,94 @@
+version: v0.9.0-alpha.3
+serve:
+  public:
+    base_url: http://localhost:4433/
+    cors:
+      enabled: true
+  admin:
+    base_url: http://kratos:4434/
+
+selfservice:
+  default_browser_return_url: http://localhost:4455/
+  allowed_return_urls:
+    - http://localhost:4455
+
+  methods:
+    password:
+      enabled: false
+    oidc:
+      enabled: true
+      config:
+        providers:
+          - id: github-app
+            provider: github-app
+            client_id: fake-value
+            client_secret: another-fake-value
+            mapper_url: file:///config/oidc.github.jsonnet
+            scope:
+              - email
+
+  flows:
+    error:
+      ui_url: http://localhost:4455/auth/error
+
+    settings:
+      ui_url: http://localhost:4455/api/kratos/settings
+      privileged_session_max_age: 15m
+
+    recovery:
+      enabled: true
+      ui_url: http://localhost:4455/api/kratos/recovery
+
+    verification:
+      enabled: true
+      ui_url: http://localhost:4455/api/kratos/verification
+      after:
+        default_browser_return_url: http://localhost:4455/
+
+    logout:
+      after:
+        default_browser_return_url: http://localhost:4455
+
+    login:
+      ui_url: http://localhost:4455
+      lifespan: 10m
+
+    registration:
+      lifespan: 10m
+      ui_url: http://localhost:4455/account/register
+      after:
+        password:
+          hooks:
+            - hook: session
+        oidc:
+          hooks:
+            - hook: session
+
+log:
+  level: debug
+  format: json
+  leak_sensitive_values: true
+
+secrets:
+  cookie:
+    - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+  cipher:
+    - 32-LONG-SECRET-NOT-SECURE-AT-ALL
+
+ciphers:
+  algorithm: xchacha20-poly1305
+
+hashers:
+  algorithm: bcrypt
+  bcrypt:
+    cost: 8
+
+identity:
+  default_schema_id: user_v0
+  schemas:
+  - id: user_v0
+    url: file:///config/identity_v0.schema.json
+
+courier:
+  smtp:
+    connection_uri: smtps://test:test@mailslurper:1025/?skip_ssl_verify=true

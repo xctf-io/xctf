@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yaml -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.image-pull-secret: ghcr-pull-secret
+    kompose.service.expose: ctfg.io
+    kompose.service.expose.tls-secret: cookwherever-com-tls
+    kompose.version: 1.26.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: frontend
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose.yaml -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+        kompose.image-pull-secret: ghcr-pull-secret
+        kompose.service.expose: ctfg.io
+        kompose.service.expose.tls-secret: cookwherever-com-tls
+        kompose.version: 1.26.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: frontend
+    spec:
+      containers:
+        - image: ghcr.io/cookwherever/frontend@sha256:3c9430f064a9c3fe4f491dc4b5bd1d57923bfeb861f7cd2264929fd0cbda3004
+          name: frontend
+          ports:
+            - containerPort: 80
+          resources: {}
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+      restartPolicy: Always
+status: {}

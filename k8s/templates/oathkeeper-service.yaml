@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yaml -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.version: 1.26.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: oathkeeper
+  name: oathkeeper
+spec:
+  ports:
+    - name: "4455"
+      port: 4455
+      targetPort: 4455
+    - name: "4456"
+      port: 4456
+      targetPort: 4456
+  selector:
+    io.kompose.service: oathkeeper
+status:
+  loadBalancer: {}

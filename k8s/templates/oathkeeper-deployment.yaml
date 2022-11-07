@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yaml -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.version: 1.26.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: oathkeeper
+  name: oathkeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: oathkeeper
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose.yaml -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+        kompose.version: 1.26.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: oathkeeper
+    spec:
+      containers:
+        - args:
+            - oathkeeper
+            - --config
+            - /config/generated/config.yaml
+            - serve
+          command:
+            - /scripts/entrypoint.sh
+          env:
+            - name: MUTATORS_ID_TOKEN_CONFIG_JWKS_URL
+              value: file:///config/jwks.dev.json
+          image: oathkeeper
+          livenessProbe:
+            exec:
+              command:
+                - wget --no-verbose --tries=1 --spider http://localhost:4455/health/ready || exit 1
+          name: oathkeeper
+          ports:
+            - containerPort: 4455
+            - containerPort: 4456
+          resources: {}
+          volumeMounts:
+            - mountPath: /config
+              name: oathkeeper-cm0
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            name: oathkeeper-cm0
+          name: oathkeeper-cm0
+status: {}

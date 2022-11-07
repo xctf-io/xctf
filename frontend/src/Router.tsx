@@ -2,17 +2,23 @@ import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import App from "./App";
 import PageLayout from "./layouts/PageLayout";
-import Challenges from "./pages/Challenges";
-import Scoreboard from "./pages/Scoreboard";
-import Team from "./pages/Team";
-import Teams from "./pages/Teams";
-import Users from "./pages/Users";
+import Challenges from "./pages/challenges/Challenges";
+import Scoreboard from "./pages/scoreboard/Scoreboard";
+import Team from "./pages/team/Team";
+import Teams from "./pages/teams/Teams";
+import Users from "./pages/users/Users";
 import { AccessCheck } from "./util/auth";
+import { LoginPage } from "./pages/login/LoginPage";
 
 export default function Router() {
   return (
     <BrowserRouter>
       <Switch>
+        <Route path="/login">
+          <PageLayout>
+            <LoginPage />
+          </PageLayout>
+        </Route>
         <Route path="/users">
           <AccessCheck configKey={"account_visibility"}>
             <PageLayout>

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yaml -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.version: 1.26.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kratos
+  name: kratos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: kratos
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose.yaml -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+        kompose.version: 1.26.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: kratos
+    spec:
+      containers:
+        - args:
+            - kratos
+            - serve
+            - -c
+            - /config/config.yaml
+            - -c
+            - /config/config.dev.yaml
+            - --dev
+            - --watch-courier
+          command:
+            - /scripts/entrypoint.sh
+          env:
+            - name: DSN
+              value: postgres://postgres:password@postgres:5432/ory
+            - name: KRATOS_ADMIN_URL
+              value: http://localhost:4434
+            - name: KRATOS_DOMAIN_NAME
+              value: localhost:4433
+            - name: LOG_LEVEL
+              value: trace
+          image: kratos
+          livenessProbe:
+            exec:
+              command:
+                - wget --no-verbose --tries=1 --spider http://localhost:4434/health/ready || exit 1
+          name: kratos
+          ports:
+            - containerPort: 4433
+            - containerPort: 4434
+          resources: {}
+          volumeMounts:
+            - mountPath: /config
+              name: kratos-cm0
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            name: kratos-cm0
+          name: kratos-cm0
+status: {}

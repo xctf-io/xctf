@@ -1,0 +1,52 @@
+version: v0.9.0-alpha.3
+serve:
+  public:
+    base_url: https://$KRATOS_DOMAIN_NAME/api/kratos/
+    cors:
+      enabled: true
+  admin:
+    base_url: http://$KRATOS_DOMAIN_NAME:4434/
+
+selfservice:
+  default_browser_return_url: https://$KRATOS_DOMAIN_NAME/
+  allowed_return_urls:
+    - https://$KRATOS_DOMAIN_NAME
+
+  flows:
+    error:
+      ui_url: https://$KRATOS_DOMAIN_NAME/auth/error
+
+    settings:
+      ui_url: https://$KRATOS_DOMAIN_NAME/api/kratos/settings
+
+    recovery:
+      ui_url: https://$KRATOS_DOMAIN_NAME/api/kratos/recovery
+
+    verification:
+      ui_url: https://$KRATOS_DOMAIN_NAME/api/kratos/verification
+      after:
+        default_browser_return_url: https://$KRATOS_DOMAIN_NAME/
+
+    logout:
+      after:
+        default_browser_return_url: https://$KRATOS_DOMAIN_NAME
+
+    login:
+      ui_url: https://$KRATOS_DOMAIN_NAME
+      lifespan: 10m
+
+    registration:
+      ui_url: https://$KRATOS_DOMAIN_NAME/
+      lifespan: 10m
+      after:
+        password:
+          hooks:
+            - hook: session
+        oidc:
+          hooks:
+            - hook: session
+log:
+  level: debug
+  format: json
+  leak_sensitive_values: false
+

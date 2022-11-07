@@ -1,3 +1,5 @@
 .idea
 .data
+.env.prod
 schema.graphql
+docker/postgres/data

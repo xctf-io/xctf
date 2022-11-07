@@ -1,5 +1,0 @@
-function:
-  name: current_user
-  schema: public
-configuration:
-  session_argument: hasura_session
