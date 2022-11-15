@@ -1,0 +1,49 @@
+table:
+  name: unlock
+  schema: public
+object_relationships:
+  - name: target_hint
+    using:
+      manual_configuration:
+        column_mapping:
+          target: id
+        insertion_order: null
+        remote_table:
+          name: hint
+          schema: public
+  - name: team
+    using:
+      foreign_key_constraint_on: team_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+select_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - type
+        - id
+        - target
+        - team_id
+        - user_id
+        - date
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - type
+        - id
+        - target
+        - team_id
+        - user_id
+        - date
+      filter:
+        _and:
+          - _or:
+              - team:
+                  members:
+                    id:
+                      _eq: X-Hasura-User-Id
+              - user:
+                  id:
+                    _eq: X-Hasura-User-Id

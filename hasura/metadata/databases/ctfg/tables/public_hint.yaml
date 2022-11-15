@@ -1,0 +1,74 @@
+table:
+  name: hint
+  schema: public
+object_relationships:
+  - name: challenge
+    using:
+      foreign_key_constraint_on: challenge_id
+  - name: unlocked_content
+    using:
+      manual_configuration:
+        column_mapping:
+          id: id
+        insertion_order: null
+        remote_table:
+          name: hints_content
+          schema: public
+array_relationships:
+  - name: unlocks
+    using:
+      manual_configuration:
+        column_mapping:
+          id: target
+        insertion_order: null
+        remote_table:
+          name: unlock
+          schema: public
+insert_permissions:
+  - role: ctfd_admin
+    permission:
+      check: {}
+      columns:
+        - challenge_id
+        - content
+        - cost
+        - requirements
+        - type
+select_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - challenge_id
+        - cost
+        - id
+        - requirements
+        - type
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - challenge_id
+        - cost
+        - id
+        - requirements
+        - type
+      filter:
+        challenge:
+          state:
+            _eq: visible
+update_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - challenge_id
+        - content
+        - cost
+        - requirements
+        - type
+      filter: {}
+      check: {}
+delete_permissions:
+  - role: ctfd_admin
+    permission:
+      backend_only: false
+      filter: {}

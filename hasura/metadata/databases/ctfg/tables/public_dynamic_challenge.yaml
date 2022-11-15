@@ -1,0 +1,27 @@
+table:
+  name: dynamic_challenge
+  schema: public
+object_relationships:
+  - name: challenge
+    using:
+      foreign_key_constraint_on: id
+select_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - decay
+        - id
+        - initial
+        - minimum
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - decay
+        - id
+        - initial
+        - minimum
+      filter:
+        challenge:
+          state:
+            _eq: visible

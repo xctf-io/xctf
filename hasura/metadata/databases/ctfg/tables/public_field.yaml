@@ -1,0 +1,68 @@
+table:
+  name: field
+  schema: public
+array_relationships:
+  - name: field_entries
+    using:
+      foreign_key_constraint_on:
+        column: field_id
+        table:
+          name: field_entry
+          schema: public
+insert_permissions:
+  - role: ctfd_admin
+    permission:
+      check: {}
+      columns:
+        - description
+        - editable
+        - field_type
+        - name
+        - public
+        - required
+        - type
+select_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - id
+        - name
+        - type
+        - field_type
+        - description
+        - required
+        - public
+        - editable
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - description
+        - editable
+        - field_type
+        - id
+        - name
+        - public
+        - required
+        - type
+      filter:
+        public:
+          _eq: true
+update_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - description
+        - editable
+        - field_type
+        - name
+        - public
+        - required
+        - type
+      filter: {}
+      check: {}
+delete_permissions:
+  - role: ctfd_admin
+    permission:
+      backend_only: false
+      filter: {}

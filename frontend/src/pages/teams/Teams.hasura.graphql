@@ -1,4 +1,4 @@
-fragment TeamList on teams {
+fragment TeamList on team {
   id
   name
   website

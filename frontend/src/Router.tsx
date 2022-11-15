@@ -58,6 +58,11 @@ export default function Router() {
             </PageLayout>
           </AccessCheck>
         </Route>
+        <Route path="/admin">
+          <PageLayout>
+            <AdminPage />
+          </PageLayout>
+        </Route>
         <Route path="/">
           <PageLayout>
             <App />

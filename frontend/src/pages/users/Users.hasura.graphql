@@ -1,4 +1,4 @@
-fragment UserList on users {
+fragment UserList on user {
   id
   name
   website

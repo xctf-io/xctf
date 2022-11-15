@@ -1,0 +1,110 @@
+table:
+  name: field_entry
+  schema: public
+object_relationships:
+  - name: field
+    using:
+      foreign_key_constraint_on: field_id
+  - name: team
+    using:
+      foreign_key_constraint_on: team_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+select_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - type
+        - field_id
+        - id
+        - team_id
+        - user_id
+        - value
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - id
+        - type
+        - value
+        - field_id
+        - user_id
+        - team_id
+      filter:
+        _or:
+          - user_id:
+              _eq: X-Hasura-User-Id
+          - team:
+              members:
+                id:
+                  _eq: X-Hasura-User-Id
+update_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - type
+        - field_id
+        - id
+        - team_id
+        - user_id
+        - value
+      filter: {}
+      check: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - value
+      filter:
+        _and:
+          - _or:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - team:
+                  captain:
+                    id:
+                      _eq: X-Hasura-User-Id
+          - field:
+              _and:
+                - editable:
+                    _eq: true
+                - public:
+                    _eq: true
+      check:
+        _and:
+          - _or:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - team:
+                  captain:
+                    id:
+                      _eq: X-Hasura-User-Id
+          - field:
+              _and:
+                - editable:
+                    _eq: true
+                - public:
+                    _eq: true
+delete_permissions:
+  - role: ctfd_admin
+    permission:
+      backend_only: false
+      filter: {}
+  - role: ctfd_user
+    permission:
+      backend_only: false
+      filter:
+        _and:
+          - _or:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - team:
+                  captain:
+                    id:
+                      _eq: X-Hasura-User-Id
+          - field:
+              _and:
+                - editable:
+                    _eq: true
+                - public:
+                    _eq: true

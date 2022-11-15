@@ -1,10 +1,12 @@
 - id: "ory:ctfg:hasura:graphql"
   upstream:
     preserve_host: true
+    strip_path: "/api"
     url: $OATHKEEPER_HASURA_URL
   match:
-    url: "$OATHKEEPER_MATCH_URL/v1/graphql"
+    url: "$OATHKEEPER_MATCH_URL/api/v1/graphql"
     methods:
+      - GET
       - POST
   authenticators:
     - handler: cookie_session
@@ -21,33 +23,6 @@
               "x-hasura-user-id": "{{ .Subject }}",
               "x-hasura-allowed-roles": ["ctfd_user"],
               "x-hasura-default-role": "ctfd_user"
-            }
-          }
-
-- id: "ory:ctfg:hasura:graphql:ws"
-  upstream:
-    preserve_host: true
-    url: ws://hasura:8080
-  match:
-    url: "ws://localhost:4455/v1/graphql"
-    methods:
-      - POST
-  authenticators:
-    - handler: cookie_session
-    - handler: anonymous
-  authorizer:
-    handler: allow
-
-  mutators:
-    - handler: id_token
-      config:
-        issuer_url: http://oathkeeper:4455/
-        claims: |
-          {
-            "https://hasura.io/jwt/claims": {
-              "x-hasura-user-id": "{{ .Subject }}",
-              "x-hasura-allowed-roles": ["user"],
-              "x-hasura-default-role": "user"
             }
           }
 - id: "ory:ctfg:hasura:graphql:service"

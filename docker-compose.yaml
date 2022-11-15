@@ -14,11 +14,11 @@ services:
       OATHKEEPER_HASURA_URL: "http://hasura:8080"
       OATHKEEPER_FRONTEND_URL: "http://host.docker.internal:3000"
       OATHKEEPER_KRATOS_URL: "http://kratos:4433"
-      OATHKEEPER_MATCH_URL: "<https|http|ws>://localhost:4455"
+      OATHKEEPER_MATCH_URL: "<https|http>://localhost:4455"
     volumes:
       - "./ory/oathkeeper:/config"
     healthcheck:
-      test: ['CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:4455/health/ready || exit 1']
+      test: [ 'CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:4455/health/ready || exit 1' ]
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -56,7 +56,7 @@ services:
     volumes:
       - './ory/kratos:/config'
     healthcheck:
-      test: ['CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:4434/health/ready || exit 1']
+      test: [ 'CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:4434/health/ready || exit 1' ]
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -85,5 +85,7 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: password
       HASURA_GRAPHQL_JWT_SECRET: '{"type":"RS256","jwk_url":"http://oathkeeper:4456/.well-known/jwks.json","issuer":"http://oathkeeper:4455/"}'
       HASURA_GRAPHQL_LOG_LEVEL: debug
+      HASURA_GRAPHQL_METADATA_DIR: /hasura/metadata
+      HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura/migrations
     extra_hosts:
       - "host.docker.internal:host-gateway"

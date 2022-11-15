@@ -1,28 +1,34 @@
-fragment ChallengeList on challenges {
-  id
-  name
-  category
-  description
-  value
-  max_attempts
-  files {
-    id
-    location
-    type
-  }
-  hints {
-    id
-    type
-    cost
-    unlocked_content {
-      id
-      content
+fragment ChallengeList on challenge_tag {
+    challenge {
+        id
+        name
+        description
+        value
+        max_attempts
+        files {
+            id
+            location
+            type
+        }
+        hints {
+            id
+            type
+            cost
+            unlocked_content {
+                id
+                content
+            }
+        }
+        type
+        solved
+        tags {
+            tag {
+                name
+            }
+        }
     }
-  }
-  tags {
-    id
-    value
-  }
-  type
-  solved
+    tag {
+        id
+        name
+    }
 }

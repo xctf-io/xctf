@@ -1,0 +1,41 @@
+table:
+  name: token
+  schema: public
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+select_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - created
+        - expiration
+        - id
+        - type
+        - user_id
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - created
+        - expiration
+        - id
+        - type
+        - user_id
+      filter:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+delete_permissions:
+  - role: ctfd_admin
+    permission:
+      backend_only: false
+      filter: {}
+  - role: ctfd_user
+    permission:
+      backend_only: false
+      filter:
+        user:
+          id:
+            _eq: X-Hasura-User-Id

@@ -1,0 +1,131 @@
+table:
+  name: challenge
+  schema: public
+array_relationships:
+  - name: comments
+    using:
+      foreign_key_constraint_on:
+        column: challenge_id
+        table:
+          name: comment
+          schema: public
+  - name: files
+    using:
+      foreign_key_constraint_on:
+        column: challenge_id
+        table:
+          name: file
+          schema: public
+  - name: flags
+    using:
+      foreign_key_constraint_on:
+        column: challenge_id
+        table:
+          name: flag
+          schema: public
+  - name: hints
+    using:
+      foreign_key_constraint_on:
+        column: challenge_id
+        table:
+          name: hint
+          schema: public
+  - name: solves
+    using:
+      foreign_key_constraint_on:
+        column: challenge_id
+        table:
+          name: solve
+          schema: public
+  - name: submissions
+    using:
+      foreign_key_constraint_on:
+        column: challenge_id
+        table:
+          name: submission
+          schema: public
+  - name: tags
+    using:
+      foreign_key_constraint_on:
+        column: challenge_id
+        table:
+          name: challenge_tag
+          schema: public
+computed_fields:
+  - name: solved
+    definition:
+      function:
+        name: challenges_solved
+        schema: public
+      session_argument: hasura_session
+      table_argument: challenge_row
+select_permissions:
+  - role: ctfd_
+    permission:
+      columns:
+        - description
+        - id
+        - max_attempts
+        - name
+        - requirements
+        - type
+        - value
+      computed_fields:
+        - solved
+      filter:
+        _and:
+          - state:
+              _eq: visible
+          - _exists:
+              _table:
+                name: config
+                schema: public
+              _where:
+                _and:
+                  - key:
+                      _eq: challenge_visibility
+                  - value:
+                      _eq: public
+  - role: ctfd_admin
+    permission:
+      columns:
+        - name
+        - state
+        - type
+        - id
+        - max_attempts
+        - value
+        - requirements
+        - description
+      computed_fields:
+        - solved
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - description
+        - id
+        - max_attempts
+        - name
+        - requirements
+        - type
+        - value
+      computed_fields:
+        - solved
+      filter:
+        state:
+          _eq: visible
+update_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - name
+        - state
+        - type
+        - id
+        - max_attempts
+        - value
+        - requirements
+        - description
+      filter: {}
+      check: {}

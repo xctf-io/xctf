@@ -1,4 +1,4 @@
-fragment SingleTeam on teams {
+fragment SingleTeam on team {
   id
   name
   affiliation

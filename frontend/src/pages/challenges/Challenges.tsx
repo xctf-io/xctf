@@ -1,24 +1,25 @@
-import { Grid } from "baseui/layout-grid";
-import ChallengeCard from "../../components/ChallengeCard";
 import { Order_By } from "../../generated";
 import { GQLHooks } from "../../generated/hasura/react";
+import { useStyletron } from "baseui";
+import { ChallengeTableView } from "./ChallengeTableView";
 
 export default function Challenges() {
+  const [css] = useStyletron();
+
   const { data } = GQLHooks.Fragments.ChallengeList.useQueryObjects({
     variables: {
       limit: 100,
       order_by: {
-        category: Order_By.Asc,
-        value: Order_By.Desc,
-        name: Order_By.Asc,
+        challenge: {
+          name: Order_By.Desc,
+        },
       },
     },
   });
+
   return (
-    <Grid>
-      {data?.challenges.map((c) => (
-        <ChallengeCard challenge={c} />
-      ))}
-    </Grid>
+    <>
+      <ChallengeTableView challengeTags={data?.challenge_tag} />
+    </>
   );
 }

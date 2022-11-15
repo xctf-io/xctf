@@ -1,27 +1,27 @@
 import { gql } from "@apollo/client";
 import React, { lazy, useEffect } from "react";
-import ScoreboardTable from "../../components/ScoreboardTable";
-import { TimelineContainer } from "../../components/TimelineContainer";
+import ScoreboardTable from "./ScoreboardTable";
+import { TimelineContainer } from "../teams/TimelineContainer";
 import { LiveScoreboardDocument, useScoreboardQuery } from "../../generated";
 
 const ScoreboardTimeline = lazy(
-  () => import("../../components/ScoreboardTimeline"),
+  () => import("./ScoreboardTimeline"),
 );
 
 gql`
-  query Scoreboard {
-    scoreboard(limit: 10) {
-      ...ScoreboardTable
-      ...ScoreboardTimeline
+    query Scoreboard {
+        scoreboard(limit: 10) {
+            ...ScoreboardTable
+            ...ScoreboardTimeline
+        }
     }
-  }
 
-  subscription LiveScoreboard {
-    scoreboard(limit: 10) {
-      ...ScoreboardTable
-      ...ScoreboardTimeline
+    subscription LiveScoreboard {
+        scoreboard(limit: 10) {
+            ...ScoreboardTable
+            ...ScoreboardTimeline
+        }
     }
-  }
 `;
 
 // eslint-disable-next-line

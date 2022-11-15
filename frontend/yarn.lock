@@ -3576,6 +3576,14 @@ bcryptjs@^2.3.0:
   resolved "https://registry.yarnpkg.com/bcryptjs/-/bcryptjs-2.4.3.tgz#9ab5627b93e60621ff7cdac5da9733027df1d0cb"
   integrity sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==
 
+beautiful-react-hooks@^3.11.2:
+  version "3.11.2"
+  resolved "https://registry.yarnpkg.com/beautiful-react-hooks/-/beautiful-react-hooks-3.11.2.tgz#ed1e9bda09920144bdb383833b13836dc4107baf"
+  integrity sha512-g3pIIZhYfvk1btovwojdMOZ/UjqHi5jqv0TPG0AbQ9B8N8qmGgfgMHPPShelwWevSy7b4VVTmWr1VUJ+QnDR+A==
+  dependencies:
+    lodash.debounce "^4.0.8"
+    lodash.throttle "^4.1.1"
+
 bfj@^7.0.2:
   version "7.0.2"
   resolved "https://registry.npmjs.org/bfj/-/bfj-7.0.2.tgz"
@@ -9004,6 +9012,11 @@ lodash._reinterpolate@^3.0.0:
   resolved "https://registry.npmjs.org/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz"
   integrity sha1-DM8tiRZq8Ds2Y8eWU4t1rG4RTZ0=
 
+lodash.debounce@^4.0.8:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
+  integrity sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==
+
 lodash.get@^4:
   version "4.4.2"
   resolved "https://registry.npmjs.org/lodash.get/-/lodash.get-4.4.2.tgz"
@@ -9068,6 +9081,11 @@ lodash.templatesettings@^4.0.0:
   integrity sha512-stgLz+i3Aa9mZgnjr/O+v9ruKZsPsndy7qPZOchbqk2cnTU1ZaldKK+v7m54WoKIyxiuMZTKT2H81F8BeAc3ZQ==
   dependencies:
     lodash._reinterpolate "^3.0.0"
+
+lodash.throttle@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
+  integrity sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==
 
 lodash.uniq@^4.5.0:
   version "4.5.0"
@@ -11099,10 +11117,10 @@ prettier-plugin-organize-imports@^2.2.0:
   resolved "https://registry.yarnpkg.com/prettier-plugin-organize-imports/-/prettier-plugin-organize-imports-2.2.0.tgz#dcdd5222416a90bd819734f131fea4a22b1c613a"
   integrity sha512-2WM3moc/cAPCCsSneYhaL4+mMws0Bypbxz+98wuRyaA7GMokhOECVkQCG7l2hcH+9/4d5NsgZs9yktfwDy4r7A==
 
-prettier@^2.3.2:
-  version "2.3.2"
-  resolved "https://registry.npmjs.org/prettier/-/prettier-2.3.2.tgz"
-  integrity sha512-lnJzDfJ66zkMy58OL5/NY5zp70S7Nz6KqcKkXYzn2tMVrNxvbqaBpg7H3qHaLxCJ5lNMsGuM8+ohS7cZrthdLQ==
+prettier@^2.7.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.7.1.tgz#e235806850d057f97bb08368a4f7d899f7760c64"
+  integrity sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==
 
 pretty-bytes@^5.3.0:
   version "5.6.0"

@@ -1,0 +1,51 @@
+table:
+  name: submission
+  schema: public
+object_relationships:
+  - name: challenge
+    using:
+      foreign_key_constraint_on: challenge_id
+  - name: solve
+    using:
+      foreign_key_constraint_on:
+        column: id
+        table:
+          name: solve
+          schema: public
+  - name: team
+    using:
+      foreign_key_constraint_on: team_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+select_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - id
+        - challenge_id
+        - user_id
+        - team_id
+        - ip
+        - provided
+        - type
+        - date
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - challenge_id
+        - date
+        - id
+        - team_id
+        - type
+        - user_id
+      filter:
+        _and:
+          - challenge:
+              state:
+                _eq: visible
+          - team:
+              members:
+                id:
+                  _eq: X-Hasura-User-Id

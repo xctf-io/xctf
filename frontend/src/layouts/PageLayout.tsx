@@ -43,6 +43,8 @@ export default function PageLayout({ children }: PageLayoutProps) {
     controlledNavItem("Teams", "/teams"),
     controlledNavItem("Scoreboard", "/scoreboard"),
     controlledNavItem("Challenges", "/challenges"),
+    controlledNavItem("Admin", "/admin"),
+    controlledNavItem("Login", "/login"),
   ];
 
   if (authContext.current_user?.type === "admin") {

@@ -46,7 +46,7 @@ authenticators:
   anonymous:
     enabled: true
     config:
-      subject: guest
+      subject: 9dc444a7-cac8-4481-8bf3-c41c6a40263a
 
   cookie_session:
     enabled: true

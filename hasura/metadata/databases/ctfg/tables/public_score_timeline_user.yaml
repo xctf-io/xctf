@@ -1,0 +1,69 @@
+table:
+  name: score_timeline_user
+  schema: public
+object_relationships:
+  - name: team
+    using:
+      manual_configuration:
+        column_mapping:
+          team_id: id
+        insertion_order: null
+        remote_table:
+          name: team
+          schema: public
+select_permissions:
+  - role: ctfd_
+    permission:
+      columns:
+        - event_time
+        - team_id
+        - user_id
+        - score
+      filter:
+        _exists:
+          _table:
+            name: config
+            schema: public
+          _where:
+            _and:
+              - key:
+                  _eq: score_visibility
+              - value:
+                  _eq: public
+  - role: ctfd_admin
+    permission:
+      columns:
+        - event_time
+        - team_id
+        - user_id
+        - score
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - event_time
+        - team_id
+        - user_id
+        - score
+      filter:
+        _or:
+          - _exists:
+              _table:
+                name: config
+                schema: public
+              _where:
+                _and:
+                  - key:
+                      _eq: score_visibility
+                  - _or:
+                      - value:
+                          _eq: private
+                      - value:
+                          _eq: public
+          - _or:
+              - team:
+                  members:
+                    id:
+                      _eq: X-Hasura-User-Id
+              - user_id:
+                  _eq: X-Hasura-User-Id

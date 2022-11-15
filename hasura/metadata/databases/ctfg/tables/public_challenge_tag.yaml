@@ -1,0 +1,25 @@
+table:
+  name: challenge_tag
+  schema: public
+object_relationships:
+  - name: challenge
+    using:
+      foreign_key_constraint_on: challenge_id
+  - name: tag
+    using:
+      foreign_key_constraint_on: tag_id
+select_permissions:
+  - role: ctfd_admin
+    permission:
+      columns:
+        - challenge_id
+        - id
+        - tag_id
+      filter: {}
+  - role: ctfd_user
+    permission:
+      columns:
+        - challenge_id
+        - id
+        - tag_id
+      filter: {}

@@ -1,5 +1,5 @@
 schema:
-  - http://localhost:4455/v1/graphql:
+  - http://localhost:4455/api/v1/graphql:
       headers:
         user-agent: codegen
         x-hasura-admin-secret: password
