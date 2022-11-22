@@ -22,6 +22,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({ challenge, isOpe
   const [css, theme] = useStyletron();
   const [flag, setFlag] = useState<string | null>(null);
   const handleSubmit = () => {
+    
   };
 
   return (

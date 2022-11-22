@@ -9,6 +9,7 @@ import Teams from "./pages/teams/Teams";
 import Users from "./pages/users/Users";
 import { AccessCheck } from "./util/auth";
 import { LoginPage } from "./pages/login/LoginPage";
+import { AdminPage } from "./pages/admin/AdminPage";
 
 export default function Router() {
   return (

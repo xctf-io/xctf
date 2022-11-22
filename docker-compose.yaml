@@ -61,7 +61,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   hasura:
-    image: hasura/graphql-engine:v2.9.0.cli-migrations-v3
+    image: hasura/graphql-engine:v2.15.0.cli-migrations-v2
     ports:
       - "8080:8080"
     depends_on:
@@ -85,7 +85,7 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: password
       HASURA_GRAPHQL_JWT_SECRET: '{"type":"RS256","jwk_url":"http://oathkeeper:4456/.well-known/jwks.json","issuer":"http://oathkeeper:4455/"}'
       HASURA_GRAPHQL_LOG_LEVEL: debug
-      HASURA_GRAPHQL_METADATA_DIR: /hasura/metadata
-      HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura/migrations
+    #      HASURA_GRAPHQL_METADATA_DIR: /hasura/metadata
+    #      HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura/migrations
     extra_hosts:
       - "host.docker.internal:host-gateway"

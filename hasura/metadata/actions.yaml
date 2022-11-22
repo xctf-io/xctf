@@ -1,6 +1,16 @@
-actions: []
+actions:
+  - name: submitFlag
+    definition:
+      kind: synchronous
+      handler: http://host.docker.internal:3001/submitFlag
+    permissions:
+      - role: ctfd_admin
+      - role: ctfd_user
+    comment: Submit Flag
 custom_types:
   enums: []
-  input_objects: []
-  objects: []
+  input_objects:
+    - name: SubmitFlagInput
+  objects:
+    - name: SubmitFlagOutput
   scalars: []

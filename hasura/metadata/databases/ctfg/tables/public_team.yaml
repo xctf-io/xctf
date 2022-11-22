@@ -52,13 +52,6 @@ array_relationships:
         remote_table:
           name: score_timeline
           schema: public
-  - name: solves
-    using:
-      foreign_key_constraint_on:
-        column: team_id
-        table:
-          name: solve
-          schema: public
   - name: submissions
     using:
       foreign_key_constraint_on:

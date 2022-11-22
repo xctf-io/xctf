@@ -8,9 +8,6 @@ object_relationships:
   - name: submission
     using:
       foreign_key_constraint_on: id
-  - name: team
-    using:
-      foreign_key_constraint_on: team_id
   - name: user
     using:
       foreign_key_constraint_on: user_id
@@ -18,24 +15,21 @@ select_permissions:
   - role: ctfd_admin
     permission:
       columns:
-        - id
         - challenge_id
+        - id
         - user_id
-        - team_id
       filter: {}
   - role: ctfd_user
     permission:
       columns:
         - challenge_id
         - id
-        - team_id
         - user_id
       filter:
         _and:
           - challenge:
               state:
                 _eq: visible
-          - team:
-              members:
-                id:
-                  _eq: X-Hasura-User-Id
+          - user:
+              kratos_id:
+                _eq: X-Hasura-User-Id

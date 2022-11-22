@@ -30,11 +30,9 @@ select_permissions:
 delete_permissions:
   - role: ctfd_admin
     permission:
-      backend_only: false
       filter: {}
   - role: ctfd_user
     permission:
-      backend_only: false
       filter:
         user:
           id:

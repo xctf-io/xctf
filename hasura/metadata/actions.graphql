@@ -1,0 +1,14 @@
+type Mutation {
+  submitFlag(
+    req: SubmitFlagInput!
+  ): SubmitFlagOutput
+}
+
+input SubmitFlagInput {
+  flag: String!
+}
+
+type SubmitFlagOutput {
+  solved: Boolean!
+}
+
