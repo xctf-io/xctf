@@ -1,9 +1,7 @@
 schema:
   - http://localhost:4455/api/v1/graphql:
       headers:
-        user-agent: codegen
         x-hasura-admin-secret: password
-#        x-hasura-role: user
 
 overwrite: true
 generates:

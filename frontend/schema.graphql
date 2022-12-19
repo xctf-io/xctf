@@ -96,6 +96,14 @@ input String_comparison_exp {
   _similar: String
 }
 
+input SubmitFlagInput {
+  flag: String!
+}
+
+type SubmitFlagOutput {
+  solved: Boolean!
+}
+
 """
 columns and relationships of "award"
 """
@@ -127,6 +135,17 @@ aggregated selection of "award"
 type award_aggregate {
   aggregate: award_aggregate_fields
   nodes: [award!]!
+}
+
+input award_aggregate_bool_exp {
+  count: award_aggregate_bool_exp_count
+}
+
+input award_aggregate_bool_exp_count {
+  arguments: [award_select_column!]
+  distinct: Boolean
+  filter: award_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -425,6 +444,31 @@ input award_stddev_samp_order_by {
   value: order_by
 }
 
+"""
+Streaming cursor of the table "award"
+"""
+input award_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: award_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input award_stream_cursor_value_input {
+  date: timestamp
+  description: String
+  icon: String
+  id: uuid
+  name: String
+  requirements: json
+  team_id: uuid
+  type: String
+  user_id: uuid
+  value: Int
+}
+
 """aggregate sum on columns"""
 type award_sum_fields {
   value: Int
@@ -470,6 +514,15 @@ enum award_update_column {
 
   """column name"""
   value
+}
+
+input award_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: award_inc_input
+
+  """sets the columns of the filtered rows to the given values"""
+  _set: award_set_input
+  where: award_bool_exp!
 }
 
 """aggregate var_pop on columns"""
@@ -839,11 +892,15 @@ input challenge_bool_exp {
   _not: challenge_bool_exp
   _or: [challenge_bool_exp!]
   comments: comment_bool_exp
+  comments_aggregate: comment_aggregate_bool_exp
   connection_info: String_comparison_exp
   description: String_comparison_exp
   files: file_bool_exp
+  files_aggregate: file_aggregate_bool_exp
   flags: flag_bool_exp
+  flags_aggregate: flag_aggregate_bool_exp
   hints: hint_bool_exp
+  hints_aggregate: hint_aggregate_bool_exp
   id: uuid_comparison_exp
   max_attempts: Int_comparison_exp
   name: String_comparison_exp
@@ -851,9 +908,12 @@ input challenge_bool_exp {
   requirements: json_comparison_exp
   solved: Boolean_comparison_exp
   solves: solve_bool_exp
+  solves_aggregate: solve_aggregate_bool_exp
   state: String_comparison_exp
   submissions: submission_bool_exp
+  submissions_aggregate: submission_aggregate_bool_exp
   tags: challenge_tag_bool_exp
+  tags_aggregate: challenge_tag_aggregate_bool_exp
   type: String_comparison_exp
   value: Int_comparison_exp
 }
@@ -1051,6 +1111,31 @@ type challenge_stddev_samp_fields {
   value: Float
 }
 
+"""
+Streaming cursor of the table "challenge"
+"""
+input challenge_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: challenge_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input challenge_stream_cursor_value_input {
+  connection_info: String
+  description: String
+  id: uuid
+  max_attempts: Int
+  name: String
+  next_id: uuid
+  requirements: json
+  state: String
+  type: String
+  value: Int
+}
+
 """aggregate sum on columns"""
 type challenge_sum_fields {
   max_attempts: Int
@@ -1077,6 +1162,17 @@ aggregated selection of "challenge_tag"
 type challenge_tag_aggregate {
   aggregate: challenge_tag_aggregate_fields
   nodes: [challenge_tag!]!
+}
+
+input challenge_tag_aggregate_bool_exp {
+  count: challenge_tag_aggregate_bool_exp_count
+}
+
+input challenge_tag_aggregate_bool_exp_count {
+  arguments: [challenge_tag_select_column!]
+  distinct: Boolean
+  filter: challenge_tag_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -1126,7 +1222,7 @@ unique or primary key constraints on table "challenge_tag"
 """
 enum challenge_tag_constraint {
   """
-  unique or primary key constraint on columns "challenge_id", "tag_id"
+  unique or primary key constraint on columns "tag_id", "challenge_id"
   """
   challenge_id_tag_id
 
@@ -1237,6 +1333,24 @@ input challenge_tag_set_input {
 }
 
 """
+Streaming cursor of the table "challenge_tag"
+"""
+input challenge_tag_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: challenge_tag_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input challenge_tag_stream_cursor_value_input {
+  challenge_id: uuid
+  id: uuid
+  tag_id: uuid
+}
+
+"""
 update columns of table "challenge_tag"
 """
 enum challenge_tag_update_column {
@@ -1248,6 +1362,12 @@ enum challenge_tag_update_column {
 
   """column name"""
   tag_id
+}
+
+input challenge_tag_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: challenge_tag_set_input
+  where: challenge_tag_bool_exp!
 }
 
 """
@@ -1283,6 +1403,15 @@ enum challenge_update_column {
 
   """column name"""
   value
+}
+
+input challenge_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: challenge_inc_input
+
+  """sets the columns of the filtered rows to the given values"""
+  _set: challenge_set_input
+  where: challenge_bool_exp!
 }
 
 """aggregate var_pop on columns"""
@@ -1339,6 +1468,17 @@ aggregated selection of "comment"
 type comment_aggregate {
   aggregate: comment_aggregate_fields
   nodes: [comment!]!
+}
+
+input comment_aggregate_bool_exp {
+  count: comment_aggregate_bool_exp_count
+}
+
+input comment_aggregate_bool_exp_count {
+  arguments: [comment_select_column!]
+  distinct: Boolean
+  filter: comment_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -1569,6 +1709,30 @@ input comment_set_input {
 }
 
 """
+Streaming cursor of the table "comment"
+"""
+input comment_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: comment_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input comment_stream_cursor_value_input {
+  author_id: uuid
+  challenge_id: uuid
+  content: String
+  date: timestamp
+  id: uuid
+  page_id: uuid
+  team_id: uuid
+  type: String
+  user_id: uuid
+}
+
+"""
 update columns of table "comment"
 """
 enum comment_update_column {
@@ -1598,6 +1762,12 @@ enum comment_update_column {
 
   """column name"""
   user_id
+}
+
+input comment_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: comment_set_input
+  where: comment_bool_exp!
 }
 
 """
@@ -1727,6 +1897,24 @@ input config_set_input {
 }
 
 """
+Streaming cursor of the table "config"
+"""
+input config_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: config_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input config_stream_cursor_value_input {
+  id: uuid
+  key: String
+  value: String
+}
+
+"""
 update columns of table "config"
 """
 enum config_update_column {
@@ -1738,6 +1926,21 @@ enum config_update_column {
 
   """column name"""
   value
+}
+
+input config_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: config_set_input
+  where: config_bool_exp!
+}
+
+"""ordering argument of a cursor"""
+enum cursor_ordering {
+  """ascending ordering of the cursor"""
+  ASC
+
+  """descending ordering of the cursor"""
+  DESC
 }
 
 """
@@ -1926,6 +2129,25 @@ type dynamic_challenge_stddev_samp_fields {
   minimum: Float
 }
 
+"""
+Streaming cursor of the table "dynamic_challenge"
+"""
+input dynamic_challenge_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: dynamic_challenge_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input dynamic_challenge_stream_cursor_value_input {
+  decay: Int
+  id: uuid
+  initial: Int
+  minimum: Int
+}
+
 """aggregate sum on columns"""
 type dynamic_challenge_sum_fields {
   decay: Int
@@ -1948,6 +2170,15 @@ enum dynamic_challenge_update_column {
 
   """column name"""
   minimum
+}
+
+input dynamic_challenge_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: dynamic_challenge_inc_input
+
+  """sets the columns of the filtered rows to the given values"""
+  _set: dynamic_challenge_set_input
+  where: dynamic_challenge_bool_exp!
 }
 
 """aggregate var_pop on columns"""
@@ -2048,6 +2279,7 @@ input field_bool_exp {
   description: String_comparison_exp
   editable: Boolean_comparison_exp
   field_entries: field_entry_bool_exp
+  field_entries_aggregate: field_entry_aggregate_bool_exp
   field_type: String_comparison_exp
   id: uuid_comparison_exp
   name: String_comparison_exp
@@ -2095,6 +2327,17 @@ aggregated selection of "field_entry"
 type field_entry_aggregate {
   aggregate: field_entry_aggregate_fields
   nodes: [field_entry!]!
+}
+
+input field_entry_aggregate_bool_exp {
+  count: field_entry_aggregate_bool_exp_count
+}
+
+input field_entry_aggregate_bool_exp_count {
+  arguments: [field_entry_select_column!]
+  distinct: Boolean
+  filter: field_entry_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -2282,6 +2525,27 @@ input field_entry_set_input {
 }
 
 """
+Streaming cursor of the table "field_entry"
+"""
+input field_entry_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: field_entry_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input field_entry_stream_cursor_value_input {
+  field_id: uuid
+  id: uuid
+  team_id: uuid
+  type: String
+  user_id: uuid
+  value: json
+}
+
+"""
 update columns of table "field_entry"
 """
 enum field_entry_update_column {
@@ -2302,6 +2566,12 @@ enum field_entry_update_column {
 
   """column name"""
   value
+}
+
+input field_entry_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: field_entry_set_input
+  where: field_entry_bool_exp!
 }
 
 """
@@ -2429,6 +2699,29 @@ input field_set_input {
 }
 
 """
+Streaming cursor of the table "field"
+"""
+input field_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: field_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input field_stream_cursor_value_input {
+  description: String
+  editable: Boolean
+  field_type: String
+  id: uuid
+  name: String
+  public: Boolean
+  required: Boolean
+  type: String
+}
+
+"""
 update columns of table "field"
 """
 enum field_update_column {
@@ -2457,6 +2750,12 @@ enum field_update_column {
   type
 }
 
+input field_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: field_set_input
+  where: field_bool_exp!
+}
+
 """
 columns and relationships of "file"
 """
@@ -2479,6 +2778,17 @@ aggregated selection of "file"
 type file_aggregate {
   aggregate: file_aggregate_fields
   nodes: [file!]!
+}
+
+input file_aggregate_bool_exp {
+  count: file_aggregate_bool_exp_count
+}
+
+input file_aggregate_bool_exp_count {
+  arguments: [file_select_column!]
+  distinct: Boolean
+  filter: file_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -2656,6 +2966,26 @@ input file_set_input {
 }
 
 """
+Streaming cursor of the table "file"
+"""
+input file_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: file_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input file_stream_cursor_value_input {
+  challenge_id: uuid
+  id: uuid
+  location: String
+  page_id: uuid
+  type: String
+}
+
+"""
 update columns of table "file"
 """
 enum file_update_column {
@@ -2673,6 +3003,12 @@ enum file_update_column {
 
   """column name"""
   type
+}
+
+input file_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: file_set_input
+  where: file_bool_exp!
 }
 
 """
@@ -2694,6 +3030,17 @@ aggregated selection of "flag"
 type flag_aggregate {
   aggregate: flag_aggregate_fields
   nodes: [flag!]!
+}
+
+input flag_aggregate_bool_exp {
+  count: flag_aggregate_bool_exp_count
+}
+
+input flag_aggregate_bool_exp_count {
+  arguments: [flag_select_column!]
+  distinct: Boolean
+  filter: flag_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -2868,6 +3215,26 @@ input flag_set_input {
 }
 
 """
+Streaming cursor of the table "flag"
+"""
+input flag_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: flag_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input flag_stream_cursor_value_input {
+  challenge_id: uuid
+  content: String
+  data: String
+  id: uuid
+  type: String
+}
+
+"""
 update columns of table "flag"
 """
 enum flag_update_column {
@@ -2885,6 +3252,12 @@ enum flag_update_column {
 
   """column name"""
   type
+}
+
+input flag_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: flag_set_input
+  where: flag_bool_exp!
 }
 
 """
@@ -2949,6 +3322,17 @@ aggregated selection of "hint"
 type hint_aggregate {
   aggregate: hint_aggregate_fields
   nodes: [hint!]!
+}
+
+input hint_aggregate_bool_exp {
+  count: hint_aggregate_bool_exp_count
+}
+
+input hint_aggregate_bool_exp_count {
+  arguments: [hint_select_column!]
+  distinct: Boolean
+  filter: hint_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -3023,6 +3407,7 @@ input hint_bool_exp {
   type: String_comparison_exp
   unlocked_content: hints_content_bool_exp
   unlocks: unlock_bool_exp
+  unlocks_aggregate: unlock_aggregate_bool_exp
 }
 
 """
@@ -3216,6 +3601,27 @@ input hint_stddev_samp_order_by {
   cost: order_by
 }
 
+"""
+Streaming cursor of the table "hint"
+"""
+input hint_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: hint_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input hint_stream_cursor_value_input {
+  challenge_id: uuid
+  content: String
+  cost: Int
+  id: uuid
+  requirements: json
+  type: String
+}
+
 """aggregate sum on columns"""
 type hint_sum_fields {
   cost: Int
@@ -3249,6 +3655,15 @@ enum hint_update_column {
 
   """column name"""
   type
+}
+
+input hint_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: hint_inc_input
+
+  """sets the columns of the filtered rows to the given values"""
+  _set: hint_set_input
+  where: hint_bool_exp!
 }
 
 """aggregate var_pop on columns"""
@@ -3390,6 +3805,29 @@ input type for updating data in table "hints_content"
 input hints_content_set_input {
   content: String
   id: uuid
+}
+
+"""
+Streaming cursor of the table "hints_content"
+"""
+input hints_content_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: hints_content_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input hints_content_stream_cursor_value_input {
+  content: String
+  id: uuid
+}
+
+input hints_content_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: hints_content_set_input
+  where: hints_content_bool_exp!
 }
 
 scalar json
@@ -4170,6 +4608,9 @@ type mutation_root {
     on_conflict: user_on_conflict
   ): user
 
+  """Submit Flag"""
+  submitFlag(req: SubmitFlagInput!): SubmitFlagOutput
+
   """
   update data of the table: "award"
   """
@@ -4195,6 +4636,14 @@ type mutation_root {
     _set: award_set_input
     pk_columns: award_pk_columns_input!
   ): award
+
+  """
+  update multiples rows of table: "award"
+  """
+  update_award_many(
+    """updates to execute, in order"""
+    updates: [award_updates!]!
+  ): [award_mutation_response]
 
   """
   update data of the table: "challenge"
@@ -4223,6 +4672,14 @@ type mutation_root {
   ): challenge
 
   """
+  update multiples rows of table: "challenge"
+  """
+  update_challenge_many(
+    """updates to execute, in order"""
+    updates: [challenge_updates!]!
+  ): [challenge_mutation_response]
+
+  """
   update data of the table: "challenge_tag"
   """
   update_challenge_tag(
@@ -4241,6 +4698,14 @@ type mutation_root {
     _set: challenge_tag_set_input
     pk_columns: challenge_tag_pk_columns_input!
   ): challenge_tag
+
+  """
+  update multiples rows of table: "challenge_tag"
+  """
+  update_challenge_tag_many(
+    """updates to execute, in order"""
+    updates: [challenge_tag_updates!]!
+  ): [challenge_tag_mutation_response]
 
   """
   update data of the table: "comment"
@@ -4263,6 +4728,14 @@ type mutation_root {
   ): comment
 
   """
+  update multiples rows of table: "comment"
+  """
+  update_comment_many(
+    """updates to execute, in order"""
+    updates: [comment_updates!]!
+  ): [comment_mutation_response]
+
+  """
   update data of the table: "config"
   """
   update_config(
@@ -4281,6 +4754,14 @@ type mutation_root {
     _set: config_set_input
     pk_columns: config_pk_columns_input!
   ): config
+
+  """
+  update multiples rows of table: "config"
+  """
+  update_config_many(
+    """updates to execute, in order"""
+    updates: [config_updates!]!
+  ): [config_mutation_response]
 
   """
   update data of the table: "dynamic_challenge"
@@ -4307,6 +4788,14 @@ type mutation_root {
     _set: dynamic_challenge_set_input
     pk_columns: dynamic_challenge_pk_columns_input!
   ): dynamic_challenge
+
+  """
+  update multiples rows of table: "dynamic_challenge"
+  """
+  update_dynamic_challenge_many(
+    """updates to execute, in order"""
+    updates: [dynamic_challenge_updates!]!
+  ): [dynamic_challenge_mutation_response]
 
   """
   update data of the table: "field"
@@ -4349,6 +4838,22 @@ type mutation_root {
   ): field_entry
 
   """
+  update multiples rows of table: "field_entry"
+  """
+  update_field_entry_many(
+    """updates to execute, in order"""
+    updates: [field_entry_updates!]!
+  ): [field_entry_mutation_response]
+
+  """
+  update multiples rows of table: "field"
+  """
+  update_field_many(
+    """updates to execute, in order"""
+    updates: [field_updates!]!
+  ): [field_mutation_response]
+
+  """
   update data of the table: "file"
   """
   update_file(
@@ -4369,6 +4874,14 @@ type mutation_root {
   ): file
 
   """
+  update multiples rows of table: "file"
+  """
+  update_file_many(
+    """updates to execute, in order"""
+    updates: [file_updates!]!
+  ): [file_mutation_response]
+
+  """
   update data of the table: "flag"
   """
   update_flag(
@@ -4387,6 +4900,14 @@ type mutation_root {
     _set: flag_set_input
     pk_columns: flag_pk_columns_input!
   ): flag
+
+  """
+  update multiples rows of table: "flag"
+  """
+  update_flag_many(
+    """updates to execute, in order"""
+    updates: [flag_updates!]!
+  ): [flag_mutation_response]
 
   """
   update data of the table: "hint"
@@ -4415,6 +4936,14 @@ type mutation_root {
   ): hint
 
   """
+  update multiples rows of table: "hint"
+  """
+  update_hint_many(
+    """updates to execute, in order"""
+    updates: [hint_updates!]!
+  ): [hint_mutation_response]
+
+  """
   update data of the table: "hints_content"
   """
   update_hints_content(
@@ -4424,6 +4953,14 @@ type mutation_root {
     """filter the rows which have to be updated"""
     where: hints_content_bool_exp!
   ): hints_content_mutation_response
+
+  """
+  update multiples rows of table: "hints_content"
+  """
+  update_hints_content_many(
+    """updates to execute, in order"""
+    updates: [hints_content_updates!]!
+  ): [hints_content_mutation_response]
 
   """
   update data of the table: "notification"
@@ -4446,6 +4983,14 @@ type mutation_root {
   ): notification
 
   """
+  update multiples rows of table: "notification"
+  """
+  update_notification_many(
+    """updates to execute, in order"""
+    updates: [notification_updates!]!
+  ): [notification_mutation_response]
+
+  """
   update data of the table: "page"
   """
   update_page(
@@ -4464,6 +5009,14 @@ type mutation_root {
     _set: page_set_input
     pk_columns: page_pk_columns_input!
   ): page
+
+  """
+  update multiples rows of table: "page"
+  """
+  update_page_many(
+    """updates to execute, in order"""
+    updates: [page_updates!]!
+  ): [page_mutation_response]
 
   """
   update data of the table: "solve"
@@ -4486,6 +5039,14 @@ type mutation_root {
   ): solve
 
   """
+  update multiples rows of table: "solve"
+  """
+  update_solve_many(
+    """updates to execute, in order"""
+    updates: [solve_updates!]!
+  ): [solve_mutation_response]
+
+  """
   update data of the table: "submission"
   """
   update_submission(
@@ -4504,6 +5065,14 @@ type mutation_root {
     _set: submission_set_input
     pk_columns: submission_pk_columns_input!
   ): submission
+
+  """
+  update multiples rows of table: "submission"
+  """
+  update_submission_many(
+    """updates to execute, in order"""
+    updates: [submission_updates!]!
+  ): [submission_mutation_response]
 
   """
   update data of the table: "tag"
@@ -4526,6 +5095,14 @@ type mutation_root {
   ): tag
 
   """
+  update multiples rows of table: "tag"
+  """
+  update_tag_many(
+    """updates to execute, in order"""
+    updates: [tag_updates!]!
+  ): [tag_mutation_response]
+
+  """
   update data of the table: "team"
   """
   update_team(
@@ -4544,6 +5121,14 @@ type mutation_root {
     _set: team_set_input
     pk_columns: team_pk_columns_input!
   ): team
+
+  """
+  update multiples rows of table: "team"
+  """
+  update_team_many(
+    """updates to execute, in order"""
+    updates: [team_updates!]!
+  ): [team_mutation_response]
 
   """
   update data of the table: "token"
@@ -4566,6 +5151,14 @@ type mutation_root {
   ): token
 
   """
+  update multiples rows of table: "token"
+  """
+  update_token_many(
+    """updates to execute, in order"""
+    updates: [token_updates!]!
+  ): [token_mutation_response]
+
+  """
   update data of the table: "tracking"
   """
   update_tracking(
@@ -4584,6 +5177,14 @@ type mutation_root {
     _set: tracking_set_input
     pk_columns: tracking_pk_columns_input!
   ): tracking
+
+  """
+  update multiples rows of table: "tracking"
+  """
+  update_tracking_many(
+    """updates to execute, in order"""
+    updates: [tracking_updates!]!
+  ): [tracking_mutation_response]
 
   """
   update data of the table: "unlock"
@@ -4612,6 +5213,14 @@ type mutation_root {
   ): unlock
 
   """
+  update multiples rows of table: "unlock"
+  """
+  update_unlock_many(
+    """updates to execute, in order"""
+    updates: [unlock_updates!]!
+  ): [unlock_mutation_response]
+
+  """
   update data of the table: "user"
   """
   update_user(
@@ -4630,6 +5239,14 @@ type mutation_root {
     _set: user_set_input
     pk_columns: user_pk_columns_input!
   ): user
+
+  """
+  update multiples rows of table: "user"
+  """
+  update_user_many(
+    """updates to execute, in order"""
+    updates: [user_updates!]!
+  ): [user_mutation_response]
 }
 
 """
@@ -4801,6 +5418,27 @@ input notification_set_input {
 }
 
 """
+Streaming cursor of the table "notification"
+"""
+input notification_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: notification_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input notification_stream_cursor_value_input {
+  content: String
+  date: timestamp
+  id: uuid
+  team_id: uuid
+  title: String
+  user_id: uuid
+}
+
+"""
 update columns of table "notification"
 """
 enum notification_update_column {
@@ -4821,6 +5459,12 @@ enum notification_update_column {
 
   """column name"""
   user_id
+}
+
+input notification_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: notification_set_input
+  where: notification_bool_exp!
 }
 
 """column ordering options"""
@@ -4920,6 +5564,7 @@ input page_bool_exp {
   _or: [page_bool_exp!]
   auth_required: Boolean_comparison_exp
   comments: comment_bool_exp
+  comments_aggregate: comment_aggregate_bool_exp
   content: String_comparison_exp
   draft: Boolean_comparison_exp
   format: String_comparison_exp
@@ -5069,6 +5714,29 @@ input page_set_input {
 }
 
 """
+Streaming cursor of the table "page"
+"""
+input page_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: page_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input page_stream_cursor_value_input {
+  auth_required: Boolean
+  content: String
+  draft: Boolean
+  format: String
+  hidden: Boolean
+  id: uuid
+  route: String
+  title: String
+}
+
+"""
 update columns of table "page"
 """
 enum page_update_column {
@@ -5095,6 +5763,12 @@ enum page_update_column {
 
   """column name"""
   title
+}
+
+input page_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: page_set_input
+  where: page_bool_exp!
 }
 
 type query_root {
@@ -6389,6 +7063,25 @@ type score_event_stddev_samp_fields {
   event_value: Float
 }
 
+"""
+Streaming cursor of the table "score_event"
+"""
+input score_event_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: score_event_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input score_event_stream_cursor_value_input {
+  event_time: timestamp
+  event_value: Int
+  team_id: uuid
+  user_id: uuid
+}
+
 """aggregate sum on columns"""
 type score_event_sum_fields {
   event_value: Int
@@ -6427,6 +7120,17 @@ aggregated selection of "score_timeline"
 type score_timeline_aggregate {
   aggregate: score_timeline_aggregate_fields
   nodes: [score_timeline!]!
+}
+
+input score_timeline_aggregate_bool_exp {
+  count: score_timeline_aggregate_bool_exp_count
+}
+
+input score_timeline_aggregate_bool_exp_count {
+  arguments: [score_timeline_select_column!]
+  distinct: Boolean
+  filter: score_timeline_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -6595,6 +7299,24 @@ input score_timeline_stddev_samp_order_by {
   score: order_by
 }
 
+"""
+Streaming cursor of the table "score_timeline"
+"""
+input score_timeline_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: score_timeline_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input score_timeline_stream_cursor_value_input {
+  event_time: timestamp
+  score: bigint
+  team_id: uuid
+}
+
 """aggregate sum on columns"""
 type score_timeline_sum_fields {
   score: bigint
@@ -6626,6 +7348,17 @@ aggregated selection of "score_timeline_user"
 type score_timeline_user_aggregate {
   aggregate: score_timeline_user_aggregate_fields
   nodes: [score_timeline_user!]!
+}
+
+input score_timeline_user_aggregate_bool_exp {
+  count: score_timeline_user_aggregate_bool_exp_count
+}
+
+input score_timeline_user_aggregate_bool_exp_count {
+  arguments: [score_timeline_user_select_column!]
+  distinct: Boolean
+  filter: score_timeline_user_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -6802,6 +7535,25 @@ order by stddev_samp() on columns of table "score_timeline_user"
 """
 input score_timeline_user_stddev_samp_order_by {
   score: order_by
+}
+
+"""
+Streaming cursor of the table "score_timeline_user"
+"""
+input score_timeline_user_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: score_timeline_user_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input score_timeline_user_stream_cursor_value_input {
+  event_time: timestamp
+  score: bigint
+  team_id: uuid
+  user_id: uuid
 }
 
 """aggregate sum on columns"""
@@ -7024,6 +7776,25 @@ type scoreboard_stddev_samp_fields {
   score: Float
 }
 
+"""
+Streaming cursor of the table "scoreboard"
+"""
+input scoreboard_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: scoreboard_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input scoreboard_stream_cursor_value_input {
+  max_time: timestamp
+  rank: bigint
+  score: bigint
+  team_id: uuid
+}
+
 """aggregate sum on columns"""
 type scoreboard_sum_fields {
   rank: bigint
@@ -7161,6 +7932,26 @@ type scoreboard_user_stddev_samp_fields {
   score: Float
 }
 
+"""
+Streaming cursor of the table "scoreboard_user"
+"""
+input scoreboard_user_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: scoreboard_user_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input scoreboard_user_stream_cursor_value_input {
+  max_time: timestamp
+  rank: bigint
+  score: bigint
+  team_id: uuid
+  user_id: uuid
+}
+
 """aggregate sum on columns"""
 type scoreboard_user_sum_fields {
   rank: bigint
@@ -7214,9 +8005,6 @@ type solve {
 
   """An object relationship"""
   submission: submission!
-
-  """An object relationship"""
-  team: team
   team_id: uuid
 
   """An object relationship"""
@@ -7230,6 +8018,17 @@ aggregated selection of "solve"
 type solve_aggregate {
   aggregate: solve_aggregate_fields
   nodes: [solve!]!
+}
+
+input solve_aggregate_bool_exp {
+  count: solve_aggregate_bool_exp_count
+}
+
+input solve_aggregate_bool_exp_count {
+  arguments: [solve_select_column!]
+  distinct: Boolean
+  filter: solve_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -7271,7 +8070,6 @@ input solve_bool_exp {
   challenge_id: uuid_comparison_exp
   id: uuid_comparison_exp
   submission: submission_bool_exp
-  team: team_bool_exp
   team_id: uuid_comparison_exp
   user: user_bool_exp
   user_id: uuid_comparison_exp
@@ -7305,7 +8103,6 @@ input solve_insert_input {
   challenge_id: uuid
   id: uuid
   submission: submission_obj_rel_insert_input
-  team: team_obj_rel_insert_input
   team_id: uuid
   user: user_obj_rel_insert_input
   user_id: uuid
@@ -7383,7 +8180,6 @@ input solve_order_by {
   challenge_id: order_by
   id: order_by
   submission: submission_order_by
-  team: team_order_by
   team_id: order_by
   user: user_order_by
   user_id: order_by
@@ -7422,6 +8218,25 @@ input solve_set_input {
 }
 
 """
+Streaming cursor of the table "solve"
+"""
+input solve_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: solve_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input solve_stream_cursor_value_input {
+  challenge_id: uuid
+  id: uuid
+  team_id: uuid
+  user_id: uuid
+}
+
+"""
 update columns of table "solve"
 """
 enum solve_update_column {
@@ -7436,6 +8251,12 @@ enum solve_update_column {
 
   """column name"""
   user_id
+}
+
+input solve_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: solve_set_input
+  where: solve_bool_exp!
 }
 
 """
@@ -7469,6 +8290,17 @@ aggregated selection of "submission"
 type submission_aggregate {
   aggregate: submission_aggregate_fields
   nodes: [submission!]!
+}
+
+input submission_aggregate_bool_exp {
+  count: submission_aggregate_bool_exp_count
+}
+
+input submission_aggregate_bool_exp_count {
+  arguments: [submission_select_column!]
+  distinct: Boolean
+  filter: submission_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -7695,6 +8527,29 @@ input submission_set_input {
 }
 
 """
+Streaming cursor of the table "submission"
+"""
+input submission_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: submission_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input submission_stream_cursor_value_input {
+  challenge_id: uuid
+  date: timestamp
+  id: uuid
+  ip: String
+  provided: String
+  team_id: uuid
+  type: String
+  user_id: uuid
+}
+
+"""
 update columns of table "submission"
 """
 enum submission_update_column {
@@ -7721,6 +8576,12 @@ enum submission_update_column {
 
   """column name"""
   user_id
+}
+
+input submission_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: submission_set_input
+  where: submission_bool_exp!
 }
 
 type subscription_root {
@@ -7768,6 +8629,20 @@ type subscription_root {
   award_by_pk(id: uuid!): award
 
   """
+  fetch data from the table in a streaming manner: "award"
+  """
+  award_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [award_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: award_bool_exp
+  ): [award!]!
+
+  """
   fetch data from the table: "challenge"
   """
   challenge(
@@ -7809,6 +8684,20 @@ type subscription_root {
 
   """fetch data from the table: "challenge" using primary key columns"""
   challenge_by_pk(id: uuid!): challenge
+
+  """
+  fetch data from the table in a streaming manner: "challenge"
+  """
+  challenge_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [challenge_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: challenge_bool_exp
+  ): [challenge!]!
 
   """
   fetch data from the table: "challenge_tag"
@@ -7854,6 +8743,20 @@ type subscription_root {
   challenge_tag_by_pk(id: uuid!): challenge_tag
 
   """
+  fetch data from the table in a streaming manner: "challenge_tag"
+  """
+  challenge_tag_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [challenge_tag_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: challenge_tag_bool_exp
+  ): [challenge_tag!]!
+
+  """
   fetch data from the table: "comment"
   """
   comment(
@@ -7897,6 +8800,20 @@ type subscription_root {
   comment_by_pk(id: uuid!): comment
 
   """
+  fetch data from the table in a streaming manner: "comment"
+  """
+  comment_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [comment_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: comment_bool_exp
+  ): [comment!]!
+
+  """
   fetch data from the table: "config"
   """
   config(
@@ -7938,6 +8855,20 @@ type subscription_root {
 
   """fetch data from the table: "config" using primary key columns"""
   config_by_pk(id: uuid!): config
+
+  """
+  fetch data from the table in a streaming manner: "config"
+  """
+  config_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [config_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: config_bool_exp
+  ): [config!]!
 
   """
   execute function "current_user" which returns "user"
@@ -8023,6 +8954,20 @@ type subscription_root {
   fetch data from the table: "dynamic_challenge" using primary key columns
   """
   dynamic_challenge_by_pk(id: uuid!): dynamic_challenge
+
+  """
+  fetch data from the table in a streaming manner: "dynamic_challenge"
+  """
+  dynamic_challenge_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [dynamic_challenge_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: dynamic_challenge_bool_exp
+  ): [dynamic_challenge!]!
 
   """
   fetch data from the table: "field"
@@ -8111,6 +9056,34 @@ type subscription_root {
   field_entry_by_pk(id: uuid!): field_entry
 
   """
+  fetch data from the table in a streaming manner: "field_entry"
+  """
+  field_entry_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [field_entry_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: field_entry_bool_exp
+  ): [field_entry!]!
+
+  """
+  fetch data from the table in a streaming manner: "field"
+  """
+  field_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [field_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: field_bool_exp
+  ): [field!]!
+
+  """
   fetch data from the table: "file"
   """
   file(
@@ -8152,6 +9125,20 @@ type subscription_root {
 
   """fetch data from the table: "file" using primary key columns"""
   file_by_pk(id: uuid!): file
+
+  """
+  fetch data from the table in a streaming manner: "file"
+  """
+  file_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [file_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: file_bool_exp
+  ): [file!]!
 
   """
   fetch data from the table: "flag"
@@ -8197,6 +9184,20 @@ type subscription_root {
   flag_by_pk(id: uuid!): flag
 
   """
+  fetch data from the table in a streaming manner: "flag"
+  """
+  flag_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [flag_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: flag_bool_exp
+  ): [flag!]!
+
+  """
   fetch data from the table: "hint"
   """
   hint(
@@ -8240,6 +9241,20 @@ type subscription_root {
   hint_by_pk(id: uuid!): hint
 
   """
+  fetch data from the table in a streaming manner: "hint"
+  """
+  hint_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [hint_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: hint_bool_exp
+  ): [hint!]!
+
+  """
   fetch data from the table: "hints_content"
   """
   hints_content(
@@ -8278,6 +9293,20 @@ type subscription_root {
     """filter the rows returned"""
     where: hints_content_bool_exp
   ): hints_content_aggregate!
+
+  """
+  fetch data from the table in a streaming manner: "hints_content"
+  """
+  hints_content_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [hints_content_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: hints_content_bool_exp
+  ): [hints_content!]!
 
   """
   fetch data from the table: "notification"
@@ -8323,6 +9352,20 @@ type subscription_root {
   notification_by_pk(id: uuid!): notification
 
   """
+  fetch data from the table in a streaming manner: "notification"
+  """
+  notification_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [notification_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: notification_bool_exp
+  ): [notification!]!
+
+  """
   fetch data from the table: "page"
   """
   page(
@@ -8366,6 +9409,20 @@ type subscription_root {
   page_by_pk(id: uuid!): page
 
   """
+  fetch data from the table in a streaming manner: "page"
+  """
+  page_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [page_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: page_bool_exp
+  ): [page!]!
+
+  """
   fetch data from the table: "score_event"
   """
   score_event(
@@ -8405,6 +9462,20 @@ type subscription_root {
     where: score_event_bool_exp
   ): score_event_aggregate!
 
+  """
+  fetch data from the table in a streaming manner: "score_event"
+  """
+  score_event_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [score_event_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: score_event_bool_exp
+  ): [score_event!]!
+
   """An array relationship"""
   score_timeline(
     """distinct select on columns"""
@@ -8440,6 +9511,20 @@ type subscription_root {
     """filter the rows returned"""
     where: score_timeline_bool_exp
   ): score_timeline_aggregate!
+
+  """
+  fetch data from the table in a streaming manner: "score_timeline"
+  """
+  score_timeline_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [score_timeline_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: score_timeline_bool_exp
+  ): [score_timeline!]!
 
   """
   fetch data from the table: "score_timeline_user"
@@ -8482,6 +9567,20 @@ type subscription_root {
   ): score_timeline_user_aggregate!
 
   """
+  fetch data from the table in a streaming manner: "score_timeline_user"
+  """
+  score_timeline_user_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [score_timeline_user_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: score_timeline_user_bool_exp
+  ): [score_timeline_user!]!
+
+  """
   fetch data from the table: "scoreboard"
   """
   scoreboard(
@@ -8522,6 +9621,20 @@ type subscription_root {
   ): scoreboard_aggregate!
 
   """
+  fetch data from the table in a streaming manner: "scoreboard"
+  """
+  scoreboard_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [scoreboard_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: scoreboard_bool_exp
+  ): [scoreboard!]!
+
+  """
   fetch data from the table: "scoreboard_user"
   """
   scoreboard_user(
@@ -8560,6 +9673,20 @@ type subscription_root {
     """filter the rows returned"""
     where: scoreboard_user_bool_exp
   ): scoreboard_user_aggregate!
+
+  """
+  fetch data from the table in a streaming manner: "scoreboard_user"
+  """
+  scoreboard_user_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [scoreboard_user_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: scoreboard_user_bool_exp
+  ): [scoreboard_user!]!
 
   """
   fetch data from the table: "solve"
@@ -8605,6 +9732,20 @@ type subscription_root {
   solve_by_pk(id: uuid!): solve
 
   """
+  fetch data from the table in a streaming manner: "solve"
+  """
+  solve_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [solve_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: solve_bool_exp
+  ): [solve!]!
+
+  """
   fetch data from the table: "submission"
   """
   submission(
@@ -8646,6 +9787,20 @@ type subscription_root {
 
   """fetch data from the table: "submission" using primary key columns"""
   submission_by_pk(id: uuid!): submission
+
+  """
+  fetch data from the table in a streaming manner: "submission"
+  """
+  submission_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [submission_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: submission_bool_exp
+  ): [submission!]!
 
   """
   fetch data from the table: "tag"
@@ -8691,6 +9846,20 @@ type subscription_root {
   tag_by_pk(id: uuid!): tag
 
   """
+  fetch data from the table in a streaming manner: "tag"
+  """
+  tag_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [tag_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: tag_bool_exp
+  ): [tag!]!
+
+  """
   fetch data from the table: "team"
   """
   team(
@@ -8732,6 +9901,20 @@ type subscription_root {
 
   """fetch data from the table: "team" using primary key columns"""
   team_by_pk(id: uuid!): team
+
+  """
+  fetch data from the table in a streaming manner: "team"
+  """
+  team_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [team_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: team_bool_exp
+  ): [team!]!
 
   """
   fetch data from the table: "token"
@@ -8777,6 +9960,20 @@ type subscription_root {
   token_by_pk(id: uuid!): token
 
   """
+  fetch data from the table in a streaming manner: "token"
+  """
+  token_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [token_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: token_bool_exp
+  ): [token!]!
+
+  """
   fetch data from the table: "tracking"
   """
   tracking(
@@ -8818,6 +10015,20 @@ type subscription_root {
 
   """fetch data from the table: "tracking" using primary key columns"""
   tracking_by_pk(id: uuid!): tracking
+
+  """
+  fetch data from the table in a streaming manner: "tracking"
+  """
+  tracking_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [tracking_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: tracking_bool_exp
+  ): [tracking!]!
 
   """
   fetch data from the table: "unlock"
@@ -8863,6 +10074,20 @@ type subscription_root {
   unlock_by_pk(id: uuid!): unlock
 
   """
+  fetch data from the table in a streaming manner: "unlock"
+  """
+  unlock_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [unlock_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: unlock_bool_exp
+  ): [unlock!]!
+
+  """
   fetch data from the table: "user"
   """
   user(
@@ -8904,6 +10129,20 @@ type subscription_root {
 
   """fetch data from the table: "user" using primary key columns"""
   user_by_pk(id: uuid!): user
+
+  """
+  fetch data from the table in a streaming manner: "user"
+  """
+  user_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [user_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: user_bool_exp
+  ): [user!]!
 }
 
 """
@@ -8974,6 +10213,7 @@ input tag_bool_exp {
   _not: tag_bool_exp
   _or: [tag_bool_exp!]
   challenge_tags: challenge_tag_bool_exp
+  challenge_tags_aggregate: challenge_tag_aggregate_bool_exp
   id: uuid_comparison_exp
   name: String_comparison_exp
 }
@@ -9076,6 +10316,23 @@ input tag_set_input {
 }
 
 """
+Streaming cursor of the table "tag"
+"""
+input tag_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: tag_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input tag_stream_cursor_value_input {
+  id: uuid
+  name: String
+}
+
+"""
 update columns of table "tag"
 """
 enum tag_update_column {
@@ -9084,6 +10341,12 @@ enum tag_update_column {
 
   """column name"""
   name
+}
+
+input tag_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: tag_set_input
+  where: tag_bool_exp!
 }
 
 """
@@ -9295,42 +10558,6 @@ type team {
   secret: String
 
   """An array relationship"""
-  solves(
-    """distinct select on columns"""
-    distinct_on: [solve_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [solve_order_by!]
-
-    """filter the rows returned"""
-    where: solve_bool_exp
-  ): [solve!]!
-
-  """An aggregate relationship"""
-  solves_aggregate(
-    """distinct select on columns"""
-    distinct_on: [solve_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [solve_order_by!]
-
-    """filter the rows returned"""
-    where: solve_bool_exp
-  ): solve_aggregate!
-
-  """An array relationship"""
   submissions(
     """distinct select on columns"""
     distinct_on: [submission_select_column!]
@@ -9430,27 +10657,33 @@ input team_bool_exp {
   _or: [team_bool_exp!]
   affiliation: String_comparison_exp
   awards: award_bool_exp
+  awards_aggregate: award_aggregate_bool_exp
   banned: Boolean_comparison_exp
   bracket: String_comparison_exp
   captain: user_bool_exp
   captain_id: uuid_comparison_exp
   comments: comment_bool_exp
+  comments_aggregate: comment_aggregate_bool_exp
   country: String_comparison_exp
   created: timestamp_comparison_exp
   email: String_comparison_exp
   field_entries: field_entry_bool_exp
+  field_entries_aggregate: field_entry_aggregate_bool_exp
   hidden: Boolean_comparison_exp
   id: uuid_comparison_exp
   members: user_bool_exp
+  members_aggregate: user_aggregate_bool_exp
   name: String_comparison_exp
   password: String_comparison_exp
   score: Int_comparison_exp
   score_timeline: score_timeline_bool_exp
+  score_timeline_aggregate: score_timeline_aggregate_bool_exp
   scoreboard: scoreboard_bool_exp
   secret: String_comparison_exp
-  solves: solve_bool_exp
   submissions: submission_bool_exp
+  submissions_aggregate: submission_aggregate_bool_exp
   unlocks: unlock_bool_exp
+  unlocks_aggregate: unlock_aggregate_bool_exp
   website: String_comparison_exp
 }
 
@@ -9487,7 +10720,6 @@ input team_insert_input {
   score_timeline: score_timeline_arr_rel_insert_input
   scoreboard: scoreboard_obj_rel_insert_input
   secret: String
-  solves: solve_arr_rel_insert_input
   submissions: submission_arr_rel_insert_input
   unlocks: unlock_arr_rel_insert_input
   website: String
@@ -9575,7 +10807,6 @@ input team_order_by {
   score_timeline_aggregate: score_timeline_aggregate_order_by
   scoreboard: scoreboard_order_by
   secret: order_by
-  solves_aggregate: solve_aggregate_order_by
   submissions_aggregate: submission_aggregate_order_by
   unlocks_aggregate: unlock_aggregate_order_by
   website: order_by
@@ -9650,6 +10881,34 @@ input team_set_input {
 }
 
 """
+Streaming cursor of the table "team"
+"""
+input team_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: team_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input team_stream_cursor_value_input {
+  affiliation: String
+  banned: Boolean
+  bracket: String
+  captain_id: uuid
+  country: String
+  created: timestamp
+  email: String
+  hidden: Boolean
+  id: uuid
+  name: String
+  password: String
+  secret: String
+  website: String
+}
+
+"""
 update columns of table "team"
 """
 enum team_update_column {
@@ -9693,6 +10952,12 @@ enum team_update_column {
   website
 }
 
+input team_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: team_set_input
+  where: team_bool_exp!
+}
+
 scalar timestamp
 
 """
@@ -9731,6 +10996,17 @@ aggregated selection of "token"
 type token_aggregate {
   aggregate: token_aggregate_fields
   nodes: [token!]!
+}
+
+input token_aggregate_bool_exp {
+  count: token_aggregate_bool_exp_count
+}
+
+input token_aggregate_bool_exp_count {
+  arguments: [token_select_column!]
+  distinct: Boolean
+  filter: token_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -9921,6 +11197,27 @@ input token_set_input {
 }
 
 """
+Streaming cursor of the table "token"
+"""
+input token_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: token_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input token_stream_cursor_value_input {
+  created: timestamp
+  expiration: timestamp
+  id: uuid
+  type: String
+  user_id: uuid
+  value: uuid
+}
+
+"""
 update columns of table "token"
 """
 enum token_update_column {
@@ -9943,6 +11240,12 @@ enum token_update_column {
   value
 }
 
+input token_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: token_set_input
+  where: token_bool_exp!
+}
+
 """
 columns and relationships of "tracking"
 """
@@ -9963,6 +11266,17 @@ aggregated selection of "tracking"
 type tracking_aggregate {
   aggregate: tracking_aggregate_fields
   nodes: [tracking!]!
+}
+
+input tracking_aggregate_bool_exp {
+  count: tracking_aggregate_bool_exp_count
+}
+
+input tracking_aggregate_bool_exp_count {
+  arguments: [tracking_select_column!]
+  distinct: Boolean
+  filter: tracking_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -10137,6 +11451,26 @@ input tracking_set_input {
 }
 
 """
+Streaming cursor of the table "tracking"
+"""
+input tracking_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: tracking_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input tracking_stream_cursor_value_input {
+  date: timestamp
+  id: uuid
+  ip: String
+  type: String
+  user_id: uuid
+}
+
+"""
 update columns of table "tracking"
 """
 enum tracking_update_column {
@@ -10154,6 +11488,12 @@ enum tracking_update_column {
 
   """column name"""
   user_id
+}
+
+input tracking_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: tracking_set_input
+  where: tracking_bool_exp!
 }
 
 """
@@ -10183,6 +11523,17 @@ aggregated selection of "unlock"
 type unlock_aggregate {
   aggregate: unlock_aggregate_fields
   nodes: [unlock!]!
+}
+
+input unlock_aggregate_bool_exp {
+  count: unlock_aggregate_bool_exp_count
+}
+
+input unlock_aggregate_bool_exp_count {
+  arguments: [unlock_select_column!]
+  distinct: Boolean
+  filter: unlock_bool_exp
+  predicate: Int_comparison_exp!
 }
 
 """
@@ -10444,6 +11795,27 @@ input unlock_stddev_samp_order_by {
   target: order_by
 }
 
+"""
+Streaming cursor of the table "unlock"
+"""
+input unlock_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: unlock_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input unlock_stream_cursor_value_input {
+  date: timestamp
+  id: uuid
+  target: Int
+  team_id: uuid
+  type: String
+  user_id: uuid
+}
+
 """aggregate sum on columns"""
 type unlock_sum_fields {
   target: Int
@@ -10477,6 +11849,15 @@ enum unlock_update_column {
 
   """column name"""
   user_id
+}
+
+input unlock_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: unlock_inc_input
+
+  """sets the columns of the filtered rows to the given values"""
+  _set: unlock_set_input
+  where: unlock_bool_exp!
 }
 
 """aggregate var_pop on columns"""
@@ -10921,6 +12302,33 @@ type user_aggregate {
   nodes: [user!]!
 }
 
+input user_aggregate_bool_exp {
+  bool_and: user_aggregate_bool_exp_bool_and
+  bool_or: user_aggregate_bool_exp_bool_or
+  count: user_aggregate_bool_exp_count
+}
+
+input user_aggregate_bool_exp_bool_and {
+  arguments: user_select_column_user_aggregate_bool_exp_bool_and_arguments_columns!
+  distinct: Boolean
+  filter: user_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input user_aggregate_bool_exp_bool_or {
+  arguments: user_select_column_user_aggregate_bool_exp_bool_or_arguments_columns!
+  distinct: Boolean
+  filter: user_bool_exp
+  predicate: Boolean_comparison_exp!
+}
+
+input user_aggregate_bool_exp_count {
+  arguments: [user_select_column!]
+  distinct: Boolean
+  filter: user_bool_exp
+  predicate: Int_comparison_exp!
+}
+
 """
 aggregate fields of "user"
 """
@@ -10959,15 +12367,19 @@ input user_bool_exp {
   affiliation: String_comparison_exp
   avatar: String_comparison_exp
   awards: award_bool_exp
+  awards_aggregate: award_aggregate_bool_exp
   banned: Boolean_comparison_exp
   bracket: String_comparison_exp
   captain_of: team_bool_exp
   comments: comment_bool_exp
   commentsByUserId: comment_bool_exp
+  commentsByUserId_aggregate: comment_aggregate_bool_exp
+  comments_aggregate: comment_aggregate_bool_exp
   country: String_comparison_exp
   created: timestamp_comparison_exp
   email: String_comparison_exp
   field_entries: field_entry_bool_exp
+  field_entries_aggregate: field_entry_aggregate_bool_exp
   hidden: Boolean_comparison_exp
   id: uuid_comparison_exp
   kratos_id: uuid_comparison_exp
@@ -10975,15 +12387,21 @@ input user_bool_exp {
   password: String_comparison_exp
   score: Int_comparison_exp
   score_timeline: score_timeline_user_bool_exp
+  score_timeline_aggregate: score_timeline_user_aggregate_bool_exp
   secret: String_comparison_exp
   solves: solve_bool_exp
+  solves_aggregate: solve_aggregate_bool_exp
   submissions: submission_bool_exp
+  submissions_aggregate: submission_aggregate_bool_exp
   team: team_bool_exp
   team_id: uuid_comparison_exp
   tokens: token_bool_exp
+  tokens_aggregate: token_aggregate_bool_exp
   trackings: tracking_bool_exp
+  trackings_aggregate: tracking_aggregate_bool_exp
   type: String_comparison_exp
   unlocks: unlock_bool_exp
+  unlocks_aggregate: unlock_aggregate_bool_exp
   verified: Boolean_comparison_exp
   website: String_comparison_exp
 }
@@ -11232,9 +12650,68 @@ enum user_select_column {
 }
 
 """
+select "user_aggregate_bool_exp_bool_and_arguments_columns" columns of table "user"
+"""
+enum user_select_column_user_aggregate_bool_exp_bool_and_arguments_columns {
+  """column name"""
+  banned
+
+  """column name"""
+  hidden
+
+  """column name"""
+  verified
+}
+
+"""
+select "user_aggregate_bool_exp_bool_or_arguments_columns" columns of table "user"
+"""
+enum user_select_column_user_aggregate_bool_exp_bool_or_arguments_columns {
+  """column name"""
+  banned
+
+  """column name"""
+  hidden
+
+  """column name"""
+  verified
+}
+
+"""
 input type for updating data in table "user"
 """
 input user_set_input {
+  affiliation: String
+  banned: Boolean
+  bracket: String
+  country: String
+  created: timestamp
+  email: String
+  hidden: Boolean
+  id: uuid
+  kratos_id: uuid
+  name: String
+  password: String
+  secret: String
+  team_id: uuid
+  type: String
+  verified: Boolean
+  website: String
+}
+
+"""
+Streaming cursor of the table "user"
+"""
+input user_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: user_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input user_stream_cursor_value_input {
   affiliation: String
   banned: Boolean
   bracket: String
@@ -11304,6 +12781,12 @@ enum user_update_column {
 
   """column name"""
   website
+}
+
+input user_updates {
+  """sets the columns of the filtered rows to the given values"""
+  _set: user_set_input
+  where: user_bool_exp!
 }
 
 scalar uuid

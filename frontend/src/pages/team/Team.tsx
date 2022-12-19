@@ -1,5 +1,4 @@
 import { Block } from "baseui/block";
-import { Display2, Display4, H1 } from "baseui/typography";
 import React, { lazy } from "react";
 import { useParams } from "react-router-dom";
 import "react-vis/dist/style.css";
@@ -29,19 +28,19 @@ export default function Team() {
   }
   return (
     <>
-      <Display2>
+      <p>
         {t?.name} {/* todo flag icon */}
         {t?.country ? t?.country : null}
-      </Display2>
-      <Display4>{t?.scoreboard?.rank} Place</Display4>
-      <Display4>{t?.scoreboard?.score} Points</Display4>
-      <H1>Members</H1>
+      </p>
+      <p>{t?.scoreboard?.rank} Place</p>
+      <p>{t?.scoreboard?.score} Points</p>
+      <h1>Members</h1>
       <Block display={"flex"} flexWrap={true}>
         {t?.members.map((u) => (
           <TeamMember user={u} />
         ))}
       </Block>
-      <H1>Score</H1>
+      <h1>Score</h1>
       <TimelineContainer>
         <TeamTimeline timeline={t} />
       </TimelineContainer>

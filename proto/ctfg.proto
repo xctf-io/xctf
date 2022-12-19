@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+service Backend {
+  rpc SubmitFlag(SubmitFlagRequest) returns (SubmitFlagReply) {}
+}
+
+message SubmitFlagRequest {
+  string flag = 1;
+}
+
+message SubmitFlagReply {
+  bool solved = 1;
+}

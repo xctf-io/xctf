@@ -1,6 +1,6 @@
 import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
-import { StyledSpinnerNext } from "baseui/spinner";
+import { Spinner } from "baseui/spinner";
 import React, { Suspense } from "react";
 
 type TimelineContainerProps = {
@@ -21,7 +21,7 @@ export function TimelineContainer({ children }: TimelineContainerProps) {
         userSelect: "none",
       })}
     >
-      <Suspense fallback={<StyledSpinnerNext />}>{children}</Suspense>
+      <Suspense fallback={<Spinner />}>{children}</Suspense>
     </Block>
   );
 }

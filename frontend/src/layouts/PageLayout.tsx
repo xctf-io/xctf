@@ -5,15 +5,12 @@ import { faUsers } from "@fortawesome/free-solid-svg-icons/faUsers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useStyletron } from "baseui";
 import { AppNavBar, NavItemT, setItemActive } from "baseui/app-nav-bar";
-import { Block } from "baseui/block";
 import { ChevronDown, Upload } from "baseui/icon";
-import { Layer } from "baseui/layer";
 import { Cell, Grid } from "baseui/layout-grid";
-import { StyledSpinnerNext } from "baseui/spinner";
-import { H5, Label4 } from "baseui/typography";
 import React, { Suspense } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import { Spinner } from "baseui/spinner";
 
 type PageLayoutProps = {
   children?: React.ReactNode;
@@ -91,57 +88,44 @@ export default function PageLayout({ children }: PageLayoutProps) {
 
   return (
     <React.Fragment>
-      <Layer>
-        <div
-          className={css({
-            boxSizing: "border-box",
-            width: "100vw",
-            position: "fixed",
-            top: "0",
-            left: "0",
-          })}
-        >
-          <AppNavBar
-            title={
-              <a
-                href={"/"}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  push("/");
-                }}
-                className={css({
-                  userSelect: "none",
-                  textDecoration: "inherit",
-                  textColor: "inherit",
-                })}
-              >
-                {authContext?.config["ctf_name"] ? (
-                  <>
-                    <H5 display={"inline"} marginRight={"scale500"}>
-                      {authContext?.config["ctf_name"]}
-                    </H5>
-                    <sub>
-                      <Label4 display={"inline"}>with CTFg</Label4>
-                    </sub>
-                  </>
-                ) : (
-                  <H5 display={"inline"}>CTFg</H5>
-                )}
-              </a>
-            }
-            mainItems={mainItems}
-            onMainItemSelect={handleMainItemSelect}
-            onUserItemSelect={handleUserItemSelect}
-            userItems={authContext?.current_user?.id ? userItems : undefined}
-            username={authContext?.current_user?.name || undefined}
-            userImgUrl={authContext?.current_user?.avatar || undefined}
-          />
-        </div>
-      </Layer>
-      <Block height={["80px"]} backgroundColor="background" />
+      <AppNavBar
+        title={
+          <a
+            href={"/"}
+            onClick={(e) => {
+              e.stopPropagation();
+              push("/");
+            }}
+            className={css({
+              userSelect: "none",
+              textDecoration: "inherit",
+              textColor: "inherit",
+            })}
+          >
+            {authContext?.config["ctf_name"] ? (
+              <>
+                <h5>
+                  {authContext?.config["ctf_name"]}
+                </h5>
+                <sub>
+                  <label>with CTFg</label>
+                </sub>
+              </>
+            ) : (
+              <h5>CTFg</h5>
+            )}
+          </a>
+        }
+        mainItems={mainItems}
+        onMainItemSelect={handleMainItemSelect}
+        onUserItemSelect={handleUserItemSelect}
+        userItems={authContext?.current_user?.id ? userItems : undefined}
+        username={authContext?.current_user?.name || undefined}
+        userImgUrl={authContext?.current_user?.avatar || undefined}
+      />
       <Grid>
         <Cell skip={[0, 1, 1]} span={[4, 6, 10]}>
-          <Suspense fallback={<StyledSpinnerNext />}>{children}</Suspense>
+          <Suspense fallback={<Spinner />}>{children}</Suspense>
         </Cell>
       </Grid>
     </React.Fragment>

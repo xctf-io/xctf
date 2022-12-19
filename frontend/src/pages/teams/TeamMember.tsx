@@ -7,7 +7,6 @@ import { Avatar } from "baseui/avatar";
 import { Block } from "baseui/block";
 import { Icon } from "baseui/icon";
 import { KIND, Tag, VARIANT } from "baseui/tag";
-import { Label1 } from "baseui/typography";
 import { TeamMemberFragment } from "../../generated";
 
 gql`
@@ -94,7 +93,7 @@ export function TeamMember({ user }: TeamMemberProps) {
         ) : null}
       </Block>
 
-      <Label1>{user?.name} </Label1>
+      <label>{user?.name} </label>
       {/* todo flag icon */}
       {user?.country ? user?.country : null}
     </Block>
