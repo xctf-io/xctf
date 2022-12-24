@@ -25,26 +25,28 @@ array_relationships:
           name: unlock
           schema: public
 insert_permissions:
-  - role: ctfd_admin
+  - role: user
     permission:
-      check: {}
+      check:
+        _exists:
+          _table:
+            name: user
+            schema: public
+          _where:
+            _and:
+              - kratos_id:
+                  _eq: X-Hasura-User-Id
+              - type:
+                  _eq: admin
       columns:
-        - challenge_id
+        - type
+        - cost
+        - requirements
         - content
-        - cost
-        - requirements
-        - type
-select_permissions:
-  - role: ctfd_admin
-    permission:
-      columns:
         - challenge_id
-        - cost
         - id
-        - requirements
-        - type
-      filter: {}
-  - role: ctfd_user
+select_permissions:
+  - role: user
     permission:
       columns:
         - challenge_id
@@ -57,17 +59,34 @@ select_permissions:
           state:
             _eq: visible
 update_permissions:
-  - role: ctfd_admin
+  - role: user
     permission:
       columns:
-        - challenge_id
-        - content
+        - type
         - cost
         - requirements
-        - type
-      filter: {}
-      check: {}
-delete_permissions:
-  - role: ctfd_admin
-    permission:
-      filter: {}
+        - content
+        - challenge_id
+        - id
+      filter:
+        _exists:
+          _table:
+            name: user
+            schema: public
+          _where:
+            _and:
+              - kratos_id:
+                  _eq: X-Hasura-User-Id
+              - type:
+                  _eq: admin
+      check:
+        _exists:
+          _table:
+            name: user
+            schema: public
+          _where:
+            _and:
+              - kratos_id:
+                  _eq: X-Hasura-User-Id
+              - type:
+                  _eq: admin

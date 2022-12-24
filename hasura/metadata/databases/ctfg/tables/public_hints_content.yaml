@@ -12,13 +12,7 @@ object_relationships:
           name: hint
           schema: public
 select_permissions:
-  - role: ctfd_admin
-    permission:
-      columns:
-        - id
-        - content
-      filter: {}
-  - role: ctfd_user
+  - role: user
     permission:
       columns:
         - id

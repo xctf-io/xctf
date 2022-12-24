@@ -21,8 +21,8 @@
           {
             "https://hasura.io/jwt/claims": {
               "x-hasura-user-id": "{{ .Subject }}",
-              "x-hasura-allowed-roles": ["ctfd_user"],
-              "x-hasura-default-role": "ctfd_user"
+              "x-hasura-allowed-roles": ["user"],
+              "x-hasura-default-role": "user"
             }
           }
 - id: "ory:ctfg:hasura:graphql:service"

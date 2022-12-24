@@ -12,17 +12,7 @@ object_relationships:
     using:
       foreign_key_constraint_on: user_id
 select_permissions:
-  - role: ctfd_admin
-    permission:
-      columns:
-        - type
-        - field_id
-        - id
-        - team_id
-        - user_id
-        - value
-      filter: {}
-  - role: ctfd_user
+  - role: user
     permission:
       columns:
         - id
@@ -40,18 +30,7 @@ select_permissions:
                 id:
                   _eq: X-Hasura-User-Id
 update_permissions:
-  - role: ctfd_admin
-    permission:
-      columns:
-        - type
-        - field_id
-        - id
-        - team_id
-        - user_id
-        - value
-      filter: {}
-      check: {}
-  - role: ctfd_user
+  - role: user
     permission:
       columns:
         - value
@@ -86,10 +65,7 @@ update_permissions:
                 - public:
                     _eq: true
 delete_permissions:
-  - role: ctfd_admin
-    permission:
-      filter: {}
-  - role: ctfd_user
+  - role: user
     permission:
       filter:
         _and:

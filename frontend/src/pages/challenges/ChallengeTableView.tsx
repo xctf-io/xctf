@@ -81,7 +81,7 @@ export const ChallengeTableView: React.FC<ChallengeTableViewProps> = ({ challeng
           {(row: RowDataT) => row.challengeValue}
         </TableBuilderColumn>
         <TableBuilderColumn
-          header=""
+          header="Solve"
         >
           {(row: RowDataT) => (
             <>

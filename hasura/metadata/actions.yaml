@@ -4,13 +4,15 @@ actions:
       kind: synchronous
       handler: http://host.docker.internal:3001/submitFlag
     permissions:
-      - role: ctfd_admin
-      - role: ctfd_user
+      - role: user
     comment: Submit Flag
 custom_types:
   enums: []
   input_objects:
-    - name: SubmitFlagInput
+    - name: TestInput
+    - name: SubmitFlagRequestInput
   objects:
-    - name: SubmitFlagOutput
+    - name: Test
+    - name: SubmitFlagRequest
+    - name: SubmitFlagReply
   scalars: []

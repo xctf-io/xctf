@@ -1,7 +1,15 @@
 syntax = "proto3";
 
+package ctfg;
+
+import "graphql/options.proto";
+
+option go_package = "github.com/ctfg/ctfg/backend";
+
 service Backend {
-  rpc SubmitFlag(SubmitFlagRequest) returns (SubmitFlagReply) {}
+  rpc SubmitFlag(SubmitFlagRequest) returns (SubmitFlagReply) {
+    option (graphql.method) = {operation: "mutation"};
+  }
 }
 
 message SubmitFlagRequest {

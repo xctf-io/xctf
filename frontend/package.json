@@ -45,7 +45,6 @@
     "generate": "graphql-codegen --config config/1_introspect.yml; graphql-codegen --config config/2_hasura.yml && graphql-codegen --config config/3_final.yml",
     "start": "ts-node esbuild.js --serve",
     "build": "ts-node esbuild.js",
-    "fakedata": "docker-compose exec ctfd bash -c \"pip install faker; python /opt/CTFd/populate.py\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "lint": "prettier -cw .",
     "test": "react-scripts test",

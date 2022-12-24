@@ -1,34 +1,28 @@
-fragment ChallengeForAdminList on challenge_tag {
-    challenge {
+fragment AdminChallenge on challenge {
+    id
+    name
+    description
+    value
+    max_attempts
+    state
+    files {
         id
-        name
-        description
-        value
-        max_attempts
-        files {
-            id
-            location
-            type
-        }
-        hints {
-            id
-            type
-            cost
-            unlocked_content {
-                id
-                content
-            }
-        }
+        location
         type
-        solved
-        tags {
-            tag {
-                name
-            }
+    }
+    hints {
+        id
+        type
+        cost
+        unlocked_content {
+            id
+            content
         }
     }
-    tag {
-        id
-        name
+    type
+    tags {
+        tag {
+            name
+        }
     }
 }

@@ -96,12 +96,17 @@ input String_comparison_exp {
   _similar: String
 }
 
-input SubmitFlagInput {
-  flag: String!
+type SubmitFlagReply {
+  solved: Boolean!
 }
 
-type SubmitFlagOutput {
-  solved: Boolean!
+input SubmitFlagRequestInput {
+  flag: String
+  test: TestInput
+}
+
+input TestInput {
+  something: String
 }
 
 """
@@ -1816,6 +1821,11 @@ enum config_constraint {
   unique or primary key constraint on columns "id"
   """
   config_pkey
+
+  """
+  unique or primary key constraint on columns "key", "value"
+  """
+  key_value_idx
 }
 
 """
@@ -4609,7 +4619,7 @@ type mutation_root {
   ): user
 
   """Submit Flag"""
-  submitFlag(req: SubmitFlagInput!): SubmitFlagOutput
+  submitFlag(input: SubmitFlagRequestInput!): SubmitFlagReply
 
   """
   update data of the table: "award"

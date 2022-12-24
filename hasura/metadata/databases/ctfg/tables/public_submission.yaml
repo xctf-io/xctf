@@ -19,19 +19,7 @@ object_relationships:
     using:
       foreign_key_constraint_on: user_id
 select_permissions:
-  - role: ctfd_admin
-    permission:
-      columns:
-        - id
-        - challenge_id
-        - user_id
-        - team_id
-        - ip
-        - provided
-        - type
-        - date
-      filter: {}
-  - role: ctfd_user
+  - role: user
     permission:
       columns:
         - challenge_id

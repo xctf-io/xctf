@@ -59,8 +59,33 @@ computed_fields:
         schema: public
       session_argument: hasura_session
       table_argument: challenge_row
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        _exists:
+          _table:
+            name: user
+            schema: public
+          _where:
+            _and:
+              - kratos_id:
+                  _eq: X-Hasura-User-Id
+              - type:
+                  _eq: admin
+      columns:
+        - name
+        - state
+        - type
+        - max_attempts
+        - value
+        - requirements
+        - connection_info
+        - description
+        - id
+        - next_id
 select_permissions:
-  - role: ctfd_
+  - role: anonymous
     permission:
       columns:
         - description
@@ -86,28 +111,15 @@ select_permissions:
                       _eq: challenge_visibility
                   - value:
                       _eq: public
-  - role: ctfd_admin
+  - role: user
     permission:
       columns:
+        - description
+        - id
+        - max_attempts
         - name
+        - requirements
         - state
-        - type
-        - id
-        - max_attempts
-        - value
-        - requirements
-        - description
-      computed_fields:
-        - solved
-      filter: {}
-  - role: ctfd_user
-    permission:
-      columns:
-        - description
-        - id
-        - max_attempts
-        - name
-        - requirements
         - type
         - value
       computed_fields:
@@ -116,16 +128,38 @@ select_permissions:
         state:
           _eq: visible
 update_permissions:
-  - role: ctfd_admin
+  - role: user
     permission:
       columns:
         - name
         - state
         - type
-        - id
         - max_attempts
         - value
         - requirements
+        - connection_info
         - description
-      filter: {}
-      check: {}
+        - id
+        - next_id
+      filter:
+        _exists:
+          _table:
+            name: user
+            schema: public
+          _where:
+            _and:
+              - kratos_id:
+                  _eq: X-Hasura-User-Id
+              - type:
+                  _eq: admin
+      check:
+        _exists:
+          _table:
+            name: user
+            schema: public
+          _where:
+            _and:
+              - kratos_id:
+                  _eq: X-Hasura-User-Id
+              - type:
+                  _eq: admin

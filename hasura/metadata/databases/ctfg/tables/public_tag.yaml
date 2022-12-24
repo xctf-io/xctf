@@ -9,22 +9,61 @@ array_relationships:
         table:
           name: challenge_tag
           schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        _exists:
+          _table:
+            name: user
+            schema: public
+          _where:
+            _and:
+              - kratos_id:
+                  _eq: X-Hasura-User-Id
+              - type:
+                  _eq: admin
+      columns:
+        - id
+        - name
 select_permissions:
-  - role: ctfd_
+  - role: anonymous
     permission:
       columns:
         - id
         - name
       filter: {}
-  - role: ctfd_admin
+  - role: user
     permission:
       columns:
         - name
         - id
       filter: {}
-  - role: ctfd_user
+update_permissions:
+  - role: user
     permission:
       columns:
         - name
         - id
-      filter: {}
+      filter:
+        _exists:
+          _table:
+            name: user
+            schema: public
+          _where:
+            _and:
+              - kratos_id:
+                  _eq: X-Hasura-User-Id
+              - type:
+                  _eq: admin
+      check:
+        _exists:
+          _table:
+            name: user
+            schema: public
+          _where:
+            _and:
+              - kratos_id:
+                  _eq: X-Hasura-User-Id
+              - type:
+                  _eq: admin

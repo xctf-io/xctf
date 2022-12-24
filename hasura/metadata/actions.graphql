@@ -1,14 +1,28 @@
 type Mutation {
   submitFlag(
-    req: SubmitFlagInput!
-  ): SubmitFlagOutput
+    input: SubmitFlagRequestInput!
+  ): SubmitFlagReply
 }
 
-input SubmitFlagInput {
+input TestInput {
+  something: String
+}
+
+input SubmitFlagRequestInput {
+  flag: String
+  test: TestInput
+}
+
+type Test {
+  something: String!
+}
+
+type SubmitFlagRequest {
   flag: String!
+  test: Test
 }
 
-type SubmitFlagOutput {
+type SubmitFlagReply {
   solved: Boolean!
 }
 

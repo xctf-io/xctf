@@ -10,7 +10,7 @@ array_relationships:
           name: comment
           schema: public
 select_permissions:
-  - role: ctfd_
+  - role: anonymous
     permission:
       columns:
         - auth_required
@@ -27,19 +27,7 @@ select_permissions:
               _ne: true
           - auth_required:
               _ne: true
-  - role: ctfd_admin
-    permission:
-      columns:
-        - id
-        - title
-        - route
-        - content
-        - draft
-        - hidden
-        - auth_required
-        - format
-      filter: {}
-  - role: ctfd_user
+  - role: user
     permission:
       columns:
         - auth_required

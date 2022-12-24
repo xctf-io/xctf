@@ -51,11 +51,6 @@
           "title": "ProfileUrl",
           "type": "string",
           "group": "profile"
-        },
-        "githubId": {
-          "title": "GithubId",
-          "type": "string",
-          "group": "profile"
         }
       },
       "required": [

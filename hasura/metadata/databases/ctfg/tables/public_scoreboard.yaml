@@ -12,7 +12,7 @@ object_relationships:
           name: team
           schema: public
 select_permissions:
-  - role: ctfd_
+  - role: anonymous
     permission:
       columns:
         - score
@@ -28,13 +28,7 @@ select_permissions:
                   _eq: score_visibility
               - value:
                   _eq: public
-  - role: ctfd_admin
-    permission:
-      columns:
-        - score
-        - team_id
-      filter: {}
-  - role: ctfd_user
+  - role: user
     permission:
       columns:
         - rank

@@ -1,15 +1,8 @@
 table:
   name: config
   schema: public
-insert_permissions:
-  - role: ctfd_admin
-    permission:
-      check: {}
-      columns:
-        - key
-        - value
 select_permissions:
-  - role: ctfd_
+  - role: anonymous
     permission:
       columns:
         - id
@@ -18,14 +11,7 @@ select_permissions:
       filter:
         key:
           _iregex: (ctf|user_mode|start|end|visibility|freeze)
-  - role: ctfd_admin
-    permission:
-      columns:
-        - id
-        - key
-        - value
-      filter: {}
-  - role: ctfd_user
+  - role: user
     permission:
       columns:
         - id
@@ -34,10 +20,3 @@ select_permissions:
       filter:
         key:
           _iregex: (ctf|user_mode|start|end|visibility|freeze)
-update_permissions:
-  - role: ctfd_admin
-    permission:
-      columns:
-        - value
-      filter: {}
-      check: {}

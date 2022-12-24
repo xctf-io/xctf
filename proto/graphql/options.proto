@@ -1,0 +1,190 @@
+syntax = "proto3";
+
+package graphql;
+
+option go_package = "github.com/martinxsliu/protoc-gen-graphql/protobuf/graphql";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FileOptions {
+  FileOptions file = 82731;
+}
+
+extend google.protobuf.MessageOptions {
+  MessageOptions message = 82731;
+}
+
+extend google.protobuf.FieldOptions {
+  FieldOptions field = 82731;
+}
+
+extend google.protobuf.EnumOptions {
+  EnumOptions pb_enum = 82731;
+}
+
+extend google.protobuf.EnumValueOptions {
+  EnumValueOptions enum_value = 82731;
+}
+
+extend google.protobuf.ServiceOptions {
+  ServiceOptions service = 82731;
+}
+
+extend google.protobuf.MethodOptions {
+  MethodOptions method = 82731;
+}
+
+message FileOptions {
+  // Name used to prefix all types with. If unset, the default behaviour is
+  // to use the upper camel case of the Protobuf package name.
+  string namespace = 1;
+}
+
+message MessageOptions {
+  // Name of the generated GraphQL type.
+  string type = 1;
+}
+
+message FieldOptions {
+  // Name of the field in the generated GraphQL object and input types.
+  string field = 1;
+
+  // Name of GraphQL type to use for this field, including modifiers.
+  string type = 2;
+
+  // Skip this field from being generated.
+  bool skip = 3;
+
+  // GraphQL directive to generate for object fields. Do not include the @ sign,
+  // do include any arguments within parentheses.
+  repeated string directive = 4;
+
+  // GraphQL directive to generate for input fields. Do not include the @ sign,
+  // do include any arguments within parentheses.
+  repeated string input_directive = 6;
+
+  // Mark the field as a foreign key to another Protobuf message, and include
+  // the referenced message as a field of the generated GraphQL type.
+  //
+  // The value is expected to have the form:
+  //
+  //   "<protobuf_type>:<field_name>",
+  //
+  // * 'protobuf_type' is the fully qualified name of the Protobuf type.
+  // * 'field_name' is the name of the field in the generated GraphQL type.
+  //
+  // For example:
+  //
+  // message User {
+  //   string address_id = 1 [(graphql.field).foreign_key = "my.package.Address:address"];
+  // }
+  //
+  // will generate the GraphQL type:
+  //
+  // type MyPackage_User {
+  //   addressId: String!
+  //   address: MyPackage_Address
+  // }
+  string foreign_key = 5;
+}
+
+message EnumOptions {
+  // Name of the generated GraphQL type.
+  string type = 1;
+}
+
+message EnumValueOptions {
+  // Name of the enum value in the generated GraphQL enum type.
+  string value = 1;
+
+  // Skip this enum value from being generated.
+  bool skip = 2;
+
+  // GraphQL directive to generate for the value. Do not include the @ sign,
+  // do include any arguments within parentheses.
+  repeated string directive = 3;
+}
+
+message ServiceOptions {
+  // A variable-like name to reference the service with, in lieu of the
+  // name generated from the service's package and service name. The name
+  // should be unique across all gRPC services.
+  // Note: This will not be the name of the generated GraphQL type.
+  string reference_name = 1;
+
+  // Skip this service from being generated.
+  bool skip = 2;
+}
+
+message MethodOptions {
+  // Name of the field in the GraphQL type generated for the service.
+  string field = 1;
+
+  // Type of GraphQL operation. Valid values are "query", "mutation", or
+  // "subscription". A value must be specified for the method to be included
+  // in the generated type.
+  string operation = 2;
+
+  // Mark the gRPC method as one that can load a single instance of a Protobuf
+  // message from a key identifier.
+  //
+  // The value is expected to have the form:
+  //
+  //   "<protobuf_type>:<request_field_path>:<response_field_path>"
+  //
+  // * 'protobuf_type' is the fully qualified name of the Protobuf type.
+  // * 'request_field_path' is the dot separated field path in the gRPC method's
+  //   request message to the field representing the key. The key field must be
+  //   a scalar field.
+  // * 'response_field_path' is the dot separated field path in the gRPC
+  //   method's response message to the field representing the loaded Protobuf
+  //   message. The loaded message must have the same type as the type
+  //   specified by 'protobuf_type'.
+  // Field paths have the same semantics as the well known FieldMask type.
+  //
+  // For example:
+  //
+  // service Users {
+  //   rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+  //     option (graphql.method) = { load_one = "my.package.User:identifier.value:user" };
+  //   };
+  // }
+  //
+  // message GetUserRequest {
+  //   message Identifier {
+  //     string value = 1;
+  //   }
+  //   message Email {
+  //     string value = 1;
+  //   }
+  //
+  //   oneof input {
+  //     Identifier identifier = 1;
+  //     Email email = 2;
+  //   }
+  // }
+  //
+  // message GetUserResponse {
+  //   User user = 1;
+  // }
+  //
+  string load_one = 3;
+
+  // Mark the gRPC method as one that can load multiple instances of a Protobuf
+  // message from a set of key identifiers. The value is expected to have the
+  // same form as the 'load_one' option, except that the key field specified
+  // by the 'request_field_path' and the loaded field specified by the
+  // 'response_field_path' must both be repeated fields.
+  // Additionally load_many has an extra field: 'object_key_field_path'.
+  // This is a dot separated field path in the loaded Protobuf message to the
+  // field representing its primary key. This field can be used by DataLoaders
+  // to order the response corresponding to the input keys.
+  string load_many = 4;
+
+  // GraphQL directive to generate for the field. Do not include the @ sign,
+  // do include any arguments within parentheses.
+  repeated string directive = 6;
+
+  // Deprecated: methods must opt into generation by specifying an 'operation'.
+  bool skip = 5 [deprecated = true];
+}

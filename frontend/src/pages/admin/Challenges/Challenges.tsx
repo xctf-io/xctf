@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Row, RowAction, StatefulDataTable, StringColumn } from "baseui/data-table";
+import { NumericalColumn, Row, RowAction, StatefulDataTable, StringColumn } from "baseui/data-table";
 import { GQLHooks } from "../../../generated/hasura/react";
-import { Order_By } from "../../../generated";
+import { AdminChallengeFragment, Order_By } from "../../../generated";
 import { Check } from "baseui/icon";
 import { Challenge, ChallengeModal } from "./ChallengeModal";
+
+type ColumnRow = AdminChallengeFragment;
 
 const columns = [
   StringColumn({
     title: "Name",
-    mapDataToValue: (data: any) => data.name,
+    mapDataToValue: (data: ColumnRow) => data.name || "",
+  }),
+  NumericalColumn({
+    title: "Value",
+    mapDataToValue: (data: ColumnRow) => data.value || -1,
+  }),
+  StringColumn({
+    title: "Tags",
+    mapDataToValue: (data: ColumnRow) => data.tags.map(t => t.tag?.name).join(", ") || "",
   }),
 ];
 export default function Challenges() {
@@ -16,13 +26,11 @@ export default function Challenges() {
   const [editedChallenge, setEditedChallenge] = useState<Challenge | undefined>(undefined);
 
   const [rows, setRows] = useState<Row[]>([]);
-  const { data } = GQLHooks.Fragments.ChallengeForAdminList.useQueryObjects({
+  const { data } = GQLHooks.Fragments.AdminChallenge.useQueryObjects({
     variables: {
       limit: 100,
       order_by: {
-        challenge: {
-          name: Order_By.Desc,
-        },
+        name: Order_By.Desc,
       },
     },
   });
@@ -31,17 +39,17 @@ export default function Challenges() {
     if (data === undefined || rows.length) {
       return;
     }
-    const newRows: Row[] = data.challenge_tag.map(c => {
+    const newRows: Row[] = data.challenge.map(c => {
       return {
-        id: c.challenge?.id || "",
-        data: c.challenge || {},
+        id: c.id || "",
+        data: c || {},
       };
     });
     setRows(newRows);
   }, [rows, data]);
 
   const editRow = (id: string | number) => {
-    const challengesToEdit = data?.challenge_tag.filter(c => c.challenge?.id === id);
+    const challengesToEdit = data?.challenge.filter(c => c.id === id);
     if (challengesToEdit && challengesToEdit.length === 0) {
       return;
     }
@@ -50,9 +58,7 @@ export default function Challenges() {
     }
     const challengeToEdit = challengesToEdit[0];
 
-    setEditedChallenge({
-      name: challengeToEdit.challenge?.name,
-    });
+    setEditedChallenge(challengeToEdit);
     setChalModalOpen(true);
   };
 
