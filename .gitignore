@@ -1,0 +1,4 @@
+bin/
+gorm.db
+tmp/
+data/
