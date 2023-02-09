@@ -1,46 +1,36 @@
-# svelte-go-template
+# CTFg
+A simple CTF platform written in go.
 
-A simple Svelte based SPA app with a Go API server that can also embed and serve the HTML, JS, and CSS files. Handy for
-quick and dirty MVPs, prototypes and spikes.
+Have ideas about what should go in here? Come talk to us on ![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white&link=https://discord.gg/J6VJQhhQ)!
 
-The Client includes:
-- [Svelte](https://svelte.dev/)
-- [Typescript]()
-- [Svelte Routing](https://www.npmjs.com/package/svelte-routing)
-- [Sveltestrap](https://www.npmjs.com/package/sveltestrap), a [Bootstrap]() wrapper for Svelte
-- [Tailwind CSS](https://tailwindcss.com/) and [Postcss]()
-- [Svelte awesome](https://www.npmjs.com/package/svelte-awesome) for fontawesome
-- [Rollup]() for the bundler
+Currently in alpha. 
 
-The Backend includes:
-- [Chi router](https://github.com/go-chi/chi) set up with some nice and easy defaults
-- [Go:embed](https://golang.org/pkg/embed/) to embed the built SPA app into the binary for painless hosting
-- Set up to work with svelte-router, will serve the `index.html` at all unused paths instead of 404
-- Gracefull http server shutdown
+## Goals
+- Simple: Capture only the basics of what a CTF competition needs in a single binary.
+- Extendable: A well documented API to allow for creativity and variety of competitions.
 
+## Development
 
-## Start a new project
+### Tech Stack
+CTFg is developed with:
+- [Go](https://go.dev/): This is used for the server.
+	- Reasoning: This was chosen to make development and deployment easy and consistent. While python or javascript would be more approachable languages to more people, Go's types and tools are more conducive for CTFg being extendable. Additionally, plugins for CTFg, written in any language, are made possible through projects such as [this](https://github.com/hashicorp/go-plugin).
+- [Svelte](https://svelte.dev/): This is used for client.
+	- Reasoning: This was chosen because using svelete is dead simple and approachable to those who are not familiar with writing websites, while still having the powerful features present in modern js frameworks. If you are not familiar with this, the [tutuorial](https://svelte.dev/tutorial/basics) should teach you all you need to know.
 
-Use `degit`:
-
+### Hacking
+Web site
 ```
-npx degit adamveld12/svelte-go-template <my project folder>
+cd client
+yarn start
 ```
 
-Then run with `make`:
-
+Server
 ```
-make dev-client # starts the client
-make dev-server # starts the server
+go run cmd/main.go
 ```
-
-When you're ready to go to production:
-
+or for live server reloads (using [air](https://github.com/cosmtrek/air))
 ```
-make build # output in .bin folder
+curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+air
 ```
-
-
-## LICENSE
-
-MIT
