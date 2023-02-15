@@ -1,53 +1,36 @@
 <script lang="ts">
+    import { derived } from "svelte/store";
     import { Link } from "svelte-routing";
     import { user } from "../store/user";
     import type { NavLink } from "../types/nav";
+    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte'
 
     export let links: NavLink[] = [];
     let path: string = window.location.pathname;
 
     const updatePath = (newPath: string) => (path = newPath);
+
+    const userLoggedIn = derived(user, user => user !== null);
 </script>
 
-<div class="navbar">
-    <div class="logo">CTFg</div>
-    <div>{$user?.username}</div>
-    <div class="menu">
+<Navbar let:hidden let:toggle>
+    <NavBrand>CTFg</NavBrand>
+    <NavHamburger on:click={toggle} />
+    <NavUl {hidden}>
         {#each links as l}
-            <div class="link">
-                <Link
-                    on:click={() => updatePath(l.to)}
-                    to={l.to}
-                >
-                    <span>{l.label}</span>
-                </Link>
-            </div>
+            {#if ($userLoggedIn && l.showWhenAuthed) || (!$userLoggedIn && !l.hideWhenUnauthed)}
+                <NavLi active={l.to == path}>
+                    <Link
+                        on:click={() => updatePath(l.to)}
+                        to={l.to}
+                    >
+                        <span>{l.label}</span>
+                    </Link>
+                </NavLi>
+            {/if}
         {/each}
-    </div>
-</div>
-
-<style>
-    .navbar {
-        display: flex;
-        flex-direction: row;
-        min-height: 100px;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-        align-content: center;
-    }
-
-    .logo {
-        display: flex;
-        width: 30%;
-    }
-
-    .menu {
-        display: flex;
-        width: 70%;
-    }
-
-    .link {
-        padding: 1em;
-    }
-</style>
+        {#if $user}
+            <NavLi>{$user.username}</NavLi>
+        {/if}
+    </NavUl>
+</Navbar>

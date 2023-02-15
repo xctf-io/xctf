@@ -3,15 +3,15 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/ctfg/ctfg/client/public"
-	"github.com/ctfg/ctfg/gen/ctfg"
-	"github.com/ctfg/ctfg/pkg"
-	"github.com/ctfg/ctfg/pkg/database"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/ctfg/ctfg/gen/ctfg"
+	"github.com/ctfg/ctfg/pkg"
+	"github.com/ctfg/ctfg/pkg/database"
 )
 
 var (
@@ -52,6 +52,7 @@ func main() {
 	server := pkg.NewBackend(db)
 	twirpHandler := ctfg.NewBackendServer(server, pkg.NewLoggingServerHooks())
 
-	httpApiHandler := pkg.NewAPIHandler(public.Assets, twirpHandler)
+	fsys := os.DirFS("client/public")
+	httpApiHandler := pkg.NewAPIHandler(fsys, twirpHandler)
 	startHttpServer(twirpHandler, httpApiHandler)
 }

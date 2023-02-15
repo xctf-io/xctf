@@ -22,7 +22,7 @@ CTFg is developed with:
 Web site
 ```
 cd client
-yarn start
+yarn build
 ```
 
 Server

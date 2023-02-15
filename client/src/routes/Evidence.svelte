@@ -4,98 +4,158 @@ import {ctfg} from "../service";
 import type { GetDiscoveredEvidenceResponse } from "../rpc/ctfg";
 import Svelvet from "svelvet";
 import { writable, Writable, derived } from 'svelte/store';
+import { Alert, Input, Select, Button, ButtonGroup } from 'flowbite-svelte';
 
 let evidence: string = '';
 let source: number = 0;
 let destination: number = 0;
+let report: Writable<string> = writable('');
+let successMsg: Writable<string> = writable<string|null>(null);
+let errorMsg: Writable<string> = writable<string|null>(null);
 
 let graph: Writable<GetDiscoveredEvidenceResponse> = writable({
+    report: '',
     connections: [],
     evidence: []
 });
 
-const initialNodes = derived(graph, $graph => $graph.evidence.map(e => ({
-    id: e.id,
-    data: { label: e.name },
-    position: {
-        x: 100,
-        y: 100
+type Node = {
+    data: {
+        label: string
     },
-    height: 100,
-    width: 100
-})));
+    position: {
+        x: number
+        y: number
+    }
+}
 
-const initialEdges = derived(graph, $graph => $graph.connections.map(c => ({
-    id: `${c.source}-${c.destination}`,
-    source: c.source,
-    target: c.destination
-})));
-
-onMount(async () => {
+async function loadDiscoveredEvidence() {
     try {
         const resp = await ctfg.GetDiscoveredEvidence({});
         graph.set(resp);
+        report.set(resp.report);
     } catch (e) {
         console.error(e);
         return;
     }
+}
+
+const graphData = derived(graph, $graph => {
+    const nodes = $graph.evidence.map((e) => ({
+        id: e.id,
+        data: { label: e.name },
+        position: {
+            x: e.x,
+            y: e.y
+        },
+        height: 100,
+        width: 100,
+        clickCallback: async (node: Node) => {
+            const resp = await ctfg.SubmitEvidence({
+                evidence: evidence,
+                x: Math.floor(node.position.x),
+                y: Math.floor(node.position.y),
+            })
+            await loadDiscoveredEvidence();
+        }
+    }));
+
+    const edges = $graph.connections.map(c => ({
+        id: `${c.source}-${c.destination}`,
+        source: c.source,
+        target: c.destination
+    }));
+
+    return {
+        nodes,
+        edges
+    }
+});
+
+onMount(async () => {
+    await loadDiscoveredEvidence();
 });
 
 async function submitEvidence() {
-    const resp = await ctfg.SubmitEvidence({
-        evidence: evidence,
-    })
-    console.log(resp);
+    try {
+        const resp = await ctfg.SubmitEvidence({
+            evidence: evidence,
+            x: 100,
+            y: 100,
+        })
+        await loadDiscoveredEvidence();
+        successMsg.set('submitted evidence!');
+    } catch (e) {
+        errorMsg.set(e);
+    }
 }
 
 async function submitConnection() {
-    const resp = await ctfg.SubmitEvidenceConnection({
-        source: source,
-        destination: destination
-    })
-    console.log(resp);
+    try {
+        const resp = await ctfg.SubmitEvidenceConnection({
+            source: source,
+            destination: destination
+        })
+        await loadDiscoveredEvidence();
+        successMsg.set('created connection!');
+    } catch (e) {
+        errorMsg.set(e);
+    }
+}
+
+async function saveReport() {
+    try {
+        const resp = await ctfg.SubmitEvidenceReport({
+            url: $report
+        });
+        successMsg.set('saved report!');
+    } catch (e) {
+        errorMsg.set(e);
+    }
 }
 </script>
 
 <div>
-    <label for="flag">Evidence</label>
-    <input id="flag" type="text" bind:value={evidence} />
-    <button on:click={submitEvidence}>Submit</button>
-
-    <div class="connection-input">
+    <div class="mb-3">
+        {#if $successMsg}
+            <Alert color="green" dismissable>{$successMsg}</Alert>
+        {/if}
+        {#if $errorMsg}
+            <Alert color="red" dismissable>{$errorMsg}</Alert>
+        {/if}
+    </div>
+    <div class="mb-3">
+        <label for="report">Report URL</label>
+        <ButtonGroup class="w-full">
+            <Input id="report" type="text" bind:value={$report} />
+            <Button color="blue" on:click={saveReport}>Save</Button>
+        </ButtonGroup>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
         <div>
-            <label for="source">Source</label>
-            <select id="source" bind:value={source}>
-                {#if $graph !== null }
-                {#each $graph.evidence as evidence}
-                    <option value={evidence.id}>{evidence.name}</option>
-                {/each}
-                {/if}
-            </select>
+            <div class="mb-3">
+                <label for="flag">Evidence</label>
+                <Input id="flag" type="text" bind:value={evidence} />
+            </div>
+            <Button on:click={submitEvidence}>Submit</Button>
         </div>
         <div>
-            <label for="destination">Destination</label>
-            <select id="destination" bind:value={destination}>
+            <div class="mb-3">
+                <label for="source">Source</label>
                 {#if $graph !== null }
-                {#each $graph.evidence as evidence}
-                    <option value={evidence.id}>{evidence.name}</option>
-                {/each}
+                    <Select id="source" items={$graph.evidence.map(e => ({ value: e.id, name: e.name }))} bind:value={source} />
                 {/if}
-            </select>
+            </div>
+            <div class="mb-3">
+                <label for="destination">Destination</label>
+                {#if $graph !== null }
+                    <Select id="source" items={$graph.evidence.map(e => ({ value: e.id, name: e.name }))} bind:value={destination} />
+                {/if}
+            </div>
+            <Button on:click={submitConnection}>Submit</Button>
         </div>
     </div>
-    <button on:click={submitConnection}>Submit</button>
-    {#if $initialNodes.length > 0}
-        <Svelvet nodes={$initialNodes} edges={$initialEdges} background />
+    {#if $graphData.nodes.length > 0}
+        <Svelvet nodes={$graphData.nodes} edges={$graphData.edges} background />
     {/if}
 </div>
-
-<style>
-    .connection-input {
-        display: flex;
-    }
-
-    .connection-input > div {
-        width: 50%;
-    }
-</style>

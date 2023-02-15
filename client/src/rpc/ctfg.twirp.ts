@@ -19,6 +19,7 @@ import {
   GetChallengesResponse,
   SubmitFlagRequest,
   SubmitFlagResponse,
+  SubmitEvidenceReportRequest,
   GetDiscoveredEvidenceRequest,
   GetDiscoveredEvidenceResponse,
   SubmitEvidenceRequest,
@@ -46,6 +47,9 @@ export interface BackendClient {
   CurrentUser(request: CurrentUserRequest): Promise<CurrentUserResponse>;
   GetChallenges(request: GetChallengesRequest): Promise<GetChallengesResponse>;
   SubmitFlag(request: SubmitFlagRequest): Promise<SubmitFlagResponse>;
+  SubmitEvidenceReport(
+    request: SubmitEvidenceReportRequest
+  ): Promise<SubmitEvidenceReportRequest>;
   GetDiscoveredEvidence(
     request: GetDiscoveredEvidenceRequest
   ): Promise<GetDiscoveredEvidenceResponse>;
@@ -66,6 +70,7 @@ export class BackendClientJSON implements BackendClient {
     this.CurrentUser.bind(this);
     this.GetChallenges.bind(this);
     this.SubmitFlag.bind(this);
+    this.SubmitEvidenceReport.bind(this);
     this.GetDiscoveredEvidence.bind(this);
     this.SubmitEvidence.bind(this);
     this.SubmitEvidenceConnection.bind(this);
@@ -150,6 +155,26 @@ export class BackendClientJSON implements BackendClient {
     );
   }
 
+  SubmitEvidenceReport(
+    request: SubmitEvidenceReportRequest
+  ): Promise<SubmitEvidenceReportRequest> {
+    const data = SubmitEvidenceReportRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "SubmitEvidenceReport",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      SubmitEvidenceReportRequest.fromJson(data as any, {
+        ignoreUnknownFields: true,
+      })
+    );
+  }
+
   GetDiscoveredEvidence(
     request: GetDiscoveredEvidenceRequest
   ): Promise<GetDiscoveredEvidenceResponse> {
@@ -220,6 +245,7 @@ export class BackendClientProtobuf implements BackendClient {
     this.CurrentUser.bind(this);
     this.GetChallenges.bind(this);
     this.SubmitFlag.bind(this);
+    this.SubmitEvidenceReport.bind(this);
     this.GetDiscoveredEvidence.bind(this);
     this.SubmitEvidence.bind(this);
     this.SubmitEvidenceConnection.bind(this);
@@ -287,6 +313,21 @@ export class BackendClientProtobuf implements BackendClient {
     );
   }
 
+  SubmitEvidenceReport(
+    request: SubmitEvidenceReportRequest
+  ): Promise<SubmitEvidenceReportRequest> {
+    const data = SubmitEvidenceReportRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "SubmitEvidenceReport",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) =>
+      SubmitEvidenceReportRequest.fromBinary(data as Uint8Array)
+    );
+  }
+
   GetDiscoveredEvidence(
     request: GetDiscoveredEvidenceRequest
   ): Promise<GetDiscoveredEvidenceResponse> {
@@ -349,6 +390,10 @@ export interface BackendTwirp<T extends TwirpContext = TwirpContext> {
     request: GetChallengesRequest
   ): Promise<GetChallengesResponse>;
   SubmitFlag(ctx: T, request: SubmitFlagRequest): Promise<SubmitFlagResponse>;
+  SubmitEvidenceReport(
+    ctx: T,
+    request: SubmitEvidenceReportRequest
+  ): Promise<SubmitEvidenceReportRequest>;
   GetDiscoveredEvidence(
     ctx: T,
     request: GetDiscoveredEvidenceRequest
@@ -369,6 +414,7 @@ export enum BackendMethod {
   CurrentUser = "CurrentUser",
   GetChallenges = "GetChallenges",
   SubmitFlag = "SubmitFlag",
+  SubmitEvidenceReport = "SubmitEvidenceReport",
   GetDiscoveredEvidence = "GetDiscoveredEvidence",
   SubmitEvidence = "SubmitEvidence",
   SubmitEvidenceConnection = "SubmitEvidenceConnection",
@@ -380,6 +426,7 @@ export const BackendMethodList = [
   BackendMethod.CurrentUser,
   BackendMethod.GetChallenges,
   BackendMethod.SubmitFlag,
+  BackendMethod.SubmitEvidenceReport,
   BackendMethod.GetDiscoveredEvidence,
   BackendMethod.SubmitEvidence,
   BackendMethod.SubmitEvidenceConnection,
@@ -470,6 +517,26 @@ function matchBackendRoute<T extends TwirpContext = TwirpContext>(
         ctx = { ...ctx, methodName: "SubmitFlag" };
         await events.onMatch(ctx);
         return handleBackendSubmitFlagRequest(ctx, service, data, interceptors);
+      };
+    case "SubmitEvidenceReport":
+      return async (
+        ctx: T,
+        service: BackendTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<
+          T,
+          SubmitEvidenceReportRequest,
+          SubmitEvidenceReportRequest
+        >[]
+      ) => {
+        ctx = { ...ctx, methodName: "SubmitEvidenceReport" };
+        await events.onMatch(ctx);
+        return handleBackendSubmitEvidenceReportRequest(
+          ctx,
+          service,
+          data,
+          interceptors
+        );
       };
     case "GetDiscoveredEvidence":
       return async (
@@ -634,6 +701,39 @@ function handleBackendSubmitFlagRequest<T extends TwirpContext = TwirpContext>(
       return handleBackendSubmitFlagJSON<T>(ctx, service, data, interceptors);
     case TwirpContentType.Protobuf:
       return handleBackendSubmitFlagProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleBackendSubmitEvidenceReportRequest<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<
+    T,
+    SubmitEvidenceReportRequest,
+    SubmitEvidenceReportRequest
+  >[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleBackendSubmitEvidenceReportJSON<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    case TwirpContentType.Protobuf:
+      return handleBackendSubmitEvidenceReportProtobuf<T>(
         ctx,
         service,
         data,
@@ -941,6 +1041,54 @@ async function handleBackendSubmitFlagJSON<
 
   return JSON.stringify(
     SubmitFlagResponse.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
+
+async function handleBackendSubmitEvidenceReportJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<
+    T,
+    SubmitEvidenceReportRequest,
+    SubmitEvidenceReportRequest
+  >[]
+) {
+  let request: SubmitEvidenceReportRequest;
+  let response: SubmitEvidenceReportRequest;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = SubmitEvidenceReportRequest.fromJson(body, {
+      ignoreUnknownFields: true,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      SubmitEvidenceReportRequest,
+      SubmitEvidenceReportRequest
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.SubmitEvidenceReport(ctx, inputReq);
+    });
+  } else {
+    response = await service.SubmitEvidenceReport(ctx, request!);
+  }
+
+  return JSON.stringify(
+    SubmitEvidenceReportRequest.toJson(response, {
       useProtoFieldName: true,
       emitDefaultValues: false,
     }) as string
@@ -1264,6 +1412,46 @@ async function handleBackendSubmitFlagProtobuf<
   }
 
   return Buffer.from(SubmitFlagResponse.toBinary(response));
+}
+
+async function handleBackendSubmitEvidenceReportProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<
+    T,
+    SubmitEvidenceReportRequest,
+    SubmitEvidenceReportRequest
+  >[]
+) {
+  let request: SubmitEvidenceReportRequest;
+  let response: SubmitEvidenceReportRequest;
+
+  try {
+    request = SubmitEvidenceReportRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      SubmitEvidenceReportRequest,
+      SubmitEvidenceReportRequest
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.SubmitEvidenceReport(ctx, inputReq);
+    });
+  } else {
+    response = await service.SubmitEvidenceReport(ctx, request!);
+  }
+
+  return Buffer.from(SubmitEvidenceReportRequest.toBinary(response));
 }
 
 async function handleBackendGetDiscoveredEvidenceProtobuf<

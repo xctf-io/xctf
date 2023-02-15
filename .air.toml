@@ -4,7 +4,6 @@ tmp_dir = "tmp"
 
 [build]
   args_bin = []
-  bin = "./tmp/backend"
   cmd = "go build -o ./tmp/backend cmd/main.go"
   delay = 2000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "client/src", "client/node_modules"]
@@ -12,7 +11,7 @@ tmp_dir = "tmp"
   exclude_regex = ["_test.go"]
   exclude_unchanged = false
   follow_symlink = false
-  full_bin = ""
+  full_bin = "CTFG_ADMIN_EMAIL=admin@admin.com CTFG_ADMIN_PASSWORD=password ./tmp/backend"
   include_dir = []
   include_ext = ["go", "tpl", "tmpl", "html", "js", "css"]
   kill_delay = "0s"

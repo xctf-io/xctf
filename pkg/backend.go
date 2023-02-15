@@ -60,14 +60,30 @@ func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserReque
 		return nil, err
 	}
 
+	var pages []models.Page
+	resp := b.db.Find(&pages)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+
+	var returnedPages []*ctfg.Page
+	for _, page := range pages {
+		returnedPages = append(returnedPages, &ctfg.Page{
+			Route:   page.Route,
+			Title:   page.Title,
+			Content: page.Content,
+		})
+	}
+
 	var user models.User
-	resp := b.db.Where("id = ?", userID).First(&user)
+	resp = b.db.Where(&models.User{Model: gorm.Model{ID: userID}}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
 
 	return &ctfg.CurrentUserResponse{
 		Username: user.Username,
+		Pages:    returnedPages,
 	}, nil
 }
 
@@ -88,6 +104,9 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 		return nil, err
 	}
 
+	var report models.EvidenceReport
+	b.db.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
+
 	var evidence []models.Evidence
 	evResp := b.db.Where(models.Evidence{UserID: int(userID)}).Find(&evidence)
 	if evResp.Error != nil {
@@ -105,6 +124,8 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 		discoveredEvidence = append(discoveredEvidence, &ctfg.Evidence{
 			Id:   uint32(ev.ID),
 			Name: ev.Name,
+			X:    int32(ev.PositionX),
+			Y:    int32(ev.PositionY),
 		})
 	}
 
@@ -118,6 +139,7 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 	}
 
 	return &ctfg.GetDiscoveredEvidenceResponse{
+		Report:      report.URL,
 		Evidence:    discoveredEvidence,
 		Connections: discoveredConnections,
 	}, nil
@@ -138,18 +160,29 @@ func (b backend) SubmitEvidence(ctx context.Context, request *ctfg.SubmitEvidenc
 		name = chal.Name
 	}
 
-	evidence := models.Evidence{
-		Name:      name,
-		Challenge: chal,
-		User: models.User{
-			Model: gorm.Model{
-				ID: userID,
+	var evidence models.Evidence
+	res = b.db.Where(models.Evidence{Name: name, UserID: int(userID)}).First(&evidence)
+	if res.Error == nil {
+		log.Debug().
+			Str("name", name).
+			Msg("updating existing evidence")
+		evidence.PositionX = int(request.X)
+		evidence.PositionY = int(request.Y)
+		b.db.Save(&evidence)
+	} else {
+		evidence := models.Evidence{
+			Name:      name,
+			Challenge: chal,
+			User: models.User{
+				Model: gorm.Model{
+					ID: userID,
+				},
 			},
-		},
-	}
-	res = b.db.Create(&evidence)
-	if res.Error != nil {
-		return nil, res.Error
+		}
+		res = b.db.Create(&evidence)
+		if res.Error != nil {
+			return nil, res.Error
+		}
 	}
 
 	return &ctfg.SubmitEvidenceResponse{
@@ -176,6 +209,30 @@ func (b backend) SubmitEvidenceConnection(ctx context.Context, request *ctfg.Sub
 	}
 
 	return &ctfg.SubmitEvidenceConnectionResponse{}, nil
+}
+
+func (b backend) SubmitEvidenceReport(ctx context.Context, req *ctfg.SubmitEvidenceReportRequest) (*ctfg.SubmitEvidenceReportRequest, error) {
+	userID, err := GetUserFromSession(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var report models.EvidenceReport
+	res := b.db.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
+	if res.Error != nil {
+		newReport := &models.EvidenceReport{
+			UserID: int(userID),
+			URL:    req.Url,
+		}
+		if res = b.db.Create(&newReport); res.Error != nil {
+			return nil, res.Error
+		}
+		return &ctfg.SubmitEvidenceReportRequest{}, nil
+	}
+
+	report.URL = req.Url
+	b.db.Save(report)
+	return &ctfg.SubmitEvidenceReportRequest{}, nil
 }
 
 func NewBackend(db *gorm.DB) ctfg.Backend {

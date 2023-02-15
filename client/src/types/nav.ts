@@ -4,4 +4,6 @@ export interface NavLink {
 	label: string;
 	to: string;
 	Component: typeof SvelteComponent;
+	showWhenAuthed: boolean;
+	hideWhenUnauthed?: boolean;
 }

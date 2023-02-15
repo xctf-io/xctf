@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"embed"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -15,7 +15,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func NewAPIHandler(assets embed.FS, twirpHandler ctfg.TwirpServer) http.Handler {
+func NewAPIHandler(assets fs.FS, twirpHandler ctfg.TwirpServer) http.Handler {
 	muxRoot := chi.NewRouter()
 
 	muxRoot.Use(middleware.RequestID)

@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"os"
 
 	"github.com/ctfg/ctfg/pkg/models"
 	"github.com/glebarez/sqlite"
@@ -24,6 +25,8 @@ func Migrate(db *gorm.DB) {
 		&models.Challenge{},
 		&models.Evidence{},
 		&models.EvidenceConnection{},
+		&models.EvidenceReport{},
+		&models.Page{},
 	}
 
 	for _, model := range modelsToMigrate {
@@ -32,5 +35,25 @@ func Migrate(db *gorm.DB) {
 			panic(err)
 		}
 	}
+
+	email := os.Getenv("CTFG_ADMIN_EMAIL")
+	password := os.Getenv("CTFG_ADMIN_PASSWORD")
+
+	if email != "" && password != "" {
+		log.Println("Creating admin user...")
+
+		var user models.User
+		res := db.Where(&models.User{Email: email}).First(&user)
+		if res.Error != nil {
+			user.Email = email
+			user.Username = "admin"
+			user.HashPassword(password)
+			db.Create(&user)
+		} else {
+			user.HashPassword(password)
+			db.Save(&user)
+		}
+	}
+
 	log.Println("Database Migration Completed!")
 }

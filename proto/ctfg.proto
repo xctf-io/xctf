@@ -11,10 +11,17 @@ service Backend {
   rpc GetChallenges(GetChallengesRequest) returns (GetChallengesResponse);
   rpc SubmitFlag(SubmitFlagRequest) returns (SubmitFlagResponse);
 
+  rpc SubmitEvidenceReport(SubmitEvidenceReportRequest) returns (SubmitEvidenceReportRequest);
   rpc GetDiscoveredEvidence(GetDiscoveredEvidenceRequest) returns (GetDiscoveredEvidenceResponse);
   rpc SubmitEvidence(SubmitEvidenceRequest) returns (SubmitEvidenceResponse);
   rpc SubmitEvidenceConnection(SubmitEvidenceConnectionRequest) returns (SubmitEvidenceConnectionResponse);
 }
+
+message SubmitEvidenceReportRequest {
+  string url = 1;
+}
+
+message SubmitEvidenceReportResponse {}
 
 message LoginRequest {
   string email = 1;
@@ -28,6 +35,8 @@ message LoginResponse {
 message Evidence {
   uint32 id = 1;
   string name = 2;
+  int32 x = 3;
+  int32 y = 4;
 }
 
 message Connection {
@@ -38,13 +47,16 @@ message Connection {
 
 message GetDiscoveredEvidenceRequest {}
 message GetDiscoveredEvidenceResponse {
-  repeated Evidence evidence = 1;
-  repeated Connection connections = 2;
+  string report = 1;
+  repeated Evidence evidence = 2;
+  repeated Connection connections = 3;
 }
 
 message SubmitEvidenceRequest {
   // this could either be the name of some evidence or a flag.
   string evidence = 1;
+  int32 x = 2;
+  int32 y = 3;
 }
 
 message SubmitEvidenceResponse {
@@ -70,9 +82,16 @@ message RegisterResponse {
   bool created = 1;
 }
 
+message Page {
+  string route = 1;
+  string title = 2;
+  string content = 3;
+}
+
 message CurrentUserRequest {}
 message CurrentUserResponse {
   string username = 1;
+  repeated Page pages = 2;
 }
 
 message GetChallengesRequest {}

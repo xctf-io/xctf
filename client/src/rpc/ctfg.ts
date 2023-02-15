@@ -13,6 +13,20 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
+ * @generated from protobuf message ctfg.SubmitEvidenceReportRequest
+ */
+export interface SubmitEvidenceReportRequest {
+    /**
+     * @generated from protobuf field: string url = 1;
+     */
+    url: string;
+}
+/**
+ * @generated from protobuf message ctfg.SubmitEvidenceReportResponse
+ */
+export interface SubmitEvidenceReportResponse {
+}
+/**
  * @generated from protobuf message ctfg.LoginRequest
  */
 export interface LoginRequest {
@@ -46,6 +60,14 @@ export interface Evidence {
      * @generated from protobuf field: string name = 2;
      */
     name: string;
+    /**
+     * @generated from protobuf field: int32 x = 3;
+     */
+    x: number;
+    /**
+     * @generated from protobuf field: int32 y = 4;
+     */
+    y: number;
 }
 /**
  * @generated from protobuf message ctfg.Connection
@@ -74,11 +96,15 @@ export interface GetDiscoveredEvidenceRequest {
  */
 export interface GetDiscoveredEvidenceResponse {
     /**
-     * @generated from protobuf field: repeated ctfg.Evidence evidence = 1;
+     * @generated from protobuf field: string report = 1;
+     */
+    report: string;
+    /**
+     * @generated from protobuf field: repeated ctfg.Evidence evidence = 2;
      */
     evidence: Evidence[];
     /**
-     * @generated from protobuf field: repeated ctfg.Connection connections = 2;
+     * @generated from protobuf field: repeated ctfg.Connection connections = 3;
      */
     connections: Connection[];
 }
@@ -92,6 +118,14 @@ export interface SubmitEvidenceRequest {
      * @generated from protobuf field: string evidence = 1;
      */
     evidence: string;
+    /**
+     * @generated from protobuf field: int32 x = 2;
+     */
+    x: number;
+    /**
+     * @generated from protobuf field: int32 y = 3;
+     */
+    y: number;
 }
 /**
  * @generated from protobuf message ctfg.SubmitEvidenceResponse
@@ -151,6 +185,23 @@ export interface RegisterResponse {
     created: boolean;
 }
 /**
+ * @generated from protobuf message ctfg.Page
+ */
+export interface Page {
+    /**
+     * @generated from protobuf field: string route = 1;
+     */
+    route: string;
+    /**
+     * @generated from protobuf field: string title = 2;
+     */
+    title: string;
+    /**
+     * @generated from protobuf field: string content = 3;
+     */
+    content: string;
+}
+/**
  * @generated from protobuf message ctfg.CurrentUserRequest
  */
 export interface CurrentUserRequest {
@@ -163,6 +214,10 @@ export interface CurrentUserResponse {
      * @generated from protobuf field: string username = 1;
      */
     username: string;
+    /**
+     * @generated from protobuf field: repeated ctfg.Page pages = 2;
+     */
+    pages: Page[];
 }
 /**
  * @generated from protobuf message ctfg.GetChallengesRequest
@@ -213,6 +268,79 @@ export interface SubmitFlagResponse {
      */
     correct: boolean;
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class SubmitEvidenceReportRequest$Type extends MessageType<SubmitEvidenceReportRequest> {
+    constructor() {
+        super("ctfg.SubmitEvidenceReportRequest", [
+            { no: 1, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SubmitEvidenceReportRequest>): SubmitEvidenceReportRequest {
+        const message = { url: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<SubmitEvidenceReportRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SubmitEvidenceReportRequest): SubmitEvidenceReportRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string url */ 1:
+                    message.url = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SubmitEvidenceReportRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string url = 1; */
+        if (message.url !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.url);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.SubmitEvidenceReportRequest
+ */
+export const SubmitEvidenceReportRequest = new SubmitEvidenceReportRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SubmitEvidenceReportResponse$Type extends MessageType<SubmitEvidenceReportResponse> {
+    constructor() {
+        super("ctfg.SubmitEvidenceReportResponse", []);
+    }
+    create(value?: PartialMessage<SubmitEvidenceReportResponse>): SubmitEvidenceReportResponse {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<SubmitEvidenceReportResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SubmitEvidenceReportResponse): SubmitEvidenceReportResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: SubmitEvidenceReportResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.SubmitEvidenceReportResponse
+ */
+export const SubmitEvidenceReportResponse = new SubmitEvidenceReportResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class LoginRequest$Type extends MessageType<LoginRequest> {
     constructor() {
@@ -319,11 +447,13 @@ class Evidence$Type extends MessageType<Evidence> {
     constructor() {
         super("ctfg.Evidence", [
             { no: 1, name: "id", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "x", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "y", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<Evidence>): Evidence {
-        const message = { id: 0, name: "" };
+        const message = { id: 0, name: "", x: 0, y: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Evidence>(this, message, value);
@@ -339,6 +469,12 @@ class Evidence$Type extends MessageType<Evidence> {
                     break;
                 case /* string name */ 2:
                     message.name = reader.string();
+                    break;
+                case /* int32 x */ 3:
+                    message.x = reader.int32();
+                    break;
+                case /* int32 y */ 4:
+                    message.y = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -358,6 +494,12 @@ class Evidence$Type extends MessageType<Evidence> {
         /* string name = 2; */
         if (message.name !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.name);
+        /* int32 x = 3; */
+        if (message.x !== 0)
+            writer.tag(3, WireType.Varint).int32(message.x);
+        /* int32 y = 4; */
+        if (message.y !== 0)
+            writer.tag(4, WireType.Varint).int32(message.y);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -459,12 +601,13 @@ export const GetDiscoveredEvidenceRequest = new GetDiscoveredEvidenceRequest$Typ
 class GetDiscoveredEvidenceResponse$Type extends MessageType<GetDiscoveredEvidenceResponse> {
     constructor() {
         super("ctfg.GetDiscoveredEvidenceResponse", [
-            { no: 1, name: "evidence", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Evidence },
-            { no: 2, name: "connections", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Connection }
+            { no: 1, name: "report", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "evidence", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Evidence },
+            { no: 3, name: "connections", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Connection }
         ]);
     }
     create(value?: PartialMessage<GetDiscoveredEvidenceResponse>): GetDiscoveredEvidenceResponse {
-        const message = { evidence: [], connections: [] };
+        const message = { report: "", evidence: [], connections: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<GetDiscoveredEvidenceResponse>(this, message, value);
@@ -475,10 +618,13 @@ class GetDiscoveredEvidenceResponse$Type extends MessageType<GetDiscoveredEviden
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated ctfg.Evidence evidence */ 1:
+                case /* string report */ 1:
+                    message.report = reader.string();
+                    break;
+                case /* repeated ctfg.Evidence evidence */ 2:
                     message.evidence.push(Evidence.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated ctfg.Connection connections */ 2:
+                case /* repeated ctfg.Connection connections */ 3:
                     message.connections.push(Connection.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -493,12 +639,15 @@ class GetDiscoveredEvidenceResponse$Type extends MessageType<GetDiscoveredEviden
         return message;
     }
     internalBinaryWrite(message: GetDiscoveredEvidenceResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated ctfg.Evidence evidence = 1; */
+        /* string report = 1; */
+        if (message.report !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.report);
+        /* repeated ctfg.Evidence evidence = 2; */
         for (let i = 0; i < message.evidence.length; i++)
-            Evidence.internalBinaryWrite(message.evidence[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated ctfg.Connection connections = 2; */
+            Evidence.internalBinaryWrite(message.evidence[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated ctfg.Connection connections = 3; */
         for (let i = 0; i < message.connections.length; i++)
-            Connection.internalBinaryWrite(message.connections[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Connection.internalBinaryWrite(message.connections[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -513,11 +662,13 @@ export const GetDiscoveredEvidenceResponse = new GetDiscoveredEvidenceResponse$T
 class SubmitEvidenceRequest$Type extends MessageType<SubmitEvidenceRequest> {
     constructor() {
         super("ctfg.SubmitEvidenceRequest", [
-            { no: 1, name: "evidence", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "evidence", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "x", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "y", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<SubmitEvidenceRequest>): SubmitEvidenceRequest {
-        const message = { evidence: "" };
+        const message = { evidence: "", x: 0, y: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<SubmitEvidenceRequest>(this, message, value);
@@ -530,6 +681,12 @@ class SubmitEvidenceRequest$Type extends MessageType<SubmitEvidenceRequest> {
             switch (fieldNo) {
                 case /* string evidence */ 1:
                     message.evidence = reader.string();
+                    break;
+                case /* int32 x */ 2:
+                    message.x = reader.int32();
+                    break;
+                case /* int32 y */ 3:
+                    message.y = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -546,6 +703,12 @@ class SubmitEvidenceRequest$Type extends MessageType<SubmitEvidenceRequest> {
         /* string evidence = 1; */
         if (message.evidence !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.evidence);
+        /* int32 x = 2; */
+        if (message.x !== 0)
+            writer.tag(2, WireType.Varint).int32(message.x);
+        /* int32 y = 3; */
+        if (message.y !== 0)
+            writer.tag(3, WireType.Varint).int32(message.y);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -813,6 +976,67 @@ class RegisterResponse$Type extends MessageType<RegisterResponse> {
  */
 export const RegisterResponse = new RegisterResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class Page$Type extends MessageType<Page> {
+    constructor() {
+        super("ctfg.Page", [
+            { no: 1, name: "route", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<Page>): Page {
+        const message = { route: "", title: "", content: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<Page>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Page): Page {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string route */ 1:
+                    message.route = reader.string();
+                    break;
+                case /* string title */ 2:
+                    message.title = reader.string();
+                    break;
+                case /* string content */ 3:
+                    message.content = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Page, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string route = 1; */
+        if (message.route !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.route);
+        /* string title = 2; */
+        if (message.title !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.title);
+        /* string content = 3; */
+        if (message.content !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.content);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.Page
+ */
+export const Page = new Page$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CurrentUserRequest$Type extends MessageType<CurrentUserRequest> {
     constructor() {
         super("ctfg.CurrentUserRequest", []);
@@ -842,11 +1066,12 @@ export const CurrentUserRequest = new CurrentUserRequest$Type();
 class CurrentUserResponse$Type extends MessageType<CurrentUserResponse> {
     constructor() {
         super("ctfg.CurrentUserResponse", [
-            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "pages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Page }
         ]);
     }
     create(value?: PartialMessage<CurrentUserResponse>): CurrentUserResponse {
-        const message = { username: "" };
+        const message = { username: "", pages: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CurrentUserResponse>(this, message, value);
@@ -859,6 +1084,9 @@ class CurrentUserResponse$Type extends MessageType<CurrentUserResponse> {
             switch (fieldNo) {
                 case /* string username */ 1:
                     message.username = reader.string();
+                    break;
+                case /* repeated ctfg.Page pages */ 2:
+                    message.pages.push(Page.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -875,6 +1103,9 @@ class CurrentUserResponse$Type extends MessageType<CurrentUserResponse> {
         /* string username = 1; */
         if (message.username !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.username);
+        /* repeated ctfg.Page pages = 2; */
+        for (let i = 0; i < message.pages.length; i++)
+            Page.internalBinaryWrite(message.pages[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1122,6 +1353,7 @@ export const Backend = new ServiceType("ctfg.Backend", [
     { name: "CurrentUser", options: {}, I: CurrentUserRequest, O: CurrentUserResponse },
     { name: "GetChallenges", options: {}, I: GetChallengesRequest, O: GetChallengesResponse },
     { name: "SubmitFlag", options: {}, I: SubmitFlagRequest, O: SubmitFlagResponse },
+    { name: "SubmitEvidenceReport", options: {}, I: SubmitEvidenceReportRequest, O: SubmitEvidenceReportRequest },
     { name: "GetDiscoveredEvidence", options: {}, I: GetDiscoveredEvidenceRequest, O: GetDiscoveredEvidenceResponse },
     { name: "SubmitEvidence", options: {}, I: SubmitEvidenceRequest, O: SubmitEvidenceResponse },
     { name: "SubmitEvidenceConnection", options: {}, I: SubmitEvidenceConnectionRequest, O: SubmitEvidenceConnectionResponse }
