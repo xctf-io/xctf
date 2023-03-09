@@ -2,7 +2,7 @@ name: Kompose
 concurrency: production
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 jobs:
   kompose:
