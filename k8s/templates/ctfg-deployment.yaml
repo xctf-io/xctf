@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
-    kompose.version: 1.26.0 (HEAD)
+    kompose.cmd: ./kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.version: 1.26.1 (a9d05d509)
   creationTimestamp: null
   labels:
     io.kompose.service: ctfg
@@ -17,8 +17,8 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
-        kompose.version: 1.26.0 (HEAD)
+        kompose.cmd: ./kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+        kompose.version: 1.26.1 (a9d05d509)
       creationTimestamp: null
       labels:
         io.kompose.service: ctfg
