@@ -23,13 +23,12 @@ jobs:
       - name: Get branch name
         id: branch-name
         uses: tj-actions/branch-names@v5.2
-      - uses: DamianReeves/write-file-action@v1.0
-        with:
-          path: .env.prod.secrets
-          contents: |
-            DATABASE_URL=${{ secrets.HASURA_GRAPHQL_DATABASE_URL }}
-            JWT_SECRET=${{ secrets.HASURA_GRAPHQL_JWT_SECRET }}
-          write-mode: overwrite
+      # - uses: DamianReeves/write-file-action@v1.0
+      #   with:
+      #     path: .env.prod.secrets
+      #     contents: |
+      #       DATABASE_URL=${{ secrets.HASURA_GRAPHQL_DATABASE_URL }}
+      #     write-mode: overwrite
       - run: curl -L https://github.com/kubernetes/kompose/releases/download/v1.26.1/kompose-linux-amd64 -o kompose && chmod +x kompose
         name: Install kompose
       - run: ./kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s

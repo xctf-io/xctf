@@ -3,8 +3,8 @@ name: build
 on:
   workflow_dispatch:
   push:
-    paths:
-      - '**'
+    branches:
+      - main
 
 jobs:
   build:
