@@ -1,5 +1,7 @@
 FROM node:lts-alpine as client
 
+RUN apk add git
+
 COPY client /build
 WORKDIR /build
 
