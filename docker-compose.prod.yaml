@@ -22,3 +22,4 @@ services:
       CTFG_ADMIN_PASSWORD: password
     labels:
       kompose.service.type: clusterip
+      kompose.image-pull-secret: "ghcr-pull-secret"
