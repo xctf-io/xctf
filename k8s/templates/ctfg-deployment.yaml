@@ -31,7 +31,7 @@ spec:
               value: password
             - name: DB_DSN
               value: host=postgres user=postgres password=password sslmode=disable
-          image: x
+          image: ghcr.io/ctfg/ctfg@sha256:a3dcdefa08d3e46892d11afe85f11ae0e8eec5139e97e3e97a88848ac16466e1
           name: ctfg
           resources: {}
       restartPolicy: Always
