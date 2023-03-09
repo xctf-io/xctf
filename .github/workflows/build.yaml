@@ -71,6 +71,6 @@ jobs:
         if: steps.branch-name.outputs.current_branch == 'main'
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: Deploy
+          workflow: Kompose
           token: ${{ secrets.GH_TOKEN }}
           ref: master
