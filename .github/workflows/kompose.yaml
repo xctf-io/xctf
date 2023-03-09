@@ -3,13 +3,6 @@ concurrency: production
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/**'
-      - 'docker-compose.yaml'
-      - 'docker-compose.prod.yaml'
 
 jobs:
   kompose:
