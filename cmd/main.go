@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"flag"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+	"fmt"
 
 	"github.com/ctfg/ctfg/client/public"
 	"github.com/ctfg/ctfg/gen/ctfg"
@@ -15,15 +15,16 @@ import (
 	"github.com/ctfg/ctfg/pkg/database"
 )
 
-var (
-	httpAddr = flag.String("http-address", ":8000", "Bind address for http server")
-)
-
 func startHttpServer(twirpServer ctfg.TwirpServer, httpApiHandler http.Handler) {
-	flag.Parse()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
+
+	addr := fmt.Sprintf(":%s", port)
 
 	httpServer := &http.Server{
-		Addr:    *httpAddr,
+		Addr:    addr,
 		Handler: httpApiHandler,
 	}
 
@@ -31,7 +32,7 @@ func startHttpServer(twirpServer ctfg.TwirpServer, httpApiHandler http.Handler) 
 	signal.Notify(signals, os.Interrupt)
 
 	go func(server *http.Server) {
-		log.Printf("Listening @ %s", *httpAddr)
+		log.Printf("Listening @ %s", addr)
 		if err := server.ListenAndServe(); err != nil {
 			log.Fatal(err)
 		}

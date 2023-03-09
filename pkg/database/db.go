@@ -16,10 +16,10 @@ func Connect() *gorm.DB {
 	dsn := os.Getenv("DB_DSN")
 
 	var openedDb gorm.Dialector
-	if dbType == "sqlite" {
-		openedDb = sqlite.Open("gorm.db")
-	} else {
+	if dbType == "postgres" {
 		openedDb = postgres.Open(dsn)
+	} else {
+		openedDb = sqlite.Open("gorm.db")
 	}
 
 	db, err := gorm.Open(openedDb, &gorm.Config{})

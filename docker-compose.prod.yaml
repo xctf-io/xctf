@@ -10,7 +10,11 @@ services:
   ctfg:
     image: ghcr.io/ctfg/ctfg@sha256:a3dcdefa08d3e46892d11afe85f11ae0e8eec5139e97e3e97a88848ac16466e1
     restart: always
+    ports:
+      - 8000:8000
     environment:
+      PORT: 8000
+      DB_TYPE: "postgres"
       DB_DSN: "host=postgres user=postgres password=password sslmode=disable"
       CTFG_ADMIN_EMAIL: admin@admin.com
       CTFG_ADMIN_PASSWORD: password

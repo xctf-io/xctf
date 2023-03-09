@@ -6,14 +6,14 @@ metadata:
     kompose.version: 1.26.0 (HEAD)
   creationTimestamp: null
   labels:
-    io.kompose.service: postgres
-  name: postgres
+    io.kompose.service: ctfg
+  name: ctfg
 spec:
   ports:
-    - name: "5432"
-      port: 5432
-      targetPort: 5432
+    - name: "8000"
+      port: 8000
+      targetPort: 8000
   selector:
-    io.kompose.service: postgres
+    io.kompose.service: ctfg
 status:
   loadBalancer: {}

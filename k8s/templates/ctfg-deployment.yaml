@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: ./kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
-    kompose.version: 1.26.1 (a9d05d509)
+    kompose.cmd: kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.version: 1.26.0 (HEAD)
   creationTimestamp: null
   labels:
     io.kompose.service: ctfg
@@ -17,8 +17,8 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: ./kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
-        kompose.version: 1.26.1 (a9d05d509)
+        kompose.cmd: kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+        kompose.version: 1.26.0 (HEAD)
       creationTimestamp: null
       labels:
         io.kompose.service: ctfg
@@ -31,8 +31,14 @@ spec:
               value: password
             - name: DB_DSN
               value: host=postgres user=postgres password=password sslmode=disable
-          image: x
+            - name: DB_TYPE
+              value: postgres
+            - name: PORT
+              value: "8000"
+          image: ghcr.io/ctfg/ctfg@sha256:a3dcdefa08d3e46892d11afe85f11ae0e8eec5139e97e3e97a88848ac16466e1
           name: ctfg
+          ports:
+            - containerPort: 8000
           resources: {}
       restartPolicy: Always
 status: {}
