@@ -1,39 +1,25 @@
-# client BUILD
-FROM node:lts-alpine as build-client
+FROM node:lts-alpine as client
 
-WORKDIR /build/client
+COPY client /build
+WORKDIR /build
 
-RUN apk add --no-cache make
+RUN yarn && yarn run build
 
-COPY . /build/
-RUN npm install && npm run build && mkdir -p /build/.bin/static && cp -R ./public /build/.bin/static
-
-# API SERVER BUILD
-FROM golang:alpine as build-server
+FROM golang:alpine as server
 
 WORKDIR /build/
 
-RUN apk add --no-cache --update make gcc musl-dev
+COPY . /build
+COPY --from=client /build/public/build /build/client/public/build
 
-COPY --from=build-client /build /build
-RUN make .bin/webapp
+RUN go build -o ctfg cmd/main.go
 
-# RUNTIME ENVIRONMENT
 FROM alpine
 
 WORKDIR /opt
 
 RUN apk add --no-cache ca-certificates
 
-RUN addgroup webapp \
-    && adduser -H -D webapp webapp \
-    && mkdir -p /data \
-    && chown -R webapp /data
+COPY --from=server /build/ctfg /opt/ctfg
 
-COPY --chown=webapp:webapp --from=build-server /build/.bin/webapp /opt/webapp
-
-USER webapp
-
-VOLUME "/data"
-
-ENTRYPOINT /opt/webapp
+ENTRYPOINT /opt/ctfg

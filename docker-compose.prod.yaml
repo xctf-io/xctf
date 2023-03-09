@@ -1,0 +1,16 @@
+version: '3.6'
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5432:5432
+  ctfg:
+    image: x
+    restart: always
+    environment:
+      DB_DSN: "host=postgres user=postgres password=password sslmode=disable"
+      CTFG_ADMIN_EMAIL: admin@admin.com
+      CTFG_ADMIN_PASSWORD: password

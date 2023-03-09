@@ -4,7 +4,8 @@
     "version": "0.0.1",
     "module": "true",
     "scripts": {
-        "build": "node esbuild.mjs",
+        "start": "node esbuild.mjs",
+        "build": "BUILD=true node esbuild.mjs",
         "gen:proto": "protoc -I ../proto --plugin=protoc-gen-ts=\"./node_modules/.bin/protoc-gen-ts\" --plugin=protoc-gen-twirp_ts=\"./node_modules/.bin/protoc-gen-twirp_ts\" --ts_opt=client_none --ts_opt=generate_dependencies --ts_out=src/rpc --twirp_ts_out=src/rpc ctfg.proto",
         "validate": "svelte-check"
     },

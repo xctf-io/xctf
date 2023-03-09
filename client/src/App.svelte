@@ -56,13 +56,6 @@
         $pages.forEach(p => {
             // look for links to override
             const pageLink = links.findIndex(l => l.to === p.route);
-            if (pageLink !== -1) {
-                links[pageLink] = {
-                    label: p.title,
-                    to: p.route,
-                    showWhenAuthed: true,
-                };
-            }
         });
     }
 </script>

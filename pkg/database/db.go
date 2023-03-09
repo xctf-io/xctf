@@ -7,11 +7,22 @@ import (
 	"github.com/ctfg/ctfg/pkg/models"
 	"github.com/glebarez/sqlite"
 
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func Connect() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{})
+	dbType := os.Getenv("DB_TYPE")
+	dsn := os.Getenv("DB_DSN")
+
+	var openedDb gorm.Dialector
+	if dbType == "sqlite" {
+		openedDb = sqlite.Open("gorm.db")
+	} else {
+		openedDb = postgres.Open(dsn)
+	}
+
+	db, err := gorm.Open(openedDb, &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
