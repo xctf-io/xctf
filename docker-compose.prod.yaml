@@ -8,7 +8,7 @@ services:
     ports:
       - 5432:5432
   ctfg:
-    image: ghcr.io/ctfg/ctfg@sha256:a3dcdefa08d3e46892d11afe85f11ae0e8eec5139e97e3e97a88848ac16466e1
+    image: ghcr.io/ctfg/ctfg@sha256:e6948588d77f2d083b13f047cfbf0efe8f68715ea128318cf1970a465c67799f
     restart: always
     ports:
       - 8000:8000
