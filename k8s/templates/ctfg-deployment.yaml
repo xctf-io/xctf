@@ -2,8 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: ./kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
-    kompose.version: 1.26.1 (a9d05d509)
+    kompose.cmd: kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.service.type: clusterip
+    kompose.version: 1.26.0 (HEAD)
   creationTimestamp: null
   labels:
     io.kompose.service: ctfg
@@ -17,8 +18,9 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: ./kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
-        kompose.version: 1.26.1 (a9d05d509)
+        kompose.cmd: kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+        kompose.service.type: clusterip
+        kompose.version: 1.26.0 (HEAD)
       creationTimestamp: null
       labels:
         io.kompose.service: ctfg
@@ -35,7 +37,7 @@ spec:
               value: postgres
             - name: PORT
               value: "8000"
-          image: ghcr.io/ctfg/ctfg@sha256:a3dcdefa08d3e46892d11afe85f11ae0e8eec5139e97e3e97a88848ac16466e1
+          image: ghcr.io/ctfg/ctfg@sha256:e6948588d77f2d083b13f047cfbf0efe8f68715ea128318cf1970a465c67799f
           name: ctfg
           ports:
             - containerPort: 8000

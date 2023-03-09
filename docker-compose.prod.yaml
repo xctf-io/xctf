@@ -7,6 +7,8 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - 5432:5432
+    labels:
+      kompose.service.type: clusterip
   ctfg:
     image: ghcr.io/ctfg/ctfg@sha256:e6948588d77f2d083b13f047cfbf0efe8f68715ea128318cf1970a465c67799f
     restart: always
@@ -18,3 +20,5 @@ services:
       DB_DSN: "host=postgres user=postgres password=password sslmode=disable"
       CTFG_ADMIN_EMAIL: admin@admin.com
       CTFG_ADMIN_PASSWORD: password
+    labels:
+      kompose.service.type: clusterip
