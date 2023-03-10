@@ -26,6 +26,9 @@ import {
   SubmitEvidenceResponse,
   SubmitEvidenceConnectionRequest,
   SubmitEvidenceConnectionResponse,
+  UpsertChallengeRequest,
+  Empty,
+  DeleteChallengeRequest,
 } from "./ctfg";
 
 //==================================//
@@ -1568,4 +1571,383 @@ async function handleBackendSubmitEvidenceConnectionProtobuf<
   }
 
   return Buffer.from(SubmitEvidenceConnectionResponse.toBinary(response));
+}
+
+//==================================//
+//          Client Code             //
+//==================================//
+
+interface Rpc {
+  request(
+    service: string,
+    method: string,
+    contentType: "application/json" | "application/protobuf",
+    data: object | Uint8Array
+  ): Promise<object | Uint8Array>;
+}
+
+export interface AdminClient {
+  UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty>;
+  DeleteChallenge(request: DeleteChallengeRequest): Promise<Empty>;
+}
+
+export class AdminClientJSON implements AdminClient {
+  private readonly rpc: Rpc;
+  constructor(rpc: Rpc) {
+    this.rpc = rpc;
+    this.UpsertChallenge.bind(this);
+    this.DeleteChallenge.bind(this);
+  }
+  UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
+    const data = UpsertChallengeRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "UpsertChallenge",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      Empty.fromJson(data as any, { ignoreUnknownFields: true })
+    );
+  }
+
+  DeleteChallenge(request: DeleteChallengeRequest): Promise<Empty> {
+    const data = DeleteChallengeRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "DeleteChallenge",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      Empty.fromJson(data as any, { ignoreUnknownFields: true })
+    );
+  }
+}
+
+export class AdminClientProtobuf implements AdminClient {
+  private readonly rpc: Rpc;
+  constructor(rpc: Rpc) {
+    this.rpc = rpc;
+    this.UpsertChallenge.bind(this);
+    this.DeleteChallenge.bind(this);
+  }
+  UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
+    const data = UpsertChallengeRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "UpsertChallenge",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) => Empty.fromBinary(data as Uint8Array));
+  }
+
+  DeleteChallenge(request: DeleteChallengeRequest): Promise<Empty> {
+    const data = DeleteChallengeRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "DeleteChallenge",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) => Empty.fromBinary(data as Uint8Array));
+  }
+}
+
+//==================================//
+//          Server Code             //
+//==================================//
+
+export interface AdminTwirp<T extends TwirpContext = TwirpContext> {
+  UpsertChallenge(ctx: T, request: UpsertChallengeRequest): Promise<Empty>;
+  DeleteChallenge(ctx: T, request: DeleteChallengeRequest): Promise<Empty>;
+}
+
+export enum AdminMethod {
+  UpsertChallenge = "UpsertChallenge",
+  DeleteChallenge = "DeleteChallenge",
+}
+
+export const AdminMethodList = [
+  AdminMethod.UpsertChallenge,
+  AdminMethod.DeleteChallenge,
+];
+
+export function createAdminServer<T extends TwirpContext = TwirpContext>(
+  service: AdminTwirp<T>
+) {
+  return new TwirpServer<AdminTwirp, T>({
+    service,
+    packageName: "ctfg",
+    serviceName: "Admin",
+    methodList: AdminMethodList,
+    matchRoute: matchAdminRoute,
+  });
+}
+
+function matchAdminRoute<T extends TwirpContext = TwirpContext>(
+  method: string,
+  events: RouterEvents<T>
+) {
+  switch (method) {
+    case "UpsertChallenge":
+      return async (
+        ctx: T,
+        service: AdminTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<T, UpsertChallengeRequest, Empty>[]
+      ) => {
+        ctx = { ...ctx, methodName: "UpsertChallenge" };
+        await events.onMatch(ctx);
+        return handleAdminUpsertChallengeRequest(
+          ctx,
+          service,
+          data,
+          interceptors
+        );
+      };
+    case "DeleteChallenge":
+      return async (
+        ctx: T,
+        service: AdminTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<T, DeleteChallengeRequest, Empty>[]
+      ) => {
+        ctx = { ...ctx, methodName: "DeleteChallenge" };
+        await events.onMatch(ctx);
+        return handleAdminDeleteChallengeRequest(
+          ctx,
+          service,
+          data,
+          interceptors
+        );
+      };
+    default:
+      events.onNotFound();
+      const msg = `no handler found`;
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleAdminUpsertChallengeRequest<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, UpsertChallengeRequest, Empty>[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleAdminUpsertChallengeJSON<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    case TwirpContentType.Protobuf:
+      return handleAdminUpsertChallengeProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleAdminDeleteChallengeRequest<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, DeleteChallengeRequest, Empty>[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleAdminDeleteChallengeJSON<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    case TwirpContentType.Protobuf:
+      return handleAdminDeleteChallengeProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+async function handleAdminUpsertChallengeJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, UpsertChallengeRequest, Empty>[]
+) {
+  let request: UpsertChallengeRequest;
+  let response: Empty;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = UpsertChallengeRequest.fromJson(body, {
+      ignoreUnknownFields: true,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      UpsertChallengeRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.UpsertChallenge(ctx, inputReq);
+    });
+  } else {
+    response = await service.UpsertChallenge(ctx, request!);
+  }
+
+  return JSON.stringify(
+    Empty.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
+
+async function handleAdminDeleteChallengeJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, DeleteChallengeRequest, Empty>[]
+) {
+  let request: DeleteChallengeRequest;
+  let response: Empty;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = DeleteChallengeRequest.fromJson(body, {
+      ignoreUnknownFields: true,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      DeleteChallengeRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.DeleteChallenge(ctx, inputReq);
+    });
+  } else {
+    response = await service.DeleteChallenge(ctx, request!);
+  }
+
+  return JSON.stringify(
+    Empty.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
+async function handleAdminUpsertChallengeProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, UpsertChallengeRequest, Empty>[]
+) {
+  let request: UpsertChallengeRequest;
+  let response: Empty;
+
+  try {
+    request = UpsertChallengeRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      UpsertChallengeRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.UpsertChallenge(ctx, inputReq);
+    });
+  } else {
+    response = await service.UpsertChallenge(ctx, request!);
+  }
+
+  return Buffer.from(Empty.toBinary(response));
+}
+
+async function handleAdminDeleteChallengeProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, DeleteChallengeRequest, Empty>[]
+) {
+  let request: DeleteChallengeRequest;
+  let response: Empty;
+
+  try {
+    request = DeleteChallengeRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      DeleteChallengeRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.DeleteChallenge(ctx, inputReq);
+    });
+  } else {
+    response = await service.DeleteChallenge(ctx, request!);
+  }
+
+  return Buffer.from(Empty.toBinary(response));
 }

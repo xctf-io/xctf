@@ -48,6 +48,7 @@ const graphData = derived(graph, $graph => {
             x: e.x,
             y: e.y
         },
+        bgColor: e.challengeID ? '#B9F3E4' : 'white',
         height: 100,
         width: 100,
         clickCallback: async (node: Node) => {

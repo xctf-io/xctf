@@ -52,8 +52,9 @@ message LoginResponse {
 message Evidence {
   uint32 id = 1;
   string name = 2;
-  int32 x = 3;
-  int32 y = 4;
+  uint32 challengeID = 3;
+  int32 x = 4;
+  int32 y = 5;
 }
 
 message Connection {

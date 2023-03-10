@@ -2,16 +2,43 @@
 // @generated from protobuf file "ctfg.proto" (package "ctfg", syntax proto3)
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+/**
+ * @generated from protobuf message ctfg.Empty
+ */
+export interface Empty {
+}
+/**
+ * @generated from protobuf message ctfg.UpsertChallengeRequest
+ */
+export interface UpsertChallengeRequest {
+    /**
+     * @generated from protobuf field: string challengeName = 1;
+     */
+    challengeName: string;
+    /**
+     * @generated from protobuf field: string flag = 2;
+     */
+    flag: string;
+}
+/**
+ * @generated from protobuf message ctfg.DeleteChallengeRequest
+ */
+export interface DeleteChallengeRequest {
+    /**
+     * @generated from protobuf field: string challengeName = 1;
+     */
+    challengeName: string;
+}
 /**
  * @generated from protobuf message ctfg.SubmitEvidenceReportRequest
  */
@@ -38,15 +65,19 @@ export interface LoginRequest {
      * @generated from protobuf field: string password = 2;
      */
     password: string;
+    /**
+     * @generated from protobuf field: bool includeSession = 3;
+     */
+    includeSession: boolean;
 }
 /**
  * @generated from protobuf message ctfg.LoginResponse
  */
 export interface LoginResponse {
     /**
-     * @generated from protobuf field: bool loggedIn = 1;
+     * @generated from protobuf field: string session = 1;
      */
-    loggedIn: boolean;
+    session: string;
 }
 /**
  * @generated from protobuf message ctfg.Evidence
@@ -61,11 +92,15 @@ export interface Evidence {
      */
     name: string;
     /**
-     * @generated from protobuf field: int32 x = 3;
+     * @generated from protobuf field: uint32 challengeID = 3;
+     */
+    challengeID: number;
+    /**
+     * @generated from protobuf field: int32 x = 4;
      */
     x: number;
     /**
-     * @generated from protobuf field: int32 y = 4;
+     * @generated from protobuf field: int32 y = 5;
      */
     y: number;
 }
@@ -229,15 +264,19 @@ export interface GetChallengesRequest {
  */
 export interface Challenge {
     /**
-     * @generated from protobuf field: string name = 1;
+     * @generated from protobuf field: uint32 id = 1;
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: string name = 2;
      */
     name: string;
     /**
-     * @generated from protobuf field: string description = 2;
+     * @generated from protobuf field: string description = 3;
      */
     description: string;
     /**
-     * @generated from protobuf field: int32 value = 3;
+     * @generated from protobuf field: int32 value = 4;
      */
     value: number;
 }
@@ -268,6 +307,133 @@ export interface SubmitFlagResponse {
      */
     correct: boolean;
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class Empty$Type extends MessageType<Empty> {
+    constructor() {
+        super("ctfg.Empty", []);
+    }
+    create(value?: PartialMessage<Empty>): Empty {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<Empty>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Empty): Empty {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: Empty, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.Empty
+ */
+export const Empty = new Empty$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpsertChallengeRequest$Type extends MessageType<UpsertChallengeRequest> {
+    constructor() {
+        super("ctfg.UpsertChallengeRequest", [
+            { no: 1, name: "challengeName", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "flag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UpsertChallengeRequest>): UpsertChallengeRequest {
+        const message = { challengeName: "", flag: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<UpsertChallengeRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertChallengeRequest): UpsertChallengeRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string challengeName */ 1:
+                    message.challengeName = reader.string();
+                    break;
+                case /* string flag */ 2:
+                    message.flag = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpsertChallengeRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string challengeName = 1; */
+        if (message.challengeName !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.challengeName);
+        /* string flag = 2; */
+        if (message.flag !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.flag);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.UpsertChallengeRequest
+ */
+export const UpsertChallengeRequest = new UpsertChallengeRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteChallengeRequest$Type extends MessageType<DeleteChallengeRequest> {
+    constructor() {
+        super("ctfg.DeleteChallengeRequest", [
+            { no: 1, name: "challengeName", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteChallengeRequest>): DeleteChallengeRequest {
+        const message = { challengeName: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<DeleteChallengeRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteChallengeRequest): DeleteChallengeRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string challengeName */ 1:
+                    message.challengeName = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteChallengeRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string challengeName = 1; */
+        if (message.challengeName !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.challengeName);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.DeleteChallengeRequest
+ */
+export const DeleteChallengeRequest = new DeleteChallengeRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SubmitEvidenceReportRequest$Type extends MessageType<SubmitEvidenceReportRequest> {
     constructor() {
@@ -346,11 +512,12 @@ class LoginRequest$Type extends MessageType<LoginRequest> {
     constructor() {
         super("ctfg.LoginRequest", [
             { no: 1, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "includeSession", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<LoginRequest>): LoginRequest {
-        const message = { email: "", password: "" };
+        const message = { email: "", password: "", includeSession: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<LoginRequest>(this, message, value);
@@ -366,6 +533,9 @@ class LoginRequest$Type extends MessageType<LoginRequest> {
                     break;
                 case /* string password */ 2:
                     message.password = reader.string();
+                    break;
+                case /* bool includeSession */ 3:
+                    message.includeSession = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -385,6 +555,9 @@ class LoginRequest$Type extends MessageType<LoginRequest> {
         /* string password = 2; */
         if (message.password !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.password);
+        /* bool includeSession = 3; */
+        if (message.includeSession !== false)
+            writer.tag(3, WireType.Varint).bool(message.includeSession);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -399,11 +572,11 @@ export const LoginRequest = new LoginRequest$Type();
 class LoginResponse$Type extends MessageType<LoginResponse> {
     constructor() {
         super("ctfg.LoginResponse", [
-            { no: 1, name: "loggedIn", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "session", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<LoginResponse>): LoginResponse {
-        const message = { loggedIn: false };
+        const message = { session: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<LoginResponse>(this, message, value);
@@ -414,8 +587,8 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool loggedIn */ 1:
-                    message.loggedIn = reader.bool();
+                case /* string session */ 1:
+                    message.session = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -429,9 +602,9 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         return message;
     }
     internalBinaryWrite(message: LoginResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool loggedIn = 1; */
-        if (message.loggedIn !== false)
-            writer.tag(1, WireType.Varint).bool(message.loggedIn);
+        /* string session = 1; */
+        if (message.session !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.session);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -448,12 +621,13 @@ class Evidence$Type extends MessageType<Evidence> {
         super("ctfg.Evidence", [
             { no: 1, name: "id", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "x", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "y", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "challengeID", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "x", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "y", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<Evidence>): Evidence {
-        const message = { id: 0, name: "", x: 0, y: 0 };
+        const message = { id: 0, name: "", challengeID: 0, x: 0, y: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Evidence>(this, message, value);
@@ -470,10 +644,13 @@ class Evidence$Type extends MessageType<Evidence> {
                 case /* string name */ 2:
                     message.name = reader.string();
                     break;
-                case /* int32 x */ 3:
+                case /* uint32 challengeID */ 3:
+                    message.challengeID = reader.uint32();
+                    break;
+                case /* int32 x */ 4:
                     message.x = reader.int32();
                     break;
-                case /* int32 y */ 4:
+                case /* int32 y */ 5:
                     message.y = reader.int32();
                     break;
                 default:
@@ -494,12 +671,15 @@ class Evidence$Type extends MessageType<Evidence> {
         /* string name = 2; */
         if (message.name !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* int32 x = 3; */
+        /* uint32 challengeID = 3; */
+        if (message.challengeID !== 0)
+            writer.tag(3, WireType.Varint).uint32(message.challengeID);
+        /* int32 x = 4; */
         if (message.x !== 0)
-            writer.tag(3, WireType.Varint).int32(message.x);
-        /* int32 y = 4; */
+            writer.tag(4, WireType.Varint).int32(message.x);
+        /* int32 y = 5; */
         if (message.y !== 0)
-            writer.tag(4, WireType.Varint).int32(message.y);
+            writer.tag(5, WireType.Varint).int32(message.y);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1146,13 +1326,14 @@ export const GetChallengesRequest = new GetChallengesRequest$Type();
 class Challenge$Type extends MessageType<Challenge> {
     constructor() {
         super("ctfg.Challenge", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "value", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "id", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "value", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<Challenge>): Challenge {
-        const message = { name: "", description: "", value: 0 };
+        const message = { id: 0, name: "", description: "", value: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Challenge>(this, message, value);
@@ -1163,13 +1344,16 @@ class Challenge$Type extends MessageType<Challenge> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string name */ 1:
+                case /* uint32 id */ 1:
+                    message.id = reader.uint32();
+                    break;
+                case /* string name */ 2:
                     message.name = reader.string();
                     break;
-                case /* string description */ 2:
+                case /* string description */ 3:
                     message.description = reader.string();
                     break;
-                case /* int32 value */ 3:
+                case /* int32 value */ 4:
                     message.value = reader.int32();
                     break;
                 default:
@@ -1184,15 +1368,18 @@ class Challenge$Type extends MessageType<Challenge> {
         return message;
     }
     internalBinaryWrite(message: Challenge, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string name = 1; */
+        /* uint32 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).uint32(message.id);
+        /* string name = 2; */
         if (message.name !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.name);
-        /* string description = 2; */
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
+        /* string description = 3; */
         if (message.description !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.description);
-        /* int32 value = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.description);
+        /* int32 value = 4; */
         if (message.value !== 0)
-            writer.tag(3, WireType.Varint).int32(message.value);
+            writer.tag(4, WireType.Varint).int32(message.value);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1357,4 +1544,11 @@ export const Backend = new ServiceType("ctfg.Backend", [
     { name: "GetDiscoveredEvidence", options: {}, I: GetDiscoveredEvidenceRequest, O: GetDiscoveredEvidenceResponse },
     { name: "SubmitEvidence", options: {}, I: SubmitEvidenceRequest, O: SubmitEvidenceResponse },
     { name: "SubmitEvidenceConnection", options: {}, I: SubmitEvidenceConnectionRequest, O: SubmitEvidenceConnectionResponse }
+]);
+/**
+ * @generated ServiceType for protobuf service ctfg.Admin
+ */
+export const Admin = new ServiceType("ctfg.Admin", [
+    { name: "UpsertChallenge", options: {}, I: UpsertChallengeRequest, O: Empty },
+    { name: "DeleteChallenge", options: {}, I: DeleteChallengeRequest, O: Empty }
 ]);
