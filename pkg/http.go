@@ -15,7 +15,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func NewAPIHandler(assets fs.FS, twirpHandler ctfg.TwirpServer) http.Handler {
+func NewAPIHandler(assets fs.FS, twirpHandler ctfg.TwirpServer, adminHandler ctfg.TwirpServer) http.Handler {
 	muxRoot := chi.NewRouter()
 
 	muxRoot.Use(middleware.RequestID)
@@ -36,6 +36,11 @@ func NewAPIHandler(assets fs.FS, twirpHandler ctfg.TwirpServer) http.Handler {
 	muxRoot.Handle("/*", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, twirpHandler.PathPrefix()) {
 			twirpHandler.ServeHTTP(rw, r)
+			return
+		}
+
+		if strings.HasPrefix(r.URL.Path, adminHandler.PathPrefix()) {
+			adminHandler.ServeHTTP(rw, r)
 			return
 		}
 

@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Challenge struct {
 	gorm.Model
-	Name        string
+	Name        string `gorm:"uniqueIndex"`
 	Description string
 	Value       int
 	Flag        string

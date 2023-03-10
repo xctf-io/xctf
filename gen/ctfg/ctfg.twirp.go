@@ -2753,6 +2753,779 @@ func (s *backendServer) PathPrefix() string {
 	return baseServicePath(s.pathPrefix, "ctfg", "Backend")
 }
 
+// ===============
+// Admin Interface
+// ===============
+
+type Admin interface {
+	UpsertChallenge(context.Context, *UpsertChallengeRequest) (*Empty, error)
+
+	DeleteChallenge(context.Context, *DeleteChallengeRequest) (*Empty, error)
+}
+
+// =====================
+// Admin Protobuf Client
+// =====================
+
+type adminProtobufClient struct {
+	client      HTTPClient
+	urls        [2]string
+	interceptor twirp.Interceptor
+	opts        twirp.ClientOptions
+}
+
+// NewAdminProtobufClient creates a Protobuf client that implements the Admin interface.
+// It communicates using Protobuf and can be configured with a custom HTTPClient.
+func NewAdminProtobufClient(baseURL string, client HTTPClient, opts ...twirp.ClientOption) Admin {
+	if c, ok := client.(*http.Client); ok {
+		client = withoutRedirects(c)
+	}
+
+	clientOpts := twirp.ClientOptions{}
+	for _, o := range opts {
+		o(&clientOpts)
+	}
+
+	// Using ReadOpt allows backwards and forwards compatibility with new options in the future
+	literalURLs := false
+	_ = clientOpts.ReadOpt("literalURLs", &literalURLs)
+	var pathPrefix string
+	if ok := clientOpts.ReadOpt("pathPrefix", &pathPrefix); !ok {
+		pathPrefix = "/twirp" // default prefix
+	}
+
+	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
+	serviceURL := sanitizeBaseURL(baseURL)
+	serviceURL += baseServicePath(pathPrefix, "ctfg", "Admin")
+	urls := [2]string{
+		serviceURL + "UpsertChallenge",
+		serviceURL + "DeleteChallenge",
+	}
+
+	return &adminProtobufClient{
+		client:      client,
+		urls:        urls,
+		interceptor: twirp.ChainInterceptors(clientOpts.Interceptors...),
+		opts:        clientOpts,
+	}
+}
+
+func (c *adminProtobufClient) UpsertChallenge(ctx context.Context, in *UpsertChallengeRequest) (*Empty, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
+	ctx = ctxsetters.WithServiceName(ctx, "Admin")
+	ctx = ctxsetters.WithMethodName(ctx, "UpsertChallenge")
+	caller := c.callUpsertChallenge
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *UpsertChallengeRequest) (*Empty, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*UpsertChallengeRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*UpsertChallengeRequest) when calling interceptor")
+					}
+					return c.callUpsertChallenge(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*Empty)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*Empty) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *adminProtobufClient) callUpsertChallenge(ctx context.Context, in *UpsertChallengeRequest) (*Empty, error) {
+	out := new(Empty)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[0], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *adminProtobufClient) DeleteChallenge(ctx context.Context, in *DeleteChallengeRequest) (*Empty, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
+	ctx = ctxsetters.WithServiceName(ctx, "Admin")
+	ctx = ctxsetters.WithMethodName(ctx, "DeleteChallenge")
+	caller := c.callDeleteChallenge
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *DeleteChallengeRequest) (*Empty, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*DeleteChallengeRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*DeleteChallengeRequest) when calling interceptor")
+					}
+					return c.callDeleteChallenge(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*Empty)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*Empty) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *adminProtobufClient) callDeleteChallenge(ctx context.Context, in *DeleteChallengeRequest) (*Empty, error) {
+	out := new(Empty)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[1], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+// =================
+// Admin JSON Client
+// =================
+
+type adminJSONClient struct {
+	client      HTTPClient
+	urls        [2]string
+	interceptor twirp.Interceptor
+	opts        twirp.ClientOptions
+}
+
+// NewAdminJSONClient creates a JSON client that implements the Admin interface.
+// It communicates using JSON and can be configured with a custom HTTPClient.
+func NewAdminJSONClient(baseURL string, client HTTPClient, opts ...twirp.ClientOption) Admin {
+	if c, ok := client.(*http.Client); ok {
+		client = withoutRedirects(c)
+	}
+
+	clientOpts := twirp.ClientOptions{}
+	for _, o := range opts {
+		o(&clientOpts)
+	}
+
+	// Using ReadOpt allows backwards and forwards compatibility with new options in the future
+	literalURLs := false
+	_ = clientOpts.ReadOpt("literalURLs", &literalURLs)
+	var pathPrefix string
+	if ok := clientOpts.ReadOpt("pathPrefix", &pathPrefix); !ok {
+		pathPrefix = "/twirp" // default prefix
+	}
+
+	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
+	serviceURL := sanitizeBaseURL(baseURL)
+	serviceURL += baseServicePath(pathPrefix, "ctfg", "Admin")
+	urls := [2]string{
+		serviceURL + "UpsertChallenge",
+		serviceURL + "DeleteChallenge",
+	}
+
+	return &adminJSONClient{
+		client:      client,
+		urls:        urls,
+		interceptor: twirp.ChainInterceptors(clientOpts.Interceptors...),
+		opts:        clientOpts,
+	}
+}
+
+func (c *adminJSONClient) UpsertChallenge(ctx context.Context, in *UpsertChallengeRequest) (*Empty, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
+	ctx = ctxsetters.WithServiceName(ctx, "Admin")
+	ctx = ctxsetters.WithMethodName(ctx, "UpsertChallenge")
+	caller := c.callUpsertChallenge
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *UpsertChallengeRequest) (*Empty, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*UpsertChallengeRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*UpsertChallengeRequest) when calling interceptor")
+					}
+					return c.callUpsertChallenge(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*Empty)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*Empty) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *adminJSONClient) callUpsertChallenge(ctx context.Context, in *UpsertChallengeRequest) (*Empty, error) {
+	out := new(Empty)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[0], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *adminJSONClient) DeleteChallenge(ctx context.Context, in *DeleteChallengeRequest) (*Empty, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
+	ctx = ctxsetters.WithServiceName(ctx, "Admin")
+	ctx = ctxsetters.WithMethodName(ctx, "DeleteChallenge")
+	caller := c.callDeleteChallenge
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *DeleteChallengeRequest) (*Empty, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*DeleteChallengeRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*DeleteChallengeRequest) when calling interceptor")
+					}
+					return c.callDeleteChallenge(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*Empty)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*Empty) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *adminJSONClient) callDeleteChallenge(ctx context.Context, in *DeleteChallengeRequest) (*Empty, error) {
+	out := new(Empty)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[1], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+// ====================
+// Admin Server Handler
+// ====================
+
+type adminServer struct {
+	Admin
+	interceptor      twirp.Interceptor
+	hooks            *twirp.ServerHooks
+	pathPrefix       string // prefix for routing
+	jsonSkipDefaults bool   // do not include unpopulated fields (default values) in the response
+	jsonCamelCase    bool   // JSON fields are serialized as lowerCamelCase rather than keeping the original proto names
+}
+
+// NewAdminServer builds a TwirpServer that can be used as an http.Handler to handle
+// HTTP requests that are routed to the right method in the provided svc implementation.
+// The opts are twirp.ServerOption modifiers, for example twirp.WithServerHooks(hooks).
+func NewAdminServer(svc Admin, opts ...interface{}) TwirpServer {
+	serverOpts := newServerOpts(opts)
+
+	// Using ReadOpt allows backwards and forwards compatibility with new options in the future
+	jsonSkipDefaults := false
+	_ = serverOpts.ReadOpt("jsonSkipDefaults", &jsonSkipDefaults)
+	jsonCamelCase := false
+	_ = serverOpts.ReadOpt("jsonCamelCase", &jsonCamelCase)
+	var pathPrefix string
+	if ok := serverOpts.ReadOpt("pathPrefix", &pathPrefix); !ok {
+		pathPrefix = "/twirp" // default prefix
+	}
+
+	return &adminServer{
+		Admin:            svc,
+		hooks:            serverOpts.Hooks,
+		interceptor:      twirp.ChainInterceptors(serverOpts.Interceptors...),
+		pathPrefix:       pathPrefix,
+		jsonSkipDefaults: jsonSkipDefaults,
+		jsonCamelCase:    jsonCamelCase,
+	}
+}
+
+// writeError writes an HTTP response with a valid Twirp error format, and triggers hooks.
+// If err is not a twirp.Error, it will get wrapped with twirp.InternalErrorWith(err)
+func (s *adminServer) writeError(ctx context.Context, resp http.ResponseWriter, err error) {
+	writeError(ctx, resp, err, s.hooks)
+}
+
+// handleRequestBodyError is used to handle error when the twirp server cannot read request
+func (s *adminServer) handleRequestBodyError(ctx context.Context, resp http.ResponseWriter, msg string, err error) {
+	if context.Canceled == ctx.Err() {
+		s.writeError(ctx, resp, twirp.NewError(twirp.Canceled, "failed to read request: context canceled"))
+		return
+	}
+	if context.DeadlineExceeded == ctx.Err() {
+		s.writeError(ctx, resp, twirp.NewError(twirp.DeadlineExceeded, "failed to read request: deadline exceeded"))
+		return
+	}
+	s.writeError(ctx, resp, twirp.WrapError(malformedRequestError(msg), err))
+}
+
+// AdminPathPrefix is a convenience constant that may identify URL paths.
+// Should be used with caution, it only matches routes generated by Twirp Go clients,
+// with the default "/twirp" prefix and default CamelCase service and method names.
+// More info: https://twitchtv.github.io/twirp/docs/routing.html
+const AdminPathPrefix = "/twirp/ctfg.Admin/"
+
+func (s *adminServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
+	ctx = ctxsetters.WithServiceName(ctx, "Admin")
+	ctx = ctxsetters.WithResponseWriter(ctx, resp)
+
+	var err error
+	ctx, err = callRequestReceived(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	if req.Method != "POST" {
+		msg := fmt.Sprintf("unsupported method %q (only POST is allowed)", req.Method)
+		s.writeError(ctx, resp, badRouteError(msg, req.Method, req.URL.Path))
+		return
+	}
+
+	// Verify path format: [<prefix>]/<package>.<Service>/<Method>
+	prefix, pkgService, method := parseTwirpPath(req.URL.Path)
+	if pkgService != "ctfg.Admin" {
+		msg := fmt.Sprintf("no handler for path %q", req.URL.Path)
+		s.writeError(ctx, resp, badRouteError(msg, req.Method, req.URL.Path))
+		return
+	}
+	if prefix != s.pathPrefix {
+		msg := fmt.Sprintf("invalid path prefix %q, expected %q, on path %q", prefix, s.pathPrefix, req.URL.Path)
+		s.writeError(ctx, resp, badRouteError(msg, req.Method, req.URL.Path))
+		return
+	}
+
+	switch method {
+	case "UpsertChallenge":
+		s.serveUpsertChallenge(ctx, resp, req)
+		return
+	case "DeleteChallenge":
+		s.serveDeleteChallenge(ctx, resp, req)
+		return
+	default:
+		msg := fmt.Sprintf("no handler for path %q", req.URL.Path)
+		s.writeError(ctx, resp, badRouteError(msg, req.Method, req.URL.Path))
+		return
+	}
+}
+
+func (s *adminServer) serveUpsertChallenge(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	header := req.Header.Get("Content-Type")
+	i := strings.Index(header, ";")
+	if i == -1 {
+		i = len(header)
+	}
+	switch strings.TrimSpace(strings.ToLower(header[:i])) {
+	case "application/json":
+		s.serveUpsertChallengeJSON(ctx, resp, req)
+	case "application/protobuf":
+		s.serveUpsertChallengeProtobuf(ctx, resp, req)
+	default:
+		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		twerr := badRouteError(msg, req.Method, req.URL.Path)
+		s.writeError(ctx, resp, twerr)
+	}
+}
+
+func (s *adminServer) serveUpsertChallengeJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "UpsertChallenge")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	d := json.NewDecoder(req.Body)
+	rawReqBody := json.RawMessage{}
+	if err := d.Decode(&rawReqBody); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+	reqContent := new(UpsertChallengeRequest)
+	unmarshaler := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err = unmarshaler.Unmarshal(rawReqBody, reqContent); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+
+	handler := s.Admin.UpsertChallenge
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *UpsertChallengeRequest) (*Empty, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*UpsertChallengeRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*UpsertChallengeRequest) when calling interceptor")
+					}
+					return s.Admin.UpsertChallenge(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*Empty)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*Empty) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *Empty
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *Empty and nil error while calling UpsertChallenge. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	marshaler := &protojson.MarshalOptions{UseProtoNames: !s.jsonCamelCase, EmitUnpopulated: !s.jsonSkipDefaults}
+	respBytes, err := marshaler.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal json response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *adminServer) serveUpsertChallengeProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "UpsertChallenge")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	buf, err := io.ReadAll(req.Body)
+	if err != nil {
+		s.handleRequestBodyError(ctx, resp, "failed to read request body", err)
+		return
+	}
+	reqContent := new(UpsertChallengeRequest)
+	if err = proto.Unmarshal(buf, reqContent); err != nil {
+		s.writeError(ctx, resp, malformedRequestError("the protobuf request could not be decoded"))
+		return
+	}
+
+	handler := s.Admin.UpsertChallenge
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *UpsertChallengeRequest) (*Empty, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*UpsertChallengeRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*UpsertChallengeRequest) when calling interceptor")
+					}
+					return s.Admin.UpsertChallenge(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*Empty)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*Empty) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *Empty
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *Empty and nil error while calling UpsertChallenge. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	respBytes, err := proto.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal proto response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/protobuf")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *adminServer) serveDeleteChallenge(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	header := req.Header.Get("Content-Type")
+	i := strings.Index(header, ";")
+	if i == -1 {
+		i = len(header)
+	}
+	switch strings.TrimSpace(strings.ToLower(header[:i])) {
+	case "application/json":
+		s.serveDeleteChallengeJSON(ctx, resp, req)
+	case "application/protobuf":
+		s.serveDeleteChallengeProtobuf(ctx, resp, req)
+	default:
+		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		twerr := badRouteError(msg, req.Method, req.URL.Path)
+		s.writeError(ctx, resp, twerr)
+	}
+}
+
+func (s *adminServer) serveDeleteChallengeJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "DeleteChallenge")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	d := json.NewDecoder(req.Body)
+	rawReqBody := json.RawMessage{}
+	if err := d.Decode(&rawReqBody); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+	reqContent := new(DeleteChallengeRequest)
+	unmarshaler := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err = unmarshaler.Unmarshal(rawReqBody, reqContent); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+
+	handler := s.Admin.DeleteChallenge
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *DeleteChallengeRequest) (*Empty, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*DeleteChallengeRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*DeleteChallengeRequest) when calling interceptor")
+					}
+					return s.Admin.DeleteChallenge(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*Empty)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*Empty) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *Empty
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *Empty and nil error while calling DeleteChallenge. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	marshaler := &protojson.MarshalOptions{UseProtoNames: !s.jsonCamelCase, EmitUnpopulated: !s.jsonSkipDefaults}
+	respBytes, err := marshaler.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal json response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *adminServer) serveDeleteChallengeProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "DeleteChallenge")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	buf, err := io.ReadAll(req.Body)
+	if err != nil {
+		s.handleRequestBodyError(ctx, resp, "failed to read request body", err)
+		return
+	}
+	reqContent := new(DeleteChallengeRequest)
+	if err = proto.Unmarshal(buf, reqContent); err != nil {
+		s.writeError(ctx, resp, malformedRequestError("the protobuf request could not be decoded"))
+		return
+	}
+
+	handler := s.Admin.DeleteChallenge
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *DeleteChallengeRequest) (*Empty, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*DeleteChallengeRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*DeleteChallengeRequest) when calling interceptor")
+					}
+					return s.Admin.DeleteChallenge(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*Empty)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*Empty) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *Empty
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *Empty and nil error while calling DeleteChallenge. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	respBytes, err := proto.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal proto response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/protobuf")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *adminServer) ServiceDescriptor() ([]byte, int) {
+	return twirpFileDescriptor0, 1
+}
+
+func (s *adminServer) ProtocGenTwirpVersion() string {
+	return "v8.1.3"
+}
+
+// PathPrefix returns the base service path, in the form: "/<prefix>/<package>.<Service>/"
+// that is everything in a Twirp route except for the <Method>. This can be used for routing,
+// for example to identify the requests that are targeted to this service in a mux.
+func (s *adminServer) PathPrefix() string {
+	return baseServicePath(s.pathPrefix, "ctfg", "Admin")
+}
+
 // =====
 // Utils
 // =====
@@ -3319,54 +4092,61 @@ func callClientError(ctx context.Context, h *twirp.ClientHooks, err twirp.Error)
 }
 
 var twirpFileDescriptor0 = []byte{
-	// 778 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x56, 0x6d, 0x4f, 0xd4, 0x40,
-	0x10, 0x4e, 0xef, 0x05, 0x8e, 0x39, 0x0e, 0xce, 0xe5, 0x38, 0x6b, 0x41, 0x3d, 0xd7, 0xa8, 0x44,
-	0x09, 0x18, 0xfc, 0x64, 0x62, 0xa2, 0x01, 0x15, 0x54, 0x12, 0x4d, 0x89, 0x9a, 0xa8, 0x89, 0x96,
-	0x76, 0xa8, 0x8d, 0x65, 0x7b, 0x6e, 0xb7, 0x08, 0xbf, 0xc4, 0x5f, 0xe3, 0x7f, 0x33, 0xdd, 0xdd,
-	0xbe, 0xdc, 0xb5, 0x07, 0xdf, 0x76, 0x66, 0x9f, 0x7d, 0xe6, 0xe5, 0x99, 0xdd, 0x16, 0xfa, 0x63,
-	0x1e, 0x89, 0x68, 0xdb, 0x15, 0x27, 0xfe, 0x96, 0x5c, 0x92, 0x56, 0xba, 0xa6, 0xdb, 0xb0, 0x76,
-	0x94, 0x1c, 0x9f, 0x06, 0xe2, 0xd5, 0x59, 0xe0, 0x21, 0x73, 0xd1, 0xc6, 0x71, 0xc4, 0x85, 0x8d,
-	0xbf, 0x13, 0x8c, 0x05, 0xe9, 0x43, 0x33, 0xe1, 0xa1, 0x69, 0x8c, 0x8c, 0x8d, 0x05, 0x3b, 0x5d,
-	0xd2, 0x5b, 0xb0, 0x5e, 0x7f, 0x20, 0x1e, 0x47, 0x2c, 0x46, 0xfa, 0x02, 0x16, 0x0f, 0x23, 0x3f,
-	0x60, 0x19, 0xc3, 0x00, 0xda, 0x78, 0xea, 0x04, 0x19, 0x87, 0x32, 0x88, 0x05, 0x9d, 0xb1, 0x13,
-	0xc7, 0x7f, 0x22, 0xee, 0x99, 0x0d, 0xb9, 0x91, 0xdb, 0xf4, 0x11, 0xf4, 0x34, 0x83, 0xa2, 0x4c,
-	0xc1, 0x61, 0xe4, 0xfb, 0xe8, 0xbd, 0x61, 0x92, 0xa5, 0x63, 0xe7, 0x36, 0x7d, 0x0b, 0x9d, 0x2c,
-	0x11, 0xb2, 0x04, 0x8d, 0xc0, 0x93, 0x88, 0x9e, 0xdd, 0x08, 0x3c, 0x42, 0xa0, 0xc5, 0x9c, 0x53,
-	0xd4, 0x01, 0xe4, 0x9a, 0x2c, 0x82, 0x71, 0x6e, 0x36, 0x47, 0xc6, 0x46, 0xdb, 0x36, 0xce, 0x53,
-	0xeb, 0xc2, 0x6c, 0x29, 0xeb, 0x82, 0x7e, 0x02, 0xd8, 0x8b, 0x18, 0x43, 0x57, 0x04, 0x11, 0xab,
-	0xb0, 0x0d, 0x61, 0x2e, 0x8e, 0x12, 0xee, 0x2a, 0xbe, 0x9e, 0xad, 0x2d, 0x32, 0x82, 0xae, 0x87,
-	0xb1, 0x08, 0x98, 0x93, 0x1e, 0x93, 0xdc, 0x3d, 0xbb, 0xec, 0x4a, 0x5b, 0xb6, 0x8f, 0xe2, 0x65,
-	0x10, 0xbb, 0xd1, 0x19, 0x72, 0xf4, 0x8a, 0xce, 0xc9, 0x16, 0xd1, 0xbf, 0x06, 0xdc, 0x9c, 0x01,
-	0xd0, 0x1d, 0x18, 0xc2, 0x1c, 0x97, 0x6d, 0xd6, 0x5d, 0xd4, 0x16, 0x79, 0x08, 0x1d, 0xd4, 0x58,
-	0xb3, 0x31, 0x6a, 0x6e, 0x74, 0x77, 0x96, 0xb6, 0xa4, 0xc4, 0x39, 0x43, 0xbe, 0x4f, 0x76, 0xa0,
-	0xeb, 0xe6, 0xd5, 0xc5, 0x66, 0x53, 0xc2, 0xfb, 0x0a, 0x5e, 0x94, 0x6d, 0x97, 0x41, 0xf4, 0x3d,
-	0xac, 0x4e, 0x8b, 0xad, 0x54, 0xb5, 0x4a, 0x81, 0x55, 0x4a, 0x45, 0x20, 0xd9, 0xe2, 0xc6, 0x44,
-	0x8b, 0x9b, 0x59, 0x8b, 0x37, 0x61, 0x38, 0x4d, 0xa8, 0x4b, 0xcc, 0xc4, 0x32, 0x0a, 0xb1, 0xe8,
-	0x57, 0xb8, 0x3d, 0x89, 0x2e, 0xe5, 0xa9, 0x13, 0x29, 0x54, 0x31, 0x2e, 0x53, 0xa5, 0x51, 0x55,
-	0xe5, 0x19, 0x8c, 0x66, 0x93, 0xeb, 0xa4, 0x4c, 0x98, 0x77, 0x39, 0x3a, 0x02, 0x3d, 0x3d, 0x78,
-	0x99, 0x49, 0xbf, 0xc3, 0xb2, 0x8d, 0x7e, 0x10, 0x0b, 0xe4, 0xa5, 0x9e, 0x24, 0x31, 0xf2, 0x52,
-	0x15, 0xb9, 0x5d, 0xdc, 0x82, 0xc6, 0xac, 0x5b, 0xd0, 0x9c, 0xba, 0x05, 0x9b, 0xd0, 0x2f, 0x02,
-	0x5c, 0x99, 0xce, 0x21, 0xb4, 0x3e, 0x38, 0xbe, 0x8c, 0xc3, 0xa3, 0x44, 0x64, 0x09, 0x28, 0x23,
-	0xf5, 0x8a, 0x40, 0x84, 0xd9, 0x4d, 0x50, 0x86, 0x64, 0x8b, 0x98, 0x40, 0x26, 0x74, 0xf0, 0xcc,
-	0xa4, 0x03, 0x20, 0x7b, 0x09, 0xe7, 0xc8, 0xc4, 0xc7, 0x38, 0xaf, 0x8f, 0x1e, 0xc1, 0xca, 0x84,
-	0xb7, 0xb8, 0x9d, 0x33, 0xcb, 0x1e, 0x41, 0x7b, 0xec, 0xf8, 0x18, 0xeb, 0xe1, 0x04, 0x35, 0x6d,
-	0x69, 0xa6, 0xb6, 0xda, 0xa0, 0x43, 0x18, 0xec, 0xa3, 0xd8, 0xfb, 0xe9, 0x84, 0x21, 0x32, 0x1f,
-	0xe3, 0x2c, 0xd8, 0x67, 0x58, 0xc8, 0x9d, 0x75, 0xb3, 0xa1, 0x05, 0x76, 0x79, 0x30, 0xce, 0x05,
-	0x5e, 0xb0, 0xcb, 0xae, 0xb4, 0xea, 0x33, 0x27, 0x4c, 0x50, 0x4f, 0x9f, 0x32, 0xe8, 0x01, 0xac,
-	0x4e, 0x05, 0xd4, 0x75, 0x6c, 0x03, 0xb8, 0xb9, 0xd7, 0x34, 0x64, 0xc2, 0xcb, 0xfa, 0x7a, 0x64,
-	0x7e, 0xbb, 0x04, 0xa1, 0x0f, 0xe0, 0x9a, 0x1a, 0xa0, 0xd7, 0xa1, 0xe3, 0x67, 0x43, 0x40, 0xa0,
-	0x75, 0x12, 0x3a, 0x7e, 0x96, 0x6a, 0xba, 0xa6, 0x5b, 0x40, 0xca, 0xc0, 0x92, 0x98, 0x11, 0xe7,
-	0xe8, 0x8a, 0x5c, 0x4c, 0x65, 0xee, 0xfc, 0x6b, 0xc3, 0xfc, 0xae, 0xe3, 0xfe, 0x42, 0xe6, 0x91,
-	0xa7, 0xd0, 0xc9, 0xc6, 0x80, 0xac, 0xaa, 0x6c, 0xa6, 0xe6, 0xce, 0x1a, 0x4e, 0xbb, 0x75, 0x80,
-	0xc7, 0xd0, 0x96, 0xef, 0x28, 0x21, 0x0a, 0x50, 0x7e, 0x96, 0xad, 0x95, 0x09, 0x9f, 0x3e, 0xb1,
-	0x0b, 0xdd, 0x92, 0xc2, 0xc4, 0xd4, 0xd5, 0x57, 0x46, 0xc1, 0xba, 0x51, 0xb3, 0xa3, 0x39, 0x0e,
-	0xa0, 0x37, 0xd1, 0x5f, 0x62, 0x29, 0x6c, 0x9d, 0xca, 0xd6, 0x5a, 0xed, 0x9e, 0x66, 0x7a, 0x0e,
-	0x50, 0xb4, 0x8d, 0x5c, 0x57, 0xd0, 0x4a, 0xc7, 0x2d, 0xb3, 0xba, 0xa1, 0x09, 0xbe, 0xc1, 0xa0,
-	0xee, 0x53, 0x45, 0xee, 0x94, 0x4f, 0xd4, 0x7e, 0xf7, 0xac, 0xab, 0x21, 0xe4, 0x87, 0x1c, 0xa4,
-	0xea, 0xa3, 0x4d, 0x68, 0x5e, 0xd4, 0xcc, 0x27, 0xdf, 0xba, 0x7b, 0x29, 0x46, 0xe7, 0xff, 0x0e,
-	0x96, 0x26, 0x13, 0x20, 0x6b, 0xf5, 0x69, 0x29, 0xce, 0xf5, 0xfa, 0x4d, 0x4d, 0x16, 0x80, 0x39,
-	0xeb, 0xb9, 0x23, 0xf7, 0xea, 0x4e, 0x56, 0xde, 0x5a, 0xeb, 0xfe, 0x55, 0x30, 0x15, 0x6a, 0x17,
-	0xbe, 0x74, 0x7c, 0x64, 0xf2, 0x5f, 0xe3, 0x78, 0x4e, 0xfe, 0x6c, 0x3c, 0xf9, 0x1f, 0x00, 0x00,
-	0xff, 0xff, 0x7d, 0x68, 0xc7, 0x51, 0x80, 0x08, 0x00, 0x00,
+	// 881 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x5f, 0x6f, 0xdc, 0x44,
+	0x10, 0x97, 0xef, 0x72, 0xc9, 0x65, 0xae, 0x97, 0x84, 0x6d, 0x72, 0x18, 0xa7, 0xc0, 0xb1, 0x40,
+	0x09, 0xa8, 0x4a, 0xd0, 0xf1, 0x84, 0x54, 0x81, 0x48, 0x5a, 0x5a, 0x41, 0x05, 0xc8, 0x51, 0x79,
+	0x00, 0x24, 0x70, 0xed, 0xa9, 0xbb, 0xc2, 0xb7, 0x3e, 0x76, 0xd7, 0xa1, 0x79, 0xe6, 0x43, 0xf0,
+	0x69, 0xf8, 0x6e, 0xc8, 0xfb, 0xc7, 0xff, 0xce, 0x97, 0x20, 0xde, 0x76, 0x66, 0x67, 0x7e, 0xf3,
+	0x7f, 0x76, 0xe1, 0x60, 0x25, 0x72, 0x95, 0x9f, 0xc5, 0xea, 0x65, 0x7a, 0xaa, 0x8f, 0x64, 0xab,
+	0x3c, 0xd3, 0x1d, 0x18, 0x3d, 0x5e, 0xae, 0xd4, 0x35, 0x0d, 0x61, 0xf6, 0x7c, 0x25, 0x51, 0xa8,
+	0x8b, 0x57, 0x51, 0x96, 0x21, 0x4f, 0x31, 0xc4, 0x3f, 0x0a, 0x94, 0x8a, 0x7c, 0x00, 0xd3, 0xd8,
+	0xf1, 0xbe, 0x8b, 0x96, 0xe8, 0x7b, 0x73, 0xef, 0x64, 0x37, 0x6c, 0x33, 0x09, 0x81, 0xad, 0x97,
+	0x59, 0x94, 0xfa, 0x03, 0x7d, 0xa9, 0xcf, 0xf4, 0x0b, 0x98, 0x3d, 0xc2, 0x0c, 0x15, 0xfe, 0x3f,
+	0x4c, 0x7a, 0x06, 0xc7, 0x97, 0xc5, 0x8b, 0x25, 0x53, 0x8f, 0xaf, 0x58, 0x82, 0x3c, 0xc6, 0x10,
+	0x57, 0xb9, 0x50, 0x0e, 0xe4, 0x00, 0x86, 0x85, 0xc8, 0xac, 0x6a, 0x79, 0xa4, 0xef, 0xc0, 0xbd,
+	0x7e, 0x05, 0xb9, 0xca, 0xb9, 0x44, 0xfa, 0x0a, 0xee, 0x3c, 0xcb, 0x53, 0xc6, 0x1d, 0xc2, 0x21,
+	0x8c, 0x70, 0x19, 0x31, 0x87, 0x61, 0x08, 0x12, 0xc0, 0x78, 0x15, 0x49, 0xf9, 0x67, 0x2e, 0x12,
+	0x1b, 0x4e, 0x45, 0x93, 0xfb, 0xb0, 0xc7, 0x78, 0x9c, 0x15, 0x09, 0x5e, 0xa2, 0x94, 0x2c, 0xe7,
+	0xfe, 0x70, 0xee, 0x9d, 0x8c, 0xc3, 0x0e, 0x97, 0x7e, 0x0c, 0x53, 0x6b, 0xc9, 0x98, 0x26, 0x3e,
+	0xec, 0x48, 0xab, 0x61, 0x8c, 0x39, 0x92, 0x7e, 0x03, 0x63, 0xe7, 0x2e, 0xd9, 0x83, 0x01, 0x4b,
+	0xb4, 0xc0, 0x34, 0x1c, 0xb0, 0xa4, 0xcc, 0x2a, 0x2f, 0xd3, 0x63, 0xb3, 0x5a, 0x9e, 0xc9, 0x1d,
+	0xf0, 0x5e, 0x6b, 0xab, 0xa3, 0xd0, 0x7b, 0x5d, 0x52, 0xd7, 0xfe, 0x96, 0xa1, 0xae, 0xe9, 0x8f,
+	0x00, 0x17, 0x39, 0xe7, 0x18, 0x2b, 0x96, 0xf3, 0x35, 0xb4, 0x19, 0x6c, 0xcb, 0xbc, 0x10, 0xb1,
+	0xc1, 0x9b, 0x86, 0x96, 0x22, 0x73, 0x98, 0x24, 0x28, 0x15, 0xe3, 0x91, 0x72, 0x11, 0x4d, 0xc3,
+	0x26, 0xab, 0x4c, 0xec, 0x13, 0x54, 0x8f, 0x98, 0x8c, 0xf3, 0x2b, 0x14, 0x98, 0xd4, 0xf9, 0xd5,
+	0x89, 0xa4, 0x7f, 0x7b, 0xf0, 0xf6, 0x06, 0x01, 0x1b, 0xff, 0x0c, 0xb6, 0x85, 0x2e, 0x86, 0x0d,
+	0xdf, 0x52, 0xe4, 0x13, 0x18, 0xa3, 0x95, 0xf5, 0x07, 0xf3, 0xe1, 0xc9, 0x64, 0xb1, 0x77, 0xaa,
+	0xbb, 0xb4, 0x42, 0xa8, 0xee, 0xc9, 0x02, 0x26, 0x71, 0x15, 0x9d, 0xf4, 0x87, 0x5a, 0xfc, 0xc0,
+	0x88, 0xd7, 0x61, 0x87, 0x4d, 0x21, 0xfa, 0x3d, 0x1c, 0x75, 0x5b, 0xc2, 0xd4, 0x3e, 0x68, 0x18,
+	0x36, 0x2e, 0xd5, 0x86, 0x74, 0x8a, 0x07, 0xad, 0x14, 0x0f, 0x5d, 0x8a, 0x1f, 0xc0, 0xac, 0x0b,
+	0x68, 0x43, 0x74, 0xc5, 0xf2, 0xea, 0x62, 0xd1, 0x9f, 0xe1, 0xdd, 0xb6, 0x74, 0xc3, 0x4f, 0xeb,
+	0x48, 0x5d, 0x15, 0xef, 0xa6, 0xaa, 0x0c, 0xd6, 0xab, 0xf2, 0x10, 0xe6, 0x9b, 0xc1, 0xeb, 0xbe,
+	0x8b, 0x05, 0x46, 0x0a, 0x4d, 0x23, 0x8c, 0x43, 0x47, 0xd2, 0x5f, 0x61, 0x3f, 0xc4, 0x94, 0x49,
+	0x85, 0xa2, 0x91, 0x93, 0x42, 0xa2, 0x68, 0x44, 0x51, 0xd1, 0xf5, 0xac, 0x0c, 0x36, 0xcd, 0xca,
+	0xb0, 0x3d, 0x2b, 0xf4, 0x01, 0x1c, 0xd4, 0x06, 0x6e, 0x75, 0xe7, 0x19, 0x6c, 0xfd, 0x10, 0xa5,
+	0xda, 0x8e, 0xc8, 0x0b, 0xe5, 0x1c, 0x30, 0x44, 0xc9, 0x55, 0x4c, 0x65, 0x6e, 0x12, 0x0c, 0xa1,
+	0xd1, 0x72, 0xae, 0x90, 0x2b, 0x6b, 0xdc, 0x91, 0xf4, 0x10, 0xc8, 0x45, 0x21, 0x04, 0x72, 0xf5,
+	0x5c, 0x56, 0xf1, 0xd1, 0x4b, 0xb8, 0xdb, 0xe2, 0x5a, 0xa7, 0x6e, 0x0a, 0x7b, 0x0e, 0xa3, 0x55,
+	0x94, 0xa2, 0xb4, 0xcd, 0x09, 0xa6, 0xdb, 0x4a, 0x4f, 0x43, 0x73, 0x41, 0x67, 0x70, 0xf8, 0x04,
+	0xeb, 0xb5, 0x29, 0x9d, 0xb1, 0x14, 0x76, 0x2b, 0xe6, 0x7f, 0x1a, 0x6c, 0x53, 0xf0, 0x58, 0xb0,
+	0x55, 0x35, 0x86, 0xbb, 0x61, 0x93, 0x55, 0x66, 0xe1, 0x2a, 0xca, 0x0a, 0xb4, 0x03, 0x6f, 0x08,
+	0xfa, 0x14, 0x8e, 0x3a, 0x0e, 0xd8, 0xb8, 0xce, 0x00, 0xaa, 0x85, 0x2a, 0x7d, 0x4f, 0x07, 0xb0,
+	0x6f, 0xc7, 0xa5, 0xda, 0xc8, 0x0d, 0x11, 0xfa, 0x11, 0xbc, 0x61, 0x1a, 0xea, 0xeb, 0x2c, 0x4a,
+	0x5d, 0x53, 0xb8, 0xcd, 0xee, 0x35, 0x36, 0xfb, 0x29, 0x90, 0xa6, 0x60, 0xa3, 0xb8, 0xb9, 0x10,
+	0x18, 0xab, 0xaa, 0xb8, 0x86, 0x5c, 0xfc, 0x33, 0x82, 0x9d, 0xf3, 0x28, 0xfe, 0x1d, 0x79, 0x42,
+	0x3e, 0x87, 0xb1, 0x6b, 0x0b, 0x72, 0x64, 0xbc, 0xe9, 0xf4, 0x61, 0x30, 0xeb, 0xb2, 0xad, 0x81,
+	0x4f, 0x61, 0xa4, 0xb7, 0x2a, 0x21, 0x46, 0xa0, 0xb9, 0xcc, 0x83, 0xbb, 0x2d, 0x9e, 0xd5, 0x38,
+	0x87, 0x49, 0xa3, 0xe2, 0xc4, 0xb7, 0xd1, 0xaf, 0xb5, 0x46, 0xf0, 0x56, 0xcf, 0x8d, 0xc5, 0x78,
+	0x0a, 0xd3, 0x56, 0x7e, 0x49, 0x60, 0x64, 0xfb, 0xaa, 0x1e, 0x1c, 0xf7, 0xde, 0x59, 0xa4, 0x2f,
+	0x01, 0xea, 0xb4, 0x91, 0x37, 0x8d, 0xe8, 0x5a, 0xc6, 0x03, 0x7f, 0xfd, 0xc2, 0x02, 0xfc, 0x02,
+	0x87, 0x7d, 0x0f, 0x1c, 0x79, 0xaf, 0xa9, 0xd1, 0xfb, 0x5a, 0x06, 0xb7, 0x8b, 0x90, 0xdf, 0x74,
+	0x23, 0xad, 0x2f, 0x71, 0x42, 0xab, 0xa0, 0x36, 0x3e, 0x01, 0xc1, 0xfb, 0x37, 0xca, 0x58, 0xff,
+	0xbf, 0x85, 0xbd, 0xb6, 0x03, 0xe4, 0xb8, 0xdf, 0x2d, 0x83, 0x79, 0xaf, 0xff, 0xd2, 0x82, 0x31,
+	0xf0, 0x37, 0xad, 0x3f, 0xf2, 0x61, 0x9f, 0xe6, 0xda, 0xee, 0x0d, 0xee, 0xdf, 0x26, 0x66, 0x4c,
+	0x2d, 0xfe, 0xf2, 0x60, 0xf4, 0x55, 0xb2, 0x64, 0x9c, 0x3c, 0x84, 0xfd, 0xce, 0x3f, 0x89, 0x58,
+	0x2f, 0xfb, 0xbf, 0x4f, 0xc1, 0xc4, 0x3e, 0x67, 0xe5, 0x2f, 0xab, 0xd4, 0xee, 0xfc, 0x88, 0x9c,
+	0x76, 0xff, 0x47, 0xa9, 0xa5, 0x7d, 0x0e, 0x3f, 0x8d, 0x53, 0xe4, 0xfa, 0x13, 0xf7, 0x62, 0x5b,
+	0xff, 0xe2, 0x3e, 0xfb, 0x37, 0x00, 0x00, 0xff, 0xff, 0x42, 0x9e, 0x85, 0x3d, 0xd9, 0x09, 0x00,
+	0x00,
 }

@@ -49,9 +49,7 @@ func (b backend) Login(ctx context.Context, request *ctfg.LoginRequest) (*ctfg.L
 
 	SetUserForSession(ctx, user.ID)
 
-	return &ctfg.LoginResponse{
-		LoggedIn: true,
-	}, nil
+	return &ctfg.LoginResponse{}, nil
 }
 
 func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserRequest) (*ctfg.CurrentUserResponse, error) {

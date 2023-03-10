@@ -2,8 +2,10 @@ package pkg
 
 import (
 	"context"
-	"github.com/twitchtv/twirp"
 	"log"
+
+	"github.com/twitchtv/twirp"
+	"gorm.io/gorm"
 )
 
 // ResponseWriterKey From twirp: internal/contextkeys/keys.go
@@ -27,6 +29,30 @@ func NewLoggingServerHooks() *twirp.ServerHooks {
 		},
 		ResponseSent: func(ctx context.Context) {
 			log.Println("Response Sent (error or success)")
+		},
+	}
+}
+
+func NewAdminHooks(db *gorm.DB) *twirp.ServerHooks {
+	return &twirp.ServerHooks{
+		RequestReceived: func(ctx context.Context) (context.Context, error) {
+			// TODO
+			// userID, err := GetUserFromSession(ctx)
+			// if err != nil {
+			// 	return ctx, errors.New("session not found")
+			// }
+
+			// var user models.User
+			// res := db.First(&user, userID)
+			// if res.Error != nil {
+			// 	return ctx, res.Error
+			// }
+
+			// if user.Type != "admin" {
+			// 	return ctx, errors.New("unathorized")
+			// }
+
+			return ctx, nil
 		},
 	}
 }

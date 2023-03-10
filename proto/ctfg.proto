@@ -17,6 +17,22 @@ service Backend {
   rpc SubmitEvidenceConnection(SubmitEvidenceConnectionRequest) returns (SubmitEvidenceConnectionResponse);
 }
 
+service Admin {
+  rpc UpsertChallenge(UpsertChallengeRequest) returns (Empty);
+  rpc DeleteChallenge(DeleteChallengeRequest) returns (Empty);
+}
+
+message Empty {}
+
+message UpsertChallengeRequest {
+  string challengeName = 1;
+  string flag = 2;
+}
+
+message DeleteChallengeRequest {
+  string challengeName = 1;
+}
+
 message SubmitEvidenceReportRequest {
   string url = 1;
 }
@@ -26,10 +42,11 @@ message SubmitEvidenceReportResponse {}
 message LoginRequest {
   string email = 1;
   string password = 2;
+  bool includeSession = 3;
 }
 
 message LoginResponse {
-  bool loggedIn = 1;
+  string session = 1;
 }
 
 message Evidence {
@@ -97,9 +114,10 @@ message CurrentUserResponse {
 message GetChallengesRequest {}
 
 message Challenge {
-  string name = 1;
-  string description = 2;
-  int32 value = 3;
+  uint32 id = 1;
+  string name = 2;
+  string description = 3;
+  int32 value = 4;
 }
 
 message GetChallengesResponse {

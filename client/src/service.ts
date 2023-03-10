@@ -3,6 +3,6 @@ import { FetchRPC } from "twirp-ts";
 
 export const ctfg = new BackendClientJSON(
 	FetchRPC({
-		baseUrl: "/twirp",
+		baseUrl: "/twirp/backend",
 	}),
 );

@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
-	"fmt"
 
 	"github.com/ctfg/ctfg/client/public"
 	"github.com/ctfg/ctfg/gen/ctfg"
 	"github.com/ctfg/ctfg/pkg"
 	"github.com/ctfg/ctfg/pkg/database"
+	"github.com/twitchtv/twirp"
 )
 
 func startHttpServer(twirpServer ctfg.TwirpServer, httpApiHandler http.Handler) {
@@ -52,9 +53,18 @@ func main() {
 	database.Migrate(db)
 
 	server := pkg.NewBackend(db)
-	twirpHandler := ctfg.NewBackendServer(server, pkg.NewLoggingServerHooks())
+	admin := pkg.NewAdmin(db)
+
+	twirpHandler := ctfg.NewBackendServer(
+		server, pkg.NewLoggingServerHooks(), twirp.WithServerPathPrefix("/twirp/backend"),
+	)
+
+	adminHandler := ctfg.NewAdminServer(
+		admin, pkg.NewLoggingServerHooks(), pkg.NewAdminHooks(db), twirp.WithServerPathPrefix("/twirp/admin"),
+	)
 
 	//fsys := os.DirFS("client/public")
-	httpApiHandler := pkg.NewAPIHandler(public.Assets, twirpHandler)
+	httpApiHandler := pkg.NewAPIHandler(public.Assets, twirpHandler, adminHandler)
+
 	startHttpServer(twirpHandler, httpApiHandler)
 }
