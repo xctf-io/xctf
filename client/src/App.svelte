@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Router, Route } from "svelte-routing";
+    import snarkdown from 'snarkdown';
 
     import Navbar from "./components/Navbar.svelte";
     import Login from "./routes/Login.svelte";
@@ -51,13 +52,6 @@
             showWhenAuthed: false,
         },
     ];
-
-    if ($pages !== null) {
-        $pages.forEach(p => {
-            // look for links to override
-            const pageLink = links.findIndex(l => l.to === p.route);
-        });
-    }
 </script>
 
 <main>
@@ -67,6 +61,13 @@
             {#each links as link}
                 <Route path={link.to} component={link.Component} />
             {/each}
+            {#if $pages}
+                {#each $pages as page}
+                    <Route path={page.route}>
+                        {@html snarkdown(page.content)}
+                    </Route>
+                {/each}
+            {/if}
         </div>
     </Router>
 </main>

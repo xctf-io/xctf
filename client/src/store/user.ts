@@ -17,7 +17,7 @@ export const login = async (email: string, password: string) => {
 			password,
 		});
 		user.set({
-			username: "test",
+			username: resp.username,
 		});
 		authSuccess.set("Login success!")
 	} catch (e) {

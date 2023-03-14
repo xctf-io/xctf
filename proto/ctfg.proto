@@ -42,11 +42,10 @@ message SubmitEvidenceReportResponse {}
 message LoginRequest {
   string email = 1;
   string password = 2;
-  bool includeSession = 3;
 }
 
 message LoginResponse {
-  string session = 1;
+  string username = 1;
 }
 
 message Evidence {
@@ -75,6 +74,8 @@ message SubmitEvidenceRequest {
   string evidence = 1;
   int32 x = 2;
   int32 y = 3;
+	bool isFlag = 4;
+  bool remove = 5;
 }
 
 message SubmitEvidenceResponse {
@@ -84,6 +85,7 @@ message SubmitEvidenceResponse {
 message SubmitEvidenceConnectionRequest {
   uint32 source = 1;
   uint32 destination = 2;
+  bool remove = 3;
 }
 
 message SubmitEvidenceConnectionResponse {

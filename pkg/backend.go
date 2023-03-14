@@ -49,7 +49,9 @@ func (b backend) Login(ctx context.Context, request *ctfg.LoginRequest) (*ctfg.L
 
 	SetUserForSession(ctx, user.ID)
 
-	return &ctfg.LoginResponse{}, nil
+	return &ctfg.LoginResponse{
+		Username: user.Username,
+	}, nil
 }
 
 func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserRequest) (*ctfg.CurrentUserResponse, error) {
@@ -102,8 +104,8 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 		return nil, err
 	}
 
-	var report models.EvidenceReport
-	b.db.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
+	// var report models.EvidenceReport
+	// b.db.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
 
 	var evidence []models.Evidence
 	evResp := b.db.Where(models.Evidence{UserID: int(userID)}).Find(&evidence)
@@ -138,7 +140,6 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 	}
 
 	return &ctfg.GetDiscoveredEvidenceResponse{
-		Report:      report.URL,
 		Evidence:    discoveredEvidence,
 		Connections: discoveredConnections,
 	}, nil
@@ -154,20 +155,31 @@ func (b backend) SubmitEvidence(ctx context.Context, request *ctfg.SubmitEvidenc
 
 	var chal models.Challenge
 	res := b.db.Where(models.Challenge{Flag: request.Evidence}).First(&chal)
+	if res.Error != nil && request.IsFlag {
+		return nil, res.Error
+	}
+
+	// A flag was found for the challenge, set the name to the challenge name
 	if res.Error == nil {
-		// there was no error meaning there is a challenge with this flag
 		name = chal.Name
 	}
 
 	var evidence models.Evidence
 	res = b.db.Where(models.Evidence{Name: name, UserID: int(userID)}).First(&evidence)
 	if res.Error == nil {
-		log.Debug().
-			Str("name", name).
-			Msg("updating existing evidence")
-		evidence.PositionX = int(request.X)
-		evidence.PositionY = int(request.Y)
-		b.db.Save(&evidence)
+		if request.Remove {
+			log.Debug().
+				Str("name", name).
+				Msg("deleting existing evidence")
+			b.db.Delete(&evidence)
+		} else {
+			log.Debug().
+				Str("name", name).
+				Msg("updating existing evidence")
+			evidence.PositionX = int(request.X)
+			evidence.PositionY = int(request.Y)
+			b.db.Save(&evidence)
+		}
 	} else {
 		evidence := models.Evidence{
 			Name:      name,
@@ -196,15 +208,24 @@ func (b backend) SubmitEvidenceConnection(ctx context.Context, request *ctfg.Sub
 	}
 
 	// TODO verify source and destination are accessible to the user
-
 	evidenceConn := models.EvidenceConnection{
 		SourceID:      int(request.Source),
 		DestinationID: int(request.Destination),
 		UserID:        int(userID),
 	}
-	res := b.db.Create(&evidenceConn)
+	res := b.db.Where(evidenceConn).First(&evidenceConn)
 	if res.Error != nil {
-		return nil, res.Error
+		res = b.db.Create(&evidenceConn)
+		if res.Error != nil {
+			return nil, res.Error
+		}
+	} else {
+		if request.Remove {
+			res = b.db.Delete(&evidenceConn)
+			if res.Error != nil {
+				return nil, res.Error
+			}
+		}
 	}
 
 	return &ctfg.SubmitEvidenceConnectionResponse{}, nil

@@ -27,6 +27,8 @@
     },
     "dependencies": {
         "flowbite-svelte": "^0.29.13",
+        "marked": "^4.2.12",
+        "snarkdown": "^2.0.0",
         "svelte-routing": "^1.6.0",
         "svelvet": "^5.0.8",
         "twirp-ts": "git+https://github.com/breadchris/twirp-ts.git#3b136df46886a13eaa45ebc1fedbc996b760bbff"

@@ -65,19 +65,15 @@ export interface LoginRequest {
      * @generated from protobuf field: string password = 2;
      */
     password: string;
-    /**
-     * @generated from protobuf field: bool includeSession = 3;
-     */
-    includeSession: boolean;
 }
 /**
  * @generated from protobuf message ctfg.LoginResponse
  */
 export interface LoginResponse {
     /**
-     * @generated from protobuf field: string session = 1;
+     * @generated from protobuf field: string username = 1;
      */
-    session: string;
+    username: string;
 }
 /**
  * @generated from protobuf message ctfg.Evidence
@@ -161,6 +157,14 @@ export interface SubmitEvidenceRequest {
      * @generated from protobuf field: int32 y = 3;
      */
     y: number;
+    /**
+     * @generated from protobuf field: bool isFlag = 4;
+     */
+    isFlag: boolean;
+    /**
+     * @generated from protobuf field: bool remove = 5;
+     */
+    remove: boolean;
 }
 /**
  * @generated from protobuf message ctfg.SubmitEvidenceResponse
@@ -183,6 +187,10 @@ export interface SubmitEvidenceConnectionRequest {
      * @generated from protobuf field: uint32 destination = 2;
      */
     destination: number;
+    /**
+     * @generated from protobuf field: bool remove = 3;
+     */
+    remove: boolean;
 }
 /**
  * @generated from protobuf message ctfg.SubmitEvidenceConnectionResponse
@@ -512,12 +520,11 @@ class LoginRequest$Type extends MessageType<LoginRequest> {
     constructor() {
         super("ctfg.LoginRequest", [
             { no: 1, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "includeSession", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<LoginRequest>): LoginRequest {
-        const message = { email: "", password: "", includeSession: false };
+        const message = { email: "", password: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<LoginRequest>(this, message, value);
@@ -533,9 +540,6 @@ class LoginRequest$Type extends MessageType<LoginRequest> {
                     break;
                 case /* string password */ 2:
                     message.password = reader.string();
-                    break;
-                case /* bool includeSession */ 3:
-                    message.includeSession = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -555,9 +559,6 @@ class LoginRequest$Type extends MessageType<LoginRequest> {
         /* string password = 2; */
         if (message.password !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.password);
-        /* bool includeSession = 3; */
-        if (message.includeSession !== false)
-            writer.tag(3, WireType.Varint).bool(message.includeSession);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -572,11 +573,11 @@ export const LoginRequest = new LoginRequest$Type();
 class LoginResponse$Type extends MessageType<LoginResponse> {
     constructor() {
         super("ctfg.LoginResponse", [
-            { no: 1, name: "session", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<LoginResponse>): LoginResponse {
-        const message = { session: "" };
+        const message = { username: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<LoginResponse>(this, message, value);
@@ -587,8 +588,8 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string session */ 1:
-                    message.session = reader.string();
+                case /* string username */ 1:
+                    message.username = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -602,9 +603,9 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         return message;
     }
     internalBinaryWrite(message: LoginResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string session = 1; */
-        if (message.session !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.session);
+        /* string username = 1; */
+        if (message.username !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -844,11 +845,13 @@ class SubmitEvidenceRequest$Type extends MessageType<SubmitEvidenceRequest> {
         super("ctfg.SubmitEvidenceRequest", [
             { no: 1, name: "evidence", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "x", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "y", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "y", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "isFlag", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "remove", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<SubmitEvidenceRequest>): SubmitEvidenceRequest {
-        const message = { evidence: "", x: 0, y: 0 };
+        const message = { evidence: "", x: 0, y: 0, isFlag: false, remove: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<SubmitEvidenceRequest>(this, message, value);
@@ -867,6 +870,12 @@ class SubmitEvidenceRequest$Type extends MessageType<SubmitEvidenceRequest> {
                     break;
                 case /* int32 y */ 3:
                     message.y = reader.int32();
+                    break;
+                case /* bool isFlag */ 4:
+                    message.isFlag = reader.bool();
+                    break;
+                case /* bool remove */ 5:
+                    message.remove = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -889,6 +898,12 @@ class SubmitEvidenceRequest$Type extends MessageType<SubmitEvidenceRequest> {
         /* int32 y = 3; */
         if (message.y !== 0)
             writer.tag(3, WireType.Varint).int32(message.y);
+        /* bool isFlag = 4; */
+        if (message.isFlag !== false)
+            writer.tag(4, WireType.Varint).bool(message.isFlag);
+        /* bool remove = 5; */
+        if (message.remove !== false)
+            writer.tag(5, WireType.Varint).bool(message.remove);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -951,11 +966,12 @@ class SubmitEvidenceConnectionRequest$Type extends MessageType<SubmitEvidenceCon
     constructor() {
         super("ctfg.SubmitEvidenceConnectionRequest", [
             { no: 1, name: "source", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 2, name: "destination", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
+            { no: 2, name: "destination", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 3, name: "remove", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<SubmitEvidenceConnectionRequest>): SubmitEvidenceConnectionRequest {
-        const message = { source: 0, destination: 0 };
+        const message = { source: 0, destination: 0, remove: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<SubmitEvidenceConnectionRequest>(this, message, value);
@@ -971,6 +987,9 @@ class SubmitEvidenceConnectionRequest$Type extends MessageType<SubmitEvidenceCon
                     break;
                 case /* uint32 destination */ 2:
                     message.destination = reader.uint32();
+                    break;
+                case /* bool remove */ 3:
+                    message.remove = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -990,6 +1009,9 @@ class SubmitEvidenceConnectionRequest$Type extends MessageType<SubmitEvidenceCon
         /* uint32 destination = 2; */
         if (message.destination !== 0)
             writer.tag(2, WireType.Varint).uint32(message.destination);
+        /* bool remove = 3; */
+        if (message.remove !== false)
+            writer.tag(3, WireType.Varint).bool(message.remove);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
