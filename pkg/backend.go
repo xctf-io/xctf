@@ -121,13 +121,16 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 
 	var discoveredEvidence []*ctfg.Evidence
 	for _, ev := range evidence {
-		discoveredEvidence = append(discoveredEvidence, &ctfg.Evidence{
-			Id:          uint32(ev.ID),
-			Name:        ev.Name,
-			ChallengeID: uint32(*ev.ChallengeID),
-			X:           int32(ev.PositionX),
-			Y:           int32(ev.PositionY),
-		})
+		chalEv := &ctfg.Evidence{
+			Id:   uint32(ev.ID),
+			Name: ev.Name,
+			X:    int32(ev.PositionX),
+			Y:    int32(ev.PositionY),
+		}
+		if ev.ChallengeID != nil {
+			chalEv.ChallengeID = uint32(*ev.ChallengeID)
+		}
+		discoveredEvidence = append(discoveredEvidence, chalEv)
 	}
 
 	var discoveredConnections []*ctfg.Connection
