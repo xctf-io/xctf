@@ -10,7 +10,7 @@ services:
     labels:
       kompose.service.type: clusterip
   ctfg:
-    image: ghcr.io/ctfg/ctfg@sha256:1a7fb5cef58056862289d5790f511b6132ee7be4779e4b3ca19026446d1f083d
+    image: ghcr.io/ctfg/ctfg@sha256:9de28b80a316f745fe1c86707f6b16bc689ee6dc6cebe4c60911c87069a5eda6
     restart: always
     ports:
       - 8000:8000
