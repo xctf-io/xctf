@@ -21,7 +21,7 @@ export const login = async (email: string, password: string) => {
 		});
 		authSuccess.set("Login success!")
 	} catch (e) {
-		authError.set(e);
+		authError.set(e.toString());
 	}
 };
 export const register = async (

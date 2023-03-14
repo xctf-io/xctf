@@ -124,7 +124,7 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 		discoveredEvidence = append(discoveredEvidence, &ctfg.Evidence{
 			Id:          uint32(ev.ID),
 			Name:        ev.Name,
-			ChallengeID: uint32(ev.ChallengeID),
+			ChallengeID: uint32(*ev.ChallengeID),
 			X:           int32(ev.PositionX),
 			Y:           int32(ev.PositionY),
 		})

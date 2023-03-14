@@ -32,7 +32,7 @@ const options = {
           preprocess: sveltePreprocess(),
         }),
       ],
-      minify,
+      minify: false,
       sourcemap: "linked",
       define: {
         "global": "window",
