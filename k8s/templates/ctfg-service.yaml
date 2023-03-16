@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    kompose.cmd: kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.cmd: kompose -f docker-compose.prod.yaml convert -c -o k8s
     kompose.image-pull-secret: ghcr-pull-secret
     kompose.service.type: clusterip
     kompose.version: 1.26.0 (HEAD)

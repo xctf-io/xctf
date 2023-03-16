@@ -7,6 +7,8 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - 5432:5432
+    volumes:
+      - data:/var/lib/postgresql/data
     labels:
       kompose.service.type: clusterip
   ctfg:
@@ -23,3 +25,7 @@ services:
     labels:
       kompose.service.type: clusterip
       kompose.image-pull-secret: "ghcr-pull-secret"
+volumes:
+  data:
+    labels:
+      kompose.volume.type: persistentVolumeClaim

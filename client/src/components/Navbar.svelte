@@ -4,6 +4,7 @@
     import { user } from "../store/user";
     import type { NavLink } from "../types/nav";
     import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte'
+    import { Button } from 'flowbite-svelte'
 
     export let links: NavLink[] = [];
     let path: string = window.location.pathname;
@@ -11,6 +12,11 @@
     const updatePath = (newPath: string) => (path = newPath);
 
     const userLoggedIn = derived(user, user => user !== null);
+
+    const logout = () => {
+        document.cookie = '';
+        user.set(null);
+    }
 </script>
 
 <Navbar let:hidden let:toggle>
@@ -31,6 +37,7 @@
         {/each}
         {#if $user}
             <NavLi>{$user.username}</NavLi>
+            <NavLi on:click={logout}>Logout</NavLi>
         {/if}
     </NavUl>
 </Navbar>

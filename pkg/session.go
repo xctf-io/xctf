@@ -20,6 +20,11 @@ func SetUserForSession(ctx context.Context, userID uint) {
 	store.Set("user", userID)
 }
 
+func RemoveUserFromSession(ctx context.Context) {
+	store := GetSession(ctx)
+	store.Delete("user")
+}
+
 // GetUserFromSession will get the user id from the session store located in the context.
 func GetUserFromSession(ctx context.Context) (uint, error) {
 	store := GetSession(ctx)

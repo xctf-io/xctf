@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+    kompose.cmd: kompose -f docker-compose.prod.yaml convert -c -o k8s
     kompose.service.type: clusterip
     kompose.version: 1.26.0 (HEAD)
   creationTimestamp: null
@@ -14,11 +14,12 @@ spec:
   selector:
     matchLabels:
       io.kompose.service: postgres
-  strategy: {}
+  strategy:
+    type: Recreate
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+        kompose.cmd: kompose -f docker-compose.prod.yaml convert -c -o k8s
         kompose.service.type: clusterip
         kompose.version: 1.26.0 (HEAD)
       creationTimestamp: null
@@ -34,5 +35,12 @@ spec:
           ports:
             - containerPort: 5432
           resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: data
       restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
 status: {}
