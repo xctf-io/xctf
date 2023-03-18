@@ -5,12 +5,14 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data/db
     ports:
       - 5432:5432
     volumes:
-      - data:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data/db
     labels:
       kompose.service.type: clusterip
+      kompose.volume.type: persistentVolumeClaim
   ctfg:
     image: ghcr.io/ctfg/ctfg@sha256:be52e4743ff44ebfbee40d4d30e38769f0dd9e772913a20c6d317ec606a3003b
     restart: always
@@ -26,6 +28,4 @@ services:
       kompose.service.type: clusterip
       kompose.image-pull-secret: "ghcr-pull-secret"
 volumes:
-  data:
-    labels:
-      kompose.volume.type: persistentVolumeClaim
+  db:

@@ -4,7 +4,8 @@ metadata:
   annotations:
     kompose.cmd: kompose -f docker-compose.prod.yaml convert -c -o k8s
     kompose.service.type: clusterip
-    kompose.version: 1.26.0 (HEAD)
+    kompose.version: 1.28.0 (HEAD)
+    kompose.volume.type: persistentVolumeClaim
   creationTimestamp: null
   labels:
     io.kompose.service: postgres
@@ -21,13 +22,17 @@ spec:
       annotations:
         kompose.cmd: kompose -f docker-compose.prod.yaml convert -c -o k8s
         kompose.service.type: clusterip
-        kompose.version: 1.26.0 (HEAD)
+        kompose.version: 1.28.0 (HEAD)
+        kompose.volume.type: persistentVolumeClaim
       creationTimestamp: null
       labels:
+        io.kompose.network/ctfg-default: "true"
         io.kompose.service: postgres
     spec:
       containers:
         - env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/db
             - name: POSTGRES_PASSWORD
               value: password
           image: postgres
@@ -36,11 +41,11 @@ spec:
             - containerPort: 5432
           resources: {}
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: data
+            - mountPath: /var/lib/postgresql/data/db
+              name: db
       restartPolicy: Always
       volumes:
-        - name: data
+        - name: db
           persistentVolumeClaim:
-            claimName: data
+            claimName: db
 status: {}

@@ -5,7 +5,7 @@ metadata:
     kompose.cmd: kompose -f docker-compose.prod.yaml convert -c -o k8s
     kompose.image-pull-secret: ghcr-pull-secret
     kompose.service.type: clusterip
-    kompose.version: 1.26.0 (HEAD)
+    kompose.version: 1.28.0 (HEAD)
   creationTimestamp: null
   labels:
     io.kompose.service: ctfg
@@ -22,9 +22,10 @@ spec:
         kompose.cmd: kompose -f docker-compose.prod.yaml convert -c -o k8s
         kompose.image-pull-secret: ghcr-pull-secret
         kompose.service.type: clusterip
-        kompose.version: 1.26.0 (HEAD)
+        kompose.version: 1.28.0 (HEAD)
       creationTimestamp: null
       labels:
+        io.kompose.network/ctfg-default: "true"
         io.kompose.service: ctfg
     spec:
       containers:
@@ -39,7 +40,7 @@ spec:
               value: postgres
             - name: PORT
               value: "8000"
-          image: ghcr.io/ctfg/ctfg@sha256:9de28b80a316f745fe1c86707f6b16bc689ee6dc6cebe4c60911c87069a5eda6
+          image: ghcr.io/ctfg/ctfg@sha256:be52e4743ff44ebfbee40d4d30e38769f0dd9e772913a20c6d317ec606a3003b
           name: ctfg
           ports:
             - containerPort: 8000

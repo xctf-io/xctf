@@ -5,7 +5,7 @@ metadata:
     kompose.cmd: kompose -f docker-compose.prod.yaml convert -c -o k8s
     kompose.image-pull-secret: ghcr-pull-secret
     kompose.service.type: clusterip
-    kompose.version: 1.26.0 (HEAD)
+    kompose.version: 1.28.0 (HEAD)
   creationTimestamp: null
   labels:
     io.kompose.service: ctfg
