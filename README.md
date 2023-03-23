@@ -1,6 +1,8 @@
 # CTFg
 A simple CTF platform written in go. An ode to the illustrious [CTFd](https://github.com/CTFd/CTFd).
 
+We just [ran a competition](https://www.youtube.com/watch?v=2AOxuHuHS1U) for 200 high schoolers in person using this framework.
+
 Have ideas about what should go in here? Come talk to us on ![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white&link=https://discord.gg/J6VJQhhQ)!
 
 Currently in alpha. 
