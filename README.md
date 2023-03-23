@@ -1,5 +1,5 @@
 # CTFg
-A simple CTF platform written in go.
+A simple CTF platform written in go. An ode to the illustrious [CTFd](https://github.com/CTFd/CTFd).
 
 Have ideas about what should go in here? Come talk to us on ![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white&link=https://discord.gg/J6VJQhhQ)!
 
