@@ -26,8 +26,11 @@
         "typescript": "^4.1.3"
     },
     "dependencies": {
+        "flowbite-react": "^0.4.4",
         "flowbite-svelte": "^0.29.13",
         "marked": "^4.2.12",
+        "react": "^18.2.0",
+        "redux": "^4.2.1",
         "snarkdown": "^2.0.0",
         "svelte-routing": "^1.6.0",
         "svelvet": "^5.0.8",
