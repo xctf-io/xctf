@@ -1,7 +1,11 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
-  "types": ["node"],
-  "rootDir": "src",
-  "include": ["**/*.ts"],
+  "compilerOptions": {
+    "rootDir": "src",
+    "jsx": "react",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+  },
+  "include": ["**/*.ts", "src/main.tsx"],
   "exclude": ["node_modules/*", "public/*"]
 }

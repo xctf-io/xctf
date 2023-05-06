@@ -1,7 +1,7 @@
-import { writable } from "svelte/store";
+import { useState } from "react";
 
 type Evidence = {
   name: string;
 };
 
-export const evidence = writable<Evidence[] | null>(null);
+export const evidence = useState<Evidence[] | null>(null);

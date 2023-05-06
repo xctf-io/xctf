@@ -1,18 +1,19 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store';
-import { authError, authSuccess } from '../store/user';
+import { useAuthStatus } from '../store/user';
 import { Alert } from 'flowbite-react';
 
 const UserAlerts = () => {
   const dispatch = useDispatch();
-  const authErrorState = useSelector((state: RootState) => state.user.authError);
-  const authSuccessState = useSelector((state: RootState) => state.user.authSuccess);
+  const { success, setSuccess, error, setError } = useAuthStatus();
+  const authErrorState = useSelector((state) => state.user.authError);
+  const authSuccessState = useSelector((state) => state.user.authSuccess);
 
   useEffect(() => {
     return () => {
-      dispatch(authError(null));
-      dispatch(authSuccess(null));
+      dispatch(error);
+      dispatch(success);
     };
   }, [dispatch]);
 

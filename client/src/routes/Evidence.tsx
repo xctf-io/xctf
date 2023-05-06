@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React from "react";
 import { ctfg } from "../service";
 import type { GetDiscoveredEvidenceResponse } from "../rpc/ctfg";
-import Svelvet from "svelvet";
-import { useState, useRef, MutableRefObject } from 'react';
-import { Alert, Input, Select, Button, ButtonGroup } from 'flowbite-svelte';
+import ReactFlow from 'reactflow';
+import { useState, useEffect, useRef, MutableRefObject } from 'react';
+import { Alert, TextInput, Select, Button } from 'flowbite-react';
 import { error } from 'console';
 
 type Node = {
@@ -55,7 +55,7 @@ export default function MyComponent() {
 
   const nodes = graph.evidence.map((e) => {
     return {
-      id: e.id,
+      id: e.id.toString(),
       data: { label: e.name },
       position: {
         x: e.x,
@@ -84,8 +84,8 @@ export default function MyComponent() {
 
   const edges = graph.connections.map(c => ({
     id: `${c.source}-${c.destination}`,
-    source: c.source,
-    target: c.destination
+    source: c.source.toString(),
+    target: c.destination.toString(),
   }));
 
   function submitEvidence(remove: boolean) {
@@ -134,8 +134,8 @@ export default function MyComponent() {
   return (
     <div>
       <div className="mb-3">
-        {successMsg && <Alert color="green" dismissable>{successMsg}</Alert>}
-        {errorMsg && <Alert color="red" dismissable>{errorMsg}</Alert>}
+        {successMsg && <Alert color="green">{successMsg}</Alert>}
+        {errorMsg && <Alert color="red" >{errorMsg}</Alert>}
       </div>
       {/* <div class="mb-3">
         <label for="report">Report URL</label>
@@ -148,7 +148,7 @@ export default function MyComponent() {
         <div>
           <div className="mb-3">
             <label htmlFor="flag">Evidence</label>
-            <Input id="flag" type="text" value={evidence} onChange={e => evidence = e.target.value} />
+            <TextInput id="flag" type="text" value={evidence} onChange={e => evidence = e.target.value} />
           </div>
           <div className="mb-3">
             <label htmlFor="submitting-flag">Submitting a flag?</label>
@@ -175,7 +175,7 @@ export default function MyComponent() {
         </div>
       </div>
       {nodes.length > 0 &&
-        <Svelvet nodes={nodes} edges={edges} background />
+        <ReactFlow nodes={nodes} edges={edges} />
       }
     </div>
   );

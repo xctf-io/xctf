@@ -1,9 +1,9 @@
+import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { user } from "../store/user";
+import { useUser } from "../store/user";
 import type { NavLink } from "../types/nav";
-import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from "flowbite-svelte";
-import { Button } from "flowbite-svelte";
+import { Navbar, Button } from "flowbite-react";
 
 interface NavbarProps {
   links: NavLink[];
@@ -11,42 +11,38 @@ interface NavbarProps {
 
 const NavbarComponent = ({ links }: NavbarProps) => {
   const [path, updatePath] = useState(window.location.pathname);
-  const userLoggedIn = user !== null;
-
-  const logout = () => {
-    document.cookie = "";
-    user.set(null);
-  };
+  const { user, setUser, logout } = useUser();
+  const userLoggedIn = !!user;
 
   return (
     <Navbar>
-      <NavBrand>CTFg</NavBrand>
-      <NavHamburger />
-      <NavUl>
+      <Navbar.Brand>CTFg</Navbar.Brand>
+      <Navbar.Toggle />
+      <Navbar.Collapse>
         {links.map((l) => {
           if (
             (userLoggedIn && l.showWhenAuthed) ||
             (!userLoggedIn && !l.hideWhenUnauthed)
           ) {
             return (
-              <NavLi active={l.to === path}>
+              <Navbar.Link active={l.to === path}>
                 <Link
                   onClick={() => updatePath(l.to)}
                   to={l.to}
                 >
                   <span>{l.label}</span>
                 </Link>
-              </NavLi>
+              </Navbar.Link>
             );
           }
         })}
         {user && (
           <>
-            <NavLi>{user.username}</NavLi>
-            <NavLi onClick={logout}>Logout</NavLi>
+            <Navbar.Link>{user.username}</Navbar.Link>
+            <Navbar.Link onClick={logout}>Logout</Navbar.Link>
           </>
         )}
-      </NavUl>
+      </Navbar.Collapse>
     </Navbar>
   );
 };

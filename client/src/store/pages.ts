@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import React from "react";
 
 type Page = {
   route: string;
@@ -6,4 +6,8 @@ type Page = {
   content: string;
 };
 
-export const pages = writable<Page[] | null>(null);
+export const usePages = (): [Page[] | null, (p: Page[] | null) => void] => {
+  const [pages, setPages] = React.useState<Page[] | null>(null);
+  
+  return [pages, setPages];
+};
