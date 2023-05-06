@@ -167,7 +167,7 @@ export default function MyComponent() {
           <div className="mb-3">
             <label htmlFor="destination">Destination</label>
             {graph.evidence && graph.evidence.length > 0 &&
-              <Select id="source" items={graph.evidence.map(e => ({ value: e.id, name: e.name }))} value={destination} onChange={e => destination = e.target.value} />
+              <Select id="destination" items={graph.evidence.map(e => ({ value: e.id, name: e.name }))} value={destination} onChange={e => destination = e.target.value} />
             }
           </div>
           <Button onClick={() => submitConnection(false)}>Submit</Button>

@@ -32,7 +32,7 @@ const options = {
 		global: "window",
 		process: "{}",
 		"process.env": "{}",
-		"process.env.NODE_ENV": nodeEnv,
+		"process.env.NODE_ENV": "'development'",
 	},
 	logLevel: "info"
 };

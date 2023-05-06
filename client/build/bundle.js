@@ -2829,7 +2829,7 @@ var require_router_cjs = __commonJS({
             return param == null ? "" : param;
           }
           if (param == null) {
-            invariant(false, 'Missing ":' + key + '" param');
+            (false, 'Missing ":' + key + '" param');
           }
           return param;
         }

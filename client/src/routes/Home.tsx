@@ -7,7 +7,7 @@ const CTFComponent: React.FC<Props> = () => {
   const initialFlag = 'flag{you_found_twitter}';
 
   return (
-    <div className="text-center">
+    <div className="text-center text-black">
       <div className="mb-4">
         <h3>Welcome to CTFg!</h3>
         <p className="text-center">Register/Login to get started.</p>

@@ -13,7 +13,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
   const [path, updatePath] = useState(window.location.pathname);
   const { user, setUser, logout } = useUser();
   const userLoggedIn = !!user;
-
+  
   return (
     <Navbar>
       <Navbar.Brand>CTFg</Navbar.Brand>
@@ -25,7 +25,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
             (!userLoggedIn && !l.hideWhenUnauthed)
           ) {
             return (
-              <Navbar.Link active={l.to === path}>
+              <Navbar.Link key={l.label} active={l.to === path}>
                 <Link
                   onClick={() => updatePath(l.to)}
                   to={l.to}
