@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { ctfg } from "../service";
-import { challenges } from "../store/challenges";
+import { challenges, setChallenges } from "../store/challenges";
+import React from "react";
 
 interface Challenge {
   name: string;
@@ -14,7 +15,7 @@ export default function ChallengeList() {
     async function fetchChallenges() {
       try {
         const resp = await ctfg.GetChallenges({});
-        challenges.set(resp.challenges);
+        setChallenges(resp.challenges);
       } catch (e) {
         console.error(e);
       }

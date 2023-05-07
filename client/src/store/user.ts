@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { ctfg } from "../service";
+import { atomWithStorage } from 'jotai/utils'
+import { useAtom } from 'jotai'
 
 interface User {
 	username: string;
 }
+const userAtom = atomWithStorage<User | null>('user', null)
 
 export const useUser = (): [User | null, (u: User | null) => void, () => void] => {
-	const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useAtom(userAtom);
 	const logout = () => setUser(null);
 	return [user, setUser, logout];
 };
@@ -17,7 +20,7 @@ export const useAuthStatus = (): [string | null, (string) => void, string | null
 	return [success, setSuccess, error, setError];
 };
 
-export const useLogin = (): [(email: string, password: string) => void] => {
+export const useLogin = (): [(email: string, password: string) => void, string, string] => {
 	const [user, setUser] = useUser();
 	const [success, setSuccess, error, setError] = useAuthStatus();
 
@@ -35,12 +38,11 @@ export const useLogin = (): [(email: string, password: string) => void] => {
 			setError(e.toString());
 		}
 	};
-	return [login];
+	return [login, success, error];
 };
 
-export const useRegister = (): [(username: string, email: string, password: string) => void] => {
-	const [success, setSuccess] = useAuthStatus();
-	const [error, setError] = useAuthStatus();
+export const useRegister = (): [(username: string, email: string, password: string) => void, string, string] => {
+	const [success, setSuccess, error, setError] = useAuthStatus();
 
 	const register = async (username: string, email: string, password: string) => {
 		try {
@@ -54,5 +56,5 @@ export const useRegister = (): [(username: string, email: string, password: stri
 			setError(e.toString());
 		}
 	};
-	return [register];
+	return [register, success, error];
 };

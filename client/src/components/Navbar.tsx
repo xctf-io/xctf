@@ -11,7 +11,8 @@ interface NavbarProps {
 
 const NavbarComponent = ({ links }: NavbarProps) => {
   const [path, updatePath] = useState(window.location.pathname);
-  const { user, setUser, logout } = useUser();
+  const [user, setUser, logout] = useUser();
+
   const userLoggedIn = !!user;
   
   return (

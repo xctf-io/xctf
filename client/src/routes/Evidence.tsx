@@ -4,7 +4,6 @@ import type { GetDiscoveredEvidenceResponse } from "../rpc/ctfg";
 import ReactFlow from 'reactflow';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { Alert, TextInput, Select, Button } from 'flowbite-react';
-import { error } from 'console';
 
 type Node = {
   data: {

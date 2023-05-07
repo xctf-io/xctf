@@ -67,7 +67,7 @@ function App() {
 		<main className="text-white">
 			<Router>
 				<Navbar links={links} />
-				<div className="max-w-2xl px-6 py-16 mx-auto space-y-12">
+				<div className="max-w-2xl px-6 py-16 mx-auto space-y-12 text-black">
 					<Routes>
 						{links.map((link) => (
 							<Route key={link.to} path={link.to} Component={link.Component} />

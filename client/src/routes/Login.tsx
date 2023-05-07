@@ -9,7 +9,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const doLogin = useLogin()[0];
+  const [doLogin, success, error] = useLogin();
 
   // focus the email input on mount
   useEffect(() => {
@@ -36,7 +36,7 @@ const Login = () => {
         <Button onClick={() => doLogin(email, password)}>Log in</Button>
       </div>
 
-      {/* <AuthFlowInfo /> */}
+      <AuthFlowInfo success={success} error={error}/>
     </div>
   );
 };

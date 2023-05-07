@@ -2,8 +2,9 @@ import { useState } from "react";
 
 type Challenge = {
   name: string;
-  description: string;
+  category: string;
   value: number;
+  solved: boolean;
 };
 
-export const challenges = useState<Challenge[] | null>(null);
+export const [challenges, setChallenges] = useState<Challenge[] | null>(null);

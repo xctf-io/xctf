@@ -7,7 +7,7 @@ const CTFComponent: React.FC<Props> = () => {
   const initialFlag = 'flag{you_found_twitter}';
 
   return (
-    <div className="text-center text-black">
+    <div className="text-center">
       <div className="mb-4">
         <h3>Welcome to CTFg!</h3>
         <p className="text-center">Register/Login to get started.</p>
@@ -33,7 +33,7 @@ const CTFComponent: React.FC<Props> = () => {
         the killer to justice? Login to{' '}
         <a style={{ color: 'blue' }} href="http://twitter-flask.chals.mcpshsf.com/">
           http://twitter-flask.chals.mcpshsf.com/
-        </a>{' '}
+        </a>
         with the username <b>“sadamana”</b> and password <b>“s4d4m4n4”</b> to get started.
       </p>
       <br />

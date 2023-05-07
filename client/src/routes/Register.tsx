@@ -11,7 +11,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const registerUser = useRegister()[0];
+  const [registerUser, success, error] = useRegister();
 
   return (
     <div>
@@ -35,7 +35,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
       <div className="mb-6">
         <Button onClick={() => registerUser(username, email, password)}>Register</Button>
       </div>
-      {/* <AuthFlowInfo /> */}
+      <AuthFlowInfo success={success} error={error}/>
     </div>
   );
 };
