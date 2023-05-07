@@ -5,9 +5,7 @@ import React from "react";
 
 interface Challenge {
   name: string;
-  category: string;
   value: number;
-  solved: boolean;
 }
 
 export default function ChallengeList() {
@@ -23,7 +21,20 @@ export default function ChallengeList() {
     fetchChallenges();
   }, []);
 
-  function sort(key: string) {}
+  function sort(key: string) {
+    if (challenges) {
+      const sorted = challenges.sort((a: Challenge, b: Challenge) => {
+        if (a[key] < b[key]) {
+          return -1;
+        }
+        if (a[key] > b[key]) {
+          return 1;
+        }
+        return 0;
+      });
+      setChallenges(sorted);
+    }
+  }
 
   return (
     <table>
@@ -55,9 +66,7 @@ export default function ChallengeList() {
         {challenges && challenges.map((challenge: Challenge) => (
           <tr key={challenge.name}>
             <td>{challenge.name}</td>
-            <td>{challenge.category}</td>
             <td>{challenge.value}</td>
-            <td>{challenge.solved ? "Yes" : "No"}</td>
           </tr>
         ))}
       </tbody>

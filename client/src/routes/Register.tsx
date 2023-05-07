@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRegister } from '../store/user';
 import AuthFlowInfo from './AuthFlowInfo';
 import { Label, TextInput, Button } from 'flowbite-react';
+import { HiMail } from 'react-icons/hi';
 
 interface RegisterProps {}
 
@@ -24,7 +25,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
 
       <div className="mb-6">
         <Label htmlFor="email">Email</Label>
-        <TextInput id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
+        <TextInput id="email" type="email" icon={HiMail} value={email} onChange={e => setEmail(e.target.value)} />
       </div>
 
       <div className="mb-6">

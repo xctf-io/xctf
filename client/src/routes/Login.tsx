@@ -4,6 +4,7 @@ import AuthFlowInfo from './AuthFlowInfo';
 
 import { useLogin } from '../store/user';
 import { Label, TextInput, Button } from 'flowbite-react';
+import { HiMail } from 'react-icons/hi';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -23,8 +24,8 @@ const Login = () => {
       </h2>
 
       <div className="mb-6">
-        <Label htmlFor="email">Email</Label>
-        <TextInput id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Label htmlFor="email" >Email</Label>
+        <TextInput id="email" icon={HiMail} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
       </div>
 
       <div className="mb-6">

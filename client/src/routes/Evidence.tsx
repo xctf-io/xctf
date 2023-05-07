@@ -1,25 +1,14 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { ctfg } from "../service";
 import type { GetDiscoveredEvidenceResponse } from "../rpc/ctfg";
-import ReactFlow from 'reactflow';
+import ReactFlow, { Background, Controls, MarkerType, MiniMap, applyNodeChanges } from 'reactflow';
+import 'reactflow/dist/style.css';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
-import { Alert, TextInput, Select, Button } from 'flowbite-react';
-
-type Node = {
-  data: {
-    label: string
-  },
-  position: {
-    x: number
-    y: number
-  }
-}
+import { Alert, TextInput, Select, Button, Checkbox } from 'flowbite-react';
+import dagre from 'dagre';
 
 let evidence: string = '';
-let source: number = 0;
-let destination: number = 0;
 let report: string = '';
-let submittingFlag = true;
 
 export default function MyComponent() {
   const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>({
@@ -27,9 +16,11 @@ export default function MyComponent() {
     connections: [],
     evidence: []
   });
-  const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [submittingFlag, setSubmittingFlag] = useState<boolean>(true);
+  const [source, setSource] = useState<number>(0);
+  const [destination, setDestination] = useState<number>(0);
 
   const graphRef: MutableRefObject<GetDiscoveredEvidenceResponse> = useRef<GetDiscoveredEvidenceResponse>({
     report: '',
@@ -37,11 +28,62 @@ export default function MyComponent() {
     evidence: []
   });
 
+  const dagreGraph = new dagre.graphlib.Graph();
+  const nodeWidth = 172;
+  const nodeHeight = 36;
+  dagreGraph.setDefaultEdgeLabel(() => ({}));
+  const getLayoutedElements = (nodes, edges) => {
+    dagreGraph.setGraph({ rankdir: 'TB' });
+    nodes.forEach((node) => {
+      dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+    });
+    edges.forEach((edge) => {
+      dagreGraph.setEdge(edge.source, edge.target);
+    });
+    dagre.layout(dagreGraph);
+    
+    nodes.forEach((node) => {
+      const n = dagreGraph.node(node.id);
+      node.targetPosition = 'top';
+      node.sourcePosition = 'bottom';
+      node.position = {
+        x: n.x - nodeWidth / 2,
+        y: n.y - nodeHeight / 2,
+      }
+    });
+    return { nodes, edges };
+  };
+
   async function loadDiscoveredEvidence() {
     try {
       const resp = await ctfg.GetDiscoveredEvidence({});
       graphRef.current = resp;
       setGraph(resp);
+      setSource(resp.evidence[0].id);
+      setDestination(resp.evidence[0].id);
+      const tempNodes = resp.evidence.map((e) => {
+        return {
+          id: e.id.toString(),
+          data: { label: e.name },
+          position: {
+            x: e.x,
+            y: e.y
+          }
+        };
+      });
+      const tempEdges = resp.connections.map(c => ({
+        id: `${c.source}-${c.destination}`,
+        source: c.source.toString(),
+        target: c.destination.toString(),
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20
+        }
+      }));
+      const { nodes, edges } = getLayoutedElements(tempNodes, tempEdges);
+      setNodes(nodes);
+      setEdges(edges);
       report = resp.report; // report is not a state variable, so we update it directly
     } catch (e) {
       console.error(e);
@@ -52,40 +94,28 @@ export default function MyComponent() {
     loadDiscoveredEvidence();
   }, []);
 
-  const nodes = graph.evidence.map((e) => {
+  const initialNodes = graph.evidence.map((e) => {
     return {
       id: e.id.toString(),
       data: { label: e.name },
       position: {
         x: e.x,
         y: e.y
-      },
-      bgColor: e.challengeID ? '#B9F3E4' : 'white',
-      height: 100,
-      width: 100,
-      clickCallback: async (node: Node) => {
-        // try {
-        //     const resp = await ctfg.SubmitEvidence({
-        //         evidence: evidence,
-        //         x: Math.floor(node.position.x),
-        //         y: Math.floor(node.position.y),
-        //         isFlag: submittingFlag,
-        //         remove: false,
-        //     })
-        //     await loadDiscoveredEvidence();
-        //     successMsg.set('submitted evidence');
-        // } catch(e) {
-        //     errorMsg.set(e)
-        // }
       }
     };
   });
+  const [nodes, setNodes] = useState(initialNodes);
+  const onNodesChange = useCallback(
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    []
+  );
 
-  const edges = graph.connections.map(c => ({
+  const initialEdges = graph.connections.map(c => ({
     id: `${c.source}-${c.destination}`,
     source: c.source.toString(),
     target: c.destination.toString(),
   }));
+  const [edges, setEdges] = useState(initialEdges);
 
   function submitEvidence(remove: boolean) {
     ctfg.SubmitEvidence({
@@ -147,11 +177,11 @@ export default function MyComponent() {
         <div>
           <div className="mb-3">
             <label htmlFor="flag">Evidence</label>
-            <TextInput id="flag" type="text" value={evidence} onChange={e => evidence = e.target.value} />
+            <TextInput id="flag" type="text" onChange={e => evidence = e.target.value} />
           </div>
           <div className="mb-3">
             <label htmlFor="submitting-flag">Submitting a flag?</label>
-            <input id="submitting-flag" type="checkbox" checked={submittingFlag} onChange={e => submittingFlag = e.target.checked} />
+            <Checkbox id="submitting-flag" checked={submittingFlag} onChange={e => setSubmittingFlag(e.target.checked)} />
           </div>
           <Button onClick={() => submitEvidence(false)}>Submit</Button>
           <Button color="red" onClick={() => submitEvidence(true)}>Delete</Button>
@@ -160,13 +190,17 @@ export default function MyComponent() {
           <div className="mb-3">
             <label htmlFor="source">Source</label>
             {graph.evidence && graph.evidence.length > 0 &&
-              <Select id="source" items={graph.evidence.map(e => ({ value: e.id, name: e.name }))} value={source} onChange={e => source = e.target.value} />
+              <Select id="source" value={source} onChange={e => setSource(Number(e.target.value))} >
+                {graph.evidence.map(e => <option value={e.id}>{e.name}</option>)}
+              </Select>
             }
           </div>
           <div className="mb-3">
             <label htmlFor="destination">Destination</label>
             {graph.evidence && graph.evidence.length > 0 &&
-              <Select id="destination" items={graph.evidence.map(e => ({ value: e.id, name: e.name }))} value={destination} onChange={e => destination = e.target.value} />
+              <Select id="destination" value={destination} onChange={e => setDestination(Number(e.target.value))} >
+                {graph.evidence.map(e => <option value={e.id}>{e.name}</option>)}
+              </Select>
             }
           </div>
           <Button onClick={() => submitConnection(false)}>Submit</Button>
@@ -174,7 +208,12 @@ export default function MyComponent() {
         </div>
       </div>
       {nodes.length > 0 &&
-        <ReactFlow nodes={nodes} edges={edges} />
+        <div className="mt-8 border border-gray-900 w-full h-[400px]">
+        <ReactFlow nodes={nodes} onNodesChange={onNodesChange} edges={edges} fitView>
+          <Background />
+          <Controls />
+        </ReactFlow>
+        </div>
       }
     </div>
   );
