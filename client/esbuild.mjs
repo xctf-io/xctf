@@ -1,9 +1,10 @@
 import esbuild from "esbuild";
 import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
 
-const prodBuild = process.env.BUILD === "true";
+const devBuild = process.env.DEV === "true";
+const watchToggle = false;
 
-const watch = !prodBuild
+const watch = watchToggle
 	? {
 			onRebuild: () => {
 				console.log("rebuilt!");
@@ -11,9 +12,9 @@ const watch = !prodBuild
 	  }
 	: undefined;
 
-const minify = prodBuild;
+const minify = devBuild ? false : true;
 
-const nodeEnv = prodBuild ? "'production'" : "'development'";
+const nodeEnv = devBuild ? '"development"' : '"production"';
 
 const options = {
 	entryPoints: ["./src/main.tsx"],
@@ -26,18 +27,18 @@ const options = {
 		".woff": "file",
 	},
 	plugins: [nodeModulesPolyfillPlugin()],
-	minify: false,
+	minify: minify,
 	sourcemap: "linked",
 	define: {
 		global: "window",
 		process: "{}",
 		"process.env": "{}",
-		"process.env.NODE_ENV": "'development'",
+		"process.env.NODE_ENV": nodeEnv,
 	},
 	logLevel: "info"
 };
 
-if (prodBuild) {
+if (!watchToggle) {
 	await esbuild.build(options);
 } else {
 	const context = await esbuild.context(options);
