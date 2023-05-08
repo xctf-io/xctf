@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import AuthFlowInfo from "./AuthFlowInfo";
 
 import { useLogin } from "../store/user";
-import { Input, Button, Text } from "@nextui-org/react";
+import { Input, Button, Text, useTheme } from "@nextui-org/react";
 import { HiMail } from "react-icons/hi";
 
 const Login = () => {
@@ -11,6 +11,7 @@ const Login = () => {
 	const [password, setPassword] = useState("");
 
 	const [doLogin, success, error] = useLogin();
+	const { type, isDark } = useTheme();
 
 	// focus the email input on mount
 	useEffect(() => {
@@ -18,32 +19,66 @@ const Login = () => {
 	}, []);
 
 	return (
-		<div className="flex flex-col gap-6 place-content-center mx-64">
-			<Input
-				id="email"
-				label="Email"
-				type="email"
-				value={email}
-				onChange={(e) => setEmail(e.target.value)}
-				contentRight={<HiMail />}
-				width="100%"
-			/>
+		<div className="grid grid-cols-2 w-full">
+			<div className="flex flex-col gap-6 ml-48 mr-32 justify-center">
+				<div>
+					<h1 className="text-5xl font-bold mb-0">Welcome back!</h1>
+					<Text weight="light">Login to continue</Text>
+				</div>
+				<Input
+					id="email"
+					label="Email"
+					type="email"
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+					contentRight={<HiMail />}
+					width="100%"
+					size="xl"
+				/>
 
-			<Input.Password
-				id="password"
-				label="Password"
-				value={password}
-				onChange={(e) => setPassword(e.target.value)}
-				width="100%"
-			/>
+				<Input.Password
+					id="password"
+					label="Password"
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+					width="100%"
+					size="xl"
+				/>
 
-			<Button className="mt-6" auto onPress={() => doLogin(email, password)}>
-				<span>Log In</span>
-			</Button>
+				<Button
+					className="mt-6"
+					size="xl"
+					auto
+					onPress={() => doLogin(email, password)}
+				>
+					<span>Log In</span>
+				</Button>
 
-			<Text weight="thin" className="text-center">Don't have an account? Register <a href="/register">here</a>.</Text>
+				<Text weight="thin" className="text-center">
+					Don't have an account? Register <a href="/register">here</a>.
+				</Text>
 
-			<AuthFlowInfo success={success} error={error} />
+				<AuthFlowInfo success={success} error={error} />
+			</div>
+			{isDark ? (
+				<div
+					className="inset-0 bg-cover"
+					style={{
+						backgroundImage:
+							'url("https://images.unsplash.com/photo-1590069261209-f8e9b8642343?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1376&q=80")',
+						height: "calc(100vh - 80px)",
+					}}
+				/>
+			) : (
+				<div
+					className="inset-0 bg-cover"
+					style={{
+						backgroundImage:
+							'url("https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3087&q=80")',
+						height: "calc(100vh - 80px)",
+					}}
+				/>
+			)}
 		</div>
 	);
 };

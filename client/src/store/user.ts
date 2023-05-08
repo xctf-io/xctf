@@ -54,7 +54,7 @@ export const useRegister = (): [(username: string, email: string, password: stri
 				email,
 				password,
 			});
-			setSuccess("Registration success! Go to login.");
+			setSuccess("Registration success! Logging in.");
 		} catch (e) {
 			setError(e.toString());
 		}

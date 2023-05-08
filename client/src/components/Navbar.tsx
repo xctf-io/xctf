@@ -104,7 +104,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 										as="button"
 										color="primary"
 										size="md"
-										src="https://api.dicebear.com/6.x/bottts/svg?eyes=frame2&face=round01&mouth=diagram&sides=antenna02&baseColor=3070ED&top=horns"
+										src={"https://api.dicebear.com/6.x/bottts/svg?baseColor=3070ED&seed="+user.username}
 									/>
 								</Dropdown.Trigger>
 							</Navbar.Item>

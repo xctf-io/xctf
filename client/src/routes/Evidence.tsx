@@ -13,7 +13,7 @@ import { useState, useEffect, useRef, MutableRefObject } from "react";
 import { Text, Input, Dropdown, Button, Checkbox } from "@nextui-org/react";
 import dagre from "dagre";
 import DownloadButton from "../components/DownloadButton";
-import { HiPaperAirplane, HiTrash, HiLink } from "react-icons/hi2";
+import { HiPaperAirplane, HiTrash, HiLink, HiChevronDown } from "react-icons/hi2";
 
 let evidence: string = "";
 let report: string = "";
@@ -247,14 +247,14 @@ export default function MyComponent() {
 								Delete
 							</Button>
 						</div>
-						{graph.evidence && graph.evidence.length > 0 && (
+						{graph.evidence && (
 							<>
 								<h2 className="mt-16">Connections</h2>
 								<div className="grid grid-cols-2 gap-x-4">
 									<Text>Source</Text>
 									<Text>Destination</Text>
-									<Dropdown>
-										<Dropdown.Button flat color="secondary">
+									<Dropdown isDisabled={graph.evidence.length == 0} >
+										<Dropdown.Button flat color="secondary" >
 											{sourceName}
 										</Dropdown.Button>
 										<Dropdown.Menu
@@ -263,13 +263,14 @@ export default function MyComponent() {
 											disallowEmptySelection
 											selectionMode="single"
 											onSelectionChange={updateSourceSelect}
+											containerCss={{ border: "none" }}
 										>
 											{graph.evidence.map((e) => (
 												<Dropdown.Item key={e.id}>{e.name}</Dropdown.Item>
 											))}
 										</Dropdown.Menu>
 									</Dropdown>
-									<Dropdown>
+									<Dropdown isDisabled={graph.evidence.length == 0}>
 										<Dropdown.Button flat color="secondary">
 											{destinationName}
 										</Dropdown.Button>
@@ -278,6 +279,7 @@ export default function MyComponent() {
 											disallowEmptySelection
 											selectionMode="single"
 											onSelectionChange={updateDestinationSelect}
+											containerCss={{ border: "none" }}
 										>
 											{graph.evidence.map((e) => (
 												<Dropdown.Item key={e.id}>{e.name}</Dropdown.Item>
@@ -305,24 +307,22 @@ export default function MyComponent() {
 						)}
 					</div>
 					<div className="col-span-2">
-						{nodes.length > 0 && (
-							<div className="mx-8 h-[95%] w-full relative top-1/2 -translate-y-1/2">
-								<DownloadButton />
-								<ReactFlow
-									nodes={nodes}
-									onNodesChange={onNodesChange}
-									edges={edges}
-									fitView
-								>
-									<Background />
-									<Controls
-										style={{
-											background: "white",
-										}}
-									/>
-								</ReactFlow>
-							</div>
-						)}
+						<div className="mx-8 h-[95%] w-full relative top-1/2 -translate-y-1/2">
+							<DownloadButton />
+							<ReactFlow
+								nodes={nodes}
+								onNodesChange={onNodesChange}
+								edges={edges}
+								fitView
+							>
+								<Background />
+								<Controls
+									style={{
+										background: "white",
+									}}
+								/>
+							</ReactFlow>
+						</div>
 					</div>
 				</div>
 			</div>
