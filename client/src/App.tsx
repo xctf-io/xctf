@@ -12,6 +12,8 @@ import { NavLink } from "./types/nav";
 import { ctfg } from "./service";
 import { useUser } from "./store/user";
 import { usePages } from "./store/pages";
+import useDarkMode from "use-dark-mode";
+import { NextUIProvider, createTheme } from "@nextui-org/react";
 
 interface Props {}
 
@@ -40,7 +42,7 @@ function App() {
 			showWhenAuthed: false,
 		},
 		{
-			label: "Register",
+			label: "Sign Up",
 			to: "/register",
 			Component: Register,
 			showWhenAuthed: false,
@@ -51,6 +53,9 @@ function App() {
 		async function fetchCurrentUser() {
 			try {
 				setLinks(navBarLinks);
+				if (!user) {
+					return;
+				}
 				const resp = await ctfg.CurrentUser({});
 				setUser({
 					username: resp.username,
@@ -63,11 +68,20 @@ function App() {
 		fetchCurrentUser();
 	}, []);
 
+	const lightTheme = createTheme({
+		type: "light",
+	});
+
+	const darkTheme = createTheme({
+		type: "dark",
+	});
+	const darkMode = useDarkMode(false);
+
 	return (
-		<main className="text-white">
-			<Router>
-				<Navbar links={links} />
-				<div className="max-w-2xl px-6 py-16 mx-auto space-y-12 text-black">
+		<NextUIProvider theme={darkMode.value ? darkTheme : lightTheme}>
+			<main>
+				<Router>
+					<Navbar links={links} />
 					<Routes>
 						{links.map((link) => (
 							<Route key={link.to} path={link.to} Component={link.Component} />
@@ -86,9 +100,9 @@ function App() {
 							</>
 						)}
 					</Routes>
-				</div>
-			</Router>
-		</main>
+				</Router>
+			</main>
+		</NextUIProvider>
 	);
 }
 

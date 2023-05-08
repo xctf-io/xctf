@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'flowbite-react';
+import { Button } from '@nextui-org/react';
 
 interface Props {}
 
@@ -7,13 +7,13 @@ const CTFComponent: React.FC<Props> = () => {
   const initialFlag = 'flag{you_found_twitter}';
 
   return (
-    <div className="text-center">
+    <div className="text-center font-medium sm:mx-64 mt-8 flex flex-col">
       <div className="mb-4">
-        <h3>Welcome to CTFg!</h3>
-        <p className="text-center">Register/Login to get started.</p>
+        <h1>Welcome to CTFg!</h1>
+        <h4>Register/Login to get started.</h4>
       </div>
       <hr />
-      <p>
+      <p className="mt-4">
         Are you ready to embark on a thrilling journey into the world of cybersecurity and digital forensics? Today, you
         will step into the shoes of a detective and use your skills to solve a complex cybercrime that has left law
         enforcement stumped.
@@ -27,23 +27,22 @@ const CTFComponent: React.FC<Props> = () => {
         Finally, write up your evidence and conclusions so they can stand up in "court."
       </p>
       <br />
-      <p>
+      <p className="mb-4">
         The stakes are high, and failure is not an option. The fate of the case rests in your hands, and the pressure is
         on to solve the crime before it's too late. Are you up for the challenge? Can you rise to the occasion and bring
         the killer to justice? Login to{' '}
-        <a style={{ color: 'blue' }} href="http://twitter-flask.chals.mcpshsf.com/">
+        <a href="http://twitter-flask.chals.mcpshsf.com/">
           http://twitter-flask.chals.mcpshsf.com/
-        </a>
-        with the username <b>“sadamana”</b> and password <b>“s4d4m4n4”</b> to get started.
+        </a>{' '}
+        with the username <span className="font-extrabold">“sadamana”</span> and password <span className='font-extrabold'>“s4d4m4n4”</span> to get started.
       </p>
-      <br />
       <hr />
-      <div className="mt-4">
-        <p className="text-center">For help related to the competition, go to the wiki. It will help you a lot.</p>
-        <Button color="blue" href="https://wiki.ctfg.io">
+      <p className='mt-4'>For help related to the competition, go to the wiki. It will help you a lot.</p>
+      <Button className="mt-4" onPress={() =>
+        document.location='https://wiki.ctfg.io'
+      }>
           wiki
-        </Button>
-      </div>
+      </Button>
     </div>
   );
 };

@@ -1,15 +1,14 @@
 import React from 'react';
-import { useAuthStatus } from '../store/user';
-import { Alert } from 'flowbite-react';
+import { Text } from '@nextui-org/react';
 
 const UserAlerts = ({success, error}) => {
   return (
     <div>
       {success && (
-        <Alert color="green">{success}</Alert>
+        <Text color="success">{success}</Text>
       )}
       {error && (
-        <Alert color="red">{error}</Alert>
+        <Text color="error">{error}</Text>
       )}
     </div>
   );

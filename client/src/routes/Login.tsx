@@ -1,45 +1,51 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import AuthFlowInfo from './AuthFlowInfo';
+import React from "react";
+import { useEffect, useState } from "react";
+import AuthFlowInfo from "./AuthFlowInfo";
 
-import { useLogin } from '../store/user';
-import { Label, TextInput, Button } from 'flowbite-react';
-import { HiMail } from 'react-icons/hi';
+import { useLogin } from "../store/user";
+import { Input, Button, Text } from "@nextui-org/react";
+import { HiMail } from "react-icons/hi";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
 
-  const [doLogin, success, error] = useLogin();
+	const [doLogin, success, error] = useLogin();
 
-  // focus the email input on mount
-  useEffect(() => {
-    document.querySelector('input')?.focus();
-  }, []);
+	// focus the email input on mount
+	useEffect(() => {
+		document.querySelector("input")?.focus();
+	}, []);
 
-  return (
-    <div>
-      <h2 className="text-center">
-        Log in
-      </h2>
+	return (
+		<div className="flex flex-col gap-6 place-content-center mx-64">
+			<Input
+				id="email"
+				label="Email"
+				type="email"
+				value={email}
+				onChange={(e) => setEmail(e.target.value)}
+				contentRight={<HiMail />}
+				width="100%"
+			/>
 
-      <div className="mb-6">
-        <Label htmlFor="email" >Email</Label>
-        <TextInput id="email" icon={HiMail} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      </div>
+			<Input.Password
+				id="password"
+				label="Password"
+				value={password}
+				onChange={(e) => setPassword(e.target.value)}
+				width="100%"
+			/>
 
-      <div className="mb-6">
-        <Label htmlFor="password">Password</Label>
-        <TextInput id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      </div>
+			<Button className="mt-6" auto onPress={() => doLogin(email, password)}>
+				<span>Log In</span>
+			</Button>
 
-      <div className="mb-6">
-        <Button onClick={() => doLogin(email, password)}>Log in</Button>
-      </div>
+			<Text weight="thin" className="text-center">Don't have an account? Register <a href="/register">here</a>.</Text>
 
-      <AuthFlowInfo success={success} error={error}/>
-    </div>
-  );
+			<AuthFlowInfo success={success} error={error} />
+		</div>
+	);
 };
 
 export default Login;

@@ -10,7 +10,9 @@ const userAtom = atomWithStorage<User | null>('user', null)
 
 export const useUser = (): [User | null, (u: User | null) => void, () => void] => {
 	const [user, setUser] = useAtom(userAtom);
-	const logout = () => setUser(null);
+	const logout = () => {
+		setUser(null);
+	};
 	return [user, setUser, logout];
 };
 
@@ -34,6 +36,7 @@ export const useLogin = (): [(email: string, password: string) => void, string, 
 				username: resp.username,
 			});
 			setSuccess("Login success!");
+			document.location.href = '/evidence';
 		} catch (e) {
 			setError(e.toString());
 		}

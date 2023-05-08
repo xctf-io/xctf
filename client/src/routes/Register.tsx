@@ -1,44 +1,57 @@
 import React from "react";
 import { useState } from "react";
-import { useRegister } from '../store/user';
-import AuthFlowInfo from './AuthFlowInfo';
-import { Label, TextInput, Button } from 'flowbite-react';
-import { HiMail } from 'react-icons/hi';
+import { useRegister } from "../store/user";
+import AuthFlowInfo from "./AuthFlowInfo";
+import { Input, Button } from "@nextui-org/react";
+import { HiMail } from "react-icons/hi";
 
 interface RegisterProps {}
 
 const Register: React.FC<RegisterProps> = ({}) => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+	const [username, setUsername] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
 
-  const [registerUser, success, error] = useRegister();
+	const [registerUser, success, error] = useRegister();
 
-  return (
-    <div>
-      <h2 className="text-center">Register</h2>
+	return (
+		<div className="flex flex-col gap-6 place-content-center mx-64">
+			<Input
+				id="username"
+				label="Username"
+				type="text"
+				value={username}
+				onChange={(e) => setUsername(e.target.value)}
+			/>
 
-      <div className="mb-6">
-        <Label htmlFor="username">Username</Label>
-        <TextInput id="username" type="text" value={username} onChange={e => setUsername(e.target.value)} />
-      </div>
+			<Input
+				id="email"
+				type="email"
+				label="Email"
+				value={email}
+				onChange={(e) => setEmail(e.target.value)}
+				contentRight={<HiMail />}
+			/>
 
-      <div className="mb-6">
-        <Label htmlFor="email">Email</Label>
-        <TextInput id="email" type="email" icon={HiMail} value={email} onChange={e => setEmail(e.target.value)} />
-      </div>
+			<Input.Password
+				id="password"
+				label="Password"
+				type="password"
+				value={password}
+				onChange={(e) => setPassword(e.target.value)}
+			/>
 
-      <div className="mb-6">
-        <Label htmlFor="password">Password</Label>
-        <TextInput id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-      </div>
-
-      <div className="mb-6">
-        <Button onClick={() => registerUser(username, email, password)}>Register</Button>
-      </div>
-      <AuthFlowInfo success={success} error={error}/>
-    </div>
-  );
+			<Button
+				onPress={() => registerUser(username, email, password)}
+				href="/login"
+				className="mt-6"
+				auto
+			>
+				Create account
+			</Button>
+			<AuthFlowInfo success={success} error={error} />
+		</div>
+	);
 };
 
 export default Register;
