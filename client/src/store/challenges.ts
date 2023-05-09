@@ -1,9 +1,8 @@
-import { writable } from "svelte/store";
+import { useState } from "react";
 
 type Challenge = {
-	name: string;
-	description: string;
-	value: number;
+  name: string;
+  value: number;
 };
 
-export const challenges = writable<Challenge[] | null>(null);
+export const [challenges, setChallenges] = useState<Challenge[] | null>(null);

@@ -1,9 +1,9 @@
-import type { SvelteComponent } from "svelte";
+import type { ComponentType } from "react";
 
 export interface NavLink {
 	label: string;
 	to: string;
-	Component: typeof SvelteComponent;
+	Component: ComponentType<any>;
 	showWhenAuthed: boolean;
 	hideWhenUnauthed?: boolean;
 }
