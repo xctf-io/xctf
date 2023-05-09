@@ -2,15 +2,21 @@ package main
 
 import (
 	"context"
-	"github.com/rs/zerolog/log"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 
+	"github.com/glebarez/sqlite"
+	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+
 	"gopkg.in/yaml.v3"
 
 	"github.com/ctfg/ctfg/gen/ctfg"
+	"github.com/ctfg/ctfg/pkg/models"
 	"github.com/twitchtv/twirp"
 	"github.com/urfave/cli/v2"
 )
@@ -78,13 +84,40 @@ func crawlDir(dir string, cb func(chal Challenge) error) error {
 	})
 }
 
+
+func UpsertChallenge(name string, flag string) (error) {
+	var openedDb gorm.Dialector
+	openedDb = sqlite.Open("gorm.db")
+	db, err := gorm.Open(openedDb, &gorm.Config{})
+	if err != nil {
+		return err
+	}
+	challenge := models.Challenge{
+		Name: name,
+		Flag: flag,
+	}
+
+	if challenge.Name == "" || challenge.Flag == "" {
+		return errors.New("name and flag must be set")
+	}
+
+	res := db.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "name"}},
+		DoUpdates: clause.Assignments(map[string]interface{}{"flag": flag}),
+	}).Create(&challenge)
+	if res.Error != nil {
+		return res.Error
+	}
+	return nil
+}
+
 func main() {
 	app := &cli.App{
 		Name: "manage",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "url",
-				Required: true,
+				Required: false,
 			},
 			&cli.StringFlag{
 				Name:     "email",
@@ -102,7 +135,6 @@ func main() {
 					{
 						Name: "sync",
 						Action: func(ctx *cli.Context) error {
-							url := ctx.String("url")
 							dir := ctx.Args().First()
 
 							// walk dir looking for files named "chal.yaml"
@@ -113,11 +145,7 @@ func main() {
 									return nil
 								}
 
-								client := ctfg.NewAdminJSONClient(url, http.DefaultClient, twirp.WithClientPathPrefix("/twirp/admin"))
-								_, err := client.UpsertChallenge(ctx.Context, &ctfg.UpsertChallengeRequest{
-									ChallengeName: chal.Name,
-									Flag:          chal.Flag,
-								})
+								err := UpsertChallenge(chal.Name, chal.Flag)
 								return err
 							}
 							return crawlDir(dir, cb)
