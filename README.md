@@ -17,22 +17,33 @@ Currently in alpha.
 CTFg is developed with:
 - [Go](https://go.dev/): This is used for the server.
 	- Reasoning: This was chosen to make development and deployment easy and consistent. While python or javascript would be more approachable languages to more people, Go's types and tools are more conducive for CTFg being extendable. Additionally, plugins for CTFg, written in any language, are made possible through projects such as [this](https://github.com/hashicorp/go-plugin).
-- [Svelte](https://svelte.dev/): This is used for client.
-	- Reasoning: This was chosen because using svelte is dead simple and approachable to those who are not familiar with writing websites, while still having the powerful features present in modern js frameworks. If you are not familiar with this, the [tutorial](https://svelte.dev/tutorial/basics) should teach you all you need to know.
+- [React](https://react.dev/): This is used for client.
+	- Reasoning: This was chosen because using react has the best libraries and support by the community. While we prefer other frameworks, React's ecosystem is simply unmatched. If you are not familiar with React, the [tutorial](https://react.dev/learn) should teach you all you need to know.
 
-### Hacking
-Web site
+### Running Locally
+#### Live reloads
+To enable live reloads, you will need to install [air](https://github.com/cosmtrek/air)
+```
+curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+```
+Then run:
+```
+air
+```
+This will reload the website and server on any changes.
+#### Web site
+Build the client for development:
+```
+cd client
+yarn dev
+```
+Build the client for production:
 ```
 cd client
 yarn build
 ```
 
-Server
+#### Server
 ```
 go run cmd/main.go
-```
-or for live server reloads (using [air](https://github.com/cosmtrek/air))
-```
-curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
-air
 ```

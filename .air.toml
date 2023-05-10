@@ -4,16 +4,16 @@ tmp_dir = "tmp"
 
 [build]
   args_bin = []
-  cmd = "go build -o ./tmp/backend cmd/main.go"
+  cmd = "cd client && yarn dev && cd .. && go build -o ./tmp/backend cmd/main.go"
   delay = 2000
-  exclude_dir = ["assets", "tmp", "vendor", "testdata", "client/src", "client/node_modules"]
+  exclude_dir = ["assets", "tmp", "vendor", "testdata", "client/node_modules", "k8s"]
   exclude_file = []
   exclude_regex = ["_test.go"]
   exclude_unchanged = false
   follow_symlink = false
   full_bin = "CTFG_ADMIN_EMAIL=admin@admin.com CTFG_ADMIN_PASSWORD=password ./tmp/backend"
   include_dir = []
-  include_ext = ["go", "tpl", "tmpl", "html", "js", "css"]
+  include_ext = ["go", "tpl", "tmpl", "html", "tsx", "ts", "jsx"]
   kill_delay = "0s"
   log = "build-errors.log"
   send_interrupt = false
