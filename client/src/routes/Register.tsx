@@ -2,8 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useRegister } from "../store/user";
 import { useLogin } from "../store/user";
-import AuthFlowInfo from "./AuthFlowInfo";
-import { Input, Button, useTheme, Text } from "@nextui-org/react";
+import { Input, Button, useTheme, Text, Link } from "@nextui-org/react";
 import { HiMail, HiUser } from "react-icons/hi";
 
 interface RegisterProps {}
@@ -15,11 +14,11 @@ const Register: React.FC<RegisterProps> = ({}) => {
 
 	const [registerUser, success, error] = useRegister();
 	const [doLogin, successLogin, errorLogin] = useLogin();
-	async function loginAndRegister(user, mail, pass) {
-		await registerUser(user, mail, pass);
-		await doLogin(mail, pass);
-	}
 	const { type, isDark } = useTheme();
+	async function loginAndRegister(user, mail, pass) {
+		await registerUser(user, mail, pass, isDark);
+		await doLogin(mail, pass, isDark);
+	}
 
 	return (
 		<div className="grid grid-cols-2 w-full">
@@ -63,10 +62,8 @@ const Register: React.FC<RegisterProps> = ({}) => {
 					<span>Register</span>
 				</Button>
 				<Text weight="thin" className="text-center">
-					Already have an account? Login <a href="/login">here</a>.
+					Already have an account? Login <Link color="primary" href="/login">here</Link>.
 				</Text>
-
-				<AuthFlowInfo success={success} error={error} />
 			</div>
 			{isDark ? (
 				<div

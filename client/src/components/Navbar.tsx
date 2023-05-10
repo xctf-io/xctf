@@ -9,6 +9,7 @@ import {
 	useTheme,
 	Dropdown,
 	Avatar,
+	Button,
 } from "@nextui-org/react";
 import useDarkMode from "use-dark-mode";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
@@ -83,17 +84,13 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 				})}
 			</Navbar.Content>
 			<Navbar.Content enableCursorHighlight>
-				<Navbar.Item>
+				<Navbar.Link onPress={darkMode.toggle} key="toggle">
 					{isDark ? (
-						<Navbar.Link onPress={darkMode.toggle}>
-							<BsMoonStarsFill />
-						</Navbar.Link>
+						<BsMoonStarsFill />
 					) : (
-						<Navbar.Link onPress={darkMode.toggle}>
-							<BsSunFill />
-						</Navbar.Link>
+						<BsSunFill />
 					)}
-				</Navbar.Item>
+				</Navbar.Link>
 				{user && (
 					<>
 						<Dropdown placement="bottom-right">
@@ -104,7 +101,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 										as="button"
 										color="primary"
 										size="md"
-										src={"https://api.dicebear.com/6.x/bottts/svg?baseColor=3070ED&seed="+user.username}
+										src={
+											"https://api.dicebear.com/6.x/bottts/svg?baseColor=3070ED&seed=" +
+											user.username
+										}
 									/>
 								</Dropdown.Trigger>
 							</Navbar.Item>
@@ -125,7 +125,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 										{user.username}
 									</Text>
 								</Dropdown.Item>
-								<Dropdown.Item key="logout" withDivider color="error" >
+								<Dropdown.Item key="logout" withDivider color="error">
 									Logout
 								</Dropdown.Item>
 							</Dropdown.Menu>

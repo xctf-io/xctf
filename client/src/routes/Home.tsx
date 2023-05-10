@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@nextui-org/react';
+import { Button, Link } from '@nextui-org/react';
 
 interface Props {}
 
@@ -31,9 +31,9 @@ const CTFComponent: React.FC<Props> = () => {
         The stakes are high, and failure is not an option. The fate of the case rests in your hands, and the pressure is
         on to solve the crime before it's too late. Are you up for the challenge? Can you rise to the occasion and bring
         the killer to justice? Login to{' '}
-        <a href="http://twitter-flask.chals.mcpshsf.com/">
+        <Link color="primary" href="http://twitter-flask.chals.mcpshsf.com/">
           http://twitter-flask.chals.mcpshsf.com/
-        </a>{' '}
+        </Link>{' '}
         with the username <span className="font-extrabold">“sadamana”</span> and password <span className='font-extrabold'>“s4d4m4n4”</span> to get started.
       </p>
       <hr />

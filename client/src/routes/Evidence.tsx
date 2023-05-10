@@ -5,20 +5,21 @@ import ReactFlow, {
 	Background,
 	Controls,
 	MarkerType,
-	MiniMap,
 	applyNodeChanges,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useState, useEffect, useRef, MutableRefObject } from "react";
-import { Text, Input, Dropdown, Button, Checkbox } from "@nextui-org/react";
+import { Text, Input, Dropdown, Button, Checkbox, useTheme } from "@nextui-org/react";
 import dagre from "dagre";
 import DownloadButton from "../components/DownloadButton";
 import { HiPaperAirplane, HiTrash, HiLink, HiChevronDown } from "react-icons/hi2";
+import { createToast } from "../store/user";
 
 let evidence: string = "";
 let report: string = "";
 
 export default function MyComponent() {
+	const { type, isDark } = useTheme();
 	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>({
 		report: "",
 		connections: [],
@@ -160,12 +161,16 @@ export default function MyComponent() {
 			.then((resp) => {
 				console.log(resp);
 				loadDiscoveredEvidence().then(() => {
-					setSuccessMsg("submitted evidence!");
+					if (submittingFlag) {
+						createToast("You got a flag!", null, isDark);
+					}
+					else {
+						createToast("Submitted evidence!", null, isDark);
+					}
 				});
 			})
 			.catch((e) => {
-				console.error(e);
-				setErrorMsg(e);
+				createToast(null, e.toString(), isDark);
 			});
 	}
 
@@ -178,11 +183,11 @@ export default function MyComponent() {
 			})
 			.then((resp) => {
 				loadDiscoveredEvidence().then(() => {
-					setSuccessMsg("created connection!");
+					createToast("Created connection!", null, isDark);
 				});
 			})
 			.catch((e) => {
-				setErrorMsg(e);
+				createToast(null, e.toString(), isDark);
 			});
 	}
 
@@ -191,9 +196,9 @@ export default function MyComponent() {
 			const resp = await ctfg.SubmitEvidenceReport({
 				url: report,
 			});
-			setSuccessMsg("saved report!");
+			createToast("Submitted report!", null, isDark);
 		} catch (e) {
-			setErrorMsg(e);
+			createToast(null, e.toString(), isDark);
 		}
 	}
 
@@ -254,7 +259,7 @@ export default function MyComponent() {
 									<Text>Source</Text>
 									<Text>Destination</Text>
 									<Dropdown isDisabled={graph.evidence.length == 0} >
-										<Dropdown.Button flat color="secondary" >
+										<Dropdown.Button flat >
 											{sourceName}
 										</Dropdown.Button>
 										<Dropdown.Menu
@@ -271,7 +276,7 @@ export default function MyComponent() {
 										</Dropdown.Menu>
 									</Dropdown>
 									<Dropdown isDisabled={graph.evidence.length == 0}>
-										<Dropdown.Button flat color="secondary">
+										<Dropdown.Button flat>
 											{destinationName}
 										</Dropdown.Button>
 										<Dropdown.Menu

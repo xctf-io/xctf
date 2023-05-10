@@ -1,9 +1,8 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import AuthFlowInfo from "./AuthFlowInfo";
 
 import { useLogin } from "../store/user";
-import { Input, Button, Text, useTheme } from "@nextui-org/react";
+import { Input, Button, Text, useTheme, Link } from "@nextui-org/react";
 import { HiMail } from "react-icons/hi";
 
 const Login = () => {
@@ -49,16 +48,14 @@ const Login = () => {
 					className="mt-6"
 					size="xl"
 					auto
-					onPress={() => doLogin(email, password)}
+					onPress={() => doLogin(email, password, isDark)}
 				>
 					<span>Log In</span>
 				</Button>
 
 				<Text weight="thin" className="text-center">
-					Don't have an account? Register <a href="/register">here</a>.
+					Don't have an account? Register <Link color="primary" href="/register">here</Link>.
 				</Text>
-
-				<AuthFlowInfo success={success} error={error} />
 			</div>
 			{isDark ? (
 				<div
