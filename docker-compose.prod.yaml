@@ -1,7 +1,7 @@
 version: '3.6'
 services:
   ctfg:
-    image: ghcr.io/ctfg/ctfg@sha256:667d667ff7e8c6d474a6bfa46b7486a3e909419b8087fcfc552de334b6a7e6f4
+    image: ghcr.io/ctfg/ctfg@sha256:0e4091e579a99d762feaa90f9d605fadb26af2cee875c872732990204245a847
     restart: always
     ports:
       - 8000:8000
