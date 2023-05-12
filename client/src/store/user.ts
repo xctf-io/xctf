@@ -4,15 +4,14 @@ import { atomWithStorage } from "jotai/utils";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
 
-export const createToast = (success: string, error: string, isDark: boolean) => {
+export const createSuccessToast = (success: string, isDark: boolean) => {
 	const theme = isDark ? "dark" : "light";
+	toast.success(success, { theme: theme, autoClose: 2000 });
+};
 
-	if (success) {
-		toast.success(success, { theme: theme, autoClose: 2000 });
-	}
-	if (error) {
-		toast.error(error, { theme: theme, autoClose: 2000 });
-	}
+export const createErrorToast = (error: string, isDark: boolean) => {
+	const theme = isDark ? "dark" : "light";
+	toast.error(error, { theme: theme, autoClose: 2000 });
 };
 
 interface User {
@@ -60,12 +59,11 @@ export const useLogin = (): [
 			setUser({
 				username: resp.username,
 			});
-			createToast("Login success!", null, isDark);
+			createSuccessToast("Login success!", isDark);
 			document.location.href = "/evidence";
 		} catch (e) {
-			createToast(null, e.toString(), isDark);
+			createErrorToast(e.toString(), isDark);
 		}
-		createToast(success, error, isDark);
 	};
 	return [login, success, error];
 };
@@ -89,9 +87,9 @@ export const useRegister = (): [
 				email,
 				password,
 			});
-			createToast("Registration success!", null, isDark);
+			createSuccessToast("Registration success!", isDark);
 		} catch (e) {
-			createToast(null, e.toString(), isDark);
+			createErrorToast(e.toString(), isDark);
 		}
 	};
 	return [register, success, error];

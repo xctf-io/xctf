@@ -3,53 +3,43 @@ import { ctfg } from "../service";
 import type { GetDiscoveredEvidenceResponse } from "../rpc/ctfg";
 import ReactFlow, {
 	Background,
+	ControlButton,
 	Controls,
 	MarkerType,
+	addEdge,
+	applyEdgeChanges,
 	applyNodeChanges,
+	getConnectedEdges,
+	getIncomers,
+	getOutgoers,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useState, useEffect, useRef, MutableRefObject } from "react";
-import { Text, Input, Dropdown, Button, Checkbox, useTheme } from "@nextui-org/react";
+import { Text, Input, Button, Checkbox, Modal, Row } from "@nextui-org/react";
 import dagre from "dagre";
-import DownloadButton from "../components/DownloadButton";
-import { HiPaperAirplane, HiTrash, HiLink, HiChevronDown } from "react-icons/hi2";
-import { createToast } from "../store/user";
+import Menu from "../components/Menu";
+import {
+	HiPaperAirplane,
+	HiTrash,
+	HiLink,
+	HiChevronDown,
+	HiArrowRight,
+	HiArrowDown,
+} from "react-icons/hi2";
+import { createSuccessToast, createErrorToast } from "../store/user";
+import useDarkMode from "use-dark-mode";
 
 let evidence: string = "";
 let report: string = "";
 
 export default function MyComponent() {
-	const { type, isDark } = useTheme();
+	const darkMode = useDarkMode(false);
 	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>({
 		report: "",
 		connections: [],
 		evidence: [],
 	});
-	const [successMsg, setSuccessMsg] = useState<string | null>(null);
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [submittingFlag, setSubmittingFlag] = useState<boolean>(true);
-	const [source, setSource] = useState<number>(0);
-	const [destination, setDestination] = useState<number>(0);
-	const [sourceName, setSourceName] = useState<string>("");
-	const [destinationName, setDestinationName] = useState<string>("");
-	const updateSourceSelect = (e) => {
-		setSource(Number(e.anchorKey));
-		for (let i = 0; i < graph.evidence.length; i++) {
-			if (graph.evidence[i].id === Number(e.anchorKey)) {
-				setSourceName(graph.evidence[i].name);
-				break;
-			}
-		}
-	};
-	const updateDestinationSelect = (e) => {
-		setDestination(Number(e.anchorKey));
-		for (let i = 0; i < graph.evidence.length; i++) {
-			if (graph.evidence[i].id === Number(e.anchorKey)) {
-				setDestinationName(graph.evidence[i].name);
-				break;
-			}
-		}
-	};
 
 	const graphRef: MutableRefObject<GetDiscoveredEvidenceResponse> =
 		useRef<GetDiscoveredEvidenceResponse>({
@@ -81,7 +71,7 @@ export default function MyComponent() {
 				y: n.y - nodeHeight / 2,
 			};
 		});
-		return { nodes, edges };
+		return [nodes, edges];
 	};
 
 	async function loadDiscoveredEvidence() {
@@ -89,10 +79,6 @@ export default function MyComponent() {
 			const resp = await ctfg.GetDiscoveredEvidence({});
 			graphRef.current = resp;
 			setGraph(resp);
-			setSource(resp.evidence[0].id);
-			setSourceName(resp.evidence[0].name);
-			setDestination(resp.evidence[0].id);
-			setDestinationName(resp.evidence[0].name);
 			const tempNodes = resp.evidence.map((e) => {
 				return {
 					id: e.id.toString(),
@@ -113,7 +99,7 @@ export default function MyComponent() {
 					height: 20,
 				},
 			}));
-			const { nodes, edges } = getLayoutedElements(tempNodes, tempEdges);
+			const [nodes, edges] = getLayoutedElements(tempNodes, tempEdges);
 			setNodes(nodes);
 			setEdges(edges);
 			report = resp.report; // report is not a state variable, so we update it directly
@@ -141,13 +127,9 @@ export default function MyComponent() {
 		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
 		[]
 	);
-
-	const initialEdges = graph.connections.map((c) => ({
-		id: `${c.source}-${c.destination}`,
-		source: c.source.toString(),
-		target: c.destination.toString(),
-	}));
-	const [edges, setEdges] = useState(initialEdges);
+	const addNode = (node: any) => {
+		setNodes((nodes) => nodes.concat(node));
+	};
 
 	function submitEvidence(remove: boolean) {
 		ctfg
@@ -155,39 +137,44 @@ export default function MyComponent() {
 				evidence: evidence,
 				x: 100,
 				y: 100,
-				isFlag: submittingFlag,
+				isFlag: submittingFlag && !remove,
 				remove: remove,
 			})
 			.then((resp) => {
 				console.log(resp);
 				loadDiscoveredEvidence().then(() => {
-					if (submittingFlag) {
-						createToast("You got a flag!", null, isDark);
-					}
-					else {
-						createToast("Submitted evidence!", null, isDark);
+					if (remove) {
+						createSuccessToast("Removed evidence!", darkMode.value);
+					} else if (submittingFlag) {
+						createSuccessToast("You got a flag!", darkMode.value);
+					} else {
+						createSuccessToast("Submitted evidence!", darkMode.value);
 					}
 				});
 			})
 			.catch((e) => {
-				createToast(null, e.toString(), isDark);
+				createErrorToast(e.toString(), darkMode.value);
 			});
 	}
 
-	function submitConnection(remove?: boolean) {
+	function submitConnection(src: number, dst: number, remove?: boolean) {
 		ctfg
 			.SubmitEvidenceConnection({
-				source: source,
-				destination: destination,
+				source: src,
+				destination: dst,
 				remove: remove,
 			})
 			.then((resp) => {
 				loadDiscoveredEvidence().then(() => {
-					createToast("Created connection!", null, isDark);
+					if (remove) {
+						createSuccessToast("Removed connection!", darkMode.value);
+					} else {
+						createSuccessToast("Created connection!", darkMode.value);
+					}
 				});
 			})
 			.catch((e) => {
-				createToast(null, e.toString(), isDark);
+				createErrorToast(e.toString(), darkMode.value);
 			});
 	}
 
@@ -196,11 +183,56 @@ export default function MyComponent() {
 			const resp = await ctfg.SubmitEvidenceReport({
 				url: report,
 			});
-			createToast("Submitted report!", null, isDark);
+			createSuccessToast("Submitted report!", darkMode.value);
 		} catch (e) {
-			createToast(null, e.toString(), isDark);
+			createErrorToast(e.toString(), darkMode.value);
 		}
 	}
+
+	const initialEdges = graph.connections.map((c) => ({
+		id: `${c.source}-${c.destination}`,
+		source: c.source.toString(),
+		target: c.destination.toString(),
+	}));
+	const [edges, setEdges] = useState(initialEdges);
+	const onEdgesChange = useCallback(
+		(changes) =>
+			setEdges((eds) => {
+				if (changes[0].type === "remove" && changes.length === 1) {
+					const ids = changes[0]["id"].split("-");
+					submitConnection(Number(ids[0]), Number(ids[1]), true);
+				}
+				return applyEdgeChanges(changes, eds);
+			}),
+		[]
+	);
+	const onConnect = useCallback(
+		(params) =>
+			setEdges((eds) => {
+				const exists = eds.find(
+					(e) => e.source === params.source && e.target === params.target
+				);
+				if (!exists) {
+					submitConnection(Number(params.source), Number(params.target), false);
+				}
+				return addEdge(params, eds);
+			}),
+		[]
+	);
+	const [deleteNode, setDeleteNode] = useState<Node>();
+	const onNodesDelete = useCallback(
+		(deleted) => {
+			setVisible2(true);
+			setDeleteNode(deleted[0]);
+		},
+		[nodes, edges]
+	);
+
+	const [visible, setVisible] = useState(false);
+	const closeHandler = () => setVisible(false);
+	const openHandler = () => setVisible(true);
+	const [visible2, setVisible2] = useState(false);
+	const closeHandler2 = () => setVisible2(false);
 
 	return (
 		<>
@@ -210,126 +242,124 @@ export default function MyComponent() {
 			</div> */}
 			{/* <div class="mb-3">
         <label for="report">Report URL</label>
-        <ButtonGroup class="w-full">
+        <Button.Group class="w-full">
             <Input id="report" type="text" bind:value={$report} />
             <Button color="blue" on:click={saveReport}>Save</Button>
-        </ButtonGroup>
+        </Button.Group>
     </div> */}
 			<div
-				className="max-w-2xl flex flex-col"
+				className="w-screen flex flex-col"
 				style={{
-					height: "calc(100vh - 80px)",
+					height: "calc(100vh - 90px)",
 				}}
 			>
-				<div className="grid grid-cols-3 px-12 w-screen flex-1">
-					<div className="col-span-1 flex flex-col gap-2 items-center mt-16">
-						<h2>Evidence</h2>
-						<div className="grid grid-cols-2 gap-x-4">
-							<Text>Evidence</Text>
-							<Text>Flag?</Text>
-							<Input
-								type="text"
-								onChange={(e) => (evidence = e.target.value)}
-								size="lg"
-							/>
+				<Menu openModal={openHandler} />
+				<div className="h-full w-full relative">
+					<ReactFlow
+						nodes={nodes}
+						onNodesChange={onNodesChange}
+						edges={edges}
+						onEdgesChange={onEdgesChange}
+						onNodesDelete={onNodesDelete}
+						onConnect={onConnect}
+						fitView
+					>
+						<Background />
+						<Controls
+							position="top-left"
+							style={{
+								background: "white",
+							}}
+						>
+						</Controls>
+					</ReactFlow>
+				</div>
+				<Modal
+					open={visible}
+					onClose={closeHandler}
+					title="Add Evidence"
+					aria-labelledby="modal-title"
+				>
+					<Modal.Header>
+						<h3 id="modal-title">Add Evidence</h3>
+					</Modal.Header>
+					<Modal.Body>
+						<Input
+							type="text"
+							clearable
+							bordered
+							fullWidth
+							placeholder="Evidence"
+							color="primary"
+							onChange={(e) => (evidence = e.target.value)}
+							size="lg"
+						/>
+						<Row justify="space-between">
 							<Checkbox
 								isSelected={submittingFlag}
 								onChange={setSubmittingFlag}
-							/>
-							<Button
-								className="mt-4"
-								onPress={() => submitEvidence(false)}
-								iconRight={<HiPaperAirplane fill="currentColor" />}
 							>
-								Submit
-							</Button>
-							<Button
-								className="mt-4"
-								color="error"
-								onPress={() => submitEvidence(true)}
-								iconRight={<HiTrash fill="currentColor" />}
-							>
-								Delete
-							</Button>
-						</div>
-						{graph.evidence && (
-							<>
-								<h2 className="mt-16">Connections</h2>
-								<div className="grid grid-cols-2 gap-x-4">
-									<Text>Source</Text>
-									<Text>Destination</Text>
-									<Dropdown isDisabled={graph.evidence.length == 0} >
-										<Dropdown.Button flat >
-											{sourceName}
-										</Dropdown.Button>
-										<Dropdown.Menu
-											aria-label="Source select"
-											color="secondary"
-											disallowEmptySelection
-											selectionMode="single"
-											onSelectionChange={updateSourceSelect}
-											containerCss={{ border: "none" }}
-										>
-											{graph.evidence.map((e) => (
-												<Dropdown.Item key={e.id}>{e.name}</Dropdown.Item>
-											))}
-										</Dropdown.Menu>
-									</Dropdown>
-									<Dropdown isDisabled={graph.evidence.length == 0}>
-										<Dropdown.Button flat>
-											{destinationName}
-										</Dropdown.Button>
-										<Dropdown.Menu
-											aria-label="Destination select"
-											disallowEmptySelection
-											selectionMode="single"
-											onSelectionChange={updateDestinationSelect}
-											containerCss={{ border: "none" }}
-										>
-											{graph.evidence.map((e) => (
-												<Dropdown.Item key={e.id}>{e.name}</Dropdown.Item>
-											))}
-										</Dropdown.Menu>
-									</Dropdown>
-									<Button
-										color="success"
-										className="mt-4"
-										onPress={() => submitConnection(false)}
-										iconRight={<HiLink fill="currentColor" />}
-									>
-										Create
-									</Button>
-									<Button
-										color="error"
-										className="mt-4"
-										onPress={() => submitConnection(true)}
-										iconRight={<HiTrash fill="currentColor" />}
-									>
-										Delete
-									</Button>
-								</div>
-							</>
-						)}
-					</div>
-					<div className="col-span-2">
-						<div className="mx-8 h-[95%] w-full relative top-1/2 -translate-y-1/2">
-							<DownloadButton />
-							<ReactFlow
-								nodes={nodes}
-								onNodesChange={onNodesChange}
-								edges={edges}
-								fitView
-							>
-								<Background />
-								<Controls
-									style={{
-										background: "white",
-									}}
-								/>
-							</ReactFlow>
-						</div>
-					</div>
-				</div>
+								<Text size={14}>Flag?</Text>
+							</Checkbox>
+						</Row>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button auto flat color="error" onPress={closeHandler}>
+							Close
+						</Button>
+						<Button
+							auto
+							onPress={() => {
+								closeHandler();
+								submitEvidence(false);
+							}}
+							iconRight={<HiPaperAirplane fill="currentColor" />}
+						>
+							Submit
+						</Button>
+					</Modal.Footer>
+				</Modal>
+				<Modal
+					open={visible2}
+					onClose={closeHandler2}
+					title="Are you sure?"
+					aria-labelledby="modal-title"
+					blur
+				>
+					<Modal.Header>
+						<h3 id="modal-title">
+							Are you sure you want to delete this evidence?
+						</h3>
+					</Modal.Header>
+					<Modal.Body>
+						<Text className="text-center"> This action cannot be undone.</Text>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button auto flat color="error" onPress={() => { 
+							closeHandler2();
+							window.location.reload();
+						}}>
+							No
+						</Button>
+						<Button
+							auto
+							onPress={() => {
+								closeHandler2();
+								const id = Number(deleteNode["id"]);
+								for (let i = 0; i < graph.evidence.length; i++) {
+									if (graph.evidence[i]["id"] === id) {
+										evidence = graph.evidence[i]["name"];
+										submitEvidence(true);
+										break;
+									}
+								}
+							}}
+							color="success"
+						>
+							Yes
+						</Button>
+					</Modal.Footer>
+				</Modal>
 			</div>
 		</>
 	);

@@ -13,6 +13,7 @@ import {
 } from "@nextui-org/react";
 import useDarkMode from "use-dark-mode";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
+import { GiFlyingFlag } from "react-icons/gi";
 
 interface NavbarProps {
 	links: NavLink[];
@@ -27,9 +28,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 	const { type, isDark } = useTheme();
 
 	return (
-		<Navbar variant="sticky">
+		<Navbar className="w-screen" variant="sticky" maxWidth="fluid">
 			<Navbar.Brand>
-				<Text b color="inherit">
+				<GiFlyingFlag className="ml-2 mr-2 w-10 h-10"/>
+				<Text b color="inherit" className="text-2xl" >
 					CTFg
 				</Text>
 			</Navbar.Brand>
@@ -52,18 +54,8 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						);
 					}
 				})}
-				{user && (
-					<>
-						<Navbar.CollapseItem>{user.username}</Navbar.CollapseItem>
-						<Navbar.CollapseItem>
-							<Link color="inherit" onPress={logout} href="/login">
-								Logout
-							</Link>
-						</Navbar.CollapseItem>
-					</>
-				)}
 			</Navbar.Collapse>
-			<Navbar.Content hideIn="xs" enableCursorHighlight variant="underline">
+			<Navbar.Content hideIn="xs" enableCursorHighlight variant="underline" className="absolute left-0 right-0">
 				{links.map((l) => {
 					if (
 						(userLoggedIn && l.showWhenAuthed) ||
