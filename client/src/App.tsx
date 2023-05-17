@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import snarkdown from "snarkdown";
+import Markdown from "markdown-to-jsx";
 
 import Navbar from "./components/Navbar";
 import Login from "./routes/Login";
@@ -14,7 +14,7 @@ import { useUser } from "./store/user";
 import { usePages } from "./store/pages";
 import useDarkMode from "use-dark-mode";
 import { NextUIProvider, createTheme } from "@nextui-org/react";
-import 'react-toastify/dist/ReactToastify.min.css'; 
+import "react-toastify/dist/ReactToastify.min.css";
 import { ToastContainer } from "react-toastify";
 
 interface Props {}
@@ -92,11 +92,7 @@ function App() {
 							<>
 								{pages.map((page) => (
 									<Route key={page.route} path={page.route}>
-										<div
-											dangerouslySetInnerHTML={{
-												__html: snarkdown(page.content),
-											}}
-										/>
+										<Markdown>{page.content}</Markdown>
 									</Route>
 								))}
 							</>

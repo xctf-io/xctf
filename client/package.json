@@ -12,6 +12,7 @@
         "@protobuf-ts/plugin": "^2.2.3-alpha.1",
         "@types/node": "^20.1.0",
         "autoprefixer": "^10.2.3",
+        "esbuild-plugin-markdown": "^0.0.3",
         "esbuild-plugins-node-modules-polyfill": "^1.0.9",
         "fastify-plugin": "^4.5.0",
         "tslib": "^2.0.0",
@@ -28,6 +29,7 @@
         "esbuild-react": "^0.2.2",
         "html-to-image": "^1.11.11",
         "jotai": "^2.1.0",
+        "markdown-to-jsx": "^7.2.0",
         "marked": "^4.2.12",
         "postcss": "^8.4.23",
         "react": "^18.2.0",
@@ -39,7 +41,6 @@
         "reactflow": "^11.7.0",
         "redux": "^4.2.1",
         "rollup": "^3.21.5",
-        "snarkdown": "^2.0.0",
         "tailwindcss": "^3.3.2",
         "twirp-ts": "git+https://github.com/breadchris/twirp-ts.git#3b136df46886a13eaa45ebc1fedbc996b760bbff",
         "use-dark-mode": "^2.3.1"

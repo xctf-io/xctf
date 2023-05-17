@@ -4,10 +4,8 @@ import { Button, Link } from '@nextui-org/react';
 interface Props {}
 
 const CTFComponent: React.FC<Props> = () => {
-  const initialFlag = 'flag{you_found_twitter}';
-
   return (
-    <div className="text-center font-medium sm:mx-96 mt-8 flex flex-col">
+    <div className="text-center font-medium mx-[15vw] lg:mx-[25vw] mt-8 flex flex-col">
       <div className="mb-4">
         <h1 className="mb-0">Welcome to CTFg!</h1>
         <h4>Register/Login to get started.</h4>
