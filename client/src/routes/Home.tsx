@@ -1,48 +1,46 @@
-import React from 'react';
-import { Button, Link } from '@nextui-org/react';
+import React from "react";
+import { Button, Link, useTheme } from "@nextui-org/react";
+import Home from "./Home.mdx";
 
 interface Props {}
 
 const CTFComponent: React.FC<Props> = () => {
-  return (
-    <div className="text-center font-medium mx-[15vw] lg:mx-[25vw] mt-8 flex flex-col">
-      <div className="mb-4">
-        <h1 className="mb-0">Welcome to CTFg!</h1>
-        <h4>Register/Login to get started.</h4>
+  const { type, isDark } = useTheme();
+  const lineClass = isDark ? "h-1 bg-gray-400 opacity-75": "h-1 bg-slate";
+	return (
+		<div className="text-center font-medium mx-[15vw] lg:mx-[25vw] mt-8 flex flex-col gap-4">
+			<div>
+				<h1 className="mb-0">Welcome to CTFg!</h1>
+				<h4>Register/Login to get started.</h4>
+			</div>
+      <hr className={lineClass} />
+			<div >
+				<Home
+					components={{
+						a: ({ children, ...props }) => <Link {...props}>{children}</Link>,
+						p: ({ children, ...props }) => (
+							<p className="text-lg" {...props}>
+								{children}
+							</p>
+						),
+            Break: () => <br />,
+            strong: ({ children, ...props }) => <span className="font-extrabold" {...props}>{children}</span>,
+					}}
+				/>
       </div>
-      <hr />
-      <p className="mt-4 text-lg">
-        Are you ready to embark on a thrilling journey into the world of cybersecurity and digital forensics? Today, you
-        will step into the shoes of a detective and use your skills to solve a complex cybercrime that has left law
-        enforcement stumped.
-      </p>
-      <br />
-      <p className="text-lg">
-        A murder has taken place, and it's up to you to find the killer. You'll have to analyze digital evidence, comb
-        through logs, and even try your hand at hacking to uncover the truth. As you dive deeper into the investigation,
-        you'll encounter obstacles and challenges that will push your skills and abilities to the limit. You'll need to
-        think outside the box and use your creativity to overcome these hurdles and bring the perpetrator to justice.
-        Finally, write up your evidence and conclusions so they can stand up in "court."
-      </p>
-      <br />
-      <p className="mb-4 text-lg">
-        The stakes are high, and failure is not an option. The fate of the case rests in your hands, and the pressure is
-        on to solve the crime before it's too late. Are you up for the challenge? Can you rise to the occasion and bring
-        the killer to justice? Login to{' '}
-        <Link color="primary" href="http://twitter-flask.chals.mcpshsf.com/">
-          http://twitter-flask.chals.mcpshsf.com/
-        </Link>{' '}
-        with the username <span className="font-extrabold">“sadamana”</span> and password <span className='font-extrabold'>“s4d4m4n4”</span> to get started.
-      </p>
-      <hr />
-      <p className='mt-4 text-lg'>For help related to the competition, go to the wiki. It will help you a lot.</p>
-      <Button className="mt-4" size="lg" onPress={() =>
-        document.location='https://wiki.ctfg.io'
-      }>
-          wiki
-      </Button>
-    </div>
-  );
+      <hr className={lineClass} />
+			<p className="text-lg">
+				For help related to the competition, go to the wiki. It will help you a
+				lot.
+			</p>
+			<Button
+				size="lg"
+				onPress={() => (document.location = "https://wiki.ctfg.io")}
+			>
+				wiki
+			</Button>
+		</div>
+	);
 };
 
 export default CTFComponent;
