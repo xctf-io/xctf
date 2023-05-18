@@ -62,7 +62,7 @@ export const useLogin = (): [
 				type: resp.userRole,
 			});
 			createSuccessToast("Login success!", isDark);
-			document.location.href = "/evidence";
+			document.location.href = "/";
 		} catch (e) {
 			createErrorToast(e.toString(), isDark);
 		}

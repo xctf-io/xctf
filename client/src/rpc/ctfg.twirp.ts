@@ -15,8 +15,6 @@ import {
   LoginResponse,
   CurrentUserRequest,
   CurrentUserResponse,
-  GetChallengesRequest,
-  GetChallengesResponse,
   SubmitFlagRequest,
   SubmitFlagResponse,
   SubmitEvidenceReportRequest,
@@ -29,6 +27,10 @@ import {
   UpsertChallengeRequest,
   Empty,
   DeleteChallengeRequest,
+  GetTeamsProgressRequest,
+  GetTeamsProgressResponse,
+  GetAllChallengesRequest,
+  GetAllChallengesResponse,
 } from "./ctfg";
 
 //==================================//
@@ -48,7 +50,6 @@ export interface BackendClient {
   Register(request: RegisterRequest): Promise<RegisterResponse>;
   Login(request: LoginRequest): Promise<LoginResponse>;
   CurrentUser(request: CurrentUserRequest): Promise<CurrentUserResponse>;
-  GetChallenges(request: GetChallengesRequest): Promise<GetChallengesResponse>;
   SubmitFlag(request: SubmitFlagRequest): Promise<SubmitFlagResponse>;
   SubmitEvidenceReport(
     request: SubmitEvidenceReportRequest
@@ -71,7 +72,6 @@ export class BackendClientJSON implements BackendClient {
     this.Register.bind(this);
     this.Login.bind(this);
     this.CurrentUser.bind(this);
-    this.GetChallenges.bind(this);
     this.SubmitFlag.bind(this);
     this.SubmitEvidenceReport.bind(this);
     this.GetDiscoveredEvidence.bind(this);
@@ -123,22 +123,6 @@ export class BackendClientJSON implements BackendClient {
     );
     return promise.then((data) =>
       CurrentUserResponse.fromJson(data as any, { ignoreUnknownFields: true })
-    );
-  }
-
-  GetChallenges(request: GetChallengesRequest): Promise<GetChallengesResponse> {
-    const data = GetChallengesRequest.toJson(request, {
-      useProtoFieldName: true,
-      emitDefaultValues: false,
-    });
-    const promise = this.rpc.request(
-      "ctfg.Backend",
-      "GetChallenges",
-      "application/json",
-      data as object
-    );
-    return promise.then((data) =>
-      GetChallengesResponse.fromJson(data as any, { ignoreUnknownFields: true })
     );
   }
 
@@ -246,7 +230,6 @@ export class BackendClientProtobuf implements BackendClient {
     this.Register.bind(this);
     this.Login.bind(this);
     this.CurrentUser.bind(this);
-    this.GetChallenges.bind(this);
     this.SubmitFlag.bind(this);
     this.SubmitEvidenceReport.bind(this);
     this.GetDiscoveredEvidence.bind(this);
@@ -287,19 +270,6 @@ export class BackendClientProtobuf implements BackendClient {
     );
     return promise.then((data) =>
       CurrentUserResponse.fromBinary(data as Uint8Array)
-    );
-  }
-
-  GetChallenges(request: GetChallengesRequest): Promise<GetChallengesResponse> {
-    const data = GetChallengesRequest.toBinary(request);
-    const promise = this.rpc.request(
-      "ctfg.Backend",
-      "GetChallenges",
-      "application/protobuf",
-      data
-    );
-    return promise.then((data) =>
-      GetChallengesResponse.fromBinary(data as Uint8Array)
     );
   }
 
@@ -388,10 +358,6 @@ export interface BackendTwirp<T extends TwirpContext = TwirpContext> {
     ctx: T,
     request: CurrentUserRequest
   ): Promise<CurrentUserResponse>;
-  GetChallenges(
-    ctx: T,
-    request: GetChallengesRequest
-  ): Promise<GetChallengesResponse>;
   SubmitFlag(ctx: T, request: SubmitFlagRequest): Promise<SubmitFlagResponse>;
   SubmitEvidenceReport(
     ctx: T,
@@ -415,7 +381,6 @@ export enum BackendMethod {
   Register = "Register",
   Login = "Login",
   CurrentUser = "CurrentUser",
-  GetChallenges = "GetChallenges",
   SubmitFlag = "SubmitFlag",
   SubmitEvidenceReport = "SubmitEvidenceReport",
   GetDiscoveredEvidence = "GetDiscoveredEvidence",
@@ -427,7 +392,6 @@ export const BackendMethodList = [
   BackendMethod.Register,
   BackendMethod.Login,
   BackendMethod.CurrentUser,
-  BackendMethod.GetChallenges,
   BackendMethod.SubmitFlag,
   BackendMethod.SubmitEvidenceReport,
   BackendMethod.GetDiscoveredEvidence,
@@ -484,26 +448,6 @@ function matchBackendRoute<T extends TwirpContext = TwirpContext>(
         ctx = { ...ctx, methodName: "CurrentUser" };
         await events.onMatch(ctx);
         return handleBackendCurrentUserRequest(
-          ctx,
-          service,
-          data,
-          interceptors
-        );
-      };
-    case "GetChallenges":
-      return async (
-        ctx: T,
-        service: BackendTwirp,
-        data: Buffer,
-        interceptors?: Interceptor<
-          T,
-          GetChallengesRequest,
-          GetChallengesResponse
-        >[]
-      ) => {
-        ctx = { ...ctx, methodName: "GetChallenges" };
-        await events.onMatch(ctx);
-        return handleBackendGetChallengesRequest(
           ctx,
           service,
           data,
@@ -653,35 +597,6 @@ function handleBackendCurrentUserRequest<T extends TwirpContext = TwirpContext>(
       return handleBackendCurrentUserJSON<T>(ctx, service, data, interceptors);
     case TwirpContentType.Protobuf:
       return handleBackendCurrentUserProtobuf<T>(
-        ctx,
-        service,
-        data,
-        interceptors
-      );
-    default:
-      const msg = "unexpected Content-Type";
-      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
-  }
-}
-
-function handleBackendGetChallengesRequest<
-  T extends TwirpContext = TwirpContext
->(
-  ctx: T,
-  service: BackendTwirp,
-  data: Buffer,
-  interceptors?: Interceptor<T, GetChallengesRequest, GetChallengesResponse>[]
-): Promise<string | Uint8Array> {
-  switch (ctx.contentType) {
-    case TwirpContentType.JSON:
-      return handleBackendGetChallengesJSON<T>(
-        ctx,
-        service,
-        data,
-        interceptors
-      );
-    case TwirpContentType.Protobuf:
-      return handleBackendGetChallengesProtobuf<T>(
         ctx,
         service,
         data,
@@ -958,50 +873,6 @@ async function handleBackendCurrentUserJSON<
 
   return JSON.stringify(
     CurrentUserResponse.toJson(response, {
-      useProtoFieldName: true,
-      emitDefaultValues: false,
-    }) as string
-  );
-}
-
-async function handleBackendGetChallengesJSON<
-  T extends TwirpContext = TwirpContext
->(
-  ctx: T,
-  service: BackendTwirp,
-  data: Buffer,
-  interceptors?: Interceptor<T, GetChallengesRequest, GetChallengesResponse>[]
-) {
-  let request: GetChallengesRequest;
-  let response: GetChallengesResponse;
-
-  try {
-    const body = JSON.parse(data.toString() || "{}");
-    request = GetChallengesRequest.fromJson(body, {
-      ignoreUnknownFields: true,
-    });
-  } catch (e) {
-    if (e instanceof Error) {
-      const msg = "the json request could not be decoded";
-      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
-    }
-  }
-
-  if (interceptors && interceptors.length > 0) {
-    const interceptor = chainInterceptors(...interceptors) as Interceptor<
-      T,
-      GetChallengesRequest,
-      GetChallengesResponse
-    >;
-    response = await interceptor(ctx, request!, (ctx, inputReq) => {
-      return service.GetChallenges(ctx, inputReq);
-    });
-  } else {
-    response = await service.GetChallenges(ctx, request!);
-  }
-
-  return JSON.stringify(
-    GetChallengesResponse.toJson(response, {
       useProtoFieldName: true,
       emitDefaultValues: false,
     }) as string
@@ -1345,42 +1216,6 @@ async function handleBackendCurrentUserProtobuf<
   return Buffer.from(CurrentUserResponse.toBinary(response));
 }
 
-async function handleBackendGetChallengesProtobuf<
-  T extends TwirpContext = TwirpContext
->(
-  ctx: T,
-  service: BackendTwirp,
-  data: Buffer,
-  interceptors?: Interceptor<T, GetChallengesRequest, GetChallengesResponse>[]
-) {
-  let request: GetChallengesRequest;
-  let response: GetChallengesResponse;
-
-  try {
-    request = GetChallengesRequest.fromBinary(data);
-  } catch (e) {
-    if (e instanceof Error) {
-      const msg = "the protobuf request could not be decoded";
-      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
-    }
-  }
-
-  if (interceptors && interceptors.length > 0) {
-    const interceptor = chainInterceptors(...interceptors) as Interceptor<
-      T,
-      GetChallengesRequest,
-      GetChallengesResponse
-    >;
-    response = await interceptor(ctx, request!, (ctx, inputReq) => {
-      return service.GetChallenges(ctx, inputReq);
-    });
-  } else {
-    response = await service.GetChallenges(ctx, request!);
-  }
-
-  return Buffer.from(GetChallengesResponse.toBinary(response));
-}
-
 async function handleBackendSubmitFlagProtobuf<
   T extends TwirpContext = TwirpContext
 >(
@@ -1589,6 +1424,12 @@ interface Rpc {
 export interface AdminClient {
   UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty>;
   DeleteChallenge(request: DeleteChallengeRequest): Promise<Empty>;
+  GetTeamsProgress(
+    request: GetTeamsProgressRequest
+  ): Promise<GetTeamsProgressResponse>;
+  GetAllChallenges(
+    request: GetAllChallengesRequest
+  ): Promise<GetAllChallengesResponse>;
 }
 
 export class AdminClientJSON implements AdminClient {
@@ -1597,6 +1438,8 @@ export class AdminClientJSON implements AdminClient {
     this.rpc = rpc;
     this.UpsertChallenge.bind(this);
     this.DeleteChallenge.bind(this);
+    this.GetTeamsProgress.bind(this);
+    this.GetAllChallenges.bind(this);
   }
   UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
     const data = UpsertChallengeRequest.toJson(request, {
@@ -1629,6 +1472,46 @@ export class AdminClientJSON implements AdminClient {
       Empty.fromJson(data as any, { ignoreUnknownFields: true })
     );
   }
+
+  GetTeamsProgress(
+    request: GetTeamsProgressRequest
+  ): Promise<GetTeamsProgressResponse> {
+    const data = GetTeamsProgressRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "GetTeamsProgress",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      GetTeamsProgressResponse.fromJson(data as any, {
+        ignoreUnknownFields: true,
+      })
+    );
+  }
+
+  GetAllChallenges(
+    request: GetAllChallengesRequest
+  ): Promise<GetAllChallengesResponse> {
+    const data = GetAllChallengesRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "GetAllChallenges",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      GetAllChallengesResponse.fromJson(data as any, {
+        ignoreUnknownFields: true,
+      })
+    );
+  }
 }
 
 export class AdminClientProtobuf implements AdminClient {
@@ -1637,6 +1520,8 @@ export class AdminClientProtobuf implements AdminClient {
     this.rpc = rpc;
     this.UpsertChallenge.bind(this);
     this.DeleteChallenge.bind(this);
+    this.GetTeamsProgress.bind(this);
+    this.GetAllChallenges.bind(this);
   }
   UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
     const data = UpsertChallengeRequest.toBinary(request);
@@ -1659,6 +1544,36 @@ export class AdminClientProtobuf implements AdminClient {
     );
     return promise.then((data) => Empty.fromBinary(data as Uint8Array));
   }
+
+  GetTeamsProgress(
+    request: GetTeamsProgressRequest
+  ): Promise<GetTeamsProgressResponse> {
+    const data = GetTeamsProgressRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "GetTeamsProgress",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) =>
+      GetTeamsProgressResponse.fromBinary(data as Uint8Array)
+    );
+  }
+
+  GetAllChallenges(
+    request: GetAllChallengesRequest
+  ): Promise<GetAllChallengesResponse> {
+    const data = GetAllChallengesRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "GetAllChallenges",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) =>
+      GetAllChallengesResponse.fromBinary(data as Uint8Array)
+    );
+  }
 }
 
 //==================================//
@@ -1668,16 +1583,28 @@ export class AdminClientProtobuf implements AdminClient {
 export interface AdminTwirp<T extends TwirpContext = TwirpContext> {
   UpsertChallenge(ctx: T, request: UpsertChallengeRequest): Promise<Empty>;
   DeleteChallenge(ctx: T, request: DeleteChallengeRequest): Promise<Empty>;
+  GetTeamsProgress(
+    ctx: T,
+    request: GetTeamsProgressRequest
+  ): Promise<GetTeamsProgressResponse>;
+  GetAllChallenges(
+    ctx: T,
+    request: GetAllChallengesRequest
+  ): Promise<GetAllChallengesResponse>;
 }
 
 export enum AdminMethod {
   UpsertChallenge = "UpsertChallenge",
   DeleteChallenge = "DeleteChallenge",
+  GetTeamsProgress = "GetTeamsProgress",
+  GetAllChallenges = "GetAllChallenges",
 }
 
 export const AdminMethodList = [
   AdminMethod.UpsertChallenge,
   AdminMethod.DeleteChallenge,
+  AdminMethod.GetTeamsProgress,
+  AdminMethod.GetAllChallenges,
 ];
 
 export function createAdminServer<T extends TwirpContext = TwirpContext>(
@@ -1723,6 +1650,46 @@ function matchAdminRoute<T extends TwirpContext = TwirpContext>(
         ctx = { ...ctx, methodName: "DeleteChallenge" };
         await events.onMatch(ctx);
         return handleAdminDeleteChallengeRequest(
+          ctx,
+          service,
+          data,
+          interceptors
+        );
+      };
+    case "GetTeamsProgress":
+      return async (
+        ctx: T,
+        service: AdminTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<
+          T,
+          GetTeamsProgressRequest,
+          GetTeamsProgressResponse
+        >[]
+      ) => {
+        ctx = { ...ctx, methodName: "GetTeamsProgress" };
+        await events.onMatch(ctx);
+        return handleAdminGetTeamsProgressRequest(
+          ctx,
+          service,
+          data,
+          interceptors
+        );
+      };
+    case "GetAllChallenges":
+      return async (
+        ctx: T,
+        service: AdminTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<
+          T,
+          GetAllChallengesRequest,
+          GetAllChallengesResponse
+        >[]
+      ) => {
+        ctx = { ...ctx, methodName: "GetAllChallenges" };
+        await events.onMatch(ctx);
+        return handleAdminGetAllChallengesRequest(
           ctx,
           service,
           data,
@@ -1783,6 +1750,72 @@ function handleAdminDeleteChallengeRequest<
       );
     case TwirpContentType.Protobuf:
       return handleAdminDeleteChallengeProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleAdminGetTeamsProgressRequest<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<
+    T,
+    GetTeamsProgressRequest,
+    GetTeamsProgressResponse
+  >[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleAdminGetTeamsProgressJSON<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    case TwirpContentType.Protobuf:
+      return handleAdminGetTeamsProgressProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleAdminGetAllChallengesRequest<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<
+    T,
+    GetAllChallengesRequest,
+    GetAllChallengesResponse
+  >[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleAdminGetAllChallengesJSON<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    case TwirpContentType.Protobuf:
+      return handleAdminGetAllChallengesProtobuf<T>(
         ctx,
         service,
         data,
@@ -1880,6 +1913,102 @@ async function handleAdminDeleteChallengeJSON<
     }) as string
   );
 }
+
+async function handleAdminGetTeamsProgressJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<
+    T,
+    GetTeamsProgressRequest,
+    GetTeamsProgressResponse
+  >[]
+) {
+  let request: GetTeamsProgressRequest;
+  let response: GetTeamsProgressResponse;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = GetTeamsProgressRequest.fromJson(body, {
+      ignoreUnknownFields: true,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      GetTeamsProgressRequest,
+      GetTeamsProgressResponse
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.GetTeamsProgress(ctx, inputReq);
+    });
+  } else {
+    response = await service.GetTeamsProgress(ctx, request!);
+  }
+
+  return JSON.stringify(
+    GetTeamsProgressResponse.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
+
+async function handleAdminGetAllChallengesJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<
+    T,
+    GetAllChallengesRequest,
+    GetAllChallengesResponse
+  >[]
+) {
+  let request: GetAllChallengesRequest;
+  let response: GetAllChallengesResponse;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = GetAllChallengesRequest.fromJson(body, {
+      ignoreUnknownFields: true,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      GetAllChallengesRequest,
+      GetAllChallengesResponse
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.GetAllChallenges(ctx, inputReq);
+    });
+  } else {
+    response = await service.GetAllChallenges(ctx, request!);
+  }
+
+  return JSON.stringify(
+    GetAllChallengesResponse.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
 async function handleAdminUpsertChallengeProtobuf<
   T extends TwirpContext = TwirpContext
 >(
@@ -1950,4 +2079,84 @@ async function handleAdminDeleteChallengeProtobuf<
   }
 
   return Buffer.from(Empty.toBinary(response));
+}
+
+async function handleAdminGetTeamsProgressProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<
+    T,
+    GetTeamsProgressRequest,
+    GetTeamsProgressResponse
+  >[]
+) {
+  let request: GetTeamsProgressRequest;
+  let response: GetTeamsProgressResponse;
+
+  try {
+    request = GetTeamsProgressRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      GetTeamsProgressRequest,
+      GetTeamsProgressResponse
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.GetTeamsProgress(ctx, inputReq);
+    });
+  } else {
+    response = await service.GetTeamsProgress(ctx, request!);
+  }
+
+  return Buffer.from(GetTeamsProgressResponse.toBinary(response));
+}
+
+async function handleAdminGetAllChallengesProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<
+    T,
+    GetAllChallengesRequest,
+    GetAllChallengesResponse
+  >[]
+) {
+  let request: GetAllChallengesRequest;
+  let response: GetAllChallengesResponse;
+
+  try {
+    request = GetAllChallengesRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      GetAllChallengesRequest,
+      GetAllChallengesResponse
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.GetAllChallenges(ctx, inputReq);
+    });
+  } else {
+    response = await service.GetAllChallenges(ctx, request!);
+  }
+
+  return Buffer.from(GetAllChallengesResponse.toBinary(response));
 }

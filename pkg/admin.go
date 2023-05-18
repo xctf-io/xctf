@@ -42,6 +42,49 @@ func (s *admin) DeleteChallenge(ctx context.Context, req *ctfg.DeleteChallengeRe
 	return &ctfg.Empty{}, nil
 }
 
+func (s* admin) GetTeamsProgress(ctx context.Context, request *ctfg.GetTeamsProgressRequest) (*ctfg.GetTeamsProgressResponse, error) {
+	// get all users in the database
+	var users []models.User
+	resp := s.db.Find(&users)
+	var scores []*ctfg.TeamProgress
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	for _, user := range users {
+		// find the number of flags they have
+		if user.Type != "admin" {
+			var count int64
+			s.db.Model(&models.Evidence{}).Where(&models.Evidence{UserID: int(user.ID), IsFlag: true}).Count(&count)
+
+			scores = append(scores, &ctfg.TeamProgress{
+				TeamName: user.Username,
+				Score:    uint32(count),
+			})
+		}
+	}
+	return &ctfg.GetTeamsProgressResponse{
+		Teams: scores,
+	}, nil
+}
+
+func (s* admin) GetAllChallenges(ctx context.Context, request *ctfg.GetAllChallengesRequest) (*ctfg.GetAllChallengesResponse, error) {
+	var challenges []models.Challenge
+	resp := s.db.Find(&challenges)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	var chals []*ctfg.Challenge
+	for _, challenge := range challenges {
+		chals = append(chals, &ctfg.Challenge{
+			Name: challenge.Name,
+			Flag: challenge.Flag,
+		})
+	}
+	return &ctfg.GetAllChallengesResponse{
+		Challenges: chals,
+	}, nil
+}
+
 func NewAdmin(db *gorm.DB) ctfg.Admin {
 	return &admin{
 		db: db,

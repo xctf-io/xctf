@@ -11,4 +11,5 @@ type Evidence struct {
 	User        User
 	PositionX   int `gorm:"default:0"`
 	PositionY   int `gorm:"default:0"`
+	IsFlag      bool `gorm:"default:false"`
 }

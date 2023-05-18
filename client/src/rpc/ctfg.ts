@@ -103,6 +103,10 @@ export interface Evidence {
      * @generated from protobuf field: int32 y = 5;
      */
     y: number;
+    /**
+     * @generated from protobuf field: bool isFlag = 6;
+     */
+    isFlag: boolean;
 }
 /**
  * @generated from protobuf message ctfg.Connection
@@ -271,41 +275,6 @@ export interface CurrentUserResponse {
     pages: Page[];
 }
 /**
- * @generated from protobuf message ctfg.GetChallengesRequest
- */
-export interface GetChallengesRequest {
-}
-/**
- * @generated from protobuf message ctfg.Challenge
- */
-export interface Challenge {
-    /**
-     * @generated from protobuf field: uint32 id = 1;
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: string name = 2;
-     */
-    name: string;
-    /**
-     * @generated from protobuf field: string description = 3;
-     */
-    description: string;
-    /**
-     * @generated from protobuf field: int32 value = 4;
-     */
-    value: number;
-}
-/**
- * @generated from protobuf message ctfg.GetChallengesResponse
- */
-export interface GetChallengesResponse {
-    /**
-     * @generated from protobuf field: repeated ctfg.Challenge challenges = 1;
-     */
-    challenges: Challenge[];
-}
-/**
  * @generated from protobuf message ctfg.SubmitFlagRequest
  */
 export interface SubmitFlagRequest {
@@ -322,6 +291,60 @@ export interface SubmitFlagResponse {
      * @generated from protobuf field: bool correct = 1;
      */
     correct: boolean;
+}
+/**
+ * @generated from protobuf message ctfg.TeamProgress
+ */
+export interface TeamProgress {
+    /**
+     * @generated from protobuf field: string teamName = 1;
+     */
+    teamName: string;
+    /**
+     * @generated from protobuf field: uint32 score = 2;
+     */
+    score: number;
+}
+/**
+ * @generated from protobuf message ctfg.GetTeamsProgressRequest
+ */
+export interface GetTeamsProgressRequest {
+}
+/**
+ * @generated from protobuf message ctfg.GetTeamsProgressResponse
+ */
+export interface GetTeamsProgressResponse {
+    /**
+     * @generated from protobuf field: repeated ctfg.TeamProgress teams = 1;
+     */
+    teams: TeamProgress[];
+}
+/**
+ * @generated from protobuf message ctfg.Challenge
+ */
+export interface Challenge {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string flag = 2;
+     */
+    flag: string;
+}
+/**
+ * @generated from protobuf message ctfg.GetAllChallengesRequest
+ */
+export interface GetAllChallengesRequest {
+}
+/**
+ * @generated from protobuf message ctfg.GetAllChallengesResponse
+ */
+export interface GetAllChallengesResponse {
+    /**
+     * @generated from protobuf field: repeated ctfg.Challenge challenges = 1;
+     */
+    challenges: Challenge[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Empty$Type extends MessageType<Empty> {
@@ -639,11 +662,12 @@ class Evidence$Type extends MessageType<Evidence> {
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "challengeID", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
             { no: 4, name: "x", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "y", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 5, name: "y", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "isFlag", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<Evidence>): Evidence {
-        const message = { id: 0, name: "", challengeID: 0, x: 0, y: 0 };
+        const message = { id: 0, name: "", challengeID: 0, x: 0, y: 0, isFlag: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Evidence>(this, message, value);
@@ -668,6 +692,9 @@ class Evidence$Type extends MessageType<Evidence> {
                     break;
                 case /* int32 y */ 5:
                     message.y = reader.int32();
+                    break;
+                case /* bool isFlag */ 6:
+                    message.isFlag = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -696,6 +723,9 @@ class Evidence$Type extends MessageType<Evidence> {
         /* int32 y = 5; */
         if (message.y !== 0)
             writer.tag(5, WireType.Varint).int32(message.y);
+        /* bool isFlag = 6; */
+        if (message.isFlag !== false)
+            writer.tag(6, WireType.Varint).bool(message.isFlag);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1341,147 +1371,6 @@ class CurrentUserResponse$Type extends MessageType<CurrentUserResponse> {
  */
 export const CurrentUserResponse = new CurrentUserResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetChallengesRequest$Type extends MessageType<GetChallengesRequest> {
-    constructor() {
-        super("ctfg.GetChallengesRequest", []);
-    }
-    create(value?: PartialMessage<GetChallengesRequest>): GetChallengesRequest {
-        const message = {};
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<GetChallengesRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetChallengesRequest): GetChallengesRequest {
-        return target ?? this.create();
-    }
-    internalBinaryWrite(message: GetChallengesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message ctfg.GetChallengesRequest
- */
-export const GetChallengesRequest = new GetChallengesRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class Challenge$Type extends MessageType<Challenge> {
-    constructor() {
-        super("ctfg.Challenge", [
-            { no: 1, name: "id", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "value", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<Challenge>): Challenge {
-        const message = { id: 0, name: "", description: "", value: 0 };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<Challenge>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Challenge): Challenge {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint32 id */ 1:
-                    message.id = reader.uint32();
-                    break;
-                case /* string name */ 2:
-                    message.name = reader.string();
-                    break;
-                case /* string description */ 3:
-                    message.description = reader.string();
-                    break;
-                case /* int32 value */ 4:
-                    message.value = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Challenge, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint32 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint32(message.id);
-        /* string name = 2; */
-        if (message.name !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* string description = 3; */
-        if (message.description !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.description);
-        /* int32 value = 4; */
-        if (message.value !== 0)
-            writer.tag(4, WireType.Varint).int32(message.value);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message ctfg.Challenge
- */
-export const Challenge = new Challenge$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetChallengesResponse$Type extends MessageType<GetChallengesResponse> {
-    constructor() {
-        super("ctfg.GetChallengesResponse", [
-            { no: 1, name: "challenges", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Challenge }
-        ]);
-    }
-    create(value?: PartialMessage<GetChallengesResponse>): GetChallengesResponse {
-        const message = { challenges: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<GetChallengesResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetChallengesResponse): GetChallengesResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated ctfg.Challenge challenges */ 1:
-                    message.challenges.push(Challenge.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetChallengesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated ctfg.Challenge challenges = 1; */
-        for (let i = 0; i < message.challenges.length; i++)
-            Challenge.internalBinaryWrite(message.challenges[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message ctfg.GetChallengesResponse
- */
-export const GetChallengesResponse = new GetChallengesResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class SubmitFlagRequest$Type extends MessageType<SubmitFlagRequest> {
     constructor() {
         super("ctfg.SubmitFlagRequest", [
@@ -1575,6 +1464,260 @@ class SubmitFlagResponse$Type extends MessageType<SubmitFlagResponse> {
  * @generated MessageType for protobuf message ctfg.SubmitFlagResponse
  */
 export const SubmitFlagResponse = new SubmitFlagResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TeamProgress$Type extends MessageType<TeamProgress> {
+    constructor() {
+        super("ctfg.TeamProgress", [
+            { no: 1, name: "teamName", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "score", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TeamProgress>): TeamProgress {
+        const message = { teamName: "", score: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<TeamProgress>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TeamProgress): TeamProgress {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string teamName */ 1:
+                    message.teamName = reader.string();
+                    break;
+                case /* uint32 score */ 2:
+                    message.score = reader.uint32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TeamProgress, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string teamName = 1; */
+        if (message.teamName !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.teamName);
+        /* uint32 score = 2; */
+        if (message.score !== 0)
+            writer.tag(2, WireType.Varint).uint32(message.score);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.TeamProgress
+ */
+export const TeamProgress = new TeamProgress$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetTeamsProgressRequest$Type extends MessageType<GetTeamsProgressRequest> {
+    constructor() {
+        super("ctfg.GetTeamsProgressRequest", []);
+    }
+    create(value?: PartialMessage<GetTeamsProgressRequest>): GetTeamsProgressRequest {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetTeamsProgressRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetTeamsProgressRequest): GetTeamsProgressRequest {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: GetTeamsProgressRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.GetTeamsProgressRequest
+ */
+export const GetTeamsProgressRequest = new GetTeamsProgressRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetTeamsProgressResponse$Type extends MessageType<GetTeamsProgressResponse> {
+    constructor() {
+        super("ctfg.GetTeamsProgressResponse", [
+            { no: 1, name: "teams", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TeamProgress }
+        ]);
+    }
+    create(value?: PartialMessage<GetTeamsProgressResponse>): GetTeamsProgressResponse {
+        const message = { teams: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetTeamsProgressResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetTeamsProgressResponse): GetTeamsProgressResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated ctfg.TeamProgress teams */ 1:
+                    message.teams.push(TeamProgress.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetTeamsProgressResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated ctfg.TeamProgress teams = 1; */
+        for (let i = 0; i < message.teams.length; i++)
+            TeamProgress.internalBinaryWrite(message.teams[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.GetTeamsProgressResponse
+ */
+export const GetTeamsProgressResponse = new GetTeamsProgressResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Challenge$Type extends MessageType<Challenge> {
+    constructor() {
+        super("ctfg.Challenge", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "flag", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<Challenge>): Challenge {
+        const message = { name: "", flag: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<Challenge>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Challenge): Challenge {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string flag */ 2:
+                    message.flag = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Challenge, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string flag = 2; */
+        if (message.flag !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.flag);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.Challenge
+ */
+export const Challenge = new Challenge$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetAllChallengesRequest$Type extends MessageType<GetAllChallengesRequest> {
+    constructor() {
+        super("ctfg.GetAllChallengesRequest", []);
+    }
+    create(value?: PartialMessage<GetAllChallengesRequest>): GetAllChallengesRequest {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetAllChallengesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetAllChallengesRequest): GetAllChallengesRequest {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: GetAllChallengesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.GetAllChallengesRequest
+ */
+export const GetAllChallengesRequest = new GetAllChallengesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetAllChallengesResponse$Type extends MessageType<GetAllChallengesResponse> {
+    constructor() {
+        super("ctfg.GetAllChallengesResponse", [
+            { no: 1, name: "challenges", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Challenge }
+        ]);
+    }
+    create(value?: PartialMessage<GetAllChallengesResponse>): GetAllChallengesResponse {
+        const message = { challenges: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetAllChallengesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetAllChallengesResponse): GetAllChallengesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated ctfg.Challenge challenges */ 1:
+                    message.challenges.push(Challenge.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetAllChallengesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated ctfg.Challenge challenges = 1; */
+        for (let i = 0; i < message.challenges.length; i++)
+            Challenge.internalBinaryWrite(message.challenges[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.GetAllChallengesResponse
+ */
+export const GetAllChallengesResponse = new GetAllChallengesResponse$Type();
 /**
  * @generated ServiceType for protobuf service ctfg.Backend
  */
@@ -1582,7 +1725,6 @@ export const Backend = new ServiceType("ctfg.Backend", [
     { name: "Register", options: {}, I: RegisterRequest, O: RegisterResponse },
     { name: "Login", options: {}, I: LoginRequest, O: LoginResponse },
     { name: "CurrentUser", options: {}, I: CurrentUserRequest, O: CurrentUserResponse },
-    { name: "GetChallenges", options: {}, I: GetChallengesRequest, O: GetChallengesResponse },
     { name: "SubmitFlag", options: {}, I: SubmitFlagRequest, O: SubmitFlagResponse },
     { name: "SubmitEvidenceReport", options: {}, I: SubmitEvidenceReportRequest, O: SubmitEvidenceReportRequest },
     { name: "GetDiscoveredEvidence", options: {}, I: GetDiscoveredEvidenceRequest, O: GetDiscoveredEvidenceResponse },
@@ -1594,5 +1736,7 @@ export const Backend = new ServiceType("ctfg.Backend", [
  */
 export const Admin = new ServiceType("ctfg.Admin", [
     { name: "UpsertChallenge", options: {}, I: UpsertChallengeRequest, O: Empty },
-    { name: "DeleteChallenge", options: {}, I: DeleteChallengeRequest, O: Empty }
+    { name: "DeleteChallenge", options: {}, I: DeleteChallengeRequest, O: Empty },
+    { name: "GetTeamsProgress", options: {}, I: GetTeamsProgressRequest, O: GetTeamsProgressResponse },
+    { name: "GetAllChallenges", options: {}, I: GetAllChallengesRequest, O: GetAllChallengesResponse }
 ]);

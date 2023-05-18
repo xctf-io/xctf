@@ -8,6 +8,7 @@ import Login from "./routes/Login";
 import Register from "./routes/Register";
 import Home from "./routes/Home";
 import Evidence from "./routes/Evidence";
+import Grading from "./routes/Grading";
 import { NavLink } from "./types/nav";
 import { ctfg } from "./service";
 import { useUser } from "./store/user";
@@ -16,8 +17,9 @@ import useDarkMode from "use-dark-mode";
 import { NextUIProvider, createTheme } from "@nextui-org/react";
 import "react-toastify/dist/ReactToastify.min.css";
 import { ToastContainer } from "react-toastify";
+import Redirect from "./components/Redirect";
 
-interface Props {}
+interface Props { }
 
 function App() {
 	const [links, setLinks] = useState<NavLink[]>([]);
@@ -29,12 +31,14 @@ function App() {
 			to: "/",
 			Component: Home,
 			showWhenAuthed: true,
+			showWhenAdmin: true,
 		},
 		{
 			label: "Evidence",
 			to: "/evidence",
 			Component: Evidence,
 			showWhenAuthed: true,
+			showWhenAdmin: false,
 			hideWhenUnauthed: true,
 		},
 		{
@@ -42,12 +46,22 @@ function App() {
 			to: "/login",
 			Component: Login,
 			showWhenAuthed: false,
+			showWhenAdmin: false,
 		},
 		{
 			label: "Sign Up",
 			to: "/register",
 			Component: Register,
 			showWhenAuthed: false,
+			showWhenAdmin: false,
+		},
+		{
+			label: "Grading",
+			to: "/grading",
+			Component: Grading,
+			showWhenAuthed: false,
+			showWhenAdmin: true,
+			hideWhenUnauthed: true,
 		},
 	];
 
@@ -59,7 +73,7 @@ function App() {
 					return;
 				}
 				const resp = await ctfg.CurrentUser({});
-				console.log(resp)
+				console.log(resp);
 				setUser({
 					username: resp.username,
 					type: resp.userRole,
@@ -74,12 +88,24 @@ function App() {
 
 	const lightTheme = createTheme({
 		type: "light",
+		theme: {
+			borderWeights: {
+				none: "0px",
+			},
+		}
 	});
 
 	const darkTheme = createTheme({
 		type: "dark",
+		theme: {
+			borderWeights: {
+				none: "0px",
+			},
+		}
 	});
 	const darkMode = useDarkMode(false);
+	const loggedIn = !!user;
+	const isAdmin = user?.type === "admin";
 
 	return (
 		<NextUIProvider theme={darkMode.value ? darkTheme : lightTheme}>
@@ -88,7 +114,17 @@ function App() {
 					<Navbar links={links} />
 					<Routes>
 						{links.map((link) => (
-							<Route key={link.to} path={link.to} Component={link.Component} />
+							<Route
+								key={link.to}
+								path={link.to}
+								Component={
+									(loggedIn && !isAdmin && link.showWhenAuthed) ||
+									(!loggedIn && !link.hideWhenUnauthed) ||
+									(loggedIn && isAdmin && link.showWhenAdmin)
+										? link.Component
+										: Redirect
+								}
+							/>
 						))}
 						{pages && (
 							<>

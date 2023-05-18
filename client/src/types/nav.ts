@@ -5,5 +5,6 @@ export interface NavLink {
 	to: string;
 	Component: ComponentType<any>;
 	showWhenAuthed: boolean;
+	showWhenAdmin: boolean;
 	hideWhenUnauthed?: boolean;
 }

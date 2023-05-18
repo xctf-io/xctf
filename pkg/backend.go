@@ -48,7 +48,7 @@ func (b backend) Login(ctx context.Context, request *ctfg.LoginRequest) (*ctfg.L
 	}
 
 	SetUserForSession(ctx, user.ID, user.Type)
-	
+
 	return &ctfg.LoginResponse{
 		Username: user.Username,
 		UserRole: user.Type,
@@ -89,11 +89,6 @@ func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserReque
 	}, nil
 }
 
-func (b backend) GetChallenges(ctx context.Context, request *ctfg.GetChallengesRequest) (*ctfg.GetChallengesResponse, error) {
-	log.Debug().Msg("GetChallenges is not implemented")
-	return &ctfg.GetChallengesResponse{}, nil
-}
-
 func (b backend) SubmitFlag(ctx context.Context, request *ctfg.SubmitFlagRequest) (*ctfg.SubmitFlagResponse, error) {
 	return &ctfg.SubmitFlagResponse{
 		Correct: false,
@@ -124,10 +119,11 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 	var discoveredEvidence []*ctfg.Evidence
 	for _, ev := range evidence {
 		chalEv := &ctfg.Evidence{
-			Id:   uint32(ev.ID),
-			Name: ev.Name,
-			X:    int32(ev.PositionX),
-			Y:    int32(ev.PositionY),
+			Id:     uint32(ev.ID),
+			Name:   ev.Name,
+			X:      int32(ev.PositionX),
+			Y:      int32(ev.PositionY),
+			IsFlag: ev.IsFlag,
 		}
 		if ev.ChallengeID != nil {
 			chalEv.ChallengeID = uint32(*ev.ChallengeID)
@@ -161,7 +157,7 @@ func (b backend) SubmitEvidence(ctx context.Context, request *ctfg.SubmitEvidenc
 	var chal models.Challenge
 	res := b.db.Where(models.Challenge{Flag: request.Evidence}).First(&chal)
 	if res.Error != nil && request.IsFlag {
-		return nil, res.Error
+		return nil, errors.New("invalid flag")
 	}
 
 	// A flag was found for the challenge, set the name to the challenge name
@@ -194,6 +190,7 @@ func (b backend) SubmitEvidence(ctx context.Context, request *ctfg.SubmitEvidenc
 					ID: userID,
 				},
 			},
+			IsFlag: request.IsFlag,
 		}
 		res = b.db.Create(&evidence)
 		if res.Error != nil {

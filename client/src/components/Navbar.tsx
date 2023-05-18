@@ -41,8 +41,9 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 			<Navbar.Collapse>
 				{links.map((l) => {
 					if (
-						(userLoggedIn && l.showWhenAuthed) ||
-						(!userLoggedIn && !l.hideWhenUnauthed)
+						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
+						(!userLoggedIn && !l.hideWhenUnauthed) || 
+						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
 							<Navbar.CollapseItem key={l.label} isActive={l.to === path}>
@@ -63,12 +64,12 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 				enableCursorHighlight
 				variant="underline"
 				activeColor={themeColor}
-				className="absolute left-0 right-0"
 			>
 				{links.map((l) => {
 					if (
-						(userLoggedIn && l.showWhenAuthed) ||
-						(!userLoggedIn && !l.hideWhenUnauthed)
+						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
+						(!userLoggedIn && !l.hideWhenUnauthed) || 
+						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
 							<Navbar.Item key={l.label} isActive={l.to === path}>

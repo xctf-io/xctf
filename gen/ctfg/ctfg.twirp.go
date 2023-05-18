@@ -38,8 +38,6 @@ type Backend interface {
 
 	CurrentUser(context.Context, *CurrentUserRequest) (*CurrentUserResponse, error)
 
-	GetChallenges(context.Context, *GetChallengesRequest) (*GetChallengesResponse, error)
-
 	SubmitFlag(context.Context, *SubmitFlagRequest) (*SubmitFlagResponse, error)
 
 	SubmitEvidenceReport(context.Context, *SubmitEvidenceReportRequest) (*SubmitEvidenceReportRequest, error)
@@ -57,7 +55,7 @@ type Backend interface {
 
 type backendProtobufClient struct {
 	client      HTTPClient
-	urls        [9]string
+	urls        [8]string
 	interceptor twirp.Interceptor
 	opts        twirp.ClientOptions
 }
@@ -85,11 +83,10 @@ func NewBackendProtobufClient(baseURL string, client HTTPClient, opts ...twirp.C
 	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
 	serviceURL := sanitizeBaseURL(baseURL)
 	serviceURL += baseServicePath(pathPrefix, "ctfg", "Backend")
-	urls := [9]string{
+	urls := [8]string{
 		serviceURL + "Register",
 		serviceURL + "Login",
 		serviceURL + "CurrentUser",
-		serviceURL + "GetChallenges",
 		serviceURL + "SubmitFlag",
 		serviceURL + "SubmitEvidenceReport",
 		serviceURL + "GetDiscoveredEvidence",
@@ -243,52 +240,6 @@ func (c *backendProtobufClient) callCurrentUser(ctx context.Context, in *Current
 	return out, nil
 }
 
-func (c *backendProtobufClient) GetChallenges(ctx context.Context, in *GetChallengesRequest) (*GetChallengesResponse, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
-	ctx = ctxsetters.WithServiceName(ctx, "Backend")
-	ctx = ctxsetters.WithMethodName(ctx, "GetChallenges")
-	caller := c.callGetChallenges
-	if c.interceptor != nil {
-		caller = func(ctx context.Context, req *GetChallengesRequest) (*GetChallengesResponse, error) {
-			resp, err := c.interceptor(
-				func(ctx context.Context, req interface{}) (interface{}, error) {
-					typedReq, ok := req.(*GetChallengesRequest)
-					if !ok {
-						return nil, twirp.InternalError("failed type assertion req.(*GetChallengesRequest) when calling interceptor")
-					}
-					return c.callGetChallenges(ctx, typedReq)
-				},
-			)(ctx, req)
-			if resp != nil {
-				typedResp, ok := resp.(*GetChallengesResponse)
-				if !ok {
-					return nil, twirp.InternalError("failed type assertion resp.(*GetChallengesResponse) when calling interceptor")
-				}
-				return typedResp, err
-			}
-			return nil, err
-		}
-	}
-	return caller(ctx, in)
-}
-
-func (c *backendProtobufClient) callGetChallenges(ctx context.Context, in *GetChallengesRequest) (*GetChallengesResponse, error) {
-	out := new(GetChallengesResponse)
-	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[3], in, out)
-	if err != nil {
-		twerr, ok := err.(twirp.Error)
-		if !ok {
-			twerr = twirp.InternalErrorWith(err)
-		}
-		callClientError(ctx, c.opts.Hooks, twerr)
-		return nil, err
-	}
-
-	callClientResponseReceived(ctx, c.opts.Hooks)
-
-	return out, nil
-}
-
 func (c *backendProtobufClient) SubmitFlag(ctx context.Context, in *SubmitFlagRequest) (*SubmitFlagResponse, error) {
 	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
 	ctx = ctxsetters.WithServiceName(ctx, "Backend")
@@ -320,7 +271,7 @@ func (c *backendProtobufClient) SubmitFlag(ctx context.Context, in *SubmitFlagRe
 
 func (c *backendProtobufClient) callSubmitFlag(ctx context.Context, in *SubmitFlagRequest) (*SubmitFlagResponse, error) {
 	out := new(SubmitFlagResponse)
-	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[4], in, out)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[3], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -366,7 +317,7 @@ func (c *backendProtobufClient) SubmitEvidenceReport(ctx context.Context, in *Su
 
 func (c *backendProtobufClient) callSubmitEvidenceReport(ctx context.Context, in *SubmitEvidenceReportRequest) (*SubmitEvidenceReportRequest, error) {
 	out := new(SubmitEvidenceReportRequest)
-	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[5], in, out)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[4], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -412,7 +363,7 @@ func (c *backendProtobufClient) GetDiscoveredEvidence(ctx context.Context, in *G
 
 func (c *backendProtobufClient) callGetDiscoveredEvidence(ctx context.Context, in *GetDiscoveredEvidenceRequest) (*GetDiscoveredEvidenceResponse, error) {
 	out := new(GetDiscoveredEvidenceResponse)
-	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[6], in, out)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[5], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -458,7 +409,7 @@ func (c *backendProtobufClient) SubmitEvidence(ctx context.Context, in *SubmitEv
 
 func (c *backendProtobufClient) callSubmitEvidence(ctx context.Context, in *SubmitEvidenceRequest) (*SubmitEvidenceResponse, error) {
 	out := new(SubmitEvidenceResponse)
-	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[7], in, out)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[6], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -504,7 +455,7 @@ func (c *backendProtobufClient) SubmitEvidenceConnection(ctx context.Context, in
 
 func (c *backendProtobufClient) callSubmitEvidenceConnection(ctx context.Context, in *SubmitEvidenceConnectionRequest) (*SubmitEvidenceConnectionResponse, error) {
 	out := new(SubmitEvidenceConnectionResponse)
-	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[8], in, out)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[7], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -525,7 +476,7 @@ func (c *backendProtobufClient) callSubmitEvidenceConnection(ctx context.Context
 
 type backendJSONClient struct {
 	client      HTTPClient
-	urls        [9]string
+	urls        [8]string
 	interceptor twirp.Interceptor
 	opts        twirp.ClientOptions
 }
@@ -553,11 +504,10 @@ func NewBackendJSONClient(baseURL string, client HTTPClient, opts ...twirp.Clien
 	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
 	serviceURL := sanitizeBaseURL(baseURL)
 	serviceURL += baseServicePath(pathPrefix, "ctfg", "Backend")
-	urls := [9]string{
+	urls := [8]string{
 		serviceURL + "Register",
 		serviceURL + "Login",
 		serviceURL + "CurrentUser",
-		serviceURL + "GetChallenges",
 		serviceURL + "SubmitFlag",
 		serviceURL + "SubmitEvidenceReport",
 		serviceURL + "GetDiscoveredEvidence",
@@ -711,52 +661,6 @@ func (c *backendJSONClient) callCurrentUser(ctx context.Context, in *CurrentUser
 	return out, nil
 }
 
-func (c *backendJSONClient) GetChallenges(ctx context.Context, in *GetChallengesRequest) (*GetChallengesResponse, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
-	ctx = ctxsetters.WithServiceName(ctx, "Backend")
-	ctx = ctxsetters.WithMethodName(ctx, "GetChallenges")
-	caller := c.callGetChallenges
-	if c.interceptor != nil {
-		caller = func(ctx context.Context, req *GetChallengesRequest) (*GetChallengesResponse, error) {
-			resp, err := c.interceptor(
-				func(ctx context.Context, req interface{}) (interface{}, error) {
-					typedReq, ok := req.(*GetChallengesRequest)
-					if !ok {
-						return nil, twirp.InternalError("failed type assertion req.(*GetChallengesRequest) when calling interceptor")
-					}
-					return c.callGetChallenges(ctx, typedReq)
-				},
-			)(ctx, req)
-			if resp != nil {
-				typedResp, ok := resp.(*GetChallengesResponse)
-				if !ok {
-					return nil, twirp.InternalError("failed type assertion resp.(*GetChallengesResponse) when calling interceptor")
-				}
-				return typedResp, err
-			}
-			return nil, err
-		}
-	}
-	return caller(ctx, in)
-}
-
-func (c *backendJSONClient) callGetChallenges(ctx context.Context, in *GetChallengesRequest) (*GetChallengesResponse, error) {
-	out := new(GetChallengesResponse)
-	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[3], in, out)
-	if err != nil {
-		twerr, ok := err.(twirp.Error)
-		if !ok {
-			twerr = twirp.InternalErrorWith(err)
-		}
-		callClientError(ctx, c.opts.Hooks, twerr)
-		return nil, err
-	}
-
-	callClientResponseReceived(ctx, c.opts.Hooks)
-
-	return out, nil
-}
-
 func (c *backendJSONClient) SubmitFlag(ctx context.Context, in *SubmitFlagRequest) (*SubmitFlagResponse, error) {
 	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
 	ctx = ctxsetters.WithServiceName(ctx, "Backend")
@@ -788,7 +692,7 @@ func (c *backendJSONClient) SubmitFlag(ctx context.Context, in *SubmitFlagReques
 
 func (c *backendJSONClient) callSubmitFlag(ctx context.Context, in *SubmitFlagRequest) (*SubmitFlagResponse, error) {
 	out := new(SubmitFlagResponse)
-	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[4], in, out)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[3], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -834,7 +738,7 @@ func (c *backendJSONClient) SubmitEvidenceReport(ctx context.Context, in *Submit
 
 func (c *backendJSONClient) callSubmitEvidenceReport(ctx context.Context, in *SubmitEvidenceReportRequest) (*SubmitEvidenceReportRequest, error) {
 	out := new(SubmitEvidenceReportRequest)
-	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[5], in, out)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[4], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -880,7 +784,7 @@ func (c *backendJSONClient) GetDiscoveredEvidence(ctx context.Context, in *GetDi
 
 func (c *backendJSONClient) callGetDiscoveredEvidence(ctx context.Context, in *GetDiscoveredEvidenceRequest) (*GetDiscoveredEvidenceResponse, error) {
 	out := new(GetDiscoveredEvidenceResponse)
-	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[6], in, out)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[5], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -926,7 +830,7 @@ func (c *backendJSONClient) SubmitEvidence(ctx context.Context, in *SubmitEviden
 
 func (c *backendJSONClient) callSubmitEvidence(ctx context.Context, in *SubmitEvidenceRequest) (*SubmitEvidenceResponse, error) {
 	out := new(SubmitEvidenceResponse)
-	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[7], in, out)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[6], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -972,7 +876,7 @@ func (c *backendJSONClient) SubmitEvidenceConnection(ctx context.Context, in *Su
 
 func (c *backendJSONClient) callSubmitEvidenceConnection(ctx context.Context, in *SubmitEvidenceConnectionRequest) (*SubmitEvidenceConnectionResponse, error) {
 	out := new(SubmitEvidenceConnectionResponse)
-	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[8], in, out)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[7], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -1092,9 +996,6 @@ func (s *backendServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	case "CurrentUser":
 		s.serveCurrentUser(ctx, resp, req)
-		return
-	case "GetChallenges":
-		s.serveGetChallenges(ctx, resp, req)
 		return
 	case "SubmitFlag":
 		s.serveSubmitFlag(ctx, resp, req)
@@ -1635,186 +1536,6 @@ func (s *backendServer) serveCurrentUserProtobuf(ctx context.Context, resp http.
 	}
 	if respContent == nil {
 		s.writeError(ctx, resp, twirp.InternalError("received a nil *CurrentUserResponse and nil error while calling CurrentUser. nil responses are not supported"))
-		return
-	}
-
-	ctx = callResponsePrepared(ctx, s.hooks)
-
-	respBytes, err := proto.Marshal(respContent)
-	if err != nil {
-		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal proto response"))
-		return
-	}
-
-	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
-	resp.Header().Set("Content-Type", "application/protobuf")
-	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
-	resp.WriteHeader(http.StatusOK)
-	if n, err := resp.Write(respBytes); err != nil {
-		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
-		twerr := twirp.NewError(twirp.Unknown, msg)
-		ctx = callError(ctx, s.hooks, twerr)
-	}
-	callResponseSent(ctx, s.hooks)
-}
-
-func (s *backendServer) serveGetChallenges(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	header := req.Header.Get("Content-Type")
-	i := strings.Index(header, ";")
-	if i == -1 {
-		i = len(header)
-	}
-	switch strings.TrimSpace(strings.ToLower(header[:i])) {
-	case "application/json":
-		s.serveGetChallengesJSON(ctx, resp, req)
-	case "application/protobuf":
-		s.serveGetChallengesProtobuf(ctx, resp, req)
-	default:
-		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
-		twerr := badRouteError(msg, req.Method, req.URL.Path)
-		s.writeError(ctx, resp, twerr)
-	}
-}
-
-func (s *backendServer) serveGetChallengesJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	var err error
-	ctx = ctxsetters.WithMethodName(ctx, "GetChallenges")
-	ctx, err = callRequestRouted(ctx, s.hooks)
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-
-	d := json.NewDecoder(req.Body)
-	rawReqBody := json.RawMessage{}
-	if err := d.Decode(&rawReqBody); err != nil {
-		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
-		return
-	}
-	reqContent := new(GetChallengesRequest)
-	unmarshaler := protojson.UnmarshalOptions{DiscardUnknown: true}
-	if err = unmarshaler.Unmarshal(rawReqBody, reqContent); err != nil {
-		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
-		return
-	}
-
-	handler := s.Backend.GetChallenges
-	if s.interceptor != nil {
-		handler = func(ctx context.Context, req *GetChallengesRequest) (*GetChallengesResponse, error) {
-			resp, err := s.interceptor(
-				func(ctx context.Context, req interface{}) (interface{}, error) {
-					typedReq, ok := req.(*GetChallengesRequest)
-					if !ok {
-						return nil, twirp.InternalError("failed type assertion req.(*GetChallengesRequest) when calling interceptor")
-					}
-					return s.Backend.GetChallenges(ctx, typedReq)
-				},
-			)(ctx, req)
-			if resp != nil {
-				typedResp, ok := resp.(*GetChallengesResponse)
-				if !ok {
-					return nil, twirp.InternalError("failed type assertion resp.(*GetChallengesResponse) when calling interceptor")
-				}
-				return typedResp, err
-			}
-			return nil, err
-		}
-	}
-
-	// Call service method
-	var respContent *GetChallengesResponse
-	func() {
-		defer ensurePanicResponses(ctx, resp, s.hooks)
-		respContent, err = handler(ctx, reqContent)
-	}()
-
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *GetChallengesResponse and nil error while calling GetChallenges. nil responses are not supported"))
-		return
-	}
-
-	ctx = callResponsePrepared(ctx, s.hooks)
-
-	marshaler := &protojson.MarshalOptions{UseProtoNames: !s.jsonCamelCase, EmitUnpopulated: !s.jsonSkipDefaults}
-	respBytes, err := marshaler.Marshal(respContent)
-	if err != nil {
-		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal json response"))
-		return
-	}
-
-	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
-	resp.Header().Set("Content-Type", "application/json")
-	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
-	resp.WriteHeader(http.StatusOK)
-
-	if n, err := resp.Write(respBytes); err != nil {
-		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
-		twerr := twirp.NewError(twirp.Unknown, msg)
-		ctx = callError(ctx, s.hooks, twerr)
-	}
-	callResponseSent(ctx, s.hooks)
-}
-
-func (s *backendServer) serveGetChallengesProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	var err error
-	ctx = ctxsetters.WithMethodName(ctx, "GetChallenges")
-	ctx, err = callRequestRouted(ctx, s.hooks)
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-
-	buf, err := io.ReadAll(req.Body)
-	if err != nil {
-		s.handleRequestBodyError(ctx, resp, "failed to read request body", err)
-		return
-	}
-	reqContent := new(GetChallengesRequest)
-	if err = proto.Unmarshal(buf, reqContent); err != nil {
-		s.writeError(ctx, resp, malformedRequestError("the protobuf request could not be decoded"))
-		return
-	}
-
-	handler := s.Backend.GetChallenges
-	if s.interceptor != nil {
-		handler = func(ctx context.Context, req *GetChallengesRequest) (*GetChallengesResponse, error) {
-			resp, err := s.interceptor(
-				func(ctx context.Context, req interface{}) (interface{}, error) {
-					typedReq, ok := req.(*GetChallengesRequest)
-					if !ok {
-						return nil, twirp.InternalError("failed type assertion req.(*GetChallengesRequest) when calling interceptor")
-					}
-					return s.Backend.GetChallenges(ctx, typedReq)
-				},
-			)(ctx, req)
-			if resp != nil {
-				typedResp, ok := resp.(*GetChallengesResponse)
-				if !ok {
-					return nil, twirp.InternalError("failed type assertion resp.(*GetChallengesResponse) when calling interceptor")
-				}
-				return typedResp, err
-			}
-			return nil, err
-		}
-	}
-
-	// Call service method
-	var respContent *GetChallengesResponse
-	func() {
-		defer ensurePanicResponses(ctx, resp, s.hooks)
-		respContent, err = handler(ctx, reqContent)
-	}()
-
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *GetChallengesResponse and nil error while calling GetChallenges. nil responses are not supported"))
 		return
 	}
 
@@ -2761,6 +2482,10 @@ type Admin interface {
 	UpsertChallenge(context.Context, *UpsertChallengeRequest) (*Empty, error)
 
 	DeleteChallenge(context.Context, *DeleteChallengeRequest) (*Empty, error)
+
+	GetTeamsProgress(context.Context, *GetTeamsProgressRequest) (*GetTeamsProgressResponse, error)
+
+	GetAllChallenges(context.Context, *GetAllChallengesRequest) (*GetAllChallengesResponse, error)
 }
 
 // =====================
@@ -2769,7 +2494,7 @@ type Admin interface {
 
 type adminProtobufClient struct {
 	client      HTTPClient
-	urls        [2]string
+	urls        [4]string
 	interceptor twirp.Interceptor
 	opts        twirp.ClientOptions
 }
@@ -2797,9 +2522,11 @@ func NewAdminProtobufClient(baseURL string, client HTTPClient, opts ...twirp.Cli
 	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
 	serviceURL := sanitizeBaseURL(baseURL)
 	serviceURL += baseServicePath(pathPrefix, "ctfg", "Admin")
-	urls := [2]string{
+	urls := [4]string{
 		serviceURL + "UpsertChallenge",
 		serviceURL + "DeleteChallenge",
+		serviceURL + "GetTeamsProgress",
+		serviceURL + "GetAllChallenges",
 	}
 
 	return &adminProtobufClient{
@@ -2902,13 +2629,105 @@ func (c *adminProtobufClient) callDeleteChallenge(ctx context.Context, in *Delet
 	return out, nil
 }
 
+func (c *adminProtobufClient) GetTeamsProgress(ctx context.Context, in *GetTeamsProgressRequest) (*GetTeamsProgressResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
+	ctx = ctxsetters.WithServiceName(ctx, "Admin")
+	ctx = ctxsetters.WithMethodName(ctx, "GetTeamsProgress")
+	caller := c.callGetTeamsProgress
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *GetTeamsProgressRequest) (*GetTeamsProgressResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetTeamsProgressRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetTeamsProgressRequest) when calling interceptor")
+					}
+					return c.callGetTeamsProgress(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetTeamsProgressResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetTeamsProgressResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *adminProtobufClient) callGetTeamsProgress(ctx context.Context, in *GetTeamsProgressRequest) (*GetTeamsProgressResponse, error) {
+	out := new(GetTeamsProgressResponse)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[2], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *adminProtobufClient) GetAllChallenges(ctx context.Context, in *GetAllChallengesRequest) (*GetAllChallengesResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
+	ctx = ctxsetters.WithServiceName(ctx, "Admin")
+	ctx = ctxsetters.WithMethodName(ctx, "GetAllChallenges")
+	caller := c.callGetAllChallenges
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *GetAllChallengesRequest) (*GetAllChallengesResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetAllChallengesRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetAllChallengesRequest) when calling interceptor")
+					}
+					return c.callGetAllChallenges(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetAllChallengesResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetAllChallengesResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *adminProtobufClient) callGetAllChallenges(ctx context.Context, in *GetAllChallengesRequest) (*GetAllChallengesResponse, error) {
+	out := new(GetAllChallengesResponse)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[3], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
 // =================
 // Admin JSON Client
 // =================
 
 type adminJSONClient struct {
 	client      HTTPClient
-	urls        [2]string
+	urls        [4]string
 	interceptor twirp.Interceptor
 	opts        twirp.ClientOptions
 }
@@ -2936,9 +2755,11 @@ func NewAdminJSONClient(baseURL string, client HTTPClient, opts ...twirp.ClientO
 	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
 	serviceURL := sanitizeBaseURL(baseURL)
 	serviceURL += baseServicePath(pathPrefix, "ctfg", "Admin")
-	urls := [2]string{
+	urls := [4]string{
 		serviceURL + "UpsertChallenge",
 		serviceURL + "DeleteChallenge",
+		serviceURL + "GetTeamsProgress",
+		serviceURL + "GetAllChallenges",
 	}
 
 	return &adminJSONClient{
@@ -3027,6 +2848,98 @@ func (c *adminJSONClient) DeleteChallenge(ctx context.Context, in *DeleteChallen
 func (c *adminJSONClient) callDeleteChallenge(ctx context.Context, in *DeleteChallengeRequest) (*Empty, error) {
 	out := new(Empty)
 	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[1], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *adminJSONClient) GetTeamsProgress(ctx context.Context, in *GetTeamsProgressRequest) (*GetTeamsProgressResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
+	ctx = ctxsetters.WithServiceName(ctx, "Admin")
+	ctx = ctxsetters.WithMethodName(ctx, "GetTeamsProgress")
+	caller := c.callGetTeamsProgress
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *GetTeamsProgressRequest) (*GetTeamsProgressResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetTeamsProgressRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetTeamsProgressRequest) when calling interceptor")
+					}
+					return c.callGetTeamsProgress(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetTeamsProgressResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetTeamsProgressResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *adminJSONClient) callGetTeamsProgress(ctx context.Context, in *GetTeamsProgressRequest) (*GetTeamsProgressResponse, error) {
+	out := new(GetTeamsProgressResponse)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[2], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *adminJSONClient) GetAllChallenges(ctx context.Context, in *GetAllChallengesRequest) (*GetAllChallengesResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "ctfg")
+	ctx = ctxsetters.WithServiceName(ctx, "Admin")
+	ctx = ctxsetters.WithMethodName(ctx, "GetAllChallenges")
+	caller := c.callGetAllChallenges
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *GetAllChallengesRequest) (*GetAllChallengesResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetAllChallengesRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetAllChallengesRequest) when calling interceptor")
+					}
+					return c.callGetAllChallenges(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetAllChallengesResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetAllChallengesResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *adminJSONClient) callGetAllChallenges(ctx context.Context, in *GetAllChallengesRequest) (*GetAllChallengesResponse, error) {
+	out := new(GetAllChallengesResponse)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[3], in, out)
 	if err != nil {
 		twerr, ok := err.(twirp.Error)
 		if !ok {
@@ -3143,6 +3056,12 @@ func (s *adminServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	case "DeleteChallenge":
 		s.serveDeleteChallenge(ctx, resp, req)
+		return
+	case "GetTeamsProgress":
+		s.serveGetTeamsProgress(ctx, resp, req)
+		return
+	case "GetAllChallenges":
+		s.serveGetAllChallenges(ctx, resp, req)
 		return
 	default:
 		msg := fmt.Sprintf("no handler for path %q", req.URL.Path)
@@ -3488,6 +3407,366 @@ func (s *adminServer) serveDeleteChallengeProtobuf(ctx context.Context, resp htt
 	}
 	if respContent == nil {
 		s.writeError(ctx, resp, twirp.InternalError("received a nil *Empty and nil error while calling DeleteChallenge. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	respBytes, err := proto.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal proto response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/protobuf")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *adminServer) serveGetTeamsProgress(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	header := req.Header.Get("Content-Type")
+	i := strings.Index(header, ";")
+	if i == -1 {
+		i = len(header)
+	}
+	switch strings.TrimSpace(strings.ToLower(header[:i])) {
+	case "application/json":
+		s.serveGetTeamsProgressJSON(ctx, resp, req)
+	case "application/protobuf":
+		s.serveGetTeamsProgressProtobuf(ctx, resp, req)
+	default:
+		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		twerr := badRouteError(msg, req.Method, req.URL.Path)
+		s.writeError(ctx, resp, twerr)
+	}
+}
+
+func (s *adminServer) serveGetTeamsProgressJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "GetTeamsProgress")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	d := json.NewDecoder(req.Body)
+	rawReqBody := json.RawMessage{}
+	if err := d.Decode(&rawReqBody); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+	reqContent := new(GetTeamsProgressRequest)
+	unmarshaler := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err = unmarshaler.Unmarshal(rawReqBody, reqContent); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+
+	handler := s.Admin.GetTeamsProgress
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *GetTeamsProgressRequest) (*GetTeamsProgressResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetTeamsProgressRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetTeamsProgressRequest) when calling interceptor")
+					}
+					return s.Admin.GetTeamsProgress(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetTeamsProgressResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetTeamsProgressResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *GetTeamsProgressResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *GetTeamsProgressResponse and nil error while calling GetTeamsProgress. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	marshaler := &protojson.MarshalOptions{UseProtoNames: !s.jsonCamelCase, EmitUnpopulated: !s.jsonSkipDefaults}
+	respBytes, err := marshaler.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal json response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *adminServer) serveGetTeamsProgressProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "GetTeamsProgress")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	buf, err := io.ReadAll(req.Body)
+	if err != nil {
+		s.handleRequestBodyError(ctx, resp, "failed to read request body", err)
+		return
+	}
+	reqContent := new(GetTeamsProgressRequest)
+	if err = proto.Unmarshal(buf, reqContent); err != nil {
+		s.writeError(ctx, resp, malformedRequestError("the protobuf request could not be decoded"))
+		return
+	}
+
+	handler := s.Admin.GetTeamsProgress
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *GetTeamsProgressRequest) (*GetTeamsProgressResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetTeamsProgressRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetTeamsProgressRequest) when calling interceptor")
+					}
+					return s.Admin.GetTeamsProgress(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetTeamsProgressResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetTeamsProgressResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *GetTeamsProgressResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *GetTeamsProgressResponse and nil error while calling GetTeamsProgress. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	respBytes, err := proto.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal proto response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/protobuf")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *adminServer) serveGetAllChallenges(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	header := req.Header.Get("Content-Type")
+	i := strings.Index(header, ";")
+	if i == -1 {
+		i = len(header)
+	}
+	switch strings.TrimSpace(strings.ToLower(header[:i])) {
+	case "application/json":
+		s.serveGetAllChallengesJSON(ctx, resp, req)
+	case "application/protobuf":
+		s.serveGetAllChallengesProtobuf(ctx, resp, req)
+	default:
+		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		twerr := badRouteError(msg, req.Method, req.URL.Path)
+		s.writeError(ctx, resp, twerr)
+	}
+}
+
+func (s *adminServer) serveGetAllChallengesJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "GetAllChallenges")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	d := json.NewDecoder(req.Body)
+	rawReqBody := json.RawMessage{}
+	if err := d.Decode(&rawReqBody); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+	reqContent := new(GetAllChallengesRequest)
+	unmarshaler := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err = unmarshaler.Unmarshal(rawReqBody, reqContent); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+
+	handler := s.Admin.GetAllChallenges
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *GetAllChallengesRequest) (*GetAllChallengesResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetAllChallengesRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetAllChallengesRequest) when calling interceptor")
+					}
+					return s.Admin.GetAllChallenges(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetAllChallengesResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetAllChallengesResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *GetAllChallengesResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *GetAllChallengesResponse and nil error while calling GetAllChallenges. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	marshaler := &protojson.MarshalOptions{UseProtoNames: !s.jsonCamelCase, EmitUnpopulated: !s.jsonSkipDefaults}
+	respBytes, err := marshaler.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal json response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *adminServer) serveGetAllChallengesProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "GetAllChallenges")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	buf, err := io.ReadAll(req.Body)
+	if err != nil {
+		s.handleRequestBodyError(ctx, resp, "failed to read request body", err)
+		return
+	}
+	reqContent := new(GetAllChallengesRequest)
+	if err = proto.Unmarshal(buf, reqContent); err != nil {
+		s.writeError(ctx, resp, malformedRequestError("the protobuf request could not be decoded"))
+		return
+	}
+
+	handler := s.Admin.GetAllChallenges
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *GetAllChallengesRequest) (*GetAllChallengesResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetAllChallengesRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetAllChallengesRequest) when calling interceptor")
+					}
+					return s.Admin.GetAllChallenges(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetAllChallengesResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetAllChallengesResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *GetAllChallengesResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *GetAllChallengesResponse and nil error while calling GetAllChallenges. nil responses are not supported"))
 		return
 	}
 
@@ -4092,62 +4371,66 @@ func callClientError(ctx context.Context, h *twirp.ClientHooks, err twirp.Error)
 }
 
 var twirpFileDescriptor0 = []byte{
-	// 904 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x56, 0x4b, 0x6f, 0x23, 0x45,
-	0x10, 0xd6, 0xd8, 0x71, 0xe2, 0x94, 0xd7, 0x49, 0xe8, 0x4d, 0xcc, 0x30, 0x59, 0xc0, 0x34, 0xaf,
-	0x08, 0xad, 0x12, 0x14, 0x4e, 0x48, 0x2b, 0x1e, 0x49, 0x96, 0x2c, 0x62, 0x85, 0xd0, 0xa0, 0xe5,
-	0x80, 0x90, 0x60, 0x76, 0xa6, 0x76, 0x18, 0x61, 0x4f, 0x9b, 0xee, 0xb6, 0xd9, 0x9c, 0x38, 0xf0,
-	0x23, 0xf8, 0x35, 0xfc, 0x37, 0xd4, 0xcf, 0x79, 0x78, 0x9c, 0x20, 0xf6, 0xd6, 0x55, 0x5d, 0xcf,
-	0xaf, 0xaa, 0xba, 0x1a, 0x0e, 0x16, 0x9c, 0x49, 0x76, 0x96, 0xca, 0x17, 0xf9, 0xa9, 0x3e, 0x92,
-	0x2d, 0x75, 0xa6, 0x3b, 0x30, 0x78, 0x3c, 0x5f, 0xc8, 0x1b, 0x1a, 0xc3, 0xe4, 0xd9, 0x42, 0x20,
-	0x97, 0x97, 0xbf, 0x26, 0xb3, 0x19, 0x96, 0x39, 0xc6, 0xf8, 0xfb, 0x12, 0x85, 0x24, 0xef, 0xc1,
-	0x38, 0x75, 0xbc, 0x6f, 0x93, 0x39, 0x86, 0xc1, 0x34, 0x38, 0xd9, 0x8d, 0x9b, 0x4c, 0x42, 0x60,
-	0xeb, 0xc5, 0x2c, 0xc9, 0xc3, 0x9e, 0xbe, 0xd4, 0x67, 0xfa, 0x19, 0x4c, 0xae, 0x70, 0x86, 0x12,
-	0xff, 0x9f, 0x4d, 0x7a, 0x06, 0xc7, 0xdf, 0x2f, 0x9f, 0xcf, 0x0b, 0xf9, 0x78, 0x55, 0x64, 0x58,
-	0xa6, 0x18, 0xe3, 0x82, 0x71, 0xe9, 0x8c, 0x1c, 0x40, 0x7f, 0xc9, 0x67, 0x56, 0x55, 0x1d, 0xe9,
-	0x5b, 0xf0, 0xa0, 0x5b, 0x41, 0x2c, 0x58, 0x29, 0x90, 0x7e, 0x01, 0xf7, 0x9e, 0xb2, 0xbc, 0x28,
-	0x9d, 0x85, 0x43, 0x18, 0xe0, 0x3c, 0x29, 0x9c, 0x0d, 0x43, 0x90, 0x08, 0x86, 0x8b, 0x44, 0x88,
-	0x3f, 0x18, 0xcf, 0x6c, 0x3a, 0x9e, 0xa6, 0xd7, 0x30, 0xb6, 0x16, 0x8c, 0x49, 0x25, 0xbc, 0x14,
-	0xc8, 0xcb, 0x2a, 0x09, 0x4f, 0xbb, 0xbb, 0x98, 0xcd, 0xd0, 0x19, 0x72, 0x34, 0x9d, 0xc1, 0xd0,
-	0x05, 0x49, 0xf6, 0xa0, 0x57, 0x64, 0x5a, 0x7b, 0x1c, 0xf7, 0x8a, 0x4c, 0x61, 0xa9, 0xed, 0x59,
-	0x2c, 0xb5, 0xad, 0x29, 0x8c, 0x3c, 0x38, 0x5f, 0x5f, 0x85, 0x7d, 0x2d, 0x5c, 0x67, 0x91, 0x7b,
-	0x10, 0xbc, 0x0c, 0xb7, 0xa6, 0xc1, 0xc9, 0x20, 0x0e, 0x5e, 0x2a, 0xea, 0x26, 0x1c, 0x18, 0xea,
-	0x86, 0xfe, 0x00, 0x70, 0xc9, 0xca, 0x12, 0x53, 0x59, 0xb0, 0x72, 0xcd, 0xdf, 0x04, 0xb6, 0x05,
-	0x5b, 0xf2, 0xd4, 0x78, 0x1c, 0xc7, 0x96, 0x52, 0x3e, 0x33, 0x14, 0xb2, 0x28, 0x13, 0xa5, 0xe6,
-	0x7c, 0xd6, 0x58, 0x0a, 0xf0, 0x6b, 0x94, 0x57, 0x85, 0x48, 0xd9, 0x0a, 0x39, 0x66, 0x15, 0xee,
-	0x1a, 0x60, 0xfa, 0x77, 0x00, 0x6f, 0x6e, 0x10, 0xb0, 0xf8, 0x4d, 0x60, 0x9b, 0xeb, 0x22, 0x59,
-	0xf4, 0x2c, 0x45, 0x3e, 0x82, 0x21, 0x5a, 0xd9, 0xb0, 0x37, 0xed, 0x9f, 0x8c, 0xce, 0xf7, 0x4e,
-	0x75, 0xf7, 0x7a, 0x0b, 0xfe, 0x9e, 0x9c, 0xc3, 0x28, 0xf5, 0xd9, 0x89, 0xb0, 0xaf, 0xc5, 0x0f,
-	0x8c, 0x78, 0x95, 0x76, 0x5c, 0x17, 0xa2, 0x7f, 0xc2, 0x51, 0xbb, 0x55, 0x4c, 0x4f, 0x44, 0x35,
-	0xc7, 0xb6, 0xa0, 0xde, 0x91, 0x86, 0xb8, 0xd7, 0x80, 0xb8, 0x6f, 0x21, 0x56, 0x89, 0x14, 0xe2,
-	0x2b, 0x35, 0x02, 0xaa, 0x06, 0xc3, 0xd8, 0x52, 0x26, 0xc1, 0x39, 0x5b, 0xa1, 0xae, 0xc6, 0x30,
-	0xb6, 0x14, 0x7d, 0x08, 0x93, 0x76, 0x00, 0x16, 0x12, 0x57, 0xfe, 0xa0, 0x2a, 0x3f, 0x15, 0xf0,
-	0x76, 0x53, 0xba, 0x96, 0x97, 0x0d, 0xbc, 0xaa, 0x62, 0x70, 0x5b, 0x15, 0x7b, 0x6b, 0x55, 0xac,
-	0x85, 0xd8, 0x6f, 0x84, 0xf8, 0x08, 0xa6, 0x9b, 0x9d, 0xda, 0x60, 0x43, 0xd8, 0x49, 0x39, 0x26,
-	0x12, 0x4d, 0x43, 0x0d, 0x63, 0x47, 0xd2, 0x9f, 0x61, 0x3f, 0xc6, 0xbc, 0x10, 0x12, 0x79, 0x0d,
-	0xdb, 0x8d, 0xc3, 0xe2, 0x67, 0xb1, 0xb7, 0x69, 0x16, 0xfb, 0xad, 0x59, 0x7c, 0x08, 0x07, 0x95,
-	0x83, 0x3b, 0xc3, 0x79, 0x0a, 0x5b, 0xdf, 0x25, 0xb9, 0xf6, 0xc3, 0xd9, 0x52, 0xba, 0x00, 0x0c,
-	0xa1, 0xb8, 0xb2, 0x90, 0x7e, 0x4e, 0x0d, 0xa1, 0xad, 0xb1, 0x52, 0x62, 0x29, 0xad, 0x73, 0x47,
-	0xd2, 0x43, 0x20, 0x97, 0x4b, 0xce, 0xb1, 0x94, 0xcf, 0x84, 0xcf, 0x8f, 0x32, 0xb8, 0xdf, 0xe0,
-	0xbe, 0xda, 0x1b, 0x41, 0xa6, 0x30, 0x58, 0x24, 0x39, 0xba, 0x8e, 0x06, 0xd3, 0xd1, 0x2a, 0x8b,
-	0xd8, 0x5c, 0xd0, 0x09, 0x1c, 0x5e, 0x63, 0xf5, 0x64, 0x0b, 0x17, 0x48, 0x0e, 0xbb, 0x9e, 0xf9,
-	0x5f, 0x9f, 0x97, 0x0c, 0x45, 0xca, 0x8b, 0x85, 0x1f, 0xf5, 0xdd, 0xb8, 0xce, 0x52, 0x08, 0xad,
-	0x92, 0xd9, 0x12, 0xed, 0x13, 0x63, 0x08, 0xfa, 0x04, 0x8e, 0x5a, 0x01, 0xd8, 0x9c, 0xcf, 0x00,
-	0xfc, 0xe3, 0x24, 0xc2, 0x40, 0x27, 0xb0, 0x6f, 0x47, 0xd2, 0x6f, 0x83, 0x9a, 0x08, 0xfd, 0x10,
-	0x5e, 0x33, 0xcd, 0xa6, 0xa6, 0xc6, 0x35, 0x8c, 0xdb, 0x2a, 0x41, 0x6d, 0xab, 0x9c, 0x02, 0xa9,
-	0x0b, 0xd6, 0x0a, 0xcf, 0x38, 0xc7, 0x54, 0xfa, 0xc2, 0x1b, 0xf2, 0xfc, 0x9f, 0x01, 0xec, 0x5c,
-	0x24, 0xe9, 0x6f, 0x58, 0x66, 0xe4, 0x53, 0x18, 0xba, 0x96, 0x21, 0x47, 0x26, 0x9a, 0x56, 0x8f,
-	0x46, 0x93, 0x36, 0xdb, 0x3a, 0xf8, 0x18, 0x06, 0xfa, 0xe5, 0x27, 0xc4, 0x08, 0xd4, 0x17, 0x49,
-	0x74, 0xbf, 0xc1, 0xb3, 0x1a, 0x17, 0x30, 0xaa, 0x75, 0x03, 0x09, 0x6d, 0xf6, 0x6b, 0x6d, 0x13,
-	0xbd, 0xd1, 0x71, 0x63, 0x6d, 0x3c, 0x81, 0x71, 0x03, 0x5f, 0x12, 0x19, 0xd9, 0xae, 0xaa, 0x47,
-	0xc7, 0x9d, 0x77, 0xd6, 0xd2, 0xe7, 0x00, 0x15, 0x6c, 0xe4, 0x75, 0x23, 0xba, 0x86, 0x78, 0x14,
-	0xae, 0x5f, 0x58, 0x03, 0x3f, 0xc1, 0x61, 0xd7, 0x72, 0x25, 0xef, 0xd4, 0x35, 0x3a, 0x37, 0x75,
-	0x74, 0xb7, 0x08, 0xf9, 0x45, 0x37, 0xd2, 0xfa, 0xa2, 0x20, 0xd4, 0x27, 0xb5, 0x71, 0xcd, 0x44,
-	0xef, 0xde, 0x2a, 0x63, 0xe3, 0xff, 0x06, 0xf6, 0x9a, 0x01, 0x90, 0xe3, 0xee, 0xb0, 0x8c, 0xcd,
-	0x07, 0xdd, 0x97, 0xd6, 0x58, 0x01, 0xe1, 0xa6, 0xa7, 0x91, 0xbc, 0xdf, 0xa5, 0xb9, 0xf6, 0x5e,
-	0x47, 0x1f, 0xdc, 0x25, 0x66, 0x5c, 0x9d, 0xff, 0x15, 0xc0, 0xe0, 0xcb, 0x6c, 0x5e, 0x94, 0xe4,
-	0x11, 0xec, 0xb7, 0xfe, 0x68, 0xc4, 0x46, 0xd9, 0xfd, 0x75, 0x8b, 0x46, 0x76, 0x65, 0xaa, 0x1f,
-	0x9e, 0xd2, 0x6e, 0xfd, 0xc6, 0x9c, 0x76, 0xf7, 0x27, 0xad, 0xa1, 0x7d, 0x01, 0x3f, 0x0e, 0x73,
-	0x2c, 0xf5, 0x07, 0xf2, 0xf9, 0xb6, 0xfe, 0x41, 0x7e, 0xf2, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0xea, 0x1d, 0xc8, 0x4f, 0x55, 0x0a, 0x00, 0x00,
+	// 969 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x56, 0xdd, 0x6e, 0x1b, 0x45,
+	0x14, 0xd6, 0xfa, 0x27, 0x71, 0x8f, 0x9b, 0xc4, 0x4c, 0x13, 0x77, 0xbb, 0xfd, 0xc1, 0x0c, 0x7f,
+	0x16, 0xaa, 0x12, 0x94, 0x5e, 0x21, 0x55, 0x40, 0x93, 0x94, 0x08, 0xb5, 0x42, 0x65, 0xa1, 0x5c,
+	0x20, 0x24, 0xd8, 0xae, 0x4f, 0xcd, 0x0a, 0x7b, 0xc7, 0xcc, 0x8c, 0x43, 0x73, 0xc5, 0x0d, 0xef,
+	0xc0, 0x33, 0xf0, 0x7c, 0xbc, 0x00, 0x9a, 0x5f, 0xcf, 0xae, 0xd7, 0x89, 0x44, 0xef, 0xe6, 0xcc,
+	0x9c, 0xf3, 0xcd, 0x37, 0xdf, 0x9c, 0x73, 0x66, 0x60, 0xb0, 0xe0, 0x4c, 0xb2, 0xa3, 0x5c, 0xbe,
+	0x9e, 0x1e, 0xea, 0x21, 0xe9, 0xa8, 0x31, 0xdd, 0x86, 0xee, 0xd3, 0xf9, 0x42, 0x5e, 0xd2, 0x14,
+	0x86, 0x2f, 0x17, 0x02, 0xb9, 0x3c, 0xfd, 0x35, 0x9b, 0xcd, 0xb0, 0x9c, 0x62, 0x8a, 0xbf, 0x2f,
+	0x51, 0x48, 0xf2, 0x01, 0xec, 0xe4, 0x6e, 0xee, 0x9b, 0x6c, 0x8e, 0x71, 0x34, 0x8a, 0xc6, 0x37,
+	0xd2, 0xea, 0x24, 0x21, 0xd0, 0x79, 0x3d, 0xcb, 0xa6, 0x71, 0x4b, 0x2f, 0xea, 0x31, 0xfd, 0x1c,
+	0x86, 0x67, 0x38, 0x43, 0x89, 0xff, 0x0f, 0x93, 0x1e, 0xc1, 0xdd, 0xef, 0x96, 0xaf, 0xe6, 0x85,
+	0x7c, 0x7a, 0x51, 0x4c, 0xb0, 0xcc, 0x31, 0xc5, 0x05, 0xe3, 0xd2, 0x81, 0x0c, 0xa0, 0xbd, 0xe4,
+	0x33, 0x1b, 0xaa, 0x86, 0xf4, 0x01, 0xdc, 0x6b, 0x0e, 0x10, 0x0b, 0x56, 0x0a, 0xa4, 0x5f, 0xc2,
+	0xcd, 0xe7, 0x6c, 0x5a, 0x94, 0x0e, 0x61, 0x1f, 0xba, 0x38, 0xcf, 0x0a, 0x87, 0x61, 0x0c, 0x92,
+	0x40, 0x6f, 0x91, 0x09, 0xf1, 0x07, 0xe3, 0x13, 0x7b, 0x1c, 0x6f, 0xd3, 0x73, 0xd8, 0xb1, 0x08,
+	0x06, 0x52, 0x39, 0x2f, 0x05, 0xf2, 0x72, 0x75, 0x08, 0x6f, 0xbb, 0xb5, 0x94, 0xcd, 0xd0, 0x01,
+	0x39, 0x9b, 0xfe, 0x15, 0x41, 0xcf, 0xb1, 0x24, 0xbb, 0xd0, 0x2a, 0x26, 0x3a, 0x7c, 0x27, 0x6d,
+	0x15, 0x13, 0x25, 0xa6, 0x06, 0xb4, 0x62, 0x6a, 0xb0, 0x11, 0xf4, 0xbd, 0x3a, 0x5f, 0x9f, 0xc5,
+	0x6d, 0xed, 0x1c, 0x4e, 0x91, 0x9b, 0x10, 0xbd, 0x89, 0x3b, 0xa3, 0x68, 0xdc, 0x4d, 0xa3, 0x37,
+	0xca, 0xba, 0x8c, 0xbb, 0xc6, 0xba, 0x24, 0x43, 0xd8, 0x2a, 0xc4, 0x57, 0xea, 0x82, 0xb6, 0x46,
+	0xd1, 0xb8, 0x97, 0x5a, 0x8b, 0xfe, 0x00, 0x70, 0xca, 0xca, 0x12, 0x73, 0x59, 0xb0, 0x72, 0x8d,
+	0xc7, 0x10, 0xb6, 0x04, 0x5b, 0xf2, 0xdc, 0x30, 0xd9, 0x49, 0xad, 0xa5, 0xb8, 0x4c, 0x50, 0xc8,
+	0xa2, 0xcc, 0x54, 0x98, 0xe3, 0x12, 0x4c, 0xa9, 0x9b, 0x38, 0x47, 0x79, 0x56, 0x88, 0x9c, 0x5d,
+	0x20, 0xc7, 0xc9, 0xea, 0x42, 0xb4, 0xf2, 0xf4, 0xef, 0x08, 0xee, 0x6f, 0x70, 0xb0, 0xc2, 0x0e,
+	0x61, 0x8b, 0xeb, 0xdb, 0xb3, 0xb2, 0x5a, 0x8b, 0x7c, 0x02, 0x3d, 0xb4, 0xbe, 0x71, 0x6b, 0xd4,
+	0x1e, 0xf7, 0x8f, 0x77, 0x0f, 0x75, 0x5a, 0x7b, 0x04, 0xbf, 0x4e, 0x8e, 0xa1, 0x9f, 0xfb, 0xd3,
+	0x89, 0xb8, 0xad, 0xdd, 0x07, 0xc6, 0x7d, 0x75, 0xec, 0x34, 0x74, 0xa2, 0x7f, 0xc2, 0x41, 0x3d,
+	0x87, 0x4c, 0xb2, 0x24, 0xc1, 0xc6, 0xf6, 0xa6, 0xfd, 0x46, 0x5a, 0xfa, 0x56, 0x45, 0xfa, 0xf6,
+	0xba, 0xf4, 0x9d, 0x50, 0x7a, 0x73, 0xc0, 0x39, 0xbb, 0x40, 0x7d, 0x4b, 0xbd, 0xd4, 0x5a, 0xf4,
+	0x21, 0x0c, 0xeb, 0x04, 0xac, 0x24, 0x2e, 0x2d, 0xa2, 0x55, 0x5a, 0x50, 0x01, 0xef, 0x56, 0xbd,
+	0x83, 0x73, 0x59, 0xe2, 0xab, 0x5b, 0x8c, 0xae, 0xba, 0xc5, 0xd6, 0xda, 0x2d, 0x06, 0x14, 0xdb,
+	0x15, 0x8a, 0x8f, 0x61, 0xb4, 0x79, 0x53, 0x4b, 0x36, 0x86, 0xed, 0x9c, 0x63, 0x26, 0xd1, 0x24,
+	0x54, 0x2f, 0x75, 0x26, 0xfd, 0x19, 0xf6, 0x52, 0x9c, 0x16, 0x42, 0x22, 0x0f, 0xb4, 0xdd, 0x58,
+	0x45, 0xbe, 0x48, 0x5b, 0x9b, 0x8a, 0xb4, 0x5d, 0x2b, 0xd2, 0x87, 0x30, 0x58, 0x6d, 0x70, 0x2d,
+	0x9d, 0xe7, 0xd0, 0x79, 0x91, 0x4d, 0xf5, 0x3e, 0x9c, 0x2d, 0xa5, 0x23, 0x60, 0x0c, 0x35, 0x2b,
+	0x0b, 0xe9, 0x0b, 0xd8, 0x18, 0x1a, 0x8d, 0x95, 0x12, 0x4b, 0x69, 0x37, 0x77, 0x26, 0xdd, 0x07,
+	0x72, 0xba, 0xe4, 0x1c, 0x4b, 0xf9, 0x52, 0xf8, 0xf3, 0x51, 0x06, 0xb7, 0x2a, 0xb3, 0x6f, 0xd7,
+	0x3c, 0xc8, 0x08, 0xba, 0x8b, 0x6c, 0x8a, 0x2e, 0xa3, 0xc1, 0x64, 0xb4, 0x3a, 0x45, 0x6a, 0x16,
+	0xe8, 0xc7, 0xf0, 0x8e, 0xb9, 0x21, 0x95, 0x6a, 0x4e, 0x65, 0xd7, 0xa3, 0xa3, 0xa0, 0x47, 0x1f,
+	0x02, 0x09, 0x1d, 0x03, 0xb5, 0x18, 0xe7, 0x98, 0x4b, 0xaf, 0x96, 0x31, 0x55, 0x0b, 0xfd, 0x1e,
+	0xb3, 0xf9, 0x0b, 0xce, 0xa6, 0x1c, 0x85, 0x50, 0x34, 0x25, 0x66, 0xf3, 0xa0, 0x89, 0x7b, 0x5b,
+	0x69, 0x27, 0x72, 0xc6, 0x5d, 0xf7, 0x30, 0x06, 0xbd, 0x03, 0xb7, 0xcf, 0x51, 0x2a, 0x10, 0xe1,
+	0x50, 0x9c, 0x4c, 0x67, 0x10, 0xaf, 0x2f, 0x59, 0x4a, 0x63, 0xe8, 0x2a, 0x60, 0x11, 0x47, 0xfa,
+	0xcc, 0xc4, 0x9c, 0x39, 0xe4, 0x92, 0x1a, 0x07, 0xfa, 0x08, 0x6e, 0xf8, 0x07, 0xa7, 0xa9, 0x66,
+	0x1a, 0xdf, 0x2a, 0xc3, 0xea, 0xc9, 0x6c, 0xe6, 0x43, 0x3d, 0xab, 0x67, 0x9a, 0x55, 0x6d, 0xc9,
+	0xb2, 0x3a, 0x02, 0xf0, 0x2d, 0xd8, 0x51, 0xdb, 0xb3, 0x0d, 0xc6, 0x3f, 0x7a, 0x81, 0xcb, 0xf1,
+	0xbf, 0x1d, 0xd8, 0x3e, 0xc9, 0xf2, 0xdf, 0xb0, 0x9c, 0x90, 0xcf, 0xa0, 0xe7, 0xf2, 0x94, 0x1c,
+	0x98, 0xa0, 0x5a, 0x61, 0x24, 0xc3, 0xfa, 0xb4, 0xdd, 0xf7, 0x53, 0xe8, 0xea, 0x77, 0x88, 0x58,
+	0x1d, 0xc2, 0x67, 0x2d, 0xb9, 0x55, 0x99, 0xb3, 0x11, 0x27, 0xd0, 0x0f, 0x52, 0x90, 0xc4, 0x96,
+	0xe4, 0x5a, 0xae, 0x26, 0x77, 0x1a, 0x56, 0x2c, 0xc6, 0x17, 0x00, 0xab, 0x64, 0x21, 0xb7, 0x8d,
+	0xe3, 0x5a, 0x9e, 0x25, 0xf1, 0xfa, 0x82, 0x05, 0xf8, 0x09, 0xf6, 0x9b, 0x1e, 0x68, 0xf2, 0x5e,
+	0x18, 0xd1, 0xf8, 0xda, 0x27, 0xd7, 0xbb, 0x90, 0x5f, 0xe0, 0xa0, 0xf1, 0x4d, 0x21, 0xd4, 0xc4,
+	0x5e, 0xf5, 0x22, 0x25, 0xef, 0x5f, 0xe9, 0x63, 0xf9, 0x3f, 0x83, 0xdd, 0x2a, 0x01, 0x72, 0xb7,
+	0x99, 0x96, 0xc1, 0xbc, 0xd7, 0xbc, 0x68, 0xc1, 0x0a, 0x88, 0x37, 0x75, 0x51, 0xf2, 0x61, 0x53,
+	0xe4, 0x5a, 0x6b, 0x4f, 0x3e, 0xba, 0xce, 0xcd, 0x6c, 0x75, 0xfc, 0x4f, 0x0b, 0xba, 0x4f, 0x26,
+	0xf3, 0xa2, 0x24, 0x8f, 0x61, 0xaf, 0xf6, 0xcf, 0x23, 0x96, 0x65, 0xf3, 0xf7, 0x2f, 0xe9, 0xdb,
+	0xd7, 0x55, 0xfd, 0x12, 0x55, 0x74, 0xed, 0x47, 0xe7, 0xa2, 0x9b, 0x3f, 0x7a, 0xd5, 0xe8, 0x6f,
+	0x61, 0x50, 0x2f, 0x6f, 0x72, 0xdf, 0xcb, 0xde, 0xd4, 0x11, 0x92, 0x07, 0x9b, 0x96, 0xad, 0x86,
+	0x06, 0xb2, 0x52, 0x9b, 0x01, 0x64, 0x53, 0x39, 0x07, 0x90, 0x8d, 0x25, 0x7d, 0x02, 0x3f, 0xf6,
+	0xa6, 0x58, 0xea, 0xaf, 0xf2, 0xab, 0x2d, 0xfd, 0x57, 0x7e, 0xf4, 0x5f, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0xf1, 0xa4, 0x5c, 0x37, 0x3f, 0x0b, 0x00, 0x00,
 }

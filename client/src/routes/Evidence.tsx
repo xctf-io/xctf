@@ -68,15 +68,20 @@ export default function MyComponent() {
 	async function loadDiscoveredEvidence() {
 		try {
 			const resp = await ctfg.GetDiscoveredEvidence({});
+			console.log(resp);
 			graphRef.current = resp;
 			setGraph(resp);
 			const tempNodes = resp.evidence.map((e) => {
 				return {
 					id: e.id.toString(),
-					data: { label: e.name },
+					data: { label: e.isFlag ? e.name + "🏳️" : e.name },
 					position: {
 						x: e.x,
 						y: e.y,
+					},
+					style: {
+						background: e.isFlag ? "#17C964" : "#ffffff",
+						color: e.isFlag ? "#ffffff" : "#000000",
 					},
 				};
 			});
@@ -106,10 +111,14 @@ export default function MyComponent() {
 	const initialNodes = graph.evidence.map((e) => {
 		return {
 			id: e.id.toString(),
-			data: { label: e.name },
+			data: { label: e.isFlag ? e.name + "🏳️" : e.name},
 			position: {
 				x: e.x,
 				y: e.y,
+			},
+			style: {
+				background: e.isFlag ? "#17C964" : "#ffffff",
+				color: e.isFlag ? "#ffffff" : "#000000",
 			},
 		};
 	});
@@ -118,9 +127,6 @@ export default function MyComponent() {
 		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
 		[]
 	);
-	const addNode = (node: any) => {
-		setNodes((nodes) => nodes.concat(node));
-	};
 
 	function submitEvidence(remove: boolean) {
 		ctfg

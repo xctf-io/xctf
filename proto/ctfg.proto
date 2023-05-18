@@ -8,7 +8,6 @@ service Backend {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc CurrentUser(CurrentUserRequest) returns (CurrentUserResponse);
 
-  rpc GetChallenges(GetChallengesRequest) returns (GetChallengesResponse);
   rpc SubmitFlag(SubmitFlagRequest) returns (SubmitFlagResponse);
 
   rpc SubmitEvidenceReport(SubmitEvidenceReportRequest) returns (SubmitEvidenceReportRequest);
@@ -20,6 +19,8 @@ service Backend {
 service Admin {
   rpc UpsertChallenge(UpsertChallengeRequest) returns (Empty);
   rpc DeleteChallenge(DeleteChallengeRequest) returns (Empty);
+  rpc GetTeamsProgress(GetTeamsProgressRequest) returns (GetTeamsProgressResponse);
+  rpc GetAllChallenges(GetAllChallengesRequest) returns (GetAllChallengesResponse);
 }
 
 message Empty {}
@@ -55,6 +56,7 @@ message Evidence {
   uint32 challengeID = 3;
   int32 x = 4;
   int32 y = 5;
+  bool isFlag = 6;
 }
 
 message Connection {
@@ -116,23 +118,30 @@ message CurrentUserResponse {
   repeated Page pages = 3;
 }
 
-message GetChallengesRequest {}
-
-message Challenge {
-  uint32 id = 1;
-  string name = 2;
-  string description = 3;
-  int32 value = 4;
-}
-
-message GetChallengesResponse {
-  repeated Challenge challenges = 1;
-}
-
 message SubmitFlagRequest {
   string flag = 1;
 }
 
 message SubmitFlagResponse {
   bool correct = 1;
+}
+
+message TeamProgress {
+  string teamName = 1;
+  uint32 score = 2;
+}
+
+message GetTeamsProgressRequest {}
+message GetTeamsProgressResponse {
+  repeated TeamProgress teams = 1;
+}
+
+message Challenge {
+  string name = 1;
+  string flag = 2;
+}
+
+message GetAllChallengesRequest {}
+message GetAllChallengesResponse {
+  repeated Challenge challenges = 1;
 }
