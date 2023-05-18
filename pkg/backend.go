@@ -47,15 +47,16 @@ func (b backend) Login(ctx context.Context, request *ctfg.LoginRequest) (*ctfg.L
 		return nil, errors.New("incorrect password for user")
 	}
 
-	SetUserForSession(ctx, user.ID)
-
+	SetUserForSession(ctx, user.ID, user.Type)
+	
 	return &ctfg.LoginResponse{
 		Username: user.Username,
+		UserRole: user.Type,
 	}, nil
 }
 
 func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserRequest) (*ctfg.CurrentUserResponse, error) {
-	userID, err := GetUserFromSession(ctx)
+	userID, userType, err := GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +84,7 @@ func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserReque
 
 	return &ctfg.CurrentUserResponse{
 		Username: user.Username,
+		UserRole: userType,
 		Pages:    returnedPages,
 	}, nil
 }
@@ -99,7 +101,7 @@ func (b backend) SubmitFlag(ctx context.Context, request *ctfg.SubmitFlagRequest
 }
 
 func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDiscoveredEvidenceRequest) (*ctfg.GetDiscoveredEvidenceResponse, error) {
-	userID, err := GetUserFromSession(ctx)
+	userID, _, err := GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +151,7 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 }
 
 func (b backend) SubmitEvidence(ctx context.Context, request *ctfg.SubmitEvidenceRequest) (*ctfg.SubmitEvidenceResponse, error) {
-	userID, err := GetUserFromSession(ctx)
+	userID, _, err := GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +207,7 @@ func (b backend) SubmitEvidence(ctx context.Context, request *ctfg.SubmitEvidenc
 }
 
 func (b backend) SubmitEvidenceConnection(ctx context.Context, request *ctfg.SubmitEvidenceConnectionRequest) (*ctfg.SubmitEvidenceConnectionResponse, error) {
-	userID, err := GetUserFromSession(ctx)
+	userID, _, err := GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -235,7 +237,7 @@ func (b backend) SubmitEvidenceConnection(ctx context.Context, request *ctfg.Sub
 }
 
 func (b backend) SubmitEvidenceReport(ctx context.Context, req *ctfg.SubmitEvidenceReportRequest) (*ctfg.SubmitEvidenceReportRequest, error) {
-	userID, err := GetUserFromSession(ctx)
+	userID, _, err := GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}

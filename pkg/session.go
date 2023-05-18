@@ -15,23 +15,27 @@ func GetSession(ctx context.Context) session.Store {
 }
 
 // SetUserForSession will set the user id in the session store located in the context.
-func SetUserForSession(ctx context.Context, userID uint) {
+func SetUserForSession(ctx context.Context, userID uint, userType string) {
 	store := GetSession(ctx)
-	store.Set("user", userID)
+	store.Set("userID", userID)
+	store.Set("userType", userType)
 }
 
 func RemoveUserFromSession(ctx context.Context) {
 	store := GetSession(ctx)
-	store.Delete("user")
+	store.Delete("userID")
+	store.Delete("userType")
 }
 
 // GetUserFromSession will get the user id from the session store located in the context.
-func GetUserFromSession(ctx context.Context) (uint, error) {
+func GetUserFromSession(ctx context.Context) (uint, string, error) {
 	store := GetSession(ctx)
-	userIDInterface := store.Get("user")
+	userIDInterface := store.Get("userID")
+	userTypeInterface := store.Get("userType")
 	userID, ok := userIDInterface.(uint)
-	if !ok {
-		return 0, errors.New("failed to get user id from session")
+	userType, ok2 := userTypeInterface.(string)
+	if !ok || !ok2 {
+		return 0, "", errors.New("failed to get user from session, please logout and login again")
 	}
-	return userID, nil
+	return userID, userType, nil
 }

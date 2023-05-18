@@ -3,15 +3,11 @@ import { ctfg } from "../service";
 import type { GetDiscoveredEvidenceResponse } from "../rpc/ctfg";
 import ReactFlow, {
 	Background,
-	ControlButton,
 	Controls,
 	MarkerType,
 	addEdge,
 	applyEdgeChanges,
 	applyNodeChanges,
-	getConnectedEdges,
-	getIncomers,
-	getOutgoers,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useState, useEffect, useRef, MutableRefObject } from "react";
@@ -19,12 +15,7 @@ import { Text, Input, Button, Checkbox, Modal, Row } from "@nextui-org/react";
 import dagre from "dagre";
 import Menu from "../components/Menu";
 import {
-	HiPaperAirplane,
-	HiTrash,
-	HiLink,
-	HiChevronDown,
-	HiArrowRight,
-	HiArrowDown,
+	HiPaperAirplane
 } from "react-icons/hi2";
 import { createSuccessToast, createErrorToast } from "../store/user";
 import useDarkMode from "use-dark-mode";
@@ -335,7 +326,7 @@ export default function MyComponent() {
 						<Text className="text-center"> This action cannot be undone.</Text>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button auto flat color="error" onPress={() => { 
+						<Button auto color="error" onPress={() => { 
 							closeHandler2();
 							window.location.reload();
 						}}>

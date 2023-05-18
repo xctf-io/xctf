@@ -47,3 +47,18 @@ yarn build
 ```
 go run cmd/main.go
 ```
+
+### Protoc Generation
+Install the necessary tools:
+```
+go install github.com/twitchtv/twirp/protoc-gen-twirp
+go install google.golang.org/protobuf/cmd/protoc-gen-g
+npm install -g @protobuf-ts/plugin twirp-ts
+```
+Then run:
+```
+protoc --go_out=. --twirp-out=. --ts_out=client/src --twirp_ts_out=client/src proto/ctfg.proto
+mv client/src/proto/ctfg.ts client/src/rpc/ctfg.ts
+mv client/src/proto/ctfg.twirp.ts client/src/rpc/ctfg.twirp.ts
+rm -rf client/src/proto
+```

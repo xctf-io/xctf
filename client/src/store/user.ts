@@ -16,6 +16,7 @@ export const createErrorToast = (error: string, isDark: boolean) => {
 
 interface User {
 	username: string;
+	type: string;
 }
 const userAtom = atomWithStorage<User | null>("user", null);
 
@@ -58,6 +59,7 @@ export const useLogin = (): [
 			});
 			setUser({
 				username: resp.username,
+				type: resp.userRole,
 			});
 			createSuccessToast("Login success!", isDark);
 			document.location.href = "/evidence";

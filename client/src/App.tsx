@@ -59,8 +59,10 @@ function App() {
 					return;
 				}
 				const resp = await ctfg.CurrentUser({});
+				console.log(resp)
 				setUser({
 					username: resp.username,
+					type: resp.userRole,
 				});
 				setPages(resp.pages);
 			} catch (e) {

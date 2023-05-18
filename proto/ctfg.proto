@@ -46,6 +46,7 @@ message LoginRequest {
 
 message LoginResponse {
   string username = 1;
+  string userRole = 2;
 }
 
 message Evidence {
@@ -111,7 +112,8 @@ message Page {
 message CurrentUserRequest {}
 message CurrentUserResponse {
   string username = 1;
-  repeated Page pages = 2;
+  string userRole = 2;
+  repeated Page pages = 3;
 }
 
 message GetChallengesRequest {}

@@ -24,14 +24,17 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 	const [user, setUser, logout] = useUser();
 
 	const userLoggedIn = !!user;
+	const isAdmin = user?.type === "admin";
+	const themeHexColor = isAdmin ? "DF3562" : "3070ED";
+	const themeColor = isAdmin ? "error" : "primary";
 	const darkMode = useDarkMode(false);
 	const { type, isDark } = useTheme();
 
 	return (
 		<Navbar className="w-screen" variant="sticky" maxWidth="fluid">
 			<Navbar.Brand>
-				<GiFlyingFlag className="ml-2 mr-2 w-10 h-10"/>
-				<Text b color="inherit" className="text-2xl" >
+				<GiFlyingFlag className="ml-2 mr-2 w-10 h-10" />
+				<Text b color="inherit" className="text-2xl">
 					CTFg
 				</Text>
 			</Navbar.Brand>
@@ -55,7 +58,13 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 					}
 				})}
 			</Navbar.Collapse>
-			<Navbar.Content hideIn="xs" enableCursorHighlight variant="underline" className="absolute left-0 right-0">
+			<Navbar.Content
+				hideIn="xs"
+				enableCursorHighlight
+				variant="underline"
+				activeColor={themeColor}
+				className="absolute left-0 right-0"
+			>
 				{links.map((l) => {
 					if (
 						(userLoggedIn && l.showWhenAuthed) ||
@@ -77,11 +86,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 			</Navbar.Content>
 			<Navbar.Content enableCursorHighlight>
 				<Navbar.Link onPress={darkMode.toggle} key="toggle">
-					{isDark ? (
-						<BsMoonStarsFill />
-					) : (
-						<BsSunFill />
-					)}
+					{isDark ? <BsMoonStarsFill /> : <BsSunFill />}
 				</Navbar.Link>
 				{user && (
 					<>
@@ -91,10 +96,12 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 									<Avatar
 										bordered
 										as="button"
-										color="primary"
+										color={themeColor}
 										size="md"
 										src={
-											"https://api.dicebear.com/6.x/bottts/svg?baseColor=3070ED&seed=" +
+											"https://api.dicebear.com/6.x/bottts/svg?baseColor=" +
+											themeHexColor +
+											"&seed=" +
 											user.username
 										}
 									/>
