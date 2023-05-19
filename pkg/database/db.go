@@ -38,6 +38,7 @@ func Migrate(db *gorm.DB) {
 		&models.EvidenceConnection{},
 		&models.EvidenceReport{},
 		&models.Page{},
+		&models.HomePage{},
 	}
 
 	for _, model := range modelsToMigrate {
@@ -66,6 +67,15 @@ func Migrate(db *gorm.DB) {
 			db.Save(&user)
 		}
 	}
+	content, err := os.ReadFile("Home.md")
+	if err != nil {
+		panic(err)
+	}
+	homePage := models.HomePage{
+		Id:	"home",
+		Content: string(content),
+	}
+	db.Save(&homePage)
 
 	log.Println("Database Migration Completed!")
 }

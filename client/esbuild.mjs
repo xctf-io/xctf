@@ -1,6 +1,5 @@
 import esbuild from "esbuild";
 import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
-import mdx from "@mdx-js/esbuild";
 
 const devBuild = process.env.DEV === "true";
 const watchToggle = false;
@@ -27,7 +26,7 @@ const options = {
 		".woff2": "file",
 		".woff": "file",
 	},
-	plugins: [nodeModulesPolyfillPlugin(), mdx()],
+	plugins: [nodeModulesPolyfillPlugin()],
 	minify: minify,
 	sourcemap: "linked",
 	define: {

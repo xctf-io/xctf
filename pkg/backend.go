@@ -257,6 +257,17 @@ func (b backend) SubmitEvidenceReport(ctx context.Context, req *ctfg.SubmitEvide
 	return &ctfg.SubmitEvidenceReportRequest{}, nil
 }
 
+func (b backend) GetHomePage(ctx context.Context, request *ctfg.GetHomePageRequest) (*ctfg.GetHomePageResponse, error) {
+	var homePage models.HomePage
+	resp := b.db.First(&homePage)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	return &ctfg.GetHomePageResponse{
+		Content: homePage.Content,
+	}, nil
+}
+
 func NewBackend(db *gorm.DB) ctfg.Backend {
 	return &backend{
 		db: db,

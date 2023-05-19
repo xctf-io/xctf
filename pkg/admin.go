@@ -85,6 +85,20 @@ func (s* admin) GetAllChallenges(ctx context.Context, request *ctfg.GetAllChalle
 	}, nil
 }
 
+func (s* admin) SetHomePage(ctx context.Context, request *ctfg.SetHomePageRequest) (*ctfg.Empty, error) {
+	var homePage models.HomePage
+	resp := s.db.First(&homePage)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	homePage.Content = request.Content
+	resp = s.db.Save(&homePage)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	return &ctfg.Empty{}, nil
+}
+
 func NewAdmin(db *gorm.DB) ctfg.Admin {
 	return &admin{
 		db: db,

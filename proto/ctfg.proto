@@ -14,6 +14,7 @@ service Backend {
   rpc GetDiscoveredEvidence(GetDiscoveredEvidenceRequest) returns (GetDiscoveredEvidenceResponse);
   rpc SubmitEvidence(SubmitEvidenceRequest) returns (SubmitEvidenceResponse);
   rpc SubmitEvidenceConnection(SubmitEvidenceConnectionRequest) returns (SubmitEvidenceConnectionResponse);
+  rpc GetHomePage(GetHomePageRequest) returns (GetHomePageResponse);
 }
 
 service Admin {
@@ -21,6 +22,7 @@ service Admin {
   rpc DeleteChallenge(DeleteChallengeRequest) returns (Empty);
   rpc GetTeamsProgress(GetTeamsProgressRequest) returns (GetTeamsProgressResponse);
   rpc GetAllChallenges(GetAllChallengesRequest) returns (GetAllChallengesResponse);
+  rpc SetHomePage(SetHomePageRequest) returns (Empty);
 }
 
 message Empty {}
@@ -145,3 +147,13 @@ message GetAllChallengesRequest {}
 message GetAllChallengesResponse {
   repeated Challenge challenges = 1;
 }
+
+message SetHomePageRequest {
+  string content = 1;
+}
+
+message GetHomePageRequest {}
+message GetHomePageResponse {
+  string content = 1;
+}
+

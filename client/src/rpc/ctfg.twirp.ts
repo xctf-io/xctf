@@ -24,6 +24,8 @@ import {
   SubmitEvidenceResponse,
   SubmitEvidenceConnectionRequest,
   SubmitEvidenceConnectionResponse,
+  GetHomePageRequest,
+  GetHomePageResponse,
   UpsertChallengeRequest,
   Empty,
   DeleteChallengeRequest,
@@ -31,6 +33,7 @@ import {
   GetTeamsProgressResponse,
   GetAllChallengesRequest,
   GetAllChallengesResponse,
+  SetHomePageRequest,
 } from "./ctfg";
 
 //==================================//
@@ -63,6 +66,7 @@ export interface BackendClient {
   SubmitEvidenceConnection(
     request: SubmitEvidenceConnectionRequest
   ): Promise<SubmitEvidenceConnectionResponse>;
+  GetHomePage(request: GetHomePageRequest): Promise<GetHomePageResponse>;
 }
 
 export class BackendClientJSON implements BackendClient {
@@ -77,6 +81,7 @@ export class BackendClientJSON implements BackendClient {
     this.GetDiscoveredEvidence.bind(this);
     this.SubmitEvidence.bind(this);
     this.SubmitEvidenceConnection.bind(this);
+    this.GetHomePage.bind(this);
   }
   Register(request: RegisterRequest): Promise<RegisterResponse> {
     const data = RegisterRequest.toJson(request, {
@@ -221,6 +226,22 @@ export class BackendClientJSON implements BackendClient {
       })
     );
   }
+
+  GetHomePage(request: GetHomePageRequest): Promise<GetHomePageResponse> {
+    const data = GetHomePageRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "GetHomePage",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      GetHomePageResponse.fromJson(data as any, { ignoreUnknownFields: true })
+    );
+  }
 }
 
 export class BackendClientProtobuf implements BackendClient {
@@ -235,6 +256,7 @@ export class BackendClientProtobuf implements BackendClient {
     this.GetDiscoveredEvidence.bind(this);
     this.SubmitEvidence.bind(this);
     this.SubmitEvidenceConnection.bind(this);
+    this.GetHomePage.bind(this);
   }
   Register(request: RegisterRequest): Promise<RegisterResponse> {
     const data = RegisterRequest.toBinary(request);
@@ -345,6 +367,19 @@ export class BackendClientProtobuf implements BackendClient {
       SubmitEvidenceConnectionResponse.fromBinary(data as Uint8Array)
     );
   }
+
+  GetHomePage(request: GetHomePageRequest): Promise<GetHomePageResponse> {
+    const data = GetHomePageRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "GetHomePage",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) =>
+      GetHomePageResponse.fromBinary(data as Uint8Array)
+    );
+  }
 }
 
 //==================================//
@@ -375,6 +410,10 @@ export interface BackendTwirp<T extends TwirpContext = TwirpContext> {
     ctx: T,
     request: SubmitEvidenceConnectionRequest
   ): Promise<SubmitEvidenceConnectionResponse>;
+  GetHomePage(
+    ctx: T,
+    request: GetHomePageRequest
+  ): Promise<GetHomePageResponse>;
 }
 
 export enum BackendMethod {
@@ -386,6 +425,7 @@ export enum BackendMethod {
   GetDiscoveredEvidence = "GetDiscoveredEvidence",
   SubmitEvidence = "SubmitEvidence",
   SubmitEvidenceConnection = "SubmitEvidenceConnection",
+  GetHomePage = "GetHomePage",
 }
 
 export const BackendMethodList = [
@@ -397,6 +437,7 @@ export const BackendMethodList = [
   BackendMethod.GetDiscoveredEvidence,
   BackendMethod.SubmitEvidence,
   BackendMethod.SubmitEvidenceConnection,
+  BackendMethod.GetHomePage,
 ];
 
 export function createBackendServer<T extends TwirpContext = TwirpContext>(
@@ -539,6 +580,22 @@ function matchBackendRoute<T extends TwirpContext = TwirpContext>(
         ctx = { ...ctx, methodName: "SubmitEvidenceConnection" };
         await events.onMatch(ctx);
         return handleBackendSubmitEvidenceConnectionRequest(
+          ctx,
+          service,
+          data,
+          interceptors
+        );
+      };
+    case "GetHomePage":
+      return async (
+        ctx: T,
+        service: BackendTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<T, GetHomePageRequest, GetHomePageResponse>[]
+      ) => {
+        ctx = { ...ctx, methodName: "GetHomePage" };
+        await events.onMatch(ctx);
+        return handleBackendGetHomePageRequest(
           ctx,
           service,
           data,
@@ -747,6 +804,28 @@ function handleBackendSubmitEvidenceConnectionRequest<
       );
     case TwirpContentType.Protobuf:
       return handleBackendSubmitEvidenceConnectionProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleBackendGetHomePageRequest<T extends TwirpContext = TwirpContext>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, GetHomePageRequest, GetHomePageResponse>[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleBackendGetHomePageJSON<T>(ctx, service, data, interceptors);
+    case TwirpContentType.Protobuf:
+      return handleBackendGetHomePageProtobuf<T>(
         ctx,
         service,
         data,
@@ -1108,6 +1187,48 @@ async function handleBackendSubmitEvidenceConnectionJSON<
     }) as string
   );
 }
+
+async function handleBackendGetHomePageJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, GetHomePageRequest, GetHomePageResponse>[]
+) {
+  let request: GetHomePageRequest;
+  let response: GetHomePageResponse;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = GetHomePageRequest.fromJson(body, { ignoreUnknownFields: true });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      GetHomePageRequest,
+      GetHomePageResponse
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.GetHomePage(ctx, inputReq);
+    });
+  } else {
+    response = await service.GetHomePage(ctx, request!);
+  }
+
+  return JSON.stringify(
+    GetHomePageResponse.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
 async function handleBackendRegisterProtobuf<
   T extends TwirpContext = TwirpContext
 >(
@@ -1408,6 +1529,42 @@ async function handleBackendSubmitEvidenceConnectionProtobuf<
   return Buffer.from(SubmitEvidenceConnectionResponse.toBinary(response));
 }
 
+async function handleBackendGetHomePageProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, GetHomePageRequest, GetHomePageResponse>[]
+) {
+  let request: GetHomePageRequest;
+  let response: GetHomePageResponse;
+
+  try {
+    request = GetHomePageRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      GetHomePageRequest,
+      GetHomePageResponse
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.GetHomePage(ctx, inputReq);
+    });
+  } else {
+    response = await service.GetHomePage(ctx, request!);
+  }
+
+  return Buffer.from(GetHomePageResponse.toBinary(response));
+}
+
 //==================================//
 //          Client Code             //
 //==================================//
@@ -1430,6 +1587,7 @@ export interface AdminClient {
   GetAllChallenges(
     request: GetAllChallengesRequest
   ): Promise<GetAllChallengesResponse>;
+  SetHomePage(request: SetHomePageRequest): Promise<Empty>;
 }
 
 export class AdminClientJSON implements AdminClient {
@@ -1440,6 +1598,7 @@ export class AdminClientJSON implements AdminClient {
     this.DeleteChallenge.bind(this);
     this.GetTeamsProgress.bind(this);
     this.GetAllChallenges.bind(this);
+    this.SetHomePage.bind(this);
   }
   UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
     const data = UpsertChallengeRequest.toJson(request, {
@@ -1512,6 +1671,22 @@ export class AdminClientJSON implements AdminClient {
       })
     );
   }
+
+  SetHomePage(request: SetHomePageRequest): Promise<Empty> {
+    const data = SetHomePageRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "SetHomePage",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      Empty.fromJson(data as any, { ignoreUnknownFields: true })
+    );
+  }
 }
 
 export class AdminClientProtobuf implements AdminClient {
@@ -1522,6 +1697,7 @@ export class AdminClientProtobuf implements AdminClient {
     this.DeleteChallenge.bind(this);
     this.GetTeamsProgress.bind(this);
     this.GetAllChallenges.bind(this);
+    this.SetHomePage.bind(this);
   }
   UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
     const data = UpsertChallengeRequest.toBinary(request);
@@ -1574,6 +1750,17 @@ export class AdminClientProtobuf implements AdminClient {
       GetAllChallengesResponse.fromBinary(data as Uint8Array)
     );
   }
+
+  SetHomePage(request: SetHomePageRequest): Promise<Empty> {
+    const data = SetHomePageRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "SetHomePage",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) => Empty.fromBinary(data as Uint8Array));
+  }
 }
 
 //==================================//
@@ -1591,6 +1778,7 @@ export interface AdminTwirp<T extends TwirpContext = TwirpContext> {
     ctx: T,
     request: GetAllChallengesRequest
   ): Promise<GetAllChallengesResponse>;
+  SetHomePage(ctx: T, request: SetHomePageRequest): Promise<Empty>;
 }
 
 export enum AdminMethod {
@@ -1598,6 +1786,7 @@ export enum AdminMethod {
   DeleteChallenge = "DeleteChallenge",
   GetTeamsProgress = "GetTeamsProgress",
   GetAllChallenges = "GetAllChallenges",
+  SetHomePage = "SetHomePage",
 }
 
 export const AdminMethodList = [
@@ -1605,6 +1794,7 @@ export const AdminMethodList = [
   AdminMethod.DeleteChallenge,
   AdminMethod.GetTeamsProgress,
   AdminMethod.GetAllChallenges,
+  AdminMethod.SetHomePage,
 ];
 
 export function createAdminServer<T extends TwirpContext = TwirpContext>(
@@ -1695,6 +1885,17 @@ function matchAdminRoute<T extends TwirpContext = TwirpContext>(
           data,
           interceptors
         );
+      };
+    case "SetHomePage":
+      return async (
+        ctx: T,
+        service: AdminTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<T, SetHomePageRequest, Empty>[]
+      ) => {
+        ctx = { ...ctx, methodName: "SetHomePage" };
+        await events.onMatch(ctx);
+        return handleAdminSetHomePageRequest(ctx, service, data, interceptors);
       };
     default:
       events.onNotFound();
@@ -1816,6 +2017,28 @@ function handleAdminGetAllChallengesRequest<
       );
     case TwirpContentType.Protobuf:
       return handleAdminGetAllChallengesProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleAdminSetHomePageRequest<T extends TwirpContext = TwirpContext>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, SetHomePageRequest, Empty>[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleAdminSetHomePageJSON<T>(ctx, service, data, interceptors);
+    case TwirpContentType.Protobuf:
+      return handleAdminSetHomePageProtobuf<T>(
         ctx,
         service,
         data,
@@ -2009,6 +2232,48 @@ async function handleAdminGetAllChallengesJSON<
     }) as string
   );
 }
+
+async function handleAdminSetHomePageJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, SetHomePageRequest, Empty>[]
+) {
+  let request: SetHomePageRequest;
+  let response: Empty;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = SetHomePageRequest.fromJson(body, { ignoreUnknownFields: true });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      SetHomePageRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.SetHomePage(ctx, inputReq);
+    });
+  } else {
+    response = await service.SetHomePage(ctx, request!);
+  }
+
+  return JSON.stringify(
+    Empty.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
 async function handleAdminUpsertChallengeProtobuf<
   T extends TwirpContext = TwirpContext
 >(
@@ -2159,4 +2424,40 @@ async function handleAdminGetAllChallengesProtobuf<
   }
 
   return Buffer.from(GetAllChallengesResponse.toBinary(response));
+}
+
+async function handleAdminSetHomePageProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, SetHomePageRequest, Empty>[]
+) {
+  let request: SetHomePageRequest;
+  let response: Empty;
+
+  try {
+    request = SetHomePageRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      SetHomePageRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.SetHomePage(ctx, inputReq);
+    });
+  } else {
+    response = await service.SetHomePage(ctx, request!);
+  }
+
+  return Buffer.from(Empty.toBinary(response));
 }
