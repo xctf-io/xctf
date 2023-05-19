@@ -285,7 +285,6 @@ func (b backend) SubmitWriteup(ctx context.Context, request *ctfg.SubmitWriteupR
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	// insert writeup
 	writeup := models.Writeup{
 		Username: request.Username,
 		Content:  request.Content,
@@ -294,7 +293,7 @@ func (b backend) SubmitWriteup(ctx context.Context, request *ctfg.SubmitWriteupR
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	return &ctfg.Empty{}, errors.New("not implemented")
+	return &ctfg.Empty{}, nil
 }
 
 func NewBackend(db *gorm.DB) ctfg.Backend {

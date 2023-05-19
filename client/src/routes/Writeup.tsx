@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { useUser } from "../store/user";
+import { createErrorToast, createSuccessToast, useUser } from "../store/user";
 import { ctfg } from "../service";
 
 import { Button, Input, theme, useTheme } from "@nextui-org/react";
@@ -11,7 +11,7 @@ const Writeup = () => {
 	const isAdmin = user?.type === "admin";
     const themeColor = isAdmin ? "error" : "primary";
     const [file, setFile] = useState()
-    console.log(file);
+    const { type, isDark } = useTheme();
 
     async function uploadWriteup() {
         // read file
@@ -19,19 +19,21 @@ const Writeup = () => {
         let fileData = ""
         reader.readAsDataURL(file);
         reader.onload = async () => {
-            fileData = window.btoa(String.fromCharCode.apply(null, [reader.result]));
+            fileData = window.btoa(reader.result.toString());
         };
         reader.onerror = (error) => {
             console.log('Error: ', error);
         };
-        // submit writeup
 
-        const res = await ctfg.SubmitWriteup({
-            username: user.username,
-            content: fileData
-        });
-        console.log(res);
-        console.log(fileData);
+        try {
+            const res = await ctfg.SubmitWriteup({
+                username: user.username,
+                content: fileData
+            });
+            createSuccessToast("Submitted writeup!", isDark);
+        } catch (err) {
+            createErrorToast(err, isDark);
+        }
     }
 
 	return (
