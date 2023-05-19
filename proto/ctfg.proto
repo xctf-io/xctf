@@ -16,6 +16,7 @@ service Backend {
   rpc SubmitEvidenceConnection(SubmitEvidenceConnectionRequest) returns (SubmitEvidenceConnectionResponse);
   rpc GetHomePage(GetHomePageRequest) returns (GetHomePageResponse);
   rpc ForgotPassword(ForgotPasswordRequest) returns (Empty);
+  rpc SubmitWriteup(SubmitWriteupRequest) returns (Empty);
 }
 
 service Admin {
@@ -24,6 +25,7 @@ service Admin {
   rpc GetTeamsProgress(GetTeamsProgressRequest) returns (GetTeamsProgressResponse);
   rpc GetAllChallenges(GetAllChallengesRequest) returns (GetAllChallengesResponse);
   rpc SetHomePage(SetHomePageRequest) returns (Empty);
+  rpc GetWriteups(GetWriteupsRequest) returns (GetWriteupsResponse);
 }
 
 message Empty {}
@@ -162,3 +164,17 @@ message ForgotPasswordRequest {
   string email = 1;
 }
 
+message SubmitWriteupRequest {
+  string username = 1;
+  string content = 2;
+}
+
+message Writeup {
+  string username = 1;
+  string content = 2;
+}
+
+message GetWriteupsRequest {}
+message GetWriteupsResponse {
+  repeated Writeup writeups = 1;
+}

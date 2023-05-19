@@ -99,6 +99,30 @@ func (s* admin) SetHomePage(ctx context.Context, request *ctfg.SetHomePageReques
 	return &ctfg.Empty{}, nil
 }
 
+func (s* admin) GetWriteups(ctx context.Context, request *ctfg.GetWriteupsRequest) (*ctfg.GetWriteupsResponse, error) {
+	// for each user, get their writeup
+	var users []models.User
+	resp := s.db.Find(&users)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	var writeups []*ctfg.Writeup
+	for _, user := range users {
+		var writeup models.Writeup
+		resp := s.db.Where(&models.Writeup{Username: user.Username}).First(&writeup)
+		if resp.Error != nil {
+			return nil, resp.Error
+		}
+		writeups = append(writeups, &ctfg.Writeup{
+			Username: user.Username,
+			Content:  writeup.Content,
+		})
+	}
+	return &ctfg.GetWriteupsResponse{
+		Writeups: writeups,
+	}, nil
+}
+
 func NewAdmin(db *gorm.DB) ctfg.Admin {
 	return &admin{
 		db: db,

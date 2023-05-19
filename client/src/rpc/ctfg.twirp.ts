@@ -28,6 +28,7 @@ import {
   GetHomePageResponse,
   ForgotPasswordRequest,
   Empty,
+  SubmitWriteupRequest,
   UpsertChallengeRequest,
   DeleteChallengeRequest,
   GetTeamsProgressRequest,
@@ -35,6 +36,8 @@ import {
   GetAllChallengesRequest,
   GetAllChallengesResponse,
   SetHomePageRequest,
+  GetWriteupsRequest,
+  GetWriteupsResponse,
 } from "./ctfg";
 
 //==================================//
@@ -69,6 +72,7 @@ export interface BackendClient {
   ): Promise<SubmitEvidenceConnectionResponse>;
   GetHomePage(request: GetHomePageRequest): Promise<GetHomePageResponse>;
   ForgotPassword(request: ForgotPasswordRequest): Promise<Empty>;
+  SubmitWriteup(request: SubmitWriteupRequest): Promise<Empty>;
 }
 
 export class BackendClientJSON implements BackendClient {
@@ -85,6 +89,7 @@ export class BackendClientJSON implements BackendClient {
     this.SubmitEvidenceConnection.bind(this);
     this.GetHomePage.bind(this);
     this.ForgotPassword.bind(this);
+    this.SubmitWriteup.bind(this);
   }
   Register(request: RegisterRequest): Promise<RegisterResponse> {
     const data = RegisterRequest.toJson(request, {
@@ -261,6 +266,22 @@ export class BackendClientJSON implements BackendClient {
       Empty.fromJson(data as any, { ignoreUnknownFields: true })
     );
   }
+
+  SubmitWriteup(request: SubmitWriteupRequest): Promise<Empty> {
+    const data = SubmitWriteupRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "SubmitWriteup",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      Empty.fromJson(data as any, { ignoreUnknownFields: true })
+    );
+  }
 }
 
 export class BackendClientProtobuf implements BackendClient {
@@ -277,6 +298,7 @@ export class BackendClientProtobuf implements BackendClient {
     this.SubmitEvidenceConnection.bind(this);
     this.GetHomePage.bind(this);
     this.ForgotPassword.bind(this);
+    this.SubmitWriteup.bind(this);
   }
   Register(request: RegisterRequest): Promise<RegisterResponse> {
     const data = RegisterRequest.toBinary(request);
@@ -411,6 +433,17 @@ export class BackendClientProtobuf implements BackendClient {
     );
     return promise.then((data) => Empty.fromBinary(data as Uint8Array));
   }
+
+  SubmitWriteup(request: SubmitWriteupRequest): Promise<Empty> {
+    const data = SubmitWriteupRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "SubmitWriteup",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) => Empty.fromBinary(data as Uint8Array));
+  }
 }
 
 //==================================//
@@ -446,6 +479,7 @@ export interface BackendTwirp<T extends TwirpContext = TwirpContext> {
     request: GetHomePageRequest
   ): Promise<GetHomePageResponse>;
   ForgotPassword(ctx: T, request: ForgotPasswordRequest): Promise<Empty>;
+  SubmitWriteup(ctx: T, request: SubmitWriteupRequest): Promise<Empty>;
 }
 
 export enum BackendMethod {
@@ -459,6 +493,7 @@ export enum BackendMethod {
   SubmitEvidenceConnection = "SubmitEvidenceConnection",
   GetHomePage = "GetHomePage",
   ForgotPassword = "ForgotPassword",
+  SubmitWriteup = "SubmitWriteup",
 }
 
 export const BackendMethodList = [
@@ -472,6 +507,7 @@ export const BackendMethodList = [
   BackendMethod.SubmitEvidenceConnection,
   BackendMethod.GetHomePage,
   BackendMethod.ForgotPassword,
+  BackendMethod.SubmitWriteup,
 ];
 
 export function createBackendServer<T extends TwirpContext = TwirpContext>(
@@ -646,6 +682,22 @@ function matchBackendRoute<T extends TwirpContext = TwirpContext>(
         ctx = { ...ctx, methodName: "ForgotPassword" };
         await events.onMatch(ctx);
         return handleBackendForgotPasswordRequest(
+          ctx,
+          service,
+          data,
+          interceptors
+        );
+      };
+    case "SubmitWriteup":
+      return async (
+        ctx: T,
+        service: BackendTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<T, SubmitWriteupRequest, Empty>[]
+      ) => {
+        ctx = { ...ctx, methodName: "SubmitWriteup" };
+        await events.onMatch(ctx);
+        return handleBackendSubmitWriteupRequest(
           ctx,
           service,
           data,
@@ -905,6 +957,35 @@ function handleBackendForgotPasswordRequest<
       );
     case TwirpContentType.Protobuf:
       return handleBackendForgotPasswordProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleBackendSubmitWriteupRequest<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, SubmitWriteupRequest, Empty>[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleBackendSubmitWriteupJSON<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    case TwirpContentType.Protobuf:
+      return handleBackendSubmitWriteupProtobuf<T>(
         ctx,
         service,
         data,
@@ -1352,6 +1433,50 @@ async function handleBackendForgotPasswordJSON<
     }) as string
   );
 }
+
+async function handleBackendSubmitWriteupJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, SubmitWriteupRequest, Empty>[]
+) {
+  let request: SubmitWriteupRequest;
+  let response: Empty;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = SubmitWriteupRequest.fromJson(body, {
+      ignoreUnknownFields: true,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      SubmitWriteupRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.SubmitWriteup(ctx, inputReq);
+    });
+  } else {
+    response = await service.SubmitWriteup(ctx, request!);
+  }
+
+  return JSON.stringify(
+    Empty.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
 async function handleBackendRegisterProtobuf<
   T extends TwirpContext = TwirpContext
 >(
@@ -1724,6 +1849,42 @@ async function handleBackendForgotPasswordProtobuf<
   return Buffer.from(Empty.toBinary(response));
 }
 
+async function handleBackendSubmitWriteupProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, SubmitWriteupRequest, Empty>[]
+) {
+  let request: SubmitWriteupRequest;
+  let response: Empty;
+
+  try {
+    request = SubmitWriteupRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      SubmitWriteupRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.SubmitWriteup(ctx, inputReq);
+    });
+  } else {
+    response = await service.SubmitWriteup(ctx, request!);
+  }
+
+  return Buffer.from(Empty.toBinary(response));
+}
+
 //==================================//
 //          Client Code             //
 //==================================//
@@ -1747,6 +1908,7 @@ export interface AdminClient {
     request: GetAllChallengesRequest
   ): Promise<GetAllChallengesResponse>;
   SetHomePage(request: SetHomePageRequest): Promise<Empty>;
+  GetWriteups(request: GetWriteupsRequest): Promise<GetWriteupsResponse>;
 }
 
 export class AdminClientJSON implements AdminClient {
@@ -1758,6 +1920,7 @@ export class AdminClientJSON implements AdminClient {
     this.GetTeamsProgress.bind(this);
     this.GetAllChallenges.bind(this);
     this.SetHomePage.bind(this);
+    this.GetWriteups.bind(this);
   }
   UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
     const data = UpsertChallengeRequest.toJson(request, {
@@ -1846,6 +2009,22 @@ export class AdminClientJSON implements AdminClient {
       Empty.fromJson(data as any, { ignoreUnknownFields: true })
     );
   }
+
+  GetWriteups(request: GetWriteupsRequest): Promise<GetWriteupsResponse> {
+    const data = GetWriteupsRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "GetWriteups",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      GetWriteupsResponse.fromJson(data as any, { ignoreUnknownFields: true })
+    );
+  }
 }
 
 export class AdminClientProtobuf implements AdminClient {
@@ -1857,6 +2036,7 @@ export class AdminClientProtobuf implements AdminClient {
     this.GetTeamsProgress.bind(this);
     this.GetAllChallenges.bind(this);
     this.SetHomePage.bind(this);
+    this.GetWriteups.bind(this);
   }
   UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
     const data = UpsertChallengeRequest.toBinary(request);
@@ -1920,6 +2100,19 @@ export class AdminClientProtobuf implements AdminClient {
     );
     return promise.then((data) => Empty.fromBinary(data as Uint8Array));
   }
+
+  GetWriteups(request: GetWriteupsRequest): Promise<GetWriteupsResponse> {
+    const data = GetWriteupsRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "GetWriteups",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) =>
+      GetWriteupsResponse.fromBinary(data as Uint8Array)
+    );
+  }
 }
 
 //==================================//
@@ -1938,6 +2131,10 @@ export interface AdminTwirp<T extends TwirpContext = TwirpContext> {
     request: GetAllChallengesRequest
   ): Promise<GetAllChallengesResponse>;
   SetHomePage(ctx: T, request: SetHomePageRequest): Promise<Empty>;
+  GetWriteups(
+    ctx: T,
+    request: GetWriteupsRequest
+  ): Promise<GetWriteupsResponse>;
 }
 
 export enum AdminMethod {
@@ -1946,6 +2143,7 @@ export enum AdminMethod {
   GetTeamsProgress = "GetTeamsProgress",
   GetAllChallenges = "GetAllChallenges",
   SetHomePage = "SetHomePage",
+  GetWriteups = "GetWriteups",
 }
 
 export const AdminMethodList = [
@@ -1954,6 +2152,7 @@ export const AdminMethodList = [
   AdminMethod.GetTeamsProgress,
   AdminMethod.GetAllChallenges,
   AdminMethod.SetHomePage,
+  AdminMethod.GetWriteups,
 ];
 
 export function createAdminServer<T extends TwirpContext = TwirpContext>(
@@ -2055,6 +2254,17 @@ function matchAdminRoute<T extends TwirpContext = TwirpContext>(
         ctx = { ...ctx, methodName: "SetHomePage" };
         await events.onMatch(ctx);
         return handleAdminSetHomePageRequest(ctx, service, data, interceptors);
+      };
+    case "GetWriteups":
+      return async (
+        ctx: T,
+        service: AdminTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<T, GetWriteupsRequest, GetWriteupsResponse>[]
+      ) => {
+        ctx = { ...ctx, methodName: "GetWriteups" };
+        await events.onMatch(ctx);
+        return handleAdminGetWriteupsRequest(ctx, service, data, interceptors);
       };
     default:
       events.onNotFound();
@@ -2198,6 +2408,28 @@ function handleAdminSetHomePageRequest<T extends TwirpContext = TwirpContext>(
       return handleAdminSetHomePageJSON<T>(ctx, service, data, interceptors);
     case TwirpContentType.Protobuf:
       return handleAdminSetHomePageProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleAdminGetWriteupsRequest<T extends TwirpContext = TwirpContext>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, GetWriteupsRequest, GetWriteupsResponse>[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleAdminGetWriteupsJSON<T>(ctx, service, data, interceptors);
+    case TwirpContentType.Protobuf:
+      return handleAdminGetWriteupsProtobuf<T>(
         ctx,
         service,
         data,
@@ -2433,6 +2665,48 @@ async function handleAdminSetHomePageJSON<
     }) as string
   );
 }
+
+async function handleAdminGetWriteupsJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, GetWriteupsRequest, GetWriteupsResponse>[]
+) {
+  let request: GetWriteupsRequest;
+  let response: GetWriteupsResponse;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = GetWriteupsRequest.fromJson(body, { ignoreUnknownFields: true });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      GetWriteupsRequest,
+      GetWriteupsResponse
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.GetWriteups(ctx, inputReq);
+    });
+  } else {
+    response = await service.GetWriteups(ctx, request!);
+  }
+
+  return JSON.stringify(
+    GetWriteupsResponse.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
 async function handleAdminUpsertChallengeProtobuf<
   T extends TwirpContext = TwirpContext
 >(
@@ -2619,4 +2893,40 @@ async function handleAdminSetHomePageProtobuf<
   }
 
   return Buffer.from(Empty.toBinary(response));
+}
+
+async function handleAdminGetWriteupsProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, GetWriteupsRequest, GetWriteupsResponse>[]
+) {
+  let request: GetWriteupsRequest;
+  let response: GetWriteupsResponse;
+
+  try {
+    request = GetWriteupsRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      GetWriteupsRequest,
+      GetWriteupsResponse
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.GetWriteups(ctx, inputReq);
+    });
+  } else {
+    response = await service.GetWriteups(ctx, request!);
+  }
+
+  return Buffer.from(GetWriteupsResponse.toBinary(response));
 }

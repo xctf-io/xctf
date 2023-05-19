@@ -39,6 +39,7 @@ func Migrate(db *gorm.DB) {
 		&models.EvidenceReport{},
 		&models.Page{},
 		&models.HomePage{},
+		&models.Writeup{},
 	}
 
 	for _, model := range modelsToMigrate {

@@ -378,6 +378,46 @@ export interface ForgotPasswordRequest {
      */
     email: string;
 }
+/**
+ * @generated from protobuf message ctfg.SubmitWriteupRequest
+ */
+export interface SubmitWriteupRequest {
+    /**
+     * @generated from protobuf field: string username = 1;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: string content = 2;
+     */
+    content: string;
+}
+/**
+ * @generated from protobuf message ctfg.Writeup
+ */
+export interface Writeup {
+    /**
+     * @generated from protobuf field: string username = 1;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: string content = 2;
+     */
+    content: string;
+}
+/**
+ * @generated from protobuf message ctfg.GetWriteupsRequest
+ */
+export interface GetWriteupsRequest {
+}
+/**
+ * @generated from protobuf message ctfg.GetWriteupsResponse
+ */
+export interface GetWriteupsResponse {
+    /**
+     * @generated from protobuf field: repeated ctfg.Writeup writeups = 1;
+     */
+    writeups: Writeup[];
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Empty$Type extends MessageType<Empty> {
     constructor() {
@@ -1917,6 +1957,187 @@ class ForgotPasswordRequest$Type extends MessageType<ForgotPasswordRequest> {
  * @generated MessageType for protobuf message ctfg.ForgotPasswordRequest
  */
 export const ForgotPasswordRequest = new ForgotPasswordRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SubmitWriteupRequest$Type extends MessageType<SubmitWriteupRequest> {
+    constructor() {
+        super("ctfg.SubmitWriteupRequest", [
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SubmitWriteupRequest>): SubmitWriteupRequest {
+        const message = { username: "", content: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<SubmitWriteupRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SubmitWriteupRequest): SubmitWriteupRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string username */ 1:
+                    message.username = reader.string();
+                    break;
+                case /* string content */ 2:
+                    message.content = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SubmitWriteupRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string username = 1; */
+        if (message.username !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
+        /* string content = 2; */
+        if (message.content !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.content);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.SubmitWriteupRequest
+ */
+export const SubmitWriteupRequest = new SubmitWriteupRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Writeup$Type extends MessageType<Writeup> {
+    constructor() {
+        super("ctfg.Writeup", [
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<Writeup>): Writeup {
+        const message = { username: "", content: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<Writeup>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Writeup): Writeup {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string username */ 1:
+                    message.username = reader.string();
+                    break;
+                case /* string content */ 2:
+                    message.content = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Writeup, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string username = 1; */
+        if (message.username !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
+        /* string content = 2; */
+        if (message.content !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.content);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.Writeup
+ */
+export const Writeup = new Writeup$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetWriteupsRequest$Type extends MessageType<GetWriteupsRequest> {
+    constructor() {
+        super("ctfg.GetWriteupsRequest", []);
+    }
+    create(value?: PartialMessage<GetWriteupsRequest>): GetWriteupsRequest {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetWriteupsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetWriteupsRequest): GetWriteupsRequest {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: GetWriteupsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.GetWriteupsRequest
+ */
+export const GetWriteupsRequest = new GetWriteupsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetWriteupsResponse$Type extends MessageType<GetWriteupsResponse> {
+    constructor() {
+        super("ctfg.GetWriteupsResponse", [
+            { no: 1, name: "writeups", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Writeup }
+        ]);
+    }
+    create(value?: PartialMessage<GetWriteupsResponse>): GetWriteupsResponse {
+        const message = { writeups: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetWriteupsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetWriteupsResponse): GetWriteupsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated ctfg.Writeup writeups */ 1:
+                    message.writeups.push(Writeup.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetWriteupsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated ctfg.Writeup writeups = 1; */
+        for (let i = 0; i < message.writeups.length; i++)
+            Writeup.internalBinaryWrite(message.writeups[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.GetWriteupsResponse
+ */
+export const GetWriteupsResponse = new GetWriteupsResponse$Type();
 /**
  * @generated ServiceType for protobuf service ctfg.Backend
  */
@@ -1930,7 +2151,8 @@ export const Backend = new ServiceType("ctfg.Backend", [
     { name: "SubmitEvidence", options: {}, I: SubmitEvidenceRequest, O: SubmitEvidenceResponse },
     { name: "SubmitEvidenceConnection", options: {}, I: SubmitEvidenceConnectionRequest, O: SubmitEvidenceConnectionResponse },
     { name: "GetHomePage", options: {}, I: GetHomePageRequest, O: GetHomePageResponse },
-    { name: "ForgotPassword", options: {}, I: ForgotPasswordRequest, O: Empty }
+    { name: "ForgotPassword", options: {}, I: ForgotPasswordRequest, O: Empty },
+    { name: "SubmitWriteup", options: {}, I: SubmitWriteupRequest, O: Empty }
 ]);
 /**
  * @generated ServiceType for protobuf service ctfg.Admin
@@ -1940,5 +2162,6 @@ export const Admin = new ServiceType("ctfg.Admin", [
     { name: "DeleteChallenge", options: {}, I: DeleteChallengeRequest, O: Empty },
     { name: "GetTeamsProgress", options: {}, I: GetTeamsProgressRequest, O: GetTeamsProgressResponse },
     { name: "GetAllChallenges", options: {}, I: GetAllChallengesRequest, O: GetAllChallengesResponse },
-    { name: "SetHomePage", options: {}, I: SetHomePageRequest, O: Empty }
+    { name: "SetHomePage", options: {}, I: SetHomePageRequest, O: Empty },
+    { name: "GetWriteups", options: {}, I: GetWriteupsRequest, O: GetWriteupsResponse }
 ]);

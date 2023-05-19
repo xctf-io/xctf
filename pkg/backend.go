@@ -278,6 +278,25 @@ func (b backend) ForgotPassword(ctx context.Context, request *ctfg.ForgotPasswor
 	return nil, errors.New("not implemented")
 }
 
+func (b backend) SubmitWriteup(ctx context.Context, request *ctfg.SubmitWriteupRequest) (*ctfg.Empty, error) {
+	// check if user exists
+	var user models.User
+	resp := b.db.Where(models.User{Username: request.Username}).First(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	// insert writeup
+	writeup := models.Writeup{
+		Username: request.Username,
+		Content:  request.Content,
+	}
+	resp = b.db.Create(&writeup)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	return &ctfg.Empty{}, errors.New("not implemented")
+}
+
 func NewBackend(db *gorm.DB) ctfg.Backend {
 	return &backend{
 		db: db,
