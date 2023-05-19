@@ -19,7 +19,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { ToastContainer } from "react-toastify";
 import Redirect from "./components/Redirect";
 
-interface Props { }
+interface Props {}
 
 function App() {
 	const [links, setLinks] = useState<NavLink[]>([]);
@@ -90,12 +90,12 @@ function App() {
 		type: "light",
 		theme: {
 			colors: {
-				selection: "#FF6BD5"
+				selection: "#FF6BD5",
 			},
 			borderWeights: {
 				none: "0px",
 			},
-		}
+		},
 	});
 
 	const darkTheme = createTheme({
@@ -104,19 +104,27 @@ function App() {
 			borderWeights: {
 				none: "0px",
 			},
-		}
+		},
 	});
 	const darkMode = useDarkMode(false);
 	const loggedIn = !!user;
 	const isAdmin = user?.type === "admin";
-	const selectColor = darkMode.value ? "#0D3868" : "#CEE4FE";
-	const styles = {
-		'--nextui-colors-selection': selectColor,
+	let selectColor = "";
+	selectColor = darkMode.value ? "#0D3868" : "#CEE4FE";
+
+	if (isAdmin) {
+		selectColor = darkMode.value ? "#5C0523" : "#FF7377";
+	} else {
+		selectColor = darkMode.value ? "#0D3868" : "#CEE4FE";
 	}
 
 	return (
 		<NextUIProvider theme={darkMode.value ? darkTheme : lightTheme}>
-			<main style={styles}>
+			<main
+				style={{
+					"--nextui-colors-selection": selectColor,
+				}}
+			>
 				<Router>
 					<Navbar links={links} />
 					<Routes>
