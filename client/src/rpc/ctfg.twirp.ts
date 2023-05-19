@@ -26,8 +26,9 @@ import {
   SubmitEvidenceConnectionResponse,
   GetHomePageRequest,
   GetHomePageResponse,
-  UpsertChallengeRequest,
+  ForgotPasswordRequest,
   Empty,
+  UpsertChallengeRequest,
   DeleteChallengeRequest,
   GetTeamsProgressRequest,
   GetTeamsProgressResponse,
@@ -67,6 +68,7 @@ export interface BackendClient {
     request: SubmitEvidenceConnectionRequest
   ): Promise<SubmitEvidenceConnectionResponse>;
   GetHomePage(request: GetHomePageRequest): Promise<GetHomePageResponse>;
+  ForgotPassword(request: ForgotPasswordRequest): Promise<Empty>;
 }
 
 export class BackendClientJSON implements BackendClient {
@@ -82,6 +84,7 @@ export class BackendClientJSON implements BackendClient {
     this.SubmitEvidence.bind(this);
     this.SubmitEvidenceConnection.bind(this);
     this.GetHomePage.bind(this);
+    this.ForgotPassword.bind(this);
   }
   Register(request: RegisterRequest): Promise<RegisterResponse> {
     const data = RegisterRequest.toJson(request, {
@@ -242,6 +245,22 @@ export class BackendClientJSON implements BackendClient {
       GetHomePageResponse.fromJson(data as any, { ignoreUnknownFields: true })
     );
   }
+
+  ForgotPassword(request: ForgotPasswordRequest): Promise<Empty> {
+    const data = ForgotPasswordRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "ForgotPassword",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      Empty.fromJson(data as any, { ignoreUnknownFields: true })
+    );
+  }
 }
 
 export class BackendClientProtobuf implements BackendClient {
@@ -257,6 +276,7 @@ export class BackendClientProtobuf implements BackendClient {
     this.SubmitEvidence.bind(this);
     this.SubmitEvidenceConnection.bind(this);
     this.GetHomePage.bind(this);
+    this.ForgotPassword.bind(this);
   }
   Register(request: RegisterRequest): Promise<RegisterResponse> {
     const data = RegisterRequest.toBinary(request);
@@ -380,6 +400,17 @@ export class BackendClientProtobuf implements BackendClient {
       GetHomePageResponse.fromBinary(data as Uint8Array)
     );
   }
+
+  ForgotPassword(request: ForgotPasswordRequest): Promise<Empty> {
+    const data = ForgotPasswordRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "ForgotPassword",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) => Empty.fromBinary(data as Uint8Array));
+  }
 }
 
 //==================================//
@@ -414,6 +445,7 @@ export interface BackendTwirp<T extends TwirpContext = TwirpContext> {
     ctx: T,
     request: GetHomePageRequest
   ): Promise<GetHomePageResponse>;
+  ForgotPassword(ctx: T, request: ForgotPasswordRequest): Promise<Empty>;
 }
 
 export enum BackendMethod {
@@ -426,6 +458,7 @@ export enum BackendMethod {
   SubmitEvidence = "SubmitEvidence",
   SubmitEvidenceConnection = "SubmitEvidenceConnection",
   GetHomePage = "GetHomePage",
+  ForgotPassword = "ForgotPassword",
 }
 
 export const BackendMethodList = [
@@ -438,6 +471,7 @@ export const BackendMethodList = [
   BackendMethod.SubmitEvidence,
   BackendMethod.SubmitEvidenceConnection,
   BackendMethod.GetHomePage,
+  BackendMethod.ForgotPassword,
 ];
 
 export function createBackendServer<T extends TwirpContext = TwirpContext>(
@@ -596,6 +630,22 @@ function matchBackendRoute<T extends TwirpContext = TwirpContext>(
         ctx = { ...ctx, methodName: "GetHomePage" };
         await events.onMatch(ctx);
         return handleBackendGetHomePageRequest(
+          ctx,
+          service,
+          data,
+          interceptors
+        );
+      };
+    case "ForgotPassword":
+      return async (
+        ctx: T,
+        service: BackendTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<T, ForgotPasswordRequest, Empty>[]
+      ) => {
+        ctx = { ...ctx, methodName: "ForgotPassword" };
+        await events.onMatch(ctx);
+        return handleBackendForgotPasswordRequest(
           ctx,
           service,
           data,
@@ -826,6 +876,35 @@ function handleBackendGetHomePageRequest<T extends TwirpContext = TwirpContext>(
       return handleBackendGetHomePageJSON<T>(ctx, service, data, interceptors);
     case TwirpContentType.Protobuf:
       return handleBackendGetHomePageProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleBackendForgotPasswordRequest<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, ForgotPasswordRequest, Empty>[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleBackendForgotPasswordJSON<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    case TwirpContentType.Protobuf:
+      return handleBackendForgotPasswordProtobuf<T>(
         ctx,
         service,
         data,
@@ -1229,6 +1308,50 @@ async function handleBackendGetHomePageJSON<
     }) as string
   );
 }
+
+async function handleBackendForgotPasswordJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, ForgotPasswordRequest, Empty>[]
+) {
+  let request: ForgotPasswordRequest;
+  let response: Empty;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = ForgotPasswordRequest.fromJson(body, {
+      ignoreUnknownFields: true,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      ForgotPasswordRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.ForgotPassword(ctx, inputReq);
+    });
+  } else {
+    response = await service.ForgotPassword(ctx, request!);
+  }
+
+  return JSON.stringify(
+    Empty.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
 async function handleBackendRegisterProtobuf<
   T extends TwirpContext = TwirpContext
 >(
@@ -1563,6 +1686,42 @@ async function handleBackendGetHomePageProtobuf<
   }
 
   return Buffer.from(GetHomePageResponse.toBinary(response));
+}
+
+async function handleBackendForgotPasswordProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, ForgotPasswordRequest, Empty>[]
+) {
+  let request: ForgotPasswordRequest;
+  let response: Empty;
+
+  try {
+    request = ForgotPasswordRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      ForgotPasswordRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.ForgotPassword(ctx, inputReq);
+    });
+  } else {
+    response = await service.ForgotPassword(ctx, request!);
+  }
+
+  return Buffer.from(Empty.toBinary(response));
 }
 
 //==================================//

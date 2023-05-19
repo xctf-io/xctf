@@ -1,28 +1,28 @@
 import React from "react";
 import { useEffect, useState } from "react";
 
-import { useLogin } from "../store/user";
-import { Input, Button, Text, useTheme, Link } from "@nextui-org/react";
+import { Input, Button, Text, useTheme } from "@nextui-org/react";
 import { HiMail } from "react-icons/hi";
 
-const Login = () => {
+const ForgotPassword = () => {
 	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
 
-	const [doLogin, success, error] = useLogin();
 	const { type, isDark } = useTheme();
 
-	// focus the email input on mount
 	useEffect(() => {
 		document.querySelector("input")?.focus();
 	}, []);
+
+    function errorToast(arg0: string): void {
+        throw new Error("Function not implemented.");
+    }
 
 	return (
 		<div className="grid grid-cols-2 w-full">
 			<div className="flex flex-col gap-6 ml-48 mr-32 justify-center">
 				<div>
-					<h1 className="text-5xl font-bold mb-0">Welcome back!</h1>
-					<Text weight="light">Login to continue</Text>
+					<h1 className="text-5xl font-bold mb-0">Reset Password</h1>
+					<Text weight="light">Enter your email to get a reset code</Text>
 				</div>
 				<Input
 					id="email"
@@ -35,27 +35,14 @@ const Login = () => {
 					size="xl"
 				/>
 
-				<Input.Password
-					id="password"
-					label="Password"
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-					width="100%"
-					size="xl"
-				/>
-
 				<Button
 					className="mt-6"
 					size="xl"
-					auto
-					onPress={() => doLogin(email, password, isDark)}
+                    auto
+                    onPress={() => errorToast("This feature hasn't been implemented.")}
 				>
-					<span>Log In</span>
+					<span>Send Code</span>
 				</Button>
-
-				<Text weight="thin" className="text-center">
-					Forgot your password? Reset it <Link color="primary" href="/forgot-password">here</Link>.
-				</Text>
 			</div>
 			{isDark ? (
 				<div
@@ -80,4 +67,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default ForgotPassword;

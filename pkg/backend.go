@@ -268,6 +268,16 @@ func (b backend) GetHomePage(ctx context.Context, request *ctfg.GetHomePageReque
 	}, nil
 }
 
+func (b backend) ForgotPassword(ctx context.Context, request *ctfg.ForgotPasswordRequest) (*ctfg.Empty, error) {
+	// check if user exists
+	var user models.User
+	resp := b.db.Where(models.User{Email: request.Email}).First(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	return nil, errors.New("not implemented")
+}
+
 func NewBackend(db *gorm.DB) ctfg.Backend {
 	return &backend{
 		db: db,

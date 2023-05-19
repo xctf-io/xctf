@@ -15,6 +15,7 @@ service Backend {
   rpc SubmitEvidence(SubmitEvidenceRequest) returns (SubmitEvidenceResponse);
   rpc SubmitEvidenceConnection(SubmitEvidenceConnectionRequest) returns (SubmitEvidenceConnectionResponse);
   rpc GetHomePage(GetHomePageRequest) returns (GetHomePageResponse);
+  rpc ForgotPassword(ForgotPasswordRequest) returns (Empty);
 }
 
 service Admin {
@@ -155,5 +156,9 @@ message SetHomePageRequest {
 message GetHomePageRequest {}
 message GetHomePageResponse {
   string content = 1;
+}
+
+message ForgotPasswordRequest {
+  string email = 1;
 }
 

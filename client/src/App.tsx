@@ -9,6 +9,7 @@ import Register from "./routes/Register";
 import Home from "./routes/Home";
 import Evidence from "./routes/Evidence";
 import Grading from "./routes/Grading";
+import ForgotPassword from "./routes/ForgotPassword";
 import { NavLink } from "./types/nav";
 import { ctfg } from "./service";
 import { useUser } from "./store/user";
@@ -63,6 +64,14 @@ function App() {
 			showWhenAdmin: true,
 			hideWhenUnauthed: true,
 		},
+		{
+			label: "Forgot Password",
+			to: "/forgot-password",
+			Component: ForgotPassword,
+			showWhenAuthed: false,
+			showWhenAdmin: false,
+			hideWhenUnauthed: true,
+		}
 	];
 
 	useEffect(() => {
@@ -133,6 +142,7 @@ function App() {
 								key={link.to}
 								path={link.to}
 								Component={
+									(link.label === 'Forgot Password' && !loggedIn) ||
 									(loggedIn && !isAdmin && link.showWhenAuthed) ||
 									(!loggedIn && !link.hideWhenUnauthed) ||
 									(loggedIn && isAdmin && link.showWhenAdmin)
