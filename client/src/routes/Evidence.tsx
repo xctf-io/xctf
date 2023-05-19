@@ -247,7 +247,7 @@ export default function MyComponent() {
 			<div
 				className="w-screen flex flex-col"
 				style={{
-					height: "calc(100vh - 90px)",
+					height: "calc(100vh - 80px)",
 				}}
 			>
 				<Menu openModal={openHandler} />

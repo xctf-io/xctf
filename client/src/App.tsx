@@ -10,6 +10,7 @@ import Home from "./routes/Home";
 import Evidence from "./routes/Evidence";
 import Grading from "./routes/Grading";
 import ForgotPassword from "./routes/ForgotPassword";
+import Writeup from "./routes/Writeup";
 import { NavLink } from "./types/nav";
 import { ctfg } from "./service";
 import { useUser } from "./store/user";
@@ -71,7 +72,15 @@ function App() {
 			showWhenAuthed: false,
 			showWhenAdmin: false,
 			hideWhenUnauthed: true,
-		}
+		},
+		{
+			label: "Writeup",
+			to: "/writeup",
+			Component: Writeup,
+			showWhenAuthed: true,
+			showWhenAdmin: false,
+			hideWhenUnauthed: true,
+		},
 	];
 
 	useEffect(() => {

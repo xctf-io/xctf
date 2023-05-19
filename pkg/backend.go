@@ -290,7 +290,7 @@ func (b backend) SubmitWriteup(ctx context.Context, request *ctfg.SubmitWriteupR
 		Username: request.Username,
 		Content:  request.Content,
 	}
-	resp = b.db.Create(&writeup)
+	resp = b.db.Save(&writeup)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
