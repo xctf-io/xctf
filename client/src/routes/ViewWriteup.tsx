@@ -3,19 +3,23 @@ import { useParams } from "react-router-dom";
 import { ctfgAdmin } from "../service";
 
 const ViewWriteup = () => {
-    const { name } = useParams();
-    const [writeup, setWriteup] = useState("");
+	const { name } = useParams();
+	const [writeup, setWriteup] = useState("");
 
 	useEffect(() => {
 		async function getWriteup() {
-            const wp = await ctfgAdmin.GetWriteup({ username: name });
-            setWriteup(wp.content);
-            console.log(wp);
+			const wp = await ctfgAdmin.GetWriteup({ username: name });
+			setWriteup(wp.content);
 		}
 		getWriteup();
 	}, []);
 
-	return <div>{name}</div>;
+	return (
+		<div>
+			<p>name: {name}</p>
+			<p>writeup: {writeup}</p>
+		</div>
+	);
 };
 
 export default ViewWriteup;

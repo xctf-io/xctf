@@ -15,23 +15,22 @@ const SubmitWriteup = () => {
     async function uploadWriteup() {
         // read file
         const reader = new FileReader();
-        let fileData = ""
         reader.readAsDataURL(file);
         reader.onload = async () => {
-            fileData = window.btoa(reader.result.toString());
-        };
+            try {
+                const fileData = reader.result as string;
+                console.log(fileData);
+                const res = await ctfg.SubmitWriteup({
+                    content: fileData
+                });
+                createSuccessToast("Submitted writeup!", isDark);
+            } catch (err) {
+                createErrorToast(err, isDark);
+            }
+        }
         reader.onerror = (error) => {
             console.log('Error: ', error);
         };
-
-        try {
-            const res = await ctfg.SubmitWriteup({
-                content: fileData
-            });
-            createSuccessToast("Submitted writeup!", isDark);
-        } catch (err) {
-            createErrorToast(err, isDark);
-        }
     }
 
 	return (
