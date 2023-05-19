@@ -383,11 +383,7 @@ export interface ForgotPasswordRequest {
  */
 export interface SubmitWriteupRequest {
     /**
-     * @generated from protobuf field: string username = 1;
-     */
-    username: string;
-    /**
-     * @generated from protobuf field: string content = 2;
+     * @generated from protobuf field: string content = 1;
      */
     content: string;
 }
@@ -1961,12 +1957,11 @@ export const ForgotPasswordRequest = new ForgotPasswordRequest$Type();
 class SubmitWriteupRequest$Type extends MessageType<SubmitWriteupRequest> {
     constructor() {
         super("ctfg.SubmitWriteupRequest", [
-            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<SubmitWriteupRequest>): SubmitWriteupRequest {
-        const message = { username: "", content: "" };
+        const message = { content: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<SubmitWriteupRequest>(this, message, value);
@@ -1977,10 +1972,7 @@ class SubmitWriteupRequest$Type extends MessageType<SubmitWriteupRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string username */ 1:
-                    message.username = reader.string();
-                    break;
-                case /* string content */ 2:
+                case /* string content */ 1:
                     message.content = reader.string();
                     break;
                 default:
@@ -1995,12 +1987,9 @@ class SubmitWriteupRequest$Type extends MessageType<SubmitWriteupRequest> {
         return message;
     }
     internalBinaryWrite(message: SubmitWriteupRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string username = 1; */
-        if (message.username !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.username);
-        /* string content = 2; */
+        /* string content = 1; */
         if (message.content !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.content);
+            writer.tag(1, WireType.LengthDelimited).string(message.content);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

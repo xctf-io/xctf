@@ -165,8 +165,7 @@ message ForgotPasswordRequest {
 }
 
 message SubmitWriteupRequest {
-  string username = 1;
-  string content = 2;
+  string content = 1;
 }
 
 message Writeup {

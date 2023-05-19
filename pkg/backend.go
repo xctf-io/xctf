@@ -279,16 +279,17 @@ func (b backend) ForgotPassword(ctx context.Context, request *ctfg.ForgotPasswor
 }
 
 func (b backend) SubmitWriteup(ctx context.Context, request *ctfg.SubmitWriteupRequest) (*ctfg.Empty, error) {
-	// check if user exists
-	var user models.User
-	resp := b.db.Where(models.User{Username: request.Username}).First(&user)
+	// get user from session
+	userId, _, err := GetUserFromSession(ctx)
+	if err != nil {
+		return nil, err
+	}
+	var writeup models.Writeup
+	resp := b.db.Where(models.Writeup{UserID: userId}).First(&writeup)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	writeup := models.Writeup{
-		Username: request.Username,
-		Content:  request.Content,
-	}
+	writeup.Content = request.Content
 	resp = b.db.Save(&writeup)
 	if resp.Error != nil {
 		return nil, resp.Error

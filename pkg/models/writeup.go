@@ -4,6 +4,6 @@ import "gorm.io/gorm"
 
 type Writeup struct {
 	gorm.Model
-	Username string `gorm:"unique"`
+	UserID uint `gorm:"uniqueIndex"`
 	Content  string
 }

@@ -27,7 +27,6 @@ const Writeup = () => {
 
         try {
             const res = await ctfg.SubmitWriteup({
-                username: user.username,
                 content: fileData
             });
             createSuccessToast("Submitted writeup!", isDark);
