@@ -284,15 +284,29 @@ func (b backend) SubmitWriteup(ctx context.Context, request *ctfg.SubmitWriteupR
 	if err != nil {
 		return nil, err
 	}
-	var writeup models.Writeup
-	resp := b.db.Where(models.Writeup{UserID: userId}).First(&writeup)
+	// get username from user id
+	var user models.User
+	resp := b.db.Where(models.User{Model: gorm.Model{ID: userId}}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	writeup.Content = request.Content
-	resp = b.db.Save(&writeup)
+	var writeup models.Writeup
+	resp = b.db.Where(models.Writeup{Username: user.Username}).First(&writeup)
 	if resp.Error != nil {
-		return nil, resp.Error
+		writeup := models.Writeup{
+			Username: user.Username,
+			Content:  request.Content,
+		}
+		resp = b.db.Create(&writeup)
+		if resp.Error != nil {
+			return nil, resp.Error
+		}
+	} else {
+		writeup.Content = request.Content
+		resp = b.db.Save(&writeup)
+		if resp.Error != nil {
+			return nil, resp.Error
+		}
 	}
 	return &ctfg.Empty{}, nil
 }

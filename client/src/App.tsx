@@ -10,7 +10,8 @@ import Home from "./routes/Home";
 import Evidence from "./routes/Evidence";
 import Grading from "./routes/Grading";
 import ForgotPassword from "./routes/ForgotPassword";
-import Writeup from "./routes/Writeup";
+import SubmitWriteup from "./routes/SubmitWriteup";
+import ViewWriteup from "./routes/ViewWriteup";
 import { NavLink } from "./types/nav";
 import { ctfg } from "./service";
 import { useUser } from "./store/user";
@@ -75,9 +76,17 @@ function App() {
 		},
 		{
 			label: "Writeup",
-			to: "/writeup",
-			Component: Writeup,
+			to: "/submit",
+			Component: SubmitWriteup,
 			showWhenAuthed: true,
+			showWhenAdmin: false,
+			hideWhenUnauthed: true,
+		},
+		{
+			label: "View Writeup",
+			to: "/view/:name",
+			Component: ViewWriteup,
+			showWhenAuthed: false,
 			showWhenAdmin: false,
 			hideWhenUnauthed: true,
 		},
@@ -152,6 +161,7 @@ function App() {
 								path={link.to}
 								Component={
 									(link.label === 'Forgot Password' && !loggedIn) ||
+									(loggedIn && isAdmin && link.label === 'View Writeup') ||
 									(loggedIn && !isAdmin && link.showWhenAuthed) ||
 									(!loggedIn && !link.hideWhenUnauthed) ||
 									(loggedIn && isAdmin && link.showWhenAdmin)

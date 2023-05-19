@@ -1,12 +1,11 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createErrorToast, createSuccessToast, useUser } from "../store/user";
 import { ctfg } from "../service";
 
-import { Button, Input, theme, useTheme } from "@nextui-org/react";
-import { read } from "fs";
+import { Button, useTheme } from "@nextui-org/react";
 
-const Writeup = () => {
+const SubmitWriteup = () => {
 	const [user, setUser, logout] = useUser();
 	const isAdmin = user?.type === "admin";
     const themeColor = isAdmin ? "error" : "primary";
@@ -42,7 +41,7 @@ const Writeup = () => {
 				height: "calc(100vh - 64px)",
 			}}
 		>
-            <Input type="file" onChange={(e) => setFile(e.target.files[0])}/>
+            <input className="mx-0 w-64" type="file" onChange={(e) => setFile(e.target.files[0])}/>
             <Button color={themeColor} size="xl" onPress={() => uploadWriteup()}>
 				Submit Writeup
 			</Button>
@@ -50,4 +49,4 @@ const Writeup = () => {
 	);
 };
 
-export default Writeup;
+export default SubmitWriteup;

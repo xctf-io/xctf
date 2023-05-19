@@ -119,9 +119,15 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								}}
 								containerCss={{ border: "none" }}
 							>
-								<Dropdown.Item key="profile" css={{ height: "$18" }}>
+								<Dropdown.Item key="profile" css={{
+									height: "auto",
+									paddingTop: "0.5rem",
+									paddingBottom: "0.5rem",
+								}}>
 									<Text color="inherit">Signed in as</Text>
-									<Text b color="inherit">
+									<Text b color="inherit" style={{
+										overflowWrap: "anywhere"
+									}}>
 										{user.username}
 									</Text>
 								</Dropdown.Item>

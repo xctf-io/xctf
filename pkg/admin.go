@@ -99,27 +99,21 @@ func (s* admin) SetHomePage(ctx context.Context, request *ctfg.SetHomePageReques
 	return &ctfg.Empty{}, nil
 }
 
-func (s* admin) GetWriteups(ctx context.Context, request *ctfg.GetWriteupsRequest) (*ctfg.GetWriteupsResponse, error) {
-	// for each user, get their writeup
-	var users []models.User
-	resp := s.db.Find(&users)
+func (s* admin) GetWriteup(ctx context.Context, request *ctfg.GetWriteupRequest) (*ctfg.GetWriteupResponse, error) {
+	// check if the user exists
+	var user models.User
+	resp := s.db.Where(&models.User{Username: request.Username}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	var writeups []*ctfg.Writeup
-	for _, user := range users {
-		var writeup models.Writeup
-		resp := s.db.Where(&models.Writeup{Username: user.Username}).First(&writeup)
-		if resp.Error != nil {
-			return nil, resp.Error
-		}
-		writeups = append(writeups, &ctfg.Writeup{
-			Username: user.Username,
-			Content:  writeup.Content,
-		})
+	// get the writeup
+	var writeup models.Writeup
+	resp = s.db.Where(&models.Writeup{Username: request.Username}).First(&writeup)
+	if resp.Error != nil {
+		return nil, resp.Error
 	}
-	return &ctfg.GetWriteupsResponse{
-		Writeups: writeups,
+	return &ctfg.GetWriteupResponse{
+		Content: writeup.Content,
 	}, nil
 }
 

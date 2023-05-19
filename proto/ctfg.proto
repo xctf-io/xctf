@@ -25,7 +25,7 @@ service Admin {
   rpc GetTeamsProgress(GetTeamsProgressRequest) returns (GetTeamsProgressResponse);
   rpc GetAllChallenges(GetAllChallengesRequest) returns (GetAllChallengesResponse);
   rpc SetHomePage(SetHomePageRequest) returns (Empty);
-  rpc GetWriteups(GetWriteupsRequest) returns (GetWriteupsResponse);
+  rpc GetWriteup(GetWriteupRequest) returns (GetWriteupResponse);
 }
 
 message Empty {}
@@ -168,12 +168,9 @@ message SubmitWriteupRequest {
   string content = 1;
 }
 
-message Writeup {
+message GetWriteupRequest {
   string username = 1;
-  string content = 2;
 }
-
-message GetWriteupsRequest {}
-message GetWriteupsResponse {
-  repeated Writeup writeups = 1;
+message GetWriteupResponse {
+  string content = 1;
 }
