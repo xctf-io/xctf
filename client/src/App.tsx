@@ -89,6 +89,9 @@ function App() {
 	const lightTheme = createTheme({
 		type: "light",
 		theme: {
+			colors: {
+				selection: "#FF6BD5"
+			},
 			borderWeights: {
 				none: "0px",
 			},
@@ -106,10 +109,14 @@ function App() {
 	const darkMode = useDarkMode(false);
 	const loggedIn = !!user;
 	const isAdmin = user?.type === "admin";
+	const selectColor = darkMode.value ? "#0D3868" : "#CEE4FE";
+	const styles = {
+		'--nextui-colors-selection': selectColor,
+	}
 
 	return (
 		<NextUIProvider theme={darkMode.value ? darkTheme : lightTheme}>
-			<main>
+			<main style={styles}>
 				<Router>
 					<Navbar links={links} />
 					<Routes>
