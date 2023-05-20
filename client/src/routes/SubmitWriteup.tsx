@@ -12,7 +12,11 @@ const SubmitWriteup = () => {
 	const { type, isDark } = useTheme();
 
 	async function uploadWriteup() {
-		// read file
+        if (file.type !== "application/pdf" && file.type !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && file.type !== "application/msword") {
+            createErrorToast("File must be a PDF or Word Doc!", isDark);
+            setFile(undefined);
+            return;
+        }
 		const reader = new FileReader();
 		reader.readAsDataURL(file);
 		reader.onload = async () => {
@@ -28,12 +32,11 @@ const SubmitWriteup = () => {
 			}
 		};
 		reader.onerror = (error) => {
-			console.log("Error: ", error);
+			createErrorToast(error, isDark);
 		};
 	}
 	const inputRef = React.useRef(null);
 	const [dragActive, setDragActive] = React.useState(false);
-	const dragColor = isDark ? "#0D3868" : "#CEE4FE";
 
 	return (
 		<div

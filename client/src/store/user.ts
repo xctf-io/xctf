@@ -14,6 +14,11 @@ export const createErrorToast = (error: string, isDark: boolean) => {
 	toast.error(error, { theme: theme, autoClose: 2000 });
 };
 
+export const createCelebrateToast = (celebrate: string, isDark: boolean) => {
+	const theme = isDark ? "dark" : "light";
+	toast(celebrate, { theme: theme, autoClose: 2000 });
+};
+
 interface User {
 	username: string;
 	type: string;

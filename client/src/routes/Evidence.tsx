@@ -17,7 +17,7 @@ import Menu from "../components/Menu";
 import {
 	HiPaperAirplane
 } from "react-icons/hi2";
-import { createSuccessToast, createErrorToast } from "../store/user";
+import { createSuccessToast, createErrorToast, createCelebrateToast } from "../store/user";
 import useDarkMode from "use-dark-mode";
 
 let evidence: string = "";
@@ -143,7 +143,7 @@ export default function MyComponent() {
 					if (remove) {
 						createSuccessToast("Removed evidence!", darkMode.value);
 					} else if (submittingFlag) {
-						createSuccessToast("You got a flag!", darkMode.value);
+						createCelebrateToast("You got a flag!", darkMode.value);
 					} else {
 						createSuccessToast("Submitted evidence!", darkMode.value);
 					}
