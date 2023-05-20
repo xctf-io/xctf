@@ -53,8 +53,8 @@ const Grading: React.FC<Props> = () => {
 						<Table.Row key={team.name}>
 							<Table.Cell
 								css={{
-									minWidth: "100%",
-									wordBreak: "break-all",
+									minWidth: "$24",
+									width: "20%"
 								}}
 							>
 								{team.name}
@@ -68,7 +68,7 @@ const Grading: React.FC<Props> = () => {
 							</Table.Cell>
 							<Table.Cell
 								css={{
-									width: "70%",
+									width: "100%",
 								}}
 							>
 								<Progress size="md" color="error" value={team.score} />

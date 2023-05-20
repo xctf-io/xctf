@@ -141,9 +141,7 @@ function App() {
 
 	if (isAdmin) {
 		selectColor = darkMode.value ? "#5C0523" : "#FF7377";
-	} else {
-		selectColor = darkMode.value ? "#0D3868" : "#CEE4FE";
-	}
+	} 
 
 	return (
 		<NextUIProvider theme={darkMode.value ? darkTheme : lightTheme}>
