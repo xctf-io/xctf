@@ -6,6 +6,6 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
   },
-  "include": ["**/*.ts", "src/main.tsx"],
+  "include": ["**/*.ts", "src/index.tsx"],
   "exclude": ["node_modules/*", "public/*"]
 }

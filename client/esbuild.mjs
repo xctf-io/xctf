@@ -17,7 +17,7 @@ const minify = devBuild ? false : true;
 const nodeEnv = devBuild ? '"development"' : '"production"';
 
 const options = {
-	entryPoints: ["./src/main.tsx"],
+	entryPoints: ["./src/index.tsx"],
 	outfile: "public/build/bundle.js",
 	bundle: true,
 	loader: {
