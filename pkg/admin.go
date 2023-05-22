@@ -54,12 +54,16 @@ func (s* admin) GetTeamsProgress(ctx context.Context, request *ctfg.GetTeamsProg
 		// find the number of flags they have
 		if user.Type != "admin" {
 			var count int64
-			s.db.Model(&models.Evidence{}).Where(&models.Evidence{UserID: int(user.ID), IsFlag: true}).Count(&count)
+			resp = s.db.Model(&models.Evidence{}).Where(&models.Evidence{UserID: int(user.ID), IsFlag: true}).Count(&count)
+			if resp.Error != nil {
+				return nil, resp.Error
+			}
 
 			scores = append(scores, &ctfg.TeamProgress{
 				TeamName: user.Username,
 				HasWriteup: user.HasWriteup,
 				Score:    uint32(count),
+				Grade:	uint32(user.Grade),
 			})
 		}
 	}
@@ -101,21 +105,28 @@ func (s* admin) SetHomePage(ctx context.Context, request *ctfg.SetHomePageReques
 }
 
 func (s* admin) GetWriteup(ctx context.Context, request *ctfg.GetWriteupRequest) (*ctfg.GetWriteupResponse, error) {
-	// check if the user exists
-	var user models.User
-	resp := s.db.Where(&models.User{Username: request.Username}).First(&user)
-	if resp.Error != nil {
-		return nil, resp.Error
-	}
-	// get the writeup
 	var writeup models.Writeup
-	resp = s.db.Where(&models.Writeup{Username: request.Username}).First(&writeup)
+	resp := s.db.Where(&models.Writeup{Username: request.Username}).First(&writeup)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
 	return &ctfg.GetWriteupResponse{
 		Content: writeup.Content,
 	}, nil
+}
+
+func (s *admin) SubmitGrade(ctx context.Context, request *ctfg.SubmitGradeRequest) (*ctfg.Empty, error) {
+	var user models.User
+	resp := s.db.Where(&models.User{Username: request.Username}).First(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	user.Grade = int(request.Score)
+	resp = s.db.Save(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	return &ctfg.Empty{}, nil
 }
 
 func NewAdmin(db *gorm.DB) ctfg.Admin {

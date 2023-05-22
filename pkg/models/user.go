@@ -12,6 +12,7 @@ type User struct {
 	Password   string
 	Type       string `gorm:"default:user"`
 	HasWriteup bool   `gorm:"default:false"`
+	Grade      int    `gorm:"default:0"`
 }
 
 func (user *User) HashPassword(password string) error {

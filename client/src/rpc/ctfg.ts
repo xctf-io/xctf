@@ -308,6 +308,10 @@ export interface TeamProgress {
      * @generated from protobuf field: uint32 score = 3;
      */
     score: number;
+    /**
+     * @generated from protobuf field: uint32 grade = 4;
+     */
+    grade: number;
 }
 /**
  * @generated from protobuf message ctfg.GetTeamsProgressRequest
@@ -408,6 +412,19 @@ export interface GetWriteupResponse {
      * @generated from protobuf field: string content = 1;
      */
     content: string;
+}
+/**
+ * @generated from protobuf message ctfg.SubmitGradeRequest
+ */
+export interface SubmitGradeRequest {
+    /**
+     * @generated from protobuf field: string username = 1;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: uint32 score = 2;
+     */
+    score: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Empty$Type extends MessageType<Empty> {
@@ -1533,11 +1550,12 @@ class TeamProgress$Type extends MessageType<TeamProgress> {
         super("ctfg.TeamProgress", [
             { no: 1, name: "teamName", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "hasWriteup", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "score", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
+            { no: 3, name: "score", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "grade", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
     create(value?: PartialMessage<TeamProgress>): TeamProgress {
-        const message = { teamName: "", hasWriteup: false, score: 0 };
+        const message = { teamName: "", hasWriteup: false, score: 0, grade: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<TeamProgress>(this, message, value);
@@ -1556,6 +1574,9 @@ class TeamProgress$Type extends MessageType<TeamProgress> {
                     break;
                 case /* uint32 score */ 3:
                     message.score = reader.uint32();
+                    break;
+                case /* uint32 grade */ 4:
+                    message.grade = reader.uint32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1578,6 +1599,9 @@ class TeamProgress$Type extends MessageType<TeamProgress> {
         /* uint32 score = 3; */
         if (message.score !== 0)
             writer.tag(3, WireType.Varint).uint32(message.score);
+        /* uint32 grade = 4; */
+        if (message.grade !== 0)
+            writer.tag(4, WireType.Varint).uint32(message.grade);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2096,6 +2120,60 @@ class GetWriteupResponse$Type extends MessageType<GetWriteupResponse> {
  * @generated MessageType for protobuf message ctfg.GetWriteupResponse
  */
 export const GetWriteupResponse = new GetWriteupResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SubmitGradeRequest$Type extends MessageType<SubmitGradeRequest> {
+    constructor() {
+        super("ctfg.SubmitGradeRequest", [
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "score", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SubmitGradeRequest>): SubmitGradeRequest {
+        const message = { username: "", score: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<SubmitGradeRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SubmitGradeRequest): SubmitGradeRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string username */ 1:
+                    message.username = reader.string();
+                    break;
+                case /* uint32 score */ 2:
+                    message.score = reader.uint32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SubmitGradeRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string username = 1; */
+        if (message.username !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
+        /* uint32 score = 2; */
+        if (message.score !== 0)
+            writer.tag(2, WireType.Varint).uint32(message.score);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.SubmitGradeRequest
+ */
+export const SubmitGradeRequest = new SubmitGradeRequest$Type();
 /**
  * @generated ServiceType for protobuf service ctfg.Backend
  */
@@ -2121,5 +2199,6 @@ export const Admin = new ServiceType("ctfg.Admin", [
     { name: "GetTeamsProgress", options: {}, I: GetTeamsProgressRequest, O: GetTeamsProgressResponse },
     { name: "GetAllChallenges", options: {}, I: GetAllChallengesRequest, O: GetAllChallengesResponse },
     { name: "SetHomePage", options: {}, I: SetHomePageRequest, O: Empty },
-    { name: "GetWriteup", options: {}, I: GetWriteupRequest, O: GetWriteupResponse }
+    { name: "GetWriteup", options: {}, I: GetWriteupRequest, O: GetWriteupResponse },
+    { name: "SubmitGrade", options: {}, I: SubmitGradeRequest, O: Empty }
 ]);

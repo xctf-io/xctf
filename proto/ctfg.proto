@@ -26,6 +26,7 @@ service Admin {
   rpc GetAllChallenges(GetAllChallengesRequest) returns (GetAllChallengesResponse);
   rpc SetHomePage(SetHomePageRequest) returns (Empty);
   rpc GetWriteup(GetWriteupRequest) returns (GetWriteupResponse);
+  rpc SubmitGrade(SubmitGradeRequest) returns (Empty);
 }
 
 message Empty {}
@@ -135,6 +136,7 @@ message TeamProgress {
   string teamName = 1;
   bool hasWriteup = 2;
   uint32 score = 3;
+  uint32 grade = 4;
 }
 
 message GetTeamsProgressRequest {}
@@ -174,4 +176,9 @@ message GetWriteupRequest {
 }
 message GetWriteupResponse {
   string content = 1;
+}
+
+message SubmitGradeRequest {
+  string username = 1;
+  uint32 score = 2;
 }

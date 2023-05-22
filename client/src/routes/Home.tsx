@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Link, Textarea, useTheme } from "@nextui-org/react";
+import { Button, Link, Textarea, Tooltip, useTheme } from "@nextui-org/react";
 import { useUser } from "../store/user";
 import { ctfg, ctfgAdmin } from "../service";
 import Markdown from "markdown-to-jsx";
@@ -70,38 +70,43 @@ const CTFComponent: React.FC<Props> = () => {
 				)}
 				{!isEditing && isAdmin && (
 					<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-						<Button
-							color="error"
-							auto
-							size="xl"
-							rounded
-							icon={<HiPencilSquare className="h-8 w-8" />}
-							onPress={() => {
-								setIsEditing(true);
-							}}
-						/>
+						<Tooltip content={"Edit the homepage"} color="error">
+							<Button
+								color="error"
+								auto
+								size="xl"
+								flat
+								rounded
+								icon={<HiPencilSquare className="h-8 w-8" />}
+								onPress={() => {
+									setIsEditing(true);
+								}}
+							/>
+						</Tooltip>
 					</div>
 				)}
 			</div>
-			{isEditing && <>
-				<Textarea
-					minRows={1}
-					maxRows={20}
-					initialValue={homePage}
-					autoFocus
-					onFocus={(e) => {
-						const val = e.target.value;
-						e.target.value = "";
-						e.target.value = val;
-					}}
-					onChange={(e) => {
-						setHomePage(e.target.value);
-					}}
-				></Textarea>
-				<Button color="error" onPress={() => updateHomePage()}>
-					<span className="text-lg">Save</span>
-				</Button>
-			</>}
+			{isEditing && (
+				<>
+					<Textarea
+						minRows={1}
+						maxRows={20}
+						initialValue={homePage}
+						autoFocus
+						onFocus={(e) => {
+							const val = e.target.value;
+							e.target.value = "";
+							e.target.value = val;
+						}}
+						onChange={(e) => {
+							setHomePage(e.target.value);
+						}}
+					></Textarea>
+					<Button color="error" onPress={() => updateHomePage()}>
+						<span className="text-lg">Save</span>
+					</Button>
+				</>
+			)}
 			<hr className={lineClass} />
 			{!isAdmin && (
 				<>
