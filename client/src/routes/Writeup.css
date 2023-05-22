@@ -1,9 +1,0 @@
-#react-doc-viewer #header-bar {
-    background-color: var(--nextui-colors-backgroundAlpha);
-  }  
-#file-name {
-    color: var(--nextui-colors-text);
-}
-#doc-nav-info {
-    color: var(--nextui-colors-text);
-}

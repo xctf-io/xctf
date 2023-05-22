@@ -30,7 +30,7 @@ const CTFComponent: React.FC<Props> = () => {
 	return (
 		<div className="text-center font-medium mx-[15vw] lg:mx-[25vw] mt-8 flex flex-col gap-4 relative">
 			<div>
-				<h1 className="mb-0">Welcome to CTFg!</h1>
+				<span className="mb-0 text-5xl font-extrabold">Welcome to CTFg!</span>
 				<h4>Register/Login to get started.</h4>
 			</div>
 			<hr className={lineClass} />

@@ -301,7 +301,11 @@ export interface TeamProgress {
      */
     teamName: string;
     /**
-     * @generated from protobuf field: uint32 score = 2;
+     * @generated from protobuf field: bool hasWriteup = 2;
+     */
+    hasWriteup: boolean;
+    /**
+     * @generated from protobuf field: uint32 score = 3;
      */
     score: number;
 }
@@ -1528,11 +1532,12 @@ class TeamProgress$Type extends MessageType<TeamProgress> {
     constructor() {
         super("ctfg.TeamProgress", [
             { no: 1, name: "teamName", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "score", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
+            { no: 2, name: "hasWriteup", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "score", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
     create(value?: PartialMessage<TeamProgress>): TeamProgress {
-        const message = { teamName: "", score: 0 };
+        const message = { teamName: "", hasWriteup: false, score: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<TeamProgress>(this, message, value);
@@ -1546,7 +1551,10 @@ class TeamProgress$Type extends MessageType<TeamProgress> {
                 case /* string teamName */ 1:
                     message.teamName = reader.string();
                     break;
-                case /* uint32 score */ 2:
+                case /* bool hasWriteup */ 2:
+                    message.hasWriteup = reader.bool();
+                    break;
+                case /* uint32 score */ 3:
                     message.score = reader.uint32();
                     break;
                 default:
@@ -1564,9 +1572,12 @@ class TeamProgress$Type extends MessageType<TeamProgress> {
         /* string teamName = 1; */
         if (message.teamName !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.teamName);
-        /* uint32 score = 2; */
+        /* bool hasWriteup = 2; */
+        if (message.hasWriteup !== false)
+            writer.tag(2, WireType.Varint).bool(message.hasWriteup);
+        /* uint32 score = 3; */
         if (message.score !== 0)
-            writer.tag(2, WireType.Varint).uint32(message.score);
+            writer.tag(3, WireType.Varint).uint32(message.score);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

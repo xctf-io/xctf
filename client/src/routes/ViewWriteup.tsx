@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ctfgAdmin } from "../service";
 import { createErrorToast } from "../store/user";
-import { useTheme } from "@nextui-org/react";
-import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
-import "./Writeup.css";
+import { Button, useTheme, theme } from "@nextui-org/react";
+import DocViewer, {
+	DocViewerRenderers,
+} from "@cyntler/react-doc-viewer";
+import { TbArrowBigLeftFilled, TbArrowBigRightFilled } from "react-icons/tb";
 
 const ViewWriteup = () => {
 	const { name } = useParams();
@@ -34,13 +36,19 @@ const ViewWriteup = () => {
 				documents={docs}
 				pluginRenderers={DocViewerRenderers}
 				style={{
-                    height: "calc(100vh - 90px)",
-                    width: "50%"
-                }}
-                theme={{
-                    primary: isDark ? "#fff" : "#000",
-                }}
-            />
+					height: "calc(100vh - 90px)",
+					width: "50%",
+				}}
+				theme={{
+					primary: isDark ? "#fff" : "#000",
+				}}
+				config={{
+					pdfVerticalScrollByDefault: true,
+					header: {
+						disableHeader: true
+					},
+				}}
+			/>
 		</div>
 	);
 };

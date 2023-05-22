@@ -29,6 +29,9 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 	const themeColor = isAdmin ? "error" : "primary";
 	const darkMode = useDarkMode(false);
 	const { type, isDark } = useTheme();
+	const translate = userLoggedIn
+		? "-translate-x-[15px]"
+		: "-translate-x-[49px]";
 
 	return (
 		<Navbar className="w-screen" variant="sticky" maxWidth="fluid">
@@ -38,37 +41,17 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 					CTFg
 				</Text>
 			</Navbar.Brand>
-			<Navbar.Collapse>
-				{links.map((l) => {
-					if (
-						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
-						(!userLoggedIn && !l.hideWhenUnauthed) || 
-						(userLoggedIn && isAdmin && l.showWhenAdmin)
-					) {
-						return (
-							<Navbar.CollapseItem key={l.label} isActive={l.to === path}>
-								<Link
-									color="inherit"
-									onPress={() => updatePath(l.to)}
-									href={l.to}
-								>
-									{l.label}
-								</Link>
-							</Navbar.CollapseItem>
-						);
-					}
-				})}
-			</Navbar.Collapse>
 			<Navbar.Content
 				hideIn="xs"
 				enableCursorHighlight
 				variant="underline"
+				className={"absolute " + translate}
 				activeColor={themeColor}
 			>
 				{links.map((l) => {
 					if (
 						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
-						(!userLoggedIn && !l.hideWhenUnauthed) || 
+						(!userLoggedIn && !l.hideWhenUnauthed) ||
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
@@ -85,29 +68,31 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 					}
 				})}
 			</Navbar.Content>
-			<Navbar.Content enableCursorHighlight>
-				<Navbar.Link onPress={darkMode.toggle} key="toggle">
-					{isDark ? <BsMoonStarsFill /> : <BsSunFill />}
+			<Navbar.Content enableCursorHighlight hideIn="xs">
+				<Navbar.Link
+					className="justify-self-right"
+					onPress={darkMode.toggle}
+					key="toggle"
+				>
+					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
 				</Navbar.Link>
 				{user && (
-					<>
+					<Navbar.Item>
 						<Dropdown placement="bottom-right">
-							<Navbar.Item>
-								<Dropdown.Trigger>
-									<Avatar
-										bordered
-										as="button"
-										color={themeColor}
-										size="md"
-										src={
-											"https://api.dicebear.com/6.x/bottts/svg?baseColor=" +
-											themeHexColor +
-											"&seed=" +
-											user.username
-										}
-									/>
-								</Dropdown.Trigger>
-							</Navbar.Item>
+							<Dropdown.Trigger>
+								<Avatar
+									bordered
+									as="button"
+									color={themeColor}
+									size="md"
+									src={
+										"https://api.dicebear.com/6.x/bottts/svg?baseColor=" +
+										themeHexColor +
+										"&seed=" +
+										user.username
+									}
+								/>
+							</Dropdown.Trigger>
 							<Dropdown.Menu
 								aria-label="User menu actions"
 								onAction={(actionKey) => {
@@ -119,15 +104,22 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								}}
 								containerCss={{ border: "none" }}
 							>
-								<Dropdown.Item key="profile" css={{
-									height: "auto",
-									paddingTop: "0.5rem",
-									paddingBottom: "0.5rem",
-								}}>
+								<Dropdown.Item
+									key="profile"
+									css={{
+										height: "auto",
+										paddingTop: "0.5rem",
+										paddingBottom: "0.5rem",
+									}}
+								>
 									<Text color="inherit">Signed in as</Text>
-									<Text b color="inherit" style={{
-										overflowWrap: "anywhere"
-									}}>
+									<Text
+										b
+										color="inherit"
+										style={{
+											overflowWrap: "anywhere",
+										}}
+									>
 										{user.username}
 									</Text>
 								</Dropdown.Item>
@@ -136,10 +128,94 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								</Dropdown.Item>
 							</Dropdown.Menu>
 						</Dropdown>
-					</>
+					</Navbar.Item>
 				)}
 			</Navbar.Content>
-			<Navbar.Toggle showIn="xs" />
+			<Navbar.Collapse>
+				{links.map((l) => {
+					if (
+						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
+						(!userLoggedIn && !l.hideWhenUnauthed) ||
+						(userLoggedIn && isAdmin && l.showWhenAdmin)
+					) {
+						return (
+							<Navbar.CollapseItem key={l.label} isActive={l.to === path}>
+								<Link
+									color="inherit"
+									onPress={() => updatePath(l.to)}
+									href={l.to}
+								>
+									{l.label}
+								</Link>
+							</Navbar.CollapseItem>
+						);
+					}
+				})}
+			</Navbar.Collapse>
+			<Navbar.Content showIn="xs">
+				<Navbar.Link
+					className="justify-self-right"
+					onPress={darkMode.toggle}
+					key="toggle"
+				>
+					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
+				</Navbar.Link>
+				{user && (
+					<Navbar.Item>
+						<Dropdown placement="bottom-right">
+							<Dropdown.Trigger>
+								<Avatar
+									bordered
+									as="button"
+									color={themeColor}
+									size="md"
+									src={
+										"https://api.dicebear.com/6.x/bottts/svg?baseColor=" +
+										themeHexColor +
+										"&seed=" +
+										user.username
+									}
+								/>
+							</Dropdown.Trigger>
+							<Dropdown.Menu
+								aria-label="User menu actions"
+								onAction={(actionKey) => {
+									if (actionKey === "logout") {
+										logout();
+										document.location.href = "/login";
+										updatePath("/login");
+									}
+								}}
+								containerCss={{ border: "none" }}
+							>
+								<Dropdown.Item
+									key="profile"
+									css={{
+										height: "auto",
+										paddingTop: "0.5rem",
+										paddingBottom: "0.5rem",
+									}}
+								>
+									<Text color="inherit">Signed in as</Text>
+									<Text
+										b
+										color="inherit"
+										style={{
+											overflowWrap: "anywhere",
+										}}
+									>
+										{user.username}
+									</Text>
+								</Dropdown.Item>
+								<Dropdown.Item key="logout" withDivider color="error">
+									Logout
+								</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+					</Navbar.Item>
+				)}
+				<Navbar.Toggle />
+			</Navbar.Content>
 		</Navbar>
 	);
 };

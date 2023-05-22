@@ -289,6 +289,11 @@ func (b backend) SubmitWriteup(ctx context.Context, request *ctfg.SubmitWriteupR
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
+	user.HasWriteup = true
+	resp = b.db.Save(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
 
 	var writeup models.Writeup
 	resp = b.db.Where(models.Writeup{Username: user.Username}).First(&writeup)

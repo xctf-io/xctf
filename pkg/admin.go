@@ -58,6 +58,7 @@ func (s* admin) GetTeamsProgress(ctx context.Context, request *ctfg.GetTeamsProg
 
 			scores = append(scores, &ctfg.TeamProgress{
 				TeamName: user.Username,
+				HasWriteup: user.HasWriteup,
 				Score:    uint32(count),
 			})
 		}

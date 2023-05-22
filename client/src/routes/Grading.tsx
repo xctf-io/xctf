@@ -7,6 +7,7 @@ interface Props {}
 
 interface Team {
 	name: string;
+	hasWriteup: boolean;
 	score: number;
 }
 
@@ -17,12 +18,18 @@ const Grading: React.FC<Props> = () => {
 			try {
 				const resp = await ctfgAdmin.GetTeamsProgress({});
 				const allChallenges = await ctfgAdmin.GetAllChallenges({});
-				console.log(allChallenges);
 				const teams = resp.teams.map((t) => ({
 					name: t.teamName,
+					hasWriteup: t.hasWriteup,
 					score: t.score * 100 / allChallenges.challenges.length,
 				}));
-				teams.sort((a, b) => b.score - a.score);
+				teams.sort((a, b) => {
+					if (a.hasWriteup && !b.hasWriteup)
+						return -1;
+					if (!a.hasWriteup && b.hasWriteup)
+						return 1;
+					return b.score - a.score;
+				});
 				setTeams(teams);
 			} catch (error) {
 				console.error(error);
@@ -34,7 +41,7 @@ const Grading: React.FC<Props> = () => {
 	return <>
         <div className="mx-[3vw] lg:mx-[6vw] mt-8">
 			<Table
-				css={{
+				style={{
 					height: "auto",
                     minWidth: "100%"
                 }}
@@ -62,9 +69,14 @@ const Grading: React.FC<Props> = () => {
 							<Table.Cell css={{
 								minWidth: "$24",
 							}}>
+								{team.hasWriteup ? (
 								<Link color="error" href={"/view/" + team.name}>
-									View
-								</Link>
+										View
+									</Link>
+								) : (
+										<Text>No Writeup</Text>
+								)}
+								
 							</Table.Cell>
 							<Table.Cell
 								css={{

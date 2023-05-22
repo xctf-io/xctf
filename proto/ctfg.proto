@@ -133,7 +133,8 @@ message SubmitFlagResponse {
 
 message TeamProgress {
   string teamName = 1;
-  uint32 score = 2;
+  bool hasWriteup = 2;
+  uint32 score = 3;
 }
 
 message GetTeamsProgressRequest {}

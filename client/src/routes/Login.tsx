@@ -18,8 +18,8 @@ const Login = () => {
 	}, []);
 
 	return (
-		<div className="grid grid-cols-2 w-full">
-			<div className="flex flex-col gap-6 ml-48 mr-32 justify-center">
+		<div className="grid grid-cols-1 lg:grid-cols-2 w-full">
+			<div className="flex flex-col gap-6 lg:ml-48 lg:mr-32 mt-24 lg:mt-auto m-auto justify-center">
 				<div>
 					<h1 className="text-5xl font-bold mb-0">Welcome back!</h1>
 					<Text weight="light">Login to continue</Text>
@@ -59,7 +59,7 @@ const Login = () => {
 			</div>
 			{isDark ? (
 				<div
-					className="inset-0 bg-cover"
+					className="inset-0 bg-cover lg:block hidden"
 					style={{
 						backgroundImage:
 							'url("https://images.unsplash.com/photo-1590069261209-f8e9b8642343")',
@@ -68,7 +68,7 @@ const Login = () => {
 				/>
 			) : (
 				<div
-					className="inset-0 bg-cover"
+					className="inset-0 bg-cover lg:block hidden"
 					style={{
 						backgroundImage:
 							'url("https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d")',
