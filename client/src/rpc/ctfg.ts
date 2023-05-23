@@ -426,6 +426,28 @@ export interface SubmitGradeRequest {
      */
     score: number;
 }
+/**
+ * @generated from protobuf message ctfg.GetUserGraphRequest
+ */
+export interface GetUserGraphRequest {
+    /**
+     * @generated from protobuf field: string username = 1;
+     */
+    username: string;
+}
+/**
+ * @generated from protobuf message ctfg.GetUserGraphResponse
+ */
+export interface GetUserGraphResponse {
+    /**
+     * @generated from protobuf field: repeated ctfg.Evidence evidence = 1;
+     */
+    evidence: Evidence[];
+    /**
+     * @generated from protobuf field: repeated ctfg.Connection connections = 2;
+     */
+    connections: Connection[];
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Empty$Type extends MessageType<Empty> {
     constructor() {
@@ -2174,6 +2196,107 @@ class SubmitGradeRequest$Type extends MessageType<SubmitGradeRequest> {
  * @generated MessageType for protobuf message ctfg.SubmitGradeRequest
  */
 export const SubmitGradeRequest = new SubmitGradeRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetUserGraphRequest$Type extends MessageType<GetUserGraphRequest> {
+    constructor() {
+        super("ctfg.GetUserGraphRequest", [
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetUserGraphRequest>): GetUserGraphRequest {
+        const message = { username: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetUserGraphRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetUserGraphRequest): GetUserGraphRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string username */ 1:
+                    message.username = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetUserGraphRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string username = 1; */
+        if (message.username !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.GetUserGraphRequest
+ */
+export const GetUserGraphRequest = new GetUserGraphRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetUserGraphResponse$Type extends MessageType<GetUserGraphResponse> {
+    constructor() {
+        super("ctfg.GetUserGraphResponse", [
+            { no: 1, name: "evidence", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Evidence },
+            { no: 2, name: "connections", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Connection }
+        ]);
+    }
+    create(value?: PartialMessage<GetUserGraphResponse>): GetUserGraphResponse {
+        const message = { evidence: [], connections: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetUserGraphResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetUserGraphResponse): GetUserGraphResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated ctfg.Evidence evidence */ 1:
+                    message.evidence.push(Evidence.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated ctfg.Connection connections */ 2:
+                    message.connections.push(Connection.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetUserGraphResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated ctfg.Evidence evidence = 1; */
+        for (let i = 0; i < message.evidence.length; i++)
+            Evidence.internalBinaryWrite(message.evidence[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated ctfg.Connection connections = 2; */
+        for (let i = 0; i < message.connections.length; i++)
+            Connection.internalBinaryWrite(message.connections[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.GetUserGraphResponse
+ */
+export const GetUserGraphResponse = new GetUserGraphResponse$Type();
 /**
  * @generated ServiceType for protobuf service ctfg.Backend
  */
@@ -2200,5 +2323,6 @@ export const Admin = new ServiceType("ctfg.Admin", [
     { name: "GetAllChallenges", options: {}, I: GetAllChallengesRequest, O: GetAllChallengesResponse },
     { name: "SetHomePage", options: {}, I: SetHomePageRequest, O: Empty },
     { name: "GetWriteup", options: {}, I: GetWriteupRequest, O: GetWriteupResponse },
-    { name: "SubmitGrade", options: {}, I: SubmitGradeRequest, O: Empty }
+    { name: "SubmitGrade", options: {}, I: SubmitGradeRequest, O: Empty },
+    { name: "GetUserGraph", options: {}, I: GetUserGraphRequest, O: GetUserGraphResponse }
 ]);

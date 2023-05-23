@@ -1,18 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, {
+	useEffect,
+	useState,
+	useMemo,
+	MutableRefObject,
+	useRef,
+	useCallback,
+} from "react";
 import { useParams } from "react-router-dom";
 import { ctfgAdmin } from "../service";
 import { createErrorToast, createSuccessToast } from "../store/user";
-import { Button, useTheme, theme, Progress, Input } from "@nextui-org/react";
-import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import { Button, theme, Input, Switch, useTheme } from "@nextui-org/react";
 import {
 	TbArrowBigLeftFilled,
 	TbArrowBigRightFilled,
 	TbSend,
+	TbGraphOff,
+	TbGraph,
 } from "react-icons/tb";
 import Select from "react-select";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Legend } from "chart.js";
 import { HiPencilSquare } from "react-icons/hi2";
+
+import { Viewer } from "@react-pdf-viewer/core";
+import { Worker } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import type { GetUserGraphResponse } from "../rpc/ctfg";
+import dagre from "dagre";
+import ReactFlow, {
+	Background,
+	Controls,
+	MarkerType,
+	applyNodeChanges,
+} from "reactflow";
 
 interface Team {
 	name: string;
@@ -31,47 +54,140 @@ const ViewWriteup = () => {
 	const [numChallenges, setNumChallenges] = useState(0);
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const toggleEditing = () => setIsEditing(!isEditing);
-	const [grade, setGrade] = useState<number>(0);
+	const [grade, setGrade] = useState<number>(-1);
+	const layoutPluginInstance = defaultLayoutPlugin({
+		sidebarTabs: (defaultTabs) => [],
+	});
+	const [showChart, setShowChart] = useState<boolean>(false);
+	async function getWriteup() {
+		try {
+			const wp = await ctfgAdmin.GetWriteup({ username: name });
+			setWriteup(wp.content);
+		} catch (error) {
+			createErrorToast("User does not have a writeup", isDark);
+		}
+	}
+	async function getTeams() {
+		try {
+			const resp = await ctfgAdmin.GetTeamsProgress({});
+			const allChallenges = await ctfgAdmin.GetAllChallenges({});
+			const teams = resp.teams.map((t) => ({
+				name: t.teamName,
+				hasWriteup: t.hasWriteup,
+				score: t.score,
+				grade: t.grade,
+			}));
+			setNumChallenges(allChallenges.challenges.length);
+			teams.sort((a, b) => {
+				if (a.name < b.name) {
+					return -1;
+				}
+				if (a.name > b.name) {
+					return 1;
+				}
+				return 0;
+			});
+			setTeams(teams);
+		} catch (error) {
+			createErrorToast("Failed to get teams", isDark);
+		}
+	}
+	const [graph, setGraph] = useState<GetUserGraphResponse>({
+		connections: [],
+		evidence: [],
+	});
+	const graphRef: MutableRefObject<GetUserGraphResponse> =
+		useRef<GetUserGraphResponse>({
+			connections: [],
+			evidence: [],
+		});
+
+	const dagreGraph = new dagre.graphlib.Graph();
+	const nodeWidth = 172;
+	const nodeHeight = 36;
+	dagreGraph.setDefaultEdgeLabel(() => ({}));
+	const getLayoutedElements = (nodes, edges) => {
+		dagreGraph.setGraph({ rankdir: "TB" });
+		nodes.forEach((node) => {
+			dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+		});
+		edges.forEach((edge) => {
+			dagreGraph.setEdge(edge.source, edge.target);
+		});
+		dagre.layout(dagreGraph);
+
+		nodes.forEach((node) => {
+			const n = dagreGraph.node(node.id);
+			node.targetPosition = "top";
+			node.sourcePosition = "bottom";
+			node.position = {
+				x: n.x - nodeWidth / 2,
+				y: n.y - nodeHeight / 2,
+			};
+		});
+		return [nodes, edges];
+	};
+	async function loadDiscoveredEvidence() {
+		try {
+			const resp = await ctfgAdmin.GetUserGraph({
+				username: name,
+			});
+			graphRef.current = resp;
+			setGraph(resp);
+			const tempNodes = resp.evidence.map((e) => {
+				return {
+					id: e.id.toString(),
+					data: { label: e.isFlag ? e.name + "🏳️" : e.name },
+					position: {
+						x: e.x,
+						y: e.y,
+					},
+					style: {
+						background: e.isFlag
+							? theme.colors.errorLight.toString()
+							: theme.colors.accents1.toString(),
+						borderColor: e.isFlag
+							? theme.colors.errorBorder.toString()
+							: theme.colors.accents4.toString(),
+						color: theme.colors.text.toString(),
+					},
+				};
+			});
+			const tempEdges = resp.connections.map((c) => ({
+				id: `${c.source}-${c.destination}`,
+				source: c.source.toString(),
+				target: c.destination.toString(),
+				markerEnd: {
+					type: MarkerType.ArrowClosed,
+					width: 20,
+					height: 20,
+					color: "#4C5155",
+				},
+				style: {
+					stroke: "#4C5155",
+				},
+			}));
+			const [nodes, edges] = getLayoutedElements(tempNodes, tempEdges);
+			setNodes(nodes);
+			setEdges(edges);
+		} catch (e) {
+			createErrorToast(e, isDark);
+		}
+	}
 
 	useEffect(() => {
-		async function getWriteup() {
-			try {
-				const wp = await ctfgAdmin.GetWriteup({ username: name });
-				setWriteup(wp.content);
-			} catch (error) {
-				createErrorToast("User does not have a writeup", isDark);
-			}
-		}
-		async function getTeams() {
-			try {
-				const resp = await ctfgAdmin.GetTeamsProgress({});
-				const allChallenges = await ctfgAdmin.GetAllChallenges({});
-				const teams = resp.teams.map((t) => ({
-					name: t.teamName,
-					hasWriteup: t.hasWriteup,
-					score: t.score,
-					grade: t.grade,
-				}));
-				setNumChallenges(allChallenges.challenges.length);
-				teams.sort((a, b) => {
-					if (a.name < b.name) {
-						return -1;
-					}
-					if (a.name > b.name) {
-						return 1;
-					}
-					return 0;
-				});
-				setTeams(teams);
-			} catch (error) {
-				createErrorToast("Failed to get teams", isDark);
-			}
-		}
 		getWriteup();
 		getTeams();
+		loadDiscoveredEvidence();
 	}, []);
 
-	const docs = [{ uri: writeup, fileName: name }];
+	const [nodes, setNodes] = useState();
+	const onNodesChange = useCallback(
+		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		[]
+	);
+	const [edges, setEdges] = useState();
+
 	const index = teams.findIndex((t) => t.name === name);
 	const chartData = {
 		labels: ["Completed", "Remaining"],
@@ -105,7 +221,7 @@ const ViewWriteup = () => {
 	const submitGrade = () => {
 		try {
 			if (grade < 0 || grade > 100) {
-				createErrorToast("Grade must be between 0 and 100", isDark);
+				createErrorToast("Grade must be between 1 and 100", isDark);
 				return;
 			}
 			ctfgAdmin.SubmitGrade({
@@ -119,33 +235,58 @@ const ViewWriteup = () => {
 		}
 	};
 
+	const viewer = document.querySelector('[data-testid="theme__switch-button"]');
+	if (viewer) {
+		if (isDark) {
+			viewer.click();
+		}
+	}
+
 	return (
-		<div className="lg:grid lg:grid-cols-2 lg:my-4">
-			{writeup ? (
-				<DocViewer
-					documents={docs}
-					pluginRenderers={DocViewerRenderers}
+		<div
+			className="xl:grid xl:grid-cols-2 xl:my-2 relative"
+		>
+			{writeup && !showChart && (
+				<div
+					className="xl:ml-[20px] mx-[20px]"
 					style={{
-						height: "calc(100vh - 110px)",
-						marginLeft: "16px",
+						height: "calc(100vh - 100px)",
 					}}
-					className="border border-gray-300 rounded-md"
-					theme={{
-						primary: "#D7DBDF",
-						tertiary: "#F2F3F5",
-						disableThemeScrollbar: false,
-					}}
-					config={{
-						pdfVerticalScrollByDefault: true,
-						header: {
-							disableHeader: true,
-						},
-					}}
-				/>
-			) : (
-				<div></div>
+				>
+					<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+						<Viewer fileUrl={writeup} plugins={[layoutPluginInstance]} />
+					</Worker>
+				</div>
 			)}
-			<div className="flex flex-col items-center w-full">
+			{!writeup && !showChart && <div></div>}
+			{showChart && (
+				<div className="w-full h-full">
+					<ReactFlow
+						nodes={nodes}
+						edges={edges}
+						onNodesChange={onNodesChange}
+						fitView
+					>
+						<Background />
+						<Controls
+							position="top-left"
+							style={{
+								background: "white",
+							}}
+						></Controls>
+					</ReactFlow>
+				</div>
+			)}
+			<div className="flex flex-col items-center w-full relative">
+				<div className="absolute right-8 top-[2px]">
+					<Switch
+						color="error"
+						size="xl"
+						iconOn={<TbGraph />}
+						iconOff={<TbGraphOff />}
+						onChange={(e) => setShowChart(e.target.checked)}
+					/>
+				</div>
 				<Button.Group
 					color="error"
 					style={{
@@ -202,8 +343,8 @@ const ViewWriteup = () => {
 				<div
 					className="flex flex-col items-center h-full"
 					style={{
-						marginTop: teams[index]?.grade === 0 ? "96px" : "8px",
-						gap: teams[index]?.grade === 0 ? "72px" : "32px",
+						marginTop: teams[index]?.grade === 0 ? "96px" : "12px",
+						gap: teams[index]?.grade === 0 ? "72px" : "24px",
 					}}
 				>
 					{teams[index] && (
@@ -230,7 +371,18 @@ const ViewWriteup = () => {
 														autoFocus
 														animated={false}
 														onChange={(e) => setGrade(Number(e.target.value))}
-														onBlur={submitGrade}
+														onBlur={(e) => {
+															if (grade === -1) {
+																toggleEditing();
+															} else {
+																submitGrade();
+															}
+														}}
+														onKeyDown={(e) => {
+															if (e.key === "Enter") {
+																submitGrade();
+															}
+														}}
 													/>
 													<p className="text-lg font-thin text-center">/100</p>
 												</>

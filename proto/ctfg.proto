@@ -27,6 +27,7 @@ service Admin {
   rpc SetHomePage(SetHomePageRequest) returns (Empty);
   rpc GetWriteup(GetWriteupRequest) returns (GetWriteupResponse);
   rpc SubmitGrade(SubmitGradeRequest) returns (Empty);
+  rpc GetUserGraph(GetUserGraphRequest) returns (GetUserGraphResponse);
 }
 
 message Empty {}
@@ -181,4 +182,12 @@ message GetWriteupResponse {
 message SubmitGradeRequest {
   string username = 1;
   uint32 score = 2;
+}
+
+message GetUserGraphRequest {
+  string username = 1;
+}
+message GetUserGraphResponse {
+  repeated Evidence evidence = 1;
+  repeated Connection connections = 2;
 }

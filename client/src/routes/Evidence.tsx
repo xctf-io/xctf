@@ -11,13 +11,23 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useState, useEffect, useRef, MutableRefObject } from "react";
-import { Text, Input, Button, Checkbox, Modal, Row } from "@nextui-org/react";
+import {
+	Text,
+	Input,
+	Button,
+	Checkbox,
+	Modal,
+	Row,
+	theme,
+} from "@nextui-org/react";
 import dagre from "dagre";
 import Menu from "../components/Menu";
+import { HiPaperAirplane } from "react-icons/hi2";
 import {
-	HiPaperAirplane
-} from "react-icons/hi2";
-import { createSuccessToast, createErrorToast, createCelebrateToast } from "../store/user";
+	createSuccessToast,
+	createErrorToast,
+	createCelebrateToast,
+} from "../store/user";
 import useDarkMode from "use-dark-mode";
 
 let evidence: string = "";
@@ -68,7 +78,6 @@ export default function MyComponent() {
 	async function loadDiscoveredEvidence() {
 		try {
 			const resp = await ctfg.GetDiscoveredEvidence({});
-			console.log(resp);
 			graphRef.current = resp;
 			setGraph(resp);
 			const tempNodes = resp.evidence.map((e) => {
@@ -80,8 +89,13 @@ export default function MyComponent() {
 						y: e.y,
 					},
 					style: {
-						background: e.isFlag ? "#17C964" : "#ffffff",
-						color: e.isFlag ? "#ffffff" : "#000000",
+						background: e.isFlag
+							? theme.colors.primaryLight.toString()
+							: theme.colors.accents1.toString(),
+						borderColor: e.isFlag
+							? theme.colors.primaryBorder.toString()
+							: theme.colors.accents4.toString(),
+						color: theme.colors.text.toString(),
 					},
 				};
 			});
@@ -93,14 +107,18 @@ export default function MyComponent() {
 					type: MarkerType.ArrowClosed,
 					width: 20,
 					height: 20,
+					color: "#4C5155",
+				},
+				style: {
+					stroke: "#4C5155",
 				},
 			}));
 			const [nodes, edges] = getLayoutedElements(tempNodes, tempEdges);
 			setNodes(nodes);
 			setEdges(edges);
-			report = resp.report; // report is not a state variable, so we update it directly
+			report = resp.report;
 		} catch (e) {
-			console.error(e);
+			createErrorToast(e, darkMode.value);
 		}
 	}
 
@@ -111,14 +129,19 @@ export default function MyComponent() {
 	const initialNodes = graph.evidence.map((e) => {
 		return {
 			id: e.id.toString(),
-			data: { label: e.isFlag ? e.name + "🏳️" : e.name},
+			data: { label: e.isFlag ? e.name + "🏳️" : e.name },
 			position: {
 				x: e.x,
 				y: e.y,
 			},
 			style: {
-				background: e.isFlag ? "#17C964" : "#ffffff",
-				color: e.isFlag ? "#ffffff" : "#000000",
+				background: e.isFlag
+					? theme.colors.primaryLight.toString()
+					: theme.colors.accents1.toString(),
+				borderColor: e.isFlag
+					? theme.colors.primaryBorder.toString()
+					: theme.colors.accents4.toString(),
+				color: theme.colors.text.toString(),
 			},
 		};
 	});
@@ -175,21 +198,19 @@ export default function MyComponent() {
 			});
 	}
 
-	async function saveReport() {
-		try {
-			const resp = await ctfg.SubmitEvidenceReport({
-				url: report,
-			});
-			createSuccessToast("Submitted report!", darkMode.value);
-		} catch (e) {
-			createErrorToast(e.toString(), darkMode.value);
-		}
-	}
-
 	const initialEdges = graph.connections.map((c) => ({
 		id: `${c.source}-${c.destination}`,
 		source: c.source.toString(),
 		target: c.destination.toString(),
+		markerEnd: {
+			type: MarkerType.ArrowClosed,
+			width: 20,
+			height: 20,
+			color: "#4C5155",
+		},
+		style: {
+			stroke: "#4C5155",
+		},
 	}));
 	const [edges, setEdges] = useState(initialEdges);
 	const onEdgesChange = useCallback(
@@ -267,8 +288,7 @@ export default function MyComponent() {
 							style={{
 								background: "white",
 							}}
-						>
-						</Controls>
+						></Controls>
 					</ReactFlow>
 				</div>
 				<Modal
@@ -332,10 +352,14 @@ export default function MyComponent() {
 						<Text className="text-center"> This action cannot be undone.</Text>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button auto color="error" onPress={() => { 
-							closeHandler2();
-							window.location.reload();
-						}}>
+						<Button
+							auto
+							color="error"
+							onPress={() => {
+								closeHandler2();
+								window.location.reload();
+							}}
+						>
 							No
 						</Button>
 						<Button

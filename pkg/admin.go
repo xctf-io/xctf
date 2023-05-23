@@ -129,6 +129,56 @@ func (s *admin) SubmitGrade(ctx context.Context, request *ctfg.SubmitGradeReques
 	return &ctfg.Empty{}, nil
 }
 
+func (s *admin) GetUserGraph(ctx context.Context, request *ctfg.GetUserGraphRequest) (*ctfg.GetUserGraphResponse, error) {
+	var user models.User
+	resp := s.db.Where(&models.User{Username: request.Username}).First(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	userID := user.ID
+
+	var evidence []models.Evidence
+	evResp := s.db.Where(models.Evidence{UserID: int(userID)}).Find(&evidence)
+	if evResp.Error != nil {
+		return nil, evResp.Error
+	}
+
+	var connections []models.EvidenceConnection
+	connResp := s.db.Where(models.EvidenceConnection{UserID: int(userID)}).Find(&connections)
+	if connResp.Error != nil {
+		return nil, connResp.Error
+	}
+
+	var discoveredEvidence []*ctfg.Evidence
+	for _, ev := range evidence {
+		chalEv := &ctfg.Evidence{
+			Id:     uint32(ev.ID),
+			Name:   ev.Name,
+			X:      int32(ev.PositionX),
+			Y:      int32(ev.PositionY),
+			IsFlag: ev.IsFlag,
+		}
+		if ev.ChallengeID != nil {
+			chalEv.ChallengeID = uint32(*ev.ChallengeID)
+		}
+		discoveredEvidence = append(discoveredEvidence, chalEv)
+	}
+
+	var discoveredConnections []*ctfg.Connection
+	for _, conn := range connections {
+		discoveredConnections = append(discoveredConnections, &ctfg.Connection{
+			Id:          uint32(conn.ID),
+			Source:      uint32(conn.SourceID),
+			Destination: uint32(conn.DestinationID),
+		})
+	}
+
+	return &ctfg.GetUserGraphResponse{
+		Evidence:    discoveredEvidence,
+		Connections: discoveredConnections,
+	}, nil
+}
+
 func NewAdmin(db *gorm.DB) ctfg.Admin {
 	return &admin{
 		db: db,
