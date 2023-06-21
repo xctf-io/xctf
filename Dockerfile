@@ -23,5 +23,6 @@ WORKDIR /opt
 RUN apk add --no-cache ca-certificates
 
 COPY --from=server /build/ctfg /opt/ctfg
+ADD Home.md /opt/Home.md
 
 ENTRYPOINT /opt/ctfg
