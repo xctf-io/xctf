@@ -17,7 +17,6 @@ interface Team {
 	hasWriteup: boolean;
 	progress: number;
 	grade: number;
-	score: number;
 }
 
 const Grading: React.FC<Props> = () => {
