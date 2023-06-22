@@ -55,6 +55,11 @@ func (b backend) Login(ctx context.Context, request *ctfg.LoginRequest) (*ctfg.L
 	}, nil
 }
 
+func (b backend) Logout(ctx context.Context, request *ctfg.Empty) (*ctfg.Empty, error) {
+	RemoveUserFromSession(ctx)
+	return &ctfg.Empty{}, nil
+}
+
 func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserRequest) (*ctfg.CurrentUserResponse, error) {
 	userID, userType, err := GetUserFromSession(ctx)
 	if err != nil {

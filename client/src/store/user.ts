@@ -32,6 +32,7 @@ export const useUser = (): [
 ] => {
 	const [user, setUser] = useAtom(userAtom);
 	const logout = () => {
+		ctfg.Logout({});
 		setUser(null);
 	};
 	return [user, setUser, logout];
@@ -66,8 +67,8 @@ export const useLogin = (): [
 				username: resp.username,
 				type: resp.userRole,
 			});
+			console.log(resp.userRole)
 			createSuccessToast("Login success!", isDark);
-			document.location.href = "/";
 		} catch (e) {
 			createErrorToast(e.toString(), isDark);
 		}

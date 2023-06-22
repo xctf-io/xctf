@@ -96,11 +96,8 @@ function App() {
 		async function fetchCurrentUser() {
 			try {
 				setLinks(navBarLinks);
-				if (!user) {
-					return;
-				}
+				if (!user) return;
 				const resp = await ctfg.CurrentUser({});
-				console.log(resp);
 				setUser({
 					username: resp.username,
 					type: resp.userRole,
@@ -111,7 +108,7 @@ function App() {
 			}
 		}
 		fetchCurrentUser();
-	}, []);
+	}, [user]);
 
 	const lightTheme = createTheme({
 		type: "light",

@@ -13,6 +13,7 @@ import {
   RegisterResponse,
   LoginRequest,
   LoginResponse,
+  Empty,
   CurrentUserRequest,
   CurrentUserResponse,
   SubmitFlagRequest,
@@ -27,7 +28,6 @@ import {
   GetHomePageRequest,
   GetHomePageResponse,
   ForgotPasswordRequest,
-  Empty,
   SubmitWriteupRequest,
   UpsertChallengeRequest,
   DeleteChallengeRequest,
@@ -59,6 +59,7 @@ interface Rpc {
 export interface BackendClient {
   Register(request: RegisterRequest): Promise<RegisterResponse>;
   Login(request: LoginRequest): Promise<LoginResponse>;
+  Logout(request: Empty): Promise<Empty>;
   CurrentUser(request: CurrentUserRequest): Promise<CurrentUserResponse>;
   SubmitFlag(request: SubmitFlagRequest): Promise<SubmitFlagResponse>;
   SubmitEvidenceReport(
@@ -84,6 +85,7 @@ export class BackendClientJSON implements BackendClient {
     this.rpc = rpc;
     this.Register.bind(this);
     this.Login.bind(this);
+    this.Logout.bind(this);
     this.CurrentUser.bind(this);
     this.SubmitFlag.bind(this);
     this.SubmitEvidenceReport.bind(this);
@@ -123,6 +125,22 @@ export class BackendClientJSON implements BackendClient {
     );
     return promise.then((data) =>
       LoginResponse.fromJson(data as any, { ignoreUnknownFields: true })
+    );
+  }
+
+  Logout(request: Empty): Promise<Empty> {
+    const data = Empty.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "Logout",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      Empty.fromJson(data as any, { ignoreUnknownFields: true })
     );
   }
 
@@ -293,6 +311,7 @@ export class BackendClientProtobuf implements BackendClient {
     this.rpc = rpc;
     this.Register.bind(this);
     this.Login.bind(this);
+    this.Logout.bind(this);
     this.CurrentUser.bind(this);
     this.SubmitFlag.bind(this);
     this.SubmitEvidenceReport.bind(this);
@@ -325,6 +344,17 @@ export class BackendClientProtobuf implements BackendClient {
       data
     );
     return promise.then((data) => LoginResponse.fromBinary(data as Uint8Array));
+  }
+
+  Logout(request: Empty): Promise<Empty> {
+    const data = Empty.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Backend",
+      "Logout",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) => Empty.fromBinary(data as Uint8Array));
   }
 
   CurrentUser(request: CurrentUserRequest): Promise<CurrentUserResponse> {
@@ -456,6 +486,7 @@ export class BackendClientProtobuf implements BackendClient {
 export interface BackendTwirp<T extends TwirpContext = TwirpContext> {
   Register(ctx: T, request: RegisterRequest): Promise<RegisterResponse>;
   Login(ctx: T, request: LoginRequest): Promise<LoginResponse>;
+  Logout(ctx: T, request: Empty): Promise<Empty>;
   CurrentUser(
     ctx: T,
     request: CurrentUserRequest
@@ -488,6 +519,7 @@ export interface BackendTwirp<T extends TwirpContext = TwirpContext> {
 export enum BackendMethod {
   Register = "Register",
   Login = "Login",
+  Logout = "Logout",
   CurrentUser = "CurrentUser",
   SubmitFlag = "SubmitFlag",
   SubmitEvidenceReport = "SubmitEvidenceReport",
@@ -502,6 +534,7 @@ export enum BackendMethod {
 export const BackendMethodList = [
   BackendMethod.Register,
   BackendMethod.Login,
+  BackendMethod.Logout,
   BackendMethod.CurrentUser,
   BackendMethod.SubmitFlag,
   BackendMethod.SubmitEvidenceReport,
@@ -551,6 +584,17 @@ function matchBackendRoute<T extends TwirpContext = TwirpContext>(
         ctx = { ...ctx, methodName: "Login" };
         await events.onMatch(ctx);
         return handleBackendLoginRequest(ctx, service, data, interceptors);
+      };
+    case "Logout":
+      return async (
+        ctx: T,
+        service: BackendTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<T, Empty, Empty>[]
+      ) => {
+        ctx = { ...ctx, methodName: "Logout" };
+        await events.onMatch(ctx);
+        return handleBackendLogoutRequest(ctx, service, data, interceptors);
       };
     case "CurrentUser":
       return async (
@@ -742,6 +786,23 @@ function handleBackendLoginRequest<T extends TwirpContext = TwirpContext>(
       return handleBackendLoginJSON<T>(ctx, service, data, interceptors);
     case TwirpContentType.Protobuf:
       return handleBackendLoginProtobuf<T>(ctx, service, data, interceptors);
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleBackendLogoutRequest<T extends TwirpContext = TwirpContext>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, Empty, Empty>[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleBackendLogoutJSON<T>(ctx, service, data, interceptors);
+    case TwirpContentType.Protobuf:
+      return handleBackendLogoutProtobuf<T>(ctx, service, data, interceptors);
     default:
       const msg = "unexpected Content-Type";
       throw new TwirpError(TwirpErrorCode.BadRoute, msg);
@@ -1073,6 +1134,46 @@ async function handleBackendLoginJSON<T extends TwirpContext = TwirpContext>(
 
   return JSON.stringify(
     LoginResponse.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
+
+async function handleBackendLogoutJSON<T extends TwirpContext = TwirpContext>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, Empty, Empty>[]
+) {
+  let request: Empty;
+  let response: Empty;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = Empty.fromJson(body, { ignoreUnknownFields: true });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      Empty,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.Logout(ctx, inputReq);
+    });
+  } else {
+    response = await service.Logout(ctx, request!);
+  }
+
+  return JSON.stringify(
+    Empty.toJson(response, {
       useProtoFieldName: true,
       emitDefaultValues: false,
     }) as string
@@ -1550,6 +1651,42 @@ async function handleBackendLoginProtobuf<
   }
 
   return Buffer.from(LoginResponse.toBinary(response));
+}
+
+async function handleBackendLogoutProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: BackendTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, Empty, Empty>[]
+) {
+  let request: Empty;
+  let response: Empty;
+
+  try {
+    request = Empty.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      Empty,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.Logout(ctx, inputReq);
+    });
+  } else {
+    response = await service.Logout(ctx, request!);
+  }
+
+  return Buffer.from(Empty.toBinary(response));
 }
 
 async function handleBackendCurrentUserProtobuf<

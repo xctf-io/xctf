@@ -2303,6 +2303,7 @@ export const GetUserGraphResponse = new GetUserGraphResponse$Type();
 export const Backend = new ServiceType("ctfg.Backend", [
     { name: "Register", options: {}, I: RegisterRequest, O: RegisterResponse },
     { name: "Login", options: {}, I: LoginRequest, O: LoginResponse },
+    { name: "Logout", options: {}, I: Empty, O: Empty },
     { name: "CurrentUser", options: {}, I: CurrentUserRequest, O: CurrentUserResponse },
     { name: "SubmitFlag", options: {}, I: SubmitFlagRequest, O: SubmitFlagResponse },
     { name: "SubmitEvidenceReport", options: {}, I: SubmitEvidenceReportRequest, O: SubmitEvidenceReportRequest },
