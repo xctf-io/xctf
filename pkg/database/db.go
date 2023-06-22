@@ -60,6 +60,7 @@ func Migrate(db *gorm.DB) {
 		if res.Error != nil {
 			user.Email = email
 			user.Username = "admin"
+			user.Type = "admin"
 			user.HashPassword(password)
 			db.Create(&user)
 		} else {

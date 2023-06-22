@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Markdown from "markdown-to-jsx";
@@ -28,6 +28,7 @@ function App() {
 	const [links, setLinks] = useState<NavLink[]>([]);
 	const [user, setUser, logout] = useUser();
 	const [pages, setPages] = usePages();
+	const [isInitialMount, setIsInitialMount] = useState(true);
 	const navBarLinks: NavLink[] = [
 		{
 			label: "Home",
@@ -96,7 +97,9 @@ function App() {
 		async function fetchCurrentUser() {
 			try {
 				setLinks(navBarLinks);
-				if (!user) return;
+				if (!user) {
+					return;
+				}
 				const resp = await ctfg.CurrentUser({});
 				setUser({
 					username: resp.username,
@@ -107,7 +110,10 @@ function App() {
 				console.log(e);
 			}
 		}
-		fetchCurrentUser();
+		if (isInitialMount) {
+			fetchCurrentUser();
+			setIsInitialMount(false);
+		}
 	}, [user]);
 
 	const lightTheme = createTheme({

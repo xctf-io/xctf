@@ -1,7 +1,9 @@
 version: '3.6'
 services:
   ctfg:
-    image: ghcr.io/ctfg/ctfg@sha256:d0fea3c9f2e1a28886bd403c76b2c91538a9d6850e86b7b4d63c8e427a34c89e
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     ports:
       - 8000:8000
@@ -14,5 +16,18 @@ services:
     labels:
       kompose.service.type: clusterip
       kompose.image-pull-secret: "ghcr-pull-secret"
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresqldata/db
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data/db
+    labels:
+      kompose.service.type: clusterip
+      kompose.volume.type: persistentVolumeClaim
 volumes:
   db:

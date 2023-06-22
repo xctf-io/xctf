@@ -18,6 +18,7 @@ func GetSession(ctx context.Context) session.Store {
 func SetUserForSession(ctx context.Context, userID uint, userType string) {
 	store := GetSession(ctx)
 	store.Set("userID", userID)
+	store.Set("userType", userType)
 }
 
 func RemoveUserFromSession(ctx context.Context) {
