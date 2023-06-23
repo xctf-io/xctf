@@ -98,8 +98,6 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								onAction={(actionKey) => {
 									if (actionKey === "logout") {
 										logout();
-										document.location.href = "/login";
-										updatePath("/login");
 									}
 								}}
 								containerCss={{ border: "none" }}

@@ -11,7 +11,6 @@ const CTFComponent: React.FC<Props> = () => {
 	const { type, isDark } = useTheme();
 	const [user, setUser, logout] = useUser();
 	const themeColor = user?.type == "admin" ? "error" : "primary";
-	const lineClass = isDark ? "h-1 bg-gray-400 opacity-75" : "h-1 bg-slate";
 	const [homePage, setHomePage] = useState<string>("");
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	useEffect(() => {
@@ -27,15 +26,17 @@ const CTFComponent: React.FC<Props> = () => {
 	};
 	const isAdmin = user?.type === "admin";
 	const textOpacity = isAdmin ? "opacity-50" : "";
+	const loggedIn = !!user;
 	return (
 		<div className="text-center font-medium mx-[15vw] lg:mx-[25vw] mt-8 flex flex-col gap-4 relative">
-			<div>
-				<span className="mb-0 text-5xl font-extrabold">Welcome to CTFg!</span>
-				<h4>Register/Login to get started.</h4>
-			</div>
-			<hr className={lineClass} />
+			{!loggedIn && (
+				<div>
+					<span className="mb-0 text-5xl font-extrabold">Welcome to CTFg!</span>
+					<h4>Register/Login to get started.</h4>
+				</div>
+			)}
 			<div className="relative">
-				{!isEditing && (
+				{loggedIn && !isEditing && (
 					<Markdown
 						className={textOpacity}
 						options={{
@@ -68,7 +69,7 @@ const CTFComponent: React.FC<Props> = () => {
 						{homePage}
 					</Markdown>
 				)}
-				{!isEditing && isAdmin && (
+				{loggedIn && !isEditing && isAdmin && (
 					<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
 						<Tooltip content={"Edit the homepage"} color="error">
 							<Button
@@ -107,8 +108,7 @@ const CTFComponent: React.FC<Props> = () => {
 					</Button>
 				</>
 			)}
-			<hr className={lineClass} />
-			{!isAdmin && (
+			{loggedIn && !isAdmin && (
 				<>
 					<p className="text-lg">
 						For help related to the competition, go to the wiki.

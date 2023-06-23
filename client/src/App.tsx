@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
 import Home from "./routes/Home";
+import Welcome from "./routes/Welcome";
 import Evidence from "./routes/Evidence";
 import Grading from "./routes/Grading";
 import ForgotPassword from "./routes/ForgotPassword";
@@ -35,7 +36,7 @@ function App() {
 			to: "/",
 			Component: Home,
 			showWhenAuthed: true,
-			showWhenAdmin: true,
+			showWhenAdmin: true
 		},
 		{
 			label: "Evidence",

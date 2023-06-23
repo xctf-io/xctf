@@ -1,3 +1,4 @@
+# Welcome to MCPS HSF 2023!
 Are you ready to embark on a thrilling journey into the world of cybersecurity and digital forensics? Today, you will step into the shoes of a detective and use your skills to solve a complex cybercrime that has left law enforcement stumped.
 <br /><br />
 A murder has taken place, and it's up to you to find the killer. You'll have to analyze digital evidence, comb through logs, and even try your hand at hacking to uncover the truth. As you dive deeper into the investigation, you'll encounter obstacles and challenges that will push your skills and abilities to the limit. You'll need to think outside the box and use your creativity to overcome these hurdles and bring the perpetrator to justice. Finally, write up your evidence and conclusions so they can stand up in "court."

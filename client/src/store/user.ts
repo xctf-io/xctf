@@ -34,6 +34,7 @@ export const useUser = (): [
 	const logout = () => {
 		ctfg.Logout({});
 		setUser(null);
+		document.location.href = "/";
 	};
 	return [user, setUser, logout];
 };
