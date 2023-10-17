@@ -18,7 +18,8 @@ const nodeEnv = devBuild ? '"development"' : '"production"';
 
 const options = {
 	entryPoints: ["./src/index.tsx"],
-	outfile: "public/build/bundle.js",
+	outdir: "public/build/",
+	format: "esm",
 	bundle: true,
 	loader: {
 		".ts": "tsx",
@@ -29,6 +30,7 @@ const options = {
 	plugins: [nodeModulesPolyfillPlugin()],
 	minify: minify,
 	sourcemap: "linked",
+	splitting: true,
 	define: {
 		global: "window",
 		process: "{}",

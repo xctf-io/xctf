@@ -22,9 +22,9 @@ import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Legend } from "chart.js";
 import { HiPencilSquare } from "react-icons/hi2";
 
-import { Viewer } from "@react-pdf-viewer/core";
-import { Worker } from "@react-pdf-viewer/core";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+const { Viewer } = await import("@react-pdf-viewer/core");
+const { Worker } = await import("@react-pdf-viewer/core");
+const { defaultLayoutPlugin } = await import("@react-pdf-viewer/default-layout");
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";

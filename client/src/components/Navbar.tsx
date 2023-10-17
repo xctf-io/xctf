@@ -9,7 +9,7 @@ import {
 	useTheme,
 	Dropdown,
 	Avatar,
-	Button,
+
 } from "@nextui-org/react";
 import useDarkMode from "use-dark-mode";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
