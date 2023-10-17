@@ -121,7 +121,24 @@ func (s *admin) SubmitGrade(ctx context.Context, request *ctfg.SubmitGradeReques
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
+	if request.Score < 1 || request.Score > 100 {
+		return nil, errors.New("grade must be between 1 and 100")
+	}
 	user.Grade = int(request.Score)
+	resp = s.db.Save(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	return &ctfg.Empty{}, nil
+}
+
+func (s *admin) SubmitComments(ctx context.Context, request *ctfg.SubmitCommentsRequest) (*ctfg.Empty, error) {
+	var user models.User
+	resp := s.db.Where(&models.User{Username: request.Username}).First(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	user.Comments = request.Comments
 	resp = s.db.Save(&user)
 	if resp.Error != nil {
 		return nil, resp.Error

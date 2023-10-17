@@ -39,6 +39,7 @@ import {
   GetWriteupRequest,
   GetWriteupResponse,
   SubmitGradeRequest,
+  SubmitCommentsRequest,
   GetUserGraphRequest,
   GetUserGraphResponse,
 } from "./ctfg";
@@ -2050,6 +2051,7 @@ export interface AdminClient {
   SetHomePage(request: SetHomePageRequest): Promise<Empty>;
   GetWriteup(request: GetWriteupRequest): Promise<GetWriteupResponse>;
   SubmitGrade(request: SubmitGradeRequest): Promise<Empty>;
+  SubmitComments(request: SubmitCommentsRequest): Promise<Empty>;
   GetUserGraph(request: GetUserGraphRequest): Promise<GetUserGraphResponse>;
 }
 
@@ -2064,6 +2066,7 @@ export class AdminClientJSON implements AdminClient {
     this.SetHomePage.bind(this);
     this.GetWriteup.bind(this);
     this.SubmitGrade.bind(this);
+    this.SubmitComments.bind(this);
     this.GetUserGraph.bind(this);
   }
   UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
@@ -2186,6 +2189,22 @@ export class AdminClientJSON implements AdminClient {
     );
   }
 
+  SubmitComments(request: SubmitCommentsRequest): Promise<Empty> {
+    const data = SubmitCommentsRequest.toJson(request, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    });
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "SubmitComments",
+      "application/json",
+      data as object
+    );
+    return promise.then((data) =>
+      Empty.fromJson(data as any, { ignoreUnknownFields: true })
+    );
+  }
+
   GetUserGraph(request: GetUserGraphRequest): Promise<GetUserGraphResponse> {
     const data = GetUserGraphRequest.toJson(request, {
       useProtoFieldName: true,
@@ -2214,6 +2233,7 @@ export class AdminClientProtobuf implements AdminClient {
     this.SetHomePage.bind(this);
     this.GetWriteup.bind(this);
     this.SubmitGrade.bind(this);
+    this.SubmitComments.bind(this);
     this.GetUserGraph.bind(this);
   }
   UpsertChallenge(request: UpsertChallengeRequest): Promise<Empty> {
@@ -2303,6 +2323,17 @@ export class AdminClientProtobuf implements AdminClient {
     return promise.then((data) => Empty.fromBinary(data as Uint8Array));
   }
 
+  SubmitComments(request: SubmitCommentsRequest): Promise<Empty> {
+    const data = SubmitCommentsRequest.toBinary(request);
+    const promise = this.rpc.request(
+      "ctfg.Admin",
+      "SubmitComments",
+      "application/protobuf",
+      data
+    );
+    return promise.then((data) => Empty.fromBinary(data as Uint8Array));
+  }
+
   GetUserGraph(request: GetUserGraphRequest): Promise<GetUserGraphResponse> {
     const data = GetUserGraphRequest.toBinary(request);
     const promise = this.rpc.request(
@@ -2335,6 +2366,7 @@ export interface AdminTwirp<T extends TwirpContext = TwirpContext> {
   SetHomePage(ctx: T, request: SetHomePageRequest): Promise<Empty>;
   GetWriteup(ctx: T, request: GetWriteupRequest): Promise<GetWriteupResponse>;
   SubmitGrade(ctx: T, request: SubmitGradeRequest): Promise<Empty>;
+  SubmitComments(ctx: T, request: SubmitCommentsRequest): Promise<Empty>;
   GetUserGraph(
     ctx: T,
     request: GetUserGraphRequest
@@ -2349,6 +2381,7 @@ export enum AdminMethod {
   SetHomePage = "SetHomePage",
   GetWriteup = "GetWriteup",
   SubmitGrade = "SubmitGrade",
+  SubmitComments = "SubmitComments",
   GetUserGraph = "GetUserGraph",
 }
 
@@ -2360,6 +2393,7 @@ export const AdminMethodList = [
   AdminMethod.SetHomePage,
   AdminMethod.GetWriteup,
   AdminMethod.SubmitGrade,
+  AdminMethod.SubmitComments,
   AdminMethod.GetUserGraph,
 ];
 
@@ -2484,6 +2518,22 @@ function matchAdminRoute<T extends TwirpContext = TwirpContext>(
         ctx = { ...ctx, methodName: "SubmitGrade" };
         await events.onMatch(ctx);
         return handleAdminSubmitGradeRequest(ctx, service, data, interceptors);
+      };
+    case "SubmitComments":
+      return async (
+        ctx: T,
+        service: AdminTwirp,
+        data: Buffer,
+        interceptors?: Interceptor<T, SubmitCommentsRequest, Empty>[]
+      ) => {
+        ctx = { ...ctx, methodName: "SubmitComments" };
+        await events.onMatch(ctx);
+        return handleAdminSubmitCommentsRequest(
+          ctx,
+          service,
+          data,
+          interceptors
+        );
       };
     case "GetUserGraph":
       return async (
@@ -2681,6 +2731,30 @@ function handleAdminSubmitGradeRequest<T extends TwirpContext = TwirpContext>(
       return handleAdminSubmitGradeJSON<T>(ctx, service, data, interceptors);
     case TwirpContentType.Protobuf:
       return handleAdminSubmitGradeProtobuf<T>(
+        ctx,
+        service,
+        data,
+        interceptors
+      );
+    default:
+      const msg = "unexpected Content-Type";
+      throw new TwirpError(TwirpErrorCode.BadRoute, msg);
+  }
+}
+
+function handleAdminSubmitCommentsRequest<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, SubmitCommentsRequest, Empty>[]
+): Promise<string | Uint8Array> {
+  switch (ctx.contentType) {
+    case TwirpContentType.JSON:
+      return handleAdminSubmitCommentsJSON<T>(ctx, service, data, interceptors);
+    case TwirpContentType.Protobuf:
+      return handleAdminSubmitCommentsProtobuf<T>(
         ctx,
         service,
         data,
@@ -3021,6 +3095,50 @@ async function handleAdminSubmitGradeJSON<
   );
 }
 
+async function handleAdminSubmitCommentsJSON<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, SubmitCommentsRequest, Empty>[]
+) {
+  let request: SubmitCommentsRequest;
+  let response: Empty;
+
+  try {
+    const body = JSON.parse(data.toString() || "{}");
+    request = SubmitCommentsRequest.fromJson(body, {
+      ignoreUnknownFields: true,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the json request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      SubmitCommentsRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.SubmitComments(ctx, inputReq);
+    });
+  } else {
+    response = await service.SubmitComments(ctx, request!);
+  }
+
+  return JSON.stringify(
+    Empty.toJson(response, {
+      useProtoFieldName: true,
+      emitDefaultValues: false,
+    }) as string
+  );
+}
+
 async function handleAdminGetUserGraphJSON<
   T extends TwirpContext = TwirpContext
 >(
@@ -3317,6 +3435,42 @@ async function handleAdminSubmitGradeProtobuf<
     });
   } else {
     response = await service.SubmitGrade(ctx, request!);
+  }
+
+  return Buffer.from(Empty.toBinary(response));
+}
+
+async function handleAdminSubmitCommentsProtobuf<
+  T extends TwirpContext = TwirpContext
+>(
+  ctx: T,
+  service: AdminTwirp,
+  data: Buffer,
+  interceptors?: Interceptor<T, SubmitCommentsRequest, Empty>[]
+) {
+  let request: SubmitCommentsRequest;
+  let response: Empty;
+
+  try {
+    request = SubmitCommentsRequest.fromBinary(data);
+  } catch (e) {
+    if (e instanceof Error) {
+      const msg = "the protobuf request could not be decoded";
+      throw new TwirpError(TwirpErrorCode.Malformed, msg).withCause(e, true);
+    }
+  }
+
+  if (interceptors && interceptors.length > 0) {
+    const interceptor = chainInterceptors(...interceptors) as Interceptor<
+      T,
+      SubmitCommentsRequest,
+      Empty
+    >;
+    response = await interceptor(ctx, request!, (ctx, inputReq) => {
+      return service.SubmitComments(ctx, inputReq);
+    });
+  } else {
+    response = await service.SubmitComments(ctx, request!);
   }
 
   return Buffer.from(Empty.toBinary(response));

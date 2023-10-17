@@ -83,7 +83,7 @@ export default function MyComponent() {
 			const tempNodes = resp.evidence.map((e) => {
 				return {
 					id: e.id.toString(),
-					data: { label: e.isFlag ? e.name + "🏳️" : e.name },
+					data: { label: e.name },
 					position: {
 						x: e.x,
 						y: e.y,

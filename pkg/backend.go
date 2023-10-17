@@ -20,6 +20,9 @@ func (b backend) Register(ctx context.Context, request *ctfg.RegisterRequest) (*
 		Username: request.Username,
 		Email:    request.Email,
 	}
+	if len(request.Password) == 0 ||len(request.Username) == 0 || len(request.Password) == 0 {
+		return nil, errors.New("fields cannot be empty")
+	}
 
 	err := user.HashPassword(request.Password)
 	if err != nil {

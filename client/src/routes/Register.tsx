@@ -17,7 +17,9 @@ const Register: React.FC<RegisterProps> = ({}) => {
 	const { type, isDark } = useTheme();
 	async function loginAndRegister(user, mail, pass) {
 		await registerUser(user, mail, pass, isDark);
-		await doLogin(mail, pass, isDark);
+		if (success) {
+			await doLogin(mail, pass, isDark);
+		}
 	}
 
 	return (

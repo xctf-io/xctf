@@ -427,6 +427,19 @@ export interface SubmitGradeRequest {
     score: number;
 }
 /**
+ * @generated from protobuf message ctfg.SubmitCommentsRequest
+ */
+export interface SubmitCommentsRequest {
+    /**
+     * @generated from protobuf field: string username = 1;
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: string comments = 2;
+     */
+    comments: string;
+}
+/**
  * @generated from protobuf message ctfg.GetUserGraphRequest
  */
 export interface GetUserGraphRequest {
@@ -2197,6 +2210,60 @@ class SubmitGradeRequest$Type extends MessageType<SubmitGradeRequest> {
  */
 export const SubmitGradeRequest = new SubmitGradeRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class SubmitCommentsRequest$Type extends MessageType<SubmitCommentsRequest> {
+    constructor() {
+        super("ctfg.SubmitCommentsRequest", [
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "comments", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SubmitCommentsRequest>): SubmitCommentsRequest {
+        const message = { username: "", comments: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<SubmitCommentsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SubmitCommentsRequest): SubmitCommentsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string username */ 1:
+                    message.username = reader.string();
+                    break;
+                case /* string comments */ 2:
+                    message.comments = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SubmitCommentsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string username = 1; */
+        if (message.username !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
+        /* string comments = 2; */
+        if (message.comments !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.comments);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message ctfg.SubmitCommentsRequest
+ */
+export const SubmitCommentsRequest = new SubmitCommentsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class GetUserGraphRequest$Type extends MessageType<GetUserGraphRequest> {
     constructor() {
         super("ctfg.GetUserGraphRequest", [
@@ -2325,5 +2392,6 @@ export const Admin = new ServiceType("ctfg.Admin", [
     { name: "SetHomePage", options: {}, I: SetHomePageRequest, O: Empty },
     { name: "GetWriteup", options: {}, I: GetWriteupRequest, O: GetWriteupResponse },
     { name: "SubmitGrade", options: {}, I: SubmitGradeRequest, O: Empty },
+    { name: "SubmitComments", options: {}, I: SubmitCommentsRequest, O: Empty },
     { name: "GetUserGraph", options: {}, I: GetUserGraphRequest, O: GetUserGraphResponse }
 ]);
