@@ -7,7 +7,7 @@ WORKDIR /build
 
 RUN yarn && yarn run build
 
-FROM --platform=linux/amd64 golang:alpine as server
+FROM --platform=linux/amd64 golang as server
 
 WORKDIR /build/
 
