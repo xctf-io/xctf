@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:lts-alpine as client
+FROM node:lts-alpine as client
 
 RUN apk add git
 
@@ -7,7 +7,7 @@ WORKDIR /build
 
 RUN yarn && yarn run build
 
-FROM --platform=linux/amd64 golang:alpine as server
+FROM golang:alpine as server
 
 WORKDIR /build/
 
@@ -16,7 +16,7 @@ COPY --from=client /build/public/build /build/client/public/build
 
 RUN go build -o ctfg cmd/main.go
 
-FROM --platform=linux/amd64 alpine
+FROM alpine
 
 WORKDIR /opt
 
