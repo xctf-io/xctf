@@ -97,8 +97,10 @@ export const useRegister = (): [
 				password,
 			});
 			createSuccessToast("Registration success!", isDark);
+			return true
 		} catch (e) {
 			createErrorToast(e.toString(), isDark);
+			return false
 		}
 	};
 	return [register, success, error];

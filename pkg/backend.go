@@ -159,6 +159,9 @@ func (b backend) SubmitEvidence(ctx context.Context, request *ctfg.SubmitEvidenc
 	if err != nil {
 		return nil, err
 	}
+	if len(request.Evidence) == 0 {
+		return nil, errors.New("evidence name cannot be empty")
+	}
 
 	name := request.Evidence
 
