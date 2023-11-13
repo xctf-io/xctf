@@ -1,7 +1,6 @@
 import React, {
 	useEffect,
 	useState,
-	useMemo,
 	MutableRefObject,
 	useRef,
 	useCallback,
@@ -22,12 +21,26 @@ import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Legend } from "chart.js";
 import { HiPencilSquare } from "react-icons/hi2";
 
-const { Viewer } = await import("@react-pdf-viewer/core");
-const { Worker } = await import("@react-pdf-viewer/core");
-const { defaultLayoutPlugin } = await import("@react-pdf-viewer/default-layout");
+import { Position, Tooltip, Viewer, Worker } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import {
+	HighlightArea,
+	MessageIcon,
+	highlightPlugin,
+	RenderHighlightTargetProps,
+	RenderHighlightContentProps,
+	RenderHighlightsProps,
+} from "@react-pdf-viewer/highlight";
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
+import "@react-pdf-viewer/highlight/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import type {
+	ToolbarSlot,
+	TransformToolbarSlot,
+} from "@react-pdf-viewer/toolbar";
+import { toolbarPlugin } from "@react-pdf-viewer/toolbar";
+
 import type { GetUserGraphResponse } from "../rpc/ctfg";
 import dagre from "dagre";
 import ReactFlow, {
@@ -44,9 +57,198 @@ interface Team {
 	grade: number;
 }
 
+interface Note {
+	id: number;
+	content: string;
+	highlightAreas: HighlightArea[];
+	quote: string;
+}
+
 ChartJS.register(ArcElement, Legend);
 
 const ViewWriteup = () => {
+	const [message, setMessage] = React.useState("");
+	const [notes, setNotes] = React.useState<Note[]>([]);
+	const notesContainerRef = React.useRef<HTMLDivElement | null>(null);
+	let noteId = notes.length;
+
+	const noteEles: Map<number, HTMLElement> = new Map();
+
+	const renderHighlightTarget = (props: RenderHighlightTargetProps) => (
+		<div
+			style={{
+				display: "flex",
+				position: "absolute",
+				left: `${props.selectionRegion.left}%`,
+				top: `${props.selectionRegion.top + props.selectionRegion.height}%`,
+				transform: "translate(0, 8px)",
+				zIndex: 1,
+			}}
+		>
+			<Tooltip
+				position={Position.TopCenter}
+				target={
+					<Button
+						auto
+						color="error"
+						icon={<MessageIcon />}
+						onClick={props.toggle}
+					/>
+				}
+				content={() => <div style={{ width: "100px" }}>Add a note</div>}
+				offset={{ left: 0, top: -8 }}
+			/>
+		</div>
+	);
+
+	const renderHighlightContent = (props: RenderHighlightContentProps) => {
+		const addNote = () => {
+			if (message !== "") {
+				const note: Note = {
+					id: ++noteId,
+					content: message,
+					highlightAreas: props.highlightAreas,
+					quote: props.selectedText,
+				};
+				setNotes(notes.concat([note]));
+				props.cancel();
+			}
+		};
+
+		return (
+			<div
+				style={{
+					background: "#fff",
+					border: "1px solid rgba(0, 0, 0, .3)",
+					borderRadius: "2px",
+					padding: "8px",
+					position: "absolute",
+					left: `${props.selectionRegion.left}%`,
+					top: `${props.selectionRegion.top + props.selectionRegion.height}%`,
+					zIndex: 1,
+				}}
+			>
+				<div>
+					<textarea
+						rows={3}
+						style={{
+							border: "1px solid rgba(0, 0, 0, .3)",
+						}}
+						onChange={(e) => setMessage(e.target.value)}
+					></textarea>
+				</div>
+				<div
+					style={{
+						display: "flex",
+						marginTop: "8px",
+					}}
+				>
+					<div style={{ marginRight: "8px" }}>
+						<Button color="error" auto flat onClick={addNote}>
+							Add
+						</Button>
+					</div>
+					<Button auto disabled onClick={props.cancel}>
+						Cancel
+					</Button>
+				</div>
+			</div>
+		);
+	};
+
+	const jumpToNote = (note: Note) => {
+		activateTab(3);
+		const notesContainer = notesContainerRef.current;
+		if (noteEles.has(note.id) && notesContainer) {
+			notesContainer.scrollTop = noteEles
+				.get(note.id)
+				.getBoundingClientRect().top;
+		}
+	};
+
+	const renderHighlights = (props: RenderHighlightsProps) => (
+		<div>
+			{notes.map((note) => (
+				<React.Fragment key={note.id}>
+					{note.highlightAreas
+						.filter((area) => area.pageIndex === props.pageIndex)
+						.map((area, idx) => (
+							<div
+								key={idx}
+								style={Object.assign(
+									{},
+									{
+										background: "yellow",
+										opacity: 0.4,
+									},
+									props.getCssProperties(area, props.rotation)
+								)}
+								onClick={() => jumpToNote(note)}
+							/>
+						))}
+				</React.Fragment>
+			))}
+		</div>
+	);
+
+	const highlightPluginInstance = highlightPlugin({
+		renderHighlightTarget,
+		renderHighlightContent,
+		renderHighlights,
+	});
+
+	const { jumpToHighlightArea } = highlightPluginInstance;
+
+	React.useEffect(() => {
+		return () => {
+			noteEles.clear();
+		};
+	}, []);
+
+	const sidebarNotes = (
+		<div
+			ref={notesContainerRef}
+			style={{
+				overflow: "auto",
+				width: "100%",
+			}}
+		>
+			{notes.length === 0 && (
+				<div style={{ textAlign: "center" }}>There is no note</div>
+			)}
+			{notes.map((note) => {
+				return (
+					<div
+						key={note.id}
+						style={{
+							borderBottom: "1px solid rgba(0, 0, 0, .3)",
+							cursor: "pointer",
+							padding: "8px",
+						}}
+						onClick={() => jumpToHighlightArea(note.highlightAreas[0])}
+						ref={(ref): void => {
+							noteEles.set(note.id, ref as HTMLElement);
+						}}
+					>
+						<blockquote
+							style={{
+								borderLeft: "2px solid rgba(0, 0, 0, 0.2)",
+								fontSize: ".75rem",
+								lineHeight: 1.5,
+								margin: "0 0 8px 0",
+								paddingLeft: "8px",
+								textAlign: "justify",
+							}}
+						>
+							{note.quote}
+						</blockquote>
+						{note.content}
+					</div>
+				);
+			})}
+		</div>
+	);
+
 	const { name } = useParams();
 	const [teams, setTeams] = useState<Team[]>([]);
 	const [writeup, setWriteup] = useState("");
@@ -55,9 +257,29 @@ const ViewWriteup = () => {
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const toggleEditing = () => setIsEditing(!isEditing);
 	const [grade, setGrade] = useState<number>(-1);
-	const layoutPluginInstance = defaultLayoutPlugin({
-		sidebarTabs: (defaultTabs) => [],
+
+	const toolbarPluginInstance = toolbarPlugin();
+	const { renderDefaultToolbar, Toolbar } = toolbarPluginInstance;
+	const transform: TransformToolbarSlot = (slot: ToolbarSlot) => ({
+		...slot,
+		// These slots will be empty
+		SwitchTheme: () => <></>,
 	});
+	const defaultLayoutPluginInstance = defaultLayoutPlugin({
+		sidebarTabs: (defaultTabs) => [
+			defaultTabs[1],
+			{
+				content: sidebarNotes,
+				icon: <MessageIcon />,
+				title: "Notes",
+			},
+		],
+		renderToolbar: (toolbarSlot) => (
+			<Toolbar>{renderDefaultToolbar(transform)}</Toolbar>
+		),
+	});
+
+	const { activateTab } = defaultLayoutPluginInstance;
 	const [showChart, setShowChart] = useState<boolean>(false);
 	async function getWriteup() {
 		try {
@@ -235,32 +457,34 @@ const ViewWriteup = () => {
 		}
 	};
 
-	const viewer = document.querySelector('[data-testid="theme__switch-button"]');
-	if (viewer) {
-		if (isDark) {
-			viewer.click();
-		}
-	}
-
 	return (
-		<div
-			className="xl:grid xl:grid-cols-2 xl:my-2 relative"
-		>
+		<div className="xl:grid xl:grid-cols-5 xl:my-2 relative">
 			{writeup && !showChart && (
 				<div
-					className="xl:ml-[20px] mx-[20px]"
+					className="xl:ml-[20px] mx-[20px] xl:col-span-3"
 					style={{
 						height: "calc(100vh - 100px)",
 					}}
 				>
 					<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-						<Viewer fileUrl={writeup} plugins={[layoutPluginInstance]} />
+						{isDark ? (
+							<Viewer
+								theme="dark"
+								fileUrl={writeup}
+								plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}
+							/>
+						) : (
+							<Viewer
+								fileUrl={writeup}
+								plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}
+							/>
+						)}
 					</Worker>
 				</div>
 			)}
 			{!writeup && !showChart && <div></div>}
 			{showChart && (
-				<div className="w-full h-full">
+				<div className="w-full h-full xl:col-span-3">
 					<ReactFlow
 						nodes={nodes}
 						edges={edges}
@@ -277,7 +501,7 @@ const ViewWriteup = () => {
 					</ReactFlow>
 				</div>
 			)}
-			<div className="flex flex-col items-center w-full relative">
+			<div className="flex flex-col items-center w-full relative xl:col-span-2">
 				<div className="absolute right-8 top-[2px]">
 					<Switch
 						color="error"

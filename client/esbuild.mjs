@@ -30,14 +30,13 @@ const options = {
 	plugins: [nodeModulesPolyfillPlugin()],
 	minify: minify,
 	sourcemap: "linked",
-	splitting: true,
 	define: {
 		global: "window",
 		process: "{}",
 		"process.env": "{}",
 		"process.env.NODE_ENV": nodeEnv,
 	},
-	logLevel: "info"
+	logLevel: "info",
 };
 
 if (!watchToggle) {

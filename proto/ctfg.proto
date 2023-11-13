@@ -186,9 +186,20 @@ message SubmitGradeRequest {
   uint32 score = 2;
 }
 
+message HighlightArea {
+  int32 height = 1;
+  int32 width = 2;
+  uint32 pageIndex = 3;
+  int32 top = 4;
+  int32 left = 5;
+}
+
 message SubmitCommentsRequest {
   string username = 1;
-  string comments = 2;
+  uint32 id = 2;
+  string content = 3;
+  repeated HighlightArea areas = 4;
+  string quote = 5;
 }
 
 message GetUserGraphRequest {

@@ -52,7 +52,7 @@ go run cmd/main.go
 Install the necessary tools:
 ```
 go install github.com/twitchtv/twirp/protoc-gen-twirp
-go install google.golang.org/protobuf/cmd/protoc-gen-g
+go install google.golang.org/protobuf/cmd/protoc-gen-go
 npm install -g @protobuf-ts/plugin twirp-ts
 ```
 Then run:
