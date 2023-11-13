@@ -57,7 +57,7 @@ npm install -g @protobuf-ts/plugin twirp-ts
 ```
 Then run:
 ```
-protoc --go_out=. --twirp-out=. --ts_out=client/src --twirp_ts_out=client/src proto/ctfg.proto
+protoc --go_out=. --twirp_out=. --ts_out=client/src --twirp_ts_out=client/src proto/ctfg.proto
 mv client/src/proto/ctfg.ts client/src/rpc/ctfg.ts
 mv client/src/proto/ctfg.twirp.ts client/src/rpc/ctfg.twirp.ts
 rm -rf client/src/proto
