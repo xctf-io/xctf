@@ -3,35 +3,29 @@ package pkg
 import (
 	"context"
 	"errors"
-
-	"gitea.com/go-chi/session"
+	"github.com/breadchris/scs/v2"
 )
 
-// GetSession gets the session set by go chi session middleware.
-func GetSession(ctx context.Context) session.Store {
-	sessCtx := ctx.Value("Session")
-	sess, _ := sessCtx.(session.Store)
-	return sess
-}
+var (
+	// TODO breadchris dep inject
+	store *scs.SessionManager
+)
 
 // SetUserForSession will set the user id in the session store located in the context.
 func SetUserForSession(ctx context.Context, userID uint, userType string) {
-	store := GetSession(ctx)
-	store.Set("userID", userID)
-	store.Set("userType", userType)
+	store.Put(ctx, "userID", userID)
+	store.Put(ctx, "userType", userType)
 }
 
 func RemoveUserFromSession(ctx context.Context) {
-	store := GetSession(ctx)
-	store.Delete("userID")
-	store.Delete("userType")
+	store.Remove(ctx, "userID")
+	store.Remove(ctx, "userType")
 }
 
 // GetUserFromSession will get the user id from the session store located in the context.
 func GetUserFromSession(ctx context.Context) (uint, string, error) {
-	store := GetSession(ctx)
-	userIDInterface := store.Get("userID")
-	userTypeInterface := store.Get("userType")
+	userIDInterface := store.Get(ctx, "userID")
+	userTypeInterface := store.Get(ctx, "userType")
 	userID, ok := userIDInterface.(uint)
 	userType, ok2 := userTypeInterface.(string)
 	if !ok || !ok2 {

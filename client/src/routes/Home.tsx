@@ -15,13 +15,13 @@ const CTFComponent: React.FC<Props> = () => {
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	useEffect(() => {
 		async function getHomePage() {
-			const res = await ctfg.GetHomePage({});
+			const res = await ctfg.getHomePage({});
 			setHomePage(res.content);
 		}
 		getHomePage();
 	}, []);
 	const updateHomePage = async () => {
-		const res = await ctfgAdmin.SetHomePage({ content: homePage });
+		const res = await ctfgAdmin.setHomePage({ content: homePage });
 		setIsEditing(false);
 	};
 	const isAdmin = user?.type === "admin";

@@ -3,28 +3,115 @@ package pkg
 import (
 	"context"
 	"errors"
+	"github.com/xctf-io/xctf/gen/xctf"
+	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
 
-	"github.com/ctfg/ctfg/gen/ctfg"
-	"github.com/ctfg/ctfg/pkg/models"
+	connect "github.com/bufbuild/connect-go"
 	"github.com/rs/zerolog/log"
+	"github.com/xctf-io/xctf/pkg/models"
 	"gorm.io/gorm"
 )
 
-type backend struct {
+type Backend struct {
 	db *gorm.DB
 }
 
-func (b backend) Register(ctx context.Context, request *ctfg.RegisterRequest) (*ctfg.RegisterResponse, error) {
+var _ xctfconnect.BackendHandler = (*Backend)(nil)
+
+func (b *Backend) SubmitEvidence(ctx context.Context, request *connect.Request[xctf.SubmitEvidenceRequest]) (*connect.Response[xctf.SubmitEvidenceResponse], error) {
+	userID, _, err := GetUserFromSession(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	name := request.Msg.Evidence
+	if len(name) == 0 {
+		return nil, errors.New("evidence name cannot be empty")
+	}
+
+	var chal models.Challenge
+	res := b.db.Where(models.Challenge{Flag: request.Msg.Evidence}).First(&chal)
+	if res.Error != nil && request.Msg.IsFlag {
+		return nil, errors.New("invalid flag")
+	}
+
+	// A flag was found for the challenge, set the name to the challenge name
+	if res.Error == nil {
+		name = chal.Name
+	}
+
+	var evidence models.Evidence
+	res = b.db.Where(models.Evidence{Name: name, UserID: int(userID)}).First(&evidence)
+	if res.Error == nil {
+		if request.Msg.Remove {
+			log.Debug().
+				Str("name", name).
+				Msg("deleting existing evidence")
+			b.db.Delete(&evidence)
+		} else {
+			log.Debug().
+				Str("name", name).
+				Msg("updating existing evidence")
+			evidence.PositionX = int(request.Msg.X)
+			evidence.PositionY = int(request.Msg.Y)
+			b.db.Save(&evidence)
+		}
+	} else {
+		evidence := models.Evidence{
+			Name:      name,
+			Challenge: chal,
+			User: models.User{
+				Model: gorm.Model{
+					ID: userID,
+				},
+			},
+			IsFlag: request.Msg.IsFlag,
+		}
+		res = b.db.Create(&evidence)
+		if res.Error != nil {
+			return nil, res.Error
+		}
+	}
+	return connect.NewResponse(&xctf.SubmitEvidenceResponse{
+		Name: name,
+	}), nil
+}
+
+func (b *Backend) SubmitEvidenceReport(ctx context.Context, req *connect.Request[xctf.SubmitEvidenceReportRequest]) (*connect.Response[xctf.SubmitEvidenceReportRequest], error) {
+	userID, _, err := GetUserFromSession(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var report models.EvidenceReport
+	res := b.db.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
+	if res.Error != nil {
+		newReport := &models.EvidenceReport{
+			UserID: int(userID),
+			URL:    req.Msg.Url,
+		}
+		if res = b.db.Create(&newReport); res.Error != nil {
+			return nil, res.Error
+		}
+		return connect.NewResponse(&xctf.SubmitEvidenceReportRequest{}), nil
+	}
+
+	report.URL = req.Msg.Url
+	b.db.Save(report)
+	return connect.NewResponse(&xctf.SubmitEvidenceReportRequest{}), nil
+}
+
+func (b *Backend) Register(ctx context.Context, request *connect.Request[xctf.RegisterRequest]) (*connect.Response[xctf.RegisterResponse], error) {
 	user := models.User{
 		Model:    gorm.Model{},
-		Username: request.Username,
-		Email:    request.Email,
+		Username: request.Msg.Username,
+		Email:    request.Msg.Email,
 	}
-	if len(request.Password) == 0 ||len(request.Username) == 0 || len(request.Password) == 0 {
+	if len(request.Msg.Password) == 0 || len(request.Msg.Username) == 0 || len(request.Msg.Password) == 0 {
 		return nil, errors.New("fields cannot be empty")
 	}
 
-	err := user.HashPassword(request.Password)
+	err := user.HashPassword(request.Msg.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -33,37 +120,37 @@ func (b backend) Register(ctx context.Context, request *ctfg.RegisterRequest) (*
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return &ctfg.RegisterResponse{
+	return connect.NewResponse(&xctf.RegisterResponse{
 		Created: true,
-	}, nil
+	}), nil
 }
 
-func (b backend) Login(ctx context.Context, request *ctfg.LoginRequest) (*ctfg.LoginResponse, error) {
+func (b *Backend) Login(ctx context.Context, request *connect.Request[xctf.LoginRequest]) (*connect.Response[xctf.LoginResponse], error) {
 	var user models.User
-	resp := b.db.Where(&models.User{Email: request.Email}).First(&user)
+	resp := b.db.Where(&models.User{Email: request.Msg.Email}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
 
-	err := user.CheckPassword(request.Password)
+	err := user.CheckPassword(request.Msg.Password)
 	if err != nil {
 		return nil, errors.New("incorrect password for user")
 	}
 
 	SetUserForSession(ctx, user.ID, user.Type)
 
-	return &ctfg.LoginResponse{
+	return connect.NewResponse(&xctf.LoginResponse{
 		Username: user.Username,
 		UserRole: user.Type,
-	}, nil
+	}), nil
 }
 
-func (b backend) Logout(ctx context.Context, request *ctfg.Empty) (*ctfg.Empty, error) {
+func (b *Backend) Logout(ctx context.Context, request *connect.Request[xctf.Empty]) (*connect.Response[xctf.Empty], error) {
 	RemoveUserFromSession(ctx)
-	return &ctfg.Empty{}, nil
+	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserRequest) (*ctfg.CurrentUserResponse, error) {
+func (b *Backend) CurrentUser(ctx context.Context, request *connect.Request[xctf.CurrentUserRequest]) (*connect.Response[xctf.CurrentUserResponse], error) {
 	userID, userType, err := GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
@@ -75,9 +162,9 @@ func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserReque
 		return nil, resp.Error
 	}
 
-	var returnedPages []*ctfg.Page
+	var returnedPages []*xctf.Page
 	for _, page := range pages {
-		returnedPages = append(returnedPages, &ctfg.Page{
+		returnedPages = append(returnedPages, &xctf.Page{
 			Route:   page.Route,
 			Title:   page.Title,
 			Content: page.Content,
@@ -90,20 +177,20 @@ func (b backend) CurrentUser(ctx context.Context, request *ctfg.CurrentUserReque
 		return nil, resp.Error
 	}
 
-	return &ctfg.CurrentUserResponse{
+	return connect.NewResponse(&xctf.CurrentUserResponse{
 		Username: user.Username,
 		UserRole: userType,
 		Pages:    returnedPages,
-	}, nil
+	}), nil
 }
 
-func (b backend) SubmitFlag(ctx context.Context, request *ctfg.SubmitFlagRequest) (*ctfg.SubmitFlagResponse, error) {
-	return &ctfg.SubmitFlagResponse{
+func (b *Backend) SubmitFlag(ctx context.Context, request *connect.Request[xctf.SubmitFlagRequest]) (*connect.Response[xctf.SubmitFlagResponse], error) {
+	return connect.NewResponse(&xctf.SubmitFlagResponse{
 		Correct: false,
-	}, nil
+	}), nil
 }
 
-func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDiscoveredEvidenceRequest) (*ctfg.GetDiscoveredEvidenceResponse, error) {
+func (b *Backend) GetDiscoveredEvidence(ctx context.Context, request *connect.Request[xctf.GetDiscoveredEvidenceRequest]) (*connect.Response[xctf.GetDiscoveredEvidenceResponse], error) {
 	userID, _, err := GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
@@ -124,9 +211,9 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 		return nil, connResp.Error
 	}
 
-	var discoveredEvidence []*ctfg.Evidence
+	var discoveredEvidence []*xctf.Evidence
 	for _, ev := range evidence {
-		chalEv := &ctfg.Evidence{
+		chalEv := &xctf.Evidence{
 			Id:     uint32(ev.ID),
 			Name:   ev.Name,
 			X:      int32(ev.PositionX),
@@ -139,82 +226,25 @@ func (b backend) GetDiscoveredEvidence(ctx context.Context, request *ctfg.GetDis
 		discoveredEvidence = append(discoveredEvidence, chalEv)
 	}
 
-	var discoveredConnections []*ctfg.Connection
+	var discoveredConnections []*xctf.Connection
 	for _, conn := range connections {
-		discoveredConnections = append(discoveredConnections, &ctfg.Connection{
+		discoveredConnections = append(discoveredConnections, &xctf.Connection{
 			Id:          uint32(conn.ID),
 			Source:      uint32(conn.SourceID),
 			Destination: uint32(conn.DestinationID),
 		})
 	}
 
-	return &ctfg.GetDiscoveredEvidenceResponse{
+	return connect.NewResponse(&xctf.GetDiscoveredEvidenceResponse{
 		Evidence:    discoveredEvidence,
 		Connections: discoveredConnections,
-	}, nil
+	}), nil
 }
 
-func (b backend) SubmitEvidence(ctx context.Context, request *ctfg.SubmitEvidenceRequest) (*ctfg.SubmitEvidenceResponse, error) {
-	userID, _, err := GetUserFromSession(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if len(request.Evidence) == 0 {
-		return nil, errors.New("evidence name cannot be empty")
-	}
-
-	name := request.Evidence
-
-	var chal models.Challenge
-	res := b.db.Where(models.Challenge{Flag: request.Evidence}).First(&chal)
-	if res.Error != nil && request.IsFlag {
-		return nil, errors.New("invalid flag")
-	}
-
-	// A flag was found for the challenge, set the name to the challenge name
-	if res.Error == nil {
-		name = chal.Name
-	}
-
-	var evidence models.Evidence
-	res = b.db.Where(models.Evidence{Name: name, UserID: int(userID)}).First(&evidence)
-	if res.Error == nil {
-		if request.Remove {
-			log.Debug().
-				Str("name", name).
-				Msg("deleting existing evidence")
-			b.db.Delete(&evidence)
-		} else {
-			log.Debug().
-				Str("name", name).
-				Msg("updating existing evidence")
-			evidence.PositionX = int(request.X)
-			evidence.PositionY = int(request.Y)
-			b.db.Save(&evidence)
-		}
-	} else {
-		evidence := models.Evidence{
-			Name:      name,
-			Challenge: chal,
-			User: models.User{
-				Model: gorm.Model{
-					ID: userID,
-				},
-			},
-			IsFlag: request.IsFlag,
-		}
-		res = b.db.Create(&evidence)
-		if res.Error != nil {
-			return nil, res.Error
-		}
-	}
-
-	return &ctfg.SubmitEvidenceResponse{
-		Name: name,
-	}, nil
-}
-
-func (b backend) SubmitEvidenceConnection(ctx context.Context, request *ctfg.SubmitEvidenceConnectionRequest) (*ctfg.SubmitEvidenceConnectionResponse, error) {
+func (b *Backend) SubmitEvidenceConnection(
+	ctx context.Context,
+	request *connect.Request[xctf.SubmitEvidenceConnectionRequest],
+) (*connect.Response[xctf.SubmitEvidenceConnectionResponse], error) {
 	userID, _, err := GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
@@ -222,8 +252,8 @@ func (b backend) SubmitEvidenceConnection(ctx context.Context, request *ctfg.Sub
 
 	// TODO verify source and destination are accessible to the user
 	evidenceConn := models.EvidenceConnection{
-		SourceID:      int(request.Source),
-		DestinationID: int(request.Destination),
+		SourceID:      int(request.Msg.Source),
+		DestinationID: int(request.Msg.Destination),
 		UserID:        int(userID),
 	}
 	res := b.db.Where(evidenceConn).First(&evidenceConn)
@@ -233,63 +263,41 @@ func (b backend) SubmitEvidenceConnection(ctx context.Context, request *ctfg.Sub
 			return nil, res.Error
 		}
 	} else {
-		if request.Remove {
+		if request.Msg.Remove {
 			res = b.db.Delete(&evidenceConn)
 			if res.Error != nil {
 				return nil, res.Error
 			}
 		}
 	}
-
-	return &ctfg.SubmitEvidenceConnectionResponse{}, nil
+	return connect.NewResponse(&xctf.SubmitEvidenceConnectionResponse{}), nil
 }
 
-func (b backend) SubmitEvidenceReport(ctx context.Context, req *ctfg.SubmitEvidenceReportRequest) (*ctfg.SubmitEvidenceReportRequest, error) {
-	userID, _, err := GetUserFromSession(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	var report models.EvidenceReport
-	res := b.db.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
-	if res.Error != nil {
-		newReport := &models.EvidenceReport{
-			UserID: int(userID),
-			URL:    req.Url,
-		}
-		if res = b.db.Create(&newReport); res.Error != nil {
-			return nil, res.Error
-		}
-		return &ctfg.SubmitEvidenceReportRequest{}, nil
-	}
-
-	report.URL = req.Url
-	b.db.Save(report)
-	return &ctfg.SubmitEvidenceReportRequest{}, nil
-}
-
-func (b backend) GetHomePage(ctx context.Context, request *ctfg.GetHomePageRequest) (*ctfg.GetHomePageResponse, error) {
+func (b *Backend) GetHomePage(
+	ctx context.Context,
+	request *connect.Request[xctf.GetHomePageRequest],
+) (*connect.Response[xctf.GetHomePageResponse], error) {
 	var homePage models.HomePage
 	resp := b.db.First(&homePage)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	return &ctfg.GetHomePageResponse{
+	return connect.NewResponse(&xctf.GetHomePageResponse{
 		Content: homePage.Content,
-	}, nil
+	}), nil
 }
 
-func (b backend) ForgotPassword(ctx context.Context, request *ctfg.ForgotPasswordRequest) (*ctfg.Empty, error) {
+func (b *Backend) ForgotPassword(ctx context.Context, request *connect.Request[xctf.ForgotPasswordRequest]) (*connect.Response[xctf.Empty], error) {
 	// check if user exists
 	var user models.User
-	resp := b.db.Where(models.User{Email: request.Email}).First(&user)
+	resp := b.db.Where(models.User{Email: request.Msg.Email}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
 	return nil, errors.New("not implemented")
 }
 
-func (b backend) SubmitWriteup(ctx context.Context, request *ctfg.SubmitWriteupRequest) (*ctfg.Empty, error) {
+func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xctf.SubmitWriteupRequest]) (*connect.Response[xctf.Empty], error) {
 	userId, _, err := GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
@@ -311,24 +319,24 @@ func (b backend) SubmitWriteup(ctx context.Context, request *ctfg.SubmitWriteupR
 	if resp.Error != nil {
 		writeup := models.Writeup{
 			Username: user.Username,
-			Content:  request.Content,
+			Content:  request.Msg.Content,
 		}
 		resp = b.db.Create(&writeup)
 		if resp.Error != nil {
 			return nil, resp.Error
 		}
 	} else {
-		writeup.Content = request.Content
+		writeup.Content = request.Msg.Content
 		resp = b.db.Save(&writeup)
 		if resp.Error != nil {
 			return nil, resp.Error
 		}
 	}
-	return &ctfg.Empty{}, nil
+	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func NewBackend(db *gorm.DB) ctfg.Backend {
-	return &backend{
+func NewBackend(db *gorm.DB) *Backend {
+	return &Backend{
 		db: db,
 	}
 }

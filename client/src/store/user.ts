@@ -32,7 +32,7 @@ export const useUser = (): [
 ] => {
 	const [user, setUser] = useAtom(userAtom);
 	const logout = () => {
-		ctfg.Logout({});
+		ctfg.logout({});
 		setUser(null);
 		document.location.href = "/";
 	};
@@ -60,7 +60,7 @@ export const useLogin = (): [
 
 	const login = async (email: string, password: string, isDark: boolean) => {
 		try {
-			const resp = await ctfg.Login({
+			const resp = await ctfg.login({
 				email,
 				password,
 			});
@@ -91,7 +91,7 @@ export const useRegister = (): [
 		isDark: boolean
 	) => {
 		try {
-			const resp = await ctfg.Register({
+			const resp = await ctfg.register({
 				username,
 				email,
 				password,

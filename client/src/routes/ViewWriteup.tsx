@@ -41,7 +41,7 @@ import type {
 } from "@react-pdf-viewer/toolbar";
 import { toolbarPlugin } from "@react-pdf-viewer/toolbar";
 
-import type { GetUserGraphResponse } from "../rpc/ctfg";
+import { GetUserGraphResponse } from "@/rpc/xctf/xctf_pb";
 import dagre from "dagre";
 import ReactFlow, {
 	Background,
@@ -283,7 +283,7 @@ const ViewWriteup = () => {
 	const [showChart, setShowChart] = useState<boolean>(false);
 	async function getWriteup() {
 		try {
-			const wp = await ctfgAdmin.GetWriteup({ username: name });
+			const wp = await ctfgAdmin.getWriteup({ username: name });
 			setWriteup(wp.content);
 		} catch (error) {
 			createErrorToast("User does not have a writeup", isDark);
@@ -291,8 +291,8 @@ const ViewWriteup = () => {
 	}
 	async function getTeams() {
 		try {
-			const resp = await ctfgAdmin.GetTeamsProgress({});
-			const allChallenges = await ctfgAdmin.GetAllChallenges({});
+			const resp = await ctfgAdmin.getTeamsProgress({});
+			const allChallenges = await ctfgAdmin.getAllChallenges({});
 			const teams = resp.teams.map((t) => ({
 				name: t.teamName,
 				hasWriteup: t.hasWriteup,
@@ -314,21 +314,21 @@ const ViewWriteup = () => {
 			createErrorToast("Failed to get teams", isDark);
 		}
 	}
-	const [graph, setGraph] = useState<GetUserGraphResponse>({
+	const [graph, setGraph] = useState<GetUserGraphResponse>(new GetUserGraphResponse({
 		connections: [],
 		evidence: [],
-	});
+	}));
 	const graphRef: MutableRefObject<GetUserGraphResponse> =
-		useRef<GetUserGraphResponse>({
+		useRef<GetUserGraphResponse>(new GetUserGraphResponse({
 			connections: [],
 			evidence: [],
-		});
+		}));
 
 	const dagreGraph = new dagre.graphlib.Graph();
 	const nodeWidth = 172;
 	const nodeHeight = 36;
 	dagreGraph.setDefaultEdgeLabel(() => ({}));
-	const getLayoutedElements = (nodes, edges) => {
+	const getLayoutedElements = (nodes: any[], edges: any[]) => {
 		dagreGraph.setGraph({ rankdir: "TB" });
 		nodes.forEach((node) => {
 			dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
@@ -351,7 +351,7 @@ const ViewWriteup = () => {
 	};
 	async function loadDiscoveredEvidence() {
 		try {
-			const resp = await ctfgAdmin.GetUserGraph({
+			const resp = await ctfgAdmin.getUserGraph({
 				username: name,
 			});
 			graphRef.current = resp;
@@ -446,7 +446,7 @@ const ViewWriteup = () => {
 				createErrorToast("Grade must be between 1 and 100", isDark);
 				return;
 			}
-			ctfgAdmin.SubmitGrade({
+			ctfgAdmin.submitGrade({
 				username: name,
 				score: grade,
 			});

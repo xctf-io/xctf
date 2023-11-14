@@ -101,7 +101,7 @@ function App() {
 				if (!user) {
 					return;
 				}
-				const resp = await ctfg.CurrentUser({});
+				const resp = await ctfg.currentUser({});
 				setUser({
 					username: resp.username,
 					type: resp.userRole,

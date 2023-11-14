@@ -1,52 +1,82 @@
 package pkg
 
 import (
+	"context"
+	"fmt"
+	"github.com/alexedwards/scs/gormstore"
+	"github.com/breadchris/scs/v2"
+	"github.com/bufbuild/connect-go"
+	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
+	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
+	"gorm.io/gorm"
 	"io/fs"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"strings"
-	"time"
-
-	"github.com/ctfg/ctfg/gen/ctfg"
-
-	"gitea.com/go-chi/session"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 )
 
-func NewAPIHandler(assets fs.FS, twirpHandler ctfg.TwirpServer, adminHandler ctfg.TwirpServer) http.Handler {
-	muxRoot := chi.NewRouter()
-
-	muxRoot.Use(middleware.RequestID)
-	muxRoot.Use(middleware.RealIP)
-	muxRoot.Use(middleware.Logger)
-	muxRoot.Use(session.Sessioner(session.Options{
-		Provider:           "file",
-		CookieName:         "session",
-		FlashEncryptionKey: "SomethingSuperSecretThatShouldChange",
-	}))
-
-	//muxRoot.Use(middleware.Recoverer)
-	muxRoot.Use(middleware.Timeout(time.Second * 5))
-
-	fs := http.FS(assets)
-	httpFileServer := http.FileServer(fs)
-
-	muxRoot.Handle("/*", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.URL.Path, twirpHandler.PathPrefix()) {
-			twirpHandler.ServeHTTP(rw, r)
-			return
+func NewLogInterceptor() connect.UnaryInterceptorFunc {
+	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
+		return func(
+			ctx context.Context,
+			req connect.AnyRequest,
+		) (connect.AnyResponse, error) {
+			resp, err := next(ctx, req)
+			if err != nil {
+				slog.Error("connect error", "err", fmt.Sprintf("%+v", err))
+			}
+			return resp, err
 		}
+	}
+	return interceptor
+}
 
-		if strings.HasPrefix(r.URL.Path, adminHandler.PathPrefix()) {
-			adminHandler.ServeHTTP(rw, r)
-			return
+func NewAPIHandler(assets fs.FS, db *gorm.DB) http.Handler {
+	muxRoot := http.NewServeMux()
+
+	interceptors := connect.WithInterceptors(NewLogInterceptor())
+
+	apiRoot := http.NewServeMux()
+	apiRoot.Handle(xctfconnect.NewBackendHandler(NewBackend(db), interceptors))
+	apiRoot.Handle(xctfconnect.NewAdminHandler(NewAdmin(db), interceptors))
+
+	store = scs.New()
+	var err error
+	if store.Store, err = gormstore.New(db); err != nil {
+		log.Fatal(err)
+	}
+
+	reflector := grpcreflect.NewStaticReflector(
+		"xctf.Backend",
+		"xctf.Admin",
+	)
+	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
+		slog.Error("panic", "err", fmt.Sprintf("%+v", p))
+		if err, ok := p.(error); ok {
+			return err
 		}
+		return fmt.Errorf("panic: %v", p)
+	}
 
+	muxRoot.Handle(grpcreflect.NewHandlerV1(reflector, connect.WithRecover(recoverCall)))
+	// Many tools still expect the older version of the server reflection Service, so
+	// most servers should mount both handlers.
+	muxRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
+
+	a := http.FS(assets)
+	httpFileServer := http.FileServer(a)
+	muxRoot.Handle("/", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		filePath := r.URL.Path
 		if strings.Index(r.URL.Path, "/") == 0 {
 			filePath = r.URL.Path[1:]
+		}
+
+		if strings.Index(r.URL.Path, "/api") == 0 {
+			r.URL.Path = r.URL.Path[4:]
+			apiRoot.ServeHTTP(rw, r)
+			return
 		}
 
 		f, err := assets.Open(filePath)
@@ -62,5 +92,5 @@ func NewAPIHandler(assets fs.FS, twirpHandler ctfg.TwirpServer, adminHandler ctf
 
 		httpFileServer.ServeHTTP(rw, r)
 	}))
-	return muxRoot
+	return store.LoadAndSave(muxRoot)
 }

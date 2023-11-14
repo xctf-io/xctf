@@ -40,7 +40,7 @@ spec:
               value: postgres
             - name: PORT
               value: "8000"
-          image: ghcr.io/ctfg/ctfg@sha256:be52e4743ff44ebfbee40d4d30e38769f0dd9e772913a20c6d317ec606a3003b
+          image: ghcr.io/xctf-io/xctf@sha256:be52e4743ff44ebfbee40d4d30e38769f0dd9e772913a20c6d317ec606a3003b
           name: ctfg
           ports:
             - containerPort: 8000

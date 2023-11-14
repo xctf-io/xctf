@@ -36,7 +36,7 @@ jobs:
       - name: Push backend image
         if: steps.branch-name.outputs.current_branch == 'main'
         run: |
-          SERVER_IMAGE_ID=ghcr.io/ctfg/ctfg
+          SERVER_IMAGE_ID=ghcr.io/xctf-io/xctf
           
           # Change all uppercase to lowercase
           SERVER_IMAGE_ID=$(echo $SERVER_IMAGE_ID | tr '[A-Z]' '[a-z]')

@@ -1,16 +1,19 @@
 import React, { useCallback } from "react";
 import { ctfg } from "../service";
-import type { GetDiscoveredEvidenceResponse } from "../rpc/ctfg";
+import { GetDiscoveredEvidenceResponse } from "@/rpc/xctf/xctf_pb";
 import ReactFlow, {
 	Background,
+	Connection,
 	Controls,
+	Edge,
 	MarkerType,
+	NodeChange,
 	addEdge,
 	applyEdgeChanges,
 	applyNodeChanges,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { useState, useEffect, useRef, MutableRefObject } from "react";
+import {useState, useEffect, useRef, MutableRefObject} from "react";
 import {
 	Text,
 	Input,
@@ -22,7 +25,7 @@ import {
 } from "@nextui-org/react";
 import dagre from "dagre";
 import Menu from "../components/Menu";
-import { HiPaperAirplane } from "react-icons/hi2";
+import {HiPaperAirplane} from "react-icons/hi2";
 import {
 	createSuccessToast,
 	createErrorToast,
@@ -35,28 +38,28 @@ let report: string = "";
 
 export default function MyComponent() {
 	const darkMode = useDarkMode(false);
-	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>({
+	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>(new GetDiscoveredEvidenceResponse({
 		report: "",
 		connections: [],
 		evidence: [],
-	});
+	}));
 	const [submittingFlag, setSubmittingFlag] = useState<boolean>(true);
 
 	const graphRef: MutableRefObject<GetDiscoveredEvidenceResponse> =
-		useRef<GetDiscoveredEvidenceResponse>({
+		useRef<GetDiscoveredEvidenceResponse>(new GetDiscoveredEvidenceResponse({
 			report: "",
 			connections: [],
 			evidence: [],
-		});
+		}));
 
 	const dagreGraph = new dagre.graphlib.Graph();
 	const nodeWidth = 172;
 	const nodeHeight = 36;
 	dagreGraph.setDefaultEdgeLabel(() => ({}));
-	const getLayoutedElements = (nodes, edges) => {
-		dagreGraph.setGraph({ rankdir: "TB" });
+	const getLayoutedElements = (nodes: any[], edges: any[]) => {
+		dagreGraph.setGraph({rankdir: "TB"});
 		nodes.forEach((node) => {
-			dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+			dagreGraph.setNode(node.id, {width: nodeWidth, height: nodeHeight});
 		});
 		edges.forEach((edge) => {
 			dagreGraph.setEdge(edge.source, edge.target);
@@ -77,13 +80,13 @@ export default function MyComponent() {
 
 	async function loadDiscoveredEvidence() {
 		try {
-			const resp = await ctfg.GetDiscoveredEvidence({});
+			const resp = await ctfg.getDiscoveredEvidence({});
 			graphRef.current = resp;
 			setGraph(resp);
 			const tempNodes = resp.evidence.map((e) => {
 				return {
 					id: e.id.toString(),
-					data: { label: e.name },
+					data: {label: e.name},
 					position: {
 						x: e.x,
 						y: e.y,
@@ -117,7 +120,7 @@ export default function MyComponent() {
 			setNodes(nodes);
 			setEdges(edges);
 			report = resp.report;
-		} catch (e) {
+		} catch (e: any) {
 			createErrorToast(e, darkMode.value);
 		}
 	}
@@ -129,7 +132,7 @@ export default function MyComponent() {
 	const initialNodes = graph.evidence.map((e) => {
 		return {
 			id: e.id.toString(),
-			data: { label: e.isFlag ? e.name + "🏳️" : e.name },
+			data: {label: e.isFlag ? e.name + "🏳️" : e.name},
 			position: {
 				x: e.x,
 				y: e.y,
@@ -147,13 +150,13 @@ export default function MyComponent() {
 	});
 	const [nodes, setNodes] = useState(initialNodes);
 	const onNodesChange = useCallback(
-		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		(changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
 		[]
 	);
 
 	function submitEvidence(remove: boolean) {
 		ctfg
-			.SubmitEvidence({
+			.submitEvidence({
 				evidence: evidence,
 				x: 100,
 				y: 100,
@@ -179,7 +182,7 @@ export default function MyComponent() {
 
 	function submitConnection(src: number, dst: number, remove?: boolean) {
 		ctfg
-			.SubmitEvidenceConnection({
+			.submitEvidenceConnection({
 				source: src,
 				destination: dst,
 				remove: remove,
@@ -214,7 +217,7 @@ export default function MyComponent() {
 	}));
 	const [edges, setEdges] = useState(initialEdges);
 	const onEdgesChange = useCallback(
-		(changes) =>
+		(changes: string | any[]) =>
 			setEdges((eds) => {
 				if (changes[0].type === "remove" && changes.length === 1) {
 					const ids = changes[0]["id"].split("-");
@@ -225,7 +228,7 @@ export default function MyComponent() {
 		[]
 	);
 	const onConnect = useCallback(
-		(params) =>
+		(params: Edge | Connection) =>
 			setEdges((eds) => {
 				const exists = eds.find(
 					(e) => e.source === params.source && e.target === params.target

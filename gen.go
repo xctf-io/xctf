@@ -1,3 +1,3 @@
-package ctfg_go
+package xctf
 
-//go:generate protoc --go_out=. --twirp_out=. proto/ctfg.proto
+//go:generate npx buf generate proto

@@ -1,22 +1,19 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"github.com/xctf-io/xctf/client/public"
+	"github.com/xctf-io/xctf/pkg"
+	"github.com/xctf-io/xctf/pkg/database"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
-	"os/signal"
-	"time"
-
-	"github.com/ctfg/ctfg/client/public"
-	"github.com/ctfg/ctfg/gen/ctfg"
-	"github.com/ctfg/ctfg/pkg"
-	"github.com/ctfg/ctfg/pkg/database"
-	"github.com/twitchtv/twirp"
 )
 
-func startHttpServer(twirpServer ctfg.TwirpServer, httpApiHandler http.Handler) {
+func startHttpServer(httpApiHandler http.Handler) {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
@@ -29,42 +26,44 @@ func startHttpServer(twirpServer ctfg.TwirpServer, httpApiHandler http.Handler) 
 		Handler: httpApiHandler,
 	}
 
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, os.Interrupt)
-
-	go func(server *http.Server) {
-		log.Printf("Listening @ %s", addr)
-		if err := server.ListenAndServe(); err != nil {
-			log.Fatal(err)
-		}
-	}(httpServer)
-
-	<-signals
-	log.Println("Shutting down http server...")
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*9)
-	defer cancel()
-	if err := httpServer.Shutdown(ctx); err != nil {
-		log.Fatalf("could not cleanly shutdown http server: %v", err)
+	log.Printf("Listening @ %s", addr)
+	if err := httpServer.ListenAndServe(); err != nil {
+		log.Fatal(err)
 	}
+}
+
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		slog.Debug("request", "method", r.Method, "path", r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		// TODO breadchris how bad is this? lol
+		origin := r.Header.Get("Origin")
+
+		// TODO breadchris this should only be done for local dev
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Authorization, connect-protocol-version")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func main() {
 	db := database.Connect()
 	database.Migrate(db)
 
-	server := pkg.NewBackend(db)
-	admin := pkg.NewAdmin(db)
-
-	twirpHandler := ctfg.NewBackendServer(
-		server, pkg.NewLoggingServerHooks(), twirp.WithServerPathPrefix("/twirp/backend"),
-	)
-
-	adminHandler := ctfg.NewAdminServer(
-		admin, pkg.NewLoggingServerHooks(), pkg.NewAdminHooks(db), twirp.WithServerPathPrefix("/twirp/admin"),
-	)
-
 	//fsys := os.DirFS("client/public")
-	httpApiHandler := pkg.NewAPIHandler(public.Assets, twirpHandler, adminHandler)
+	httpApiHandler := pkg.NewAPIHandler(public.Assets, db)
 
-	startHttpServer(twirpHandler, httpApiHandler)
+	startHttpServer(h2c.NewHandler(corsMiddleware(httpApiHandler), &http2.Server{}))
 }

@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/ctfg/ctfg/pkg/models"
 	"github.com/glebarez/sqlite"
+	"github.com/xctf-io/xctf/pkg/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -74,7 +74,7 @@ func Migrate(db *gorm.DB) {
 		panic(err)
 	}
 	homePage := models.HomePage{
-		Id:	"home",
+		Id:      "home",
 		Content: string(content),
 	}
 	db.Save(&homePage)

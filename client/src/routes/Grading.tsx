@@ -25,8 +25,8 @@ const Grading: React.FC<Props> = () => {
 	useEffect(() => {
 		async function fetchCurrentProgress() {
 			try {
-				const resp = await ctfgAdmin.GetTeamsProgress({});
-				const allChallenges = await ctfgAdmin.GetAllChallenges({});
+				const resp = await ctfgAdmin.getTeamsProgress({});
+				const allChallenges = await ctfgAdmin.getAllChallenges({});
 				setNumChallenges(allChallenges.challenges.length);
 				const teams = resp.teams.map((t) => ({
 					name: t.teamName,

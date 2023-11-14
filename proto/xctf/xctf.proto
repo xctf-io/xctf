@@ -1,7 +1,8 @@
 syntax = "proto3";
 
-package ctfg;
-option go_package = "gen/ctfg";
+package xctf;
+
+option go_package = "gen/xctf";
 
 service Backend {
   rpc Register(RegisterRequest) returns (RegisterResponse);

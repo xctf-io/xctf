@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
+	"github.com/bufbuild/connect-go"
 	"github.com/rs/zerolog/log"
+	"github.com/xctf-io/xctf/gen/xctf"
+	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -10,7 +13,6 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/ctfg/ctfg/gen/ctfg"
 	"github.com/twitchtv/twirp"
 	"github.com/urfave/cli/v2"
 )
@@ -20,19 +22,12 @@ func cliLogin(cliCtx *cli.Context) (ctx context.Context, err error) {
 	email := cliCtx.String("email")
 	password := cliCtx.String("password")
 
-	hooks := twirp.ClientHooks{
-		ResponseReceived: func(c context.Context) {
-			l := c.Value("Login")
-			log.Printf("%+v", l)
-		},
-	}
+	backend := xctfconnect.NewBackendClient(http.DefaultClient, url)
 
-	backend := ctfg.NewBackendJSONClient(url, http.DefaultClient, twirp.WithClientPathPrefix("/twirp/backend"), twirp.WithClientHooks(&hooks))
-
-	_, err = backend.Login(cliCtx.Context, &ctfg.LoginRequest{
+	_, err = backend.Login(cliCtx.Context, connect.NewRequest(&xctf.LoginRequest{
 		Email:    email,
 		Password: password,
-	})
+	}))
 	if err != nil {
 		return cliCtx.Context, err
 	}
@@ -113,11 +108,11 @@ func main() {
 									return nil
 								}
 
-								client := ctfg.NewAdminJSONClient(url, http.DefaultClient, twirp.WithClientPathPrefix("/twirp/admin"))
-								_, err := client.UpsertChallenge(ctx.Context, &ctfg.UpsertChallengeRequest{
+								client := xctfconnect.NewAdminClient(http.DefaultClient, url)
+								_, err := client.UpsertChallenge(ctx.Context, connect.NewRequest(&xctf.UpsertChallengeRequest{
 									ChallengeName: chal.Name,
 									Flag:          chal.Flag,
-								})
+								}))
 								return err
 							}
 							return crawlDir(dir, cb)
@@ -140,11 +135,11 @@ func main() {
 							name := ctx.String("challenge")
 							value := ctx.String("flag")
 
-							client := ctfg.NewAdminJSONClient(url, http.DefaultClient, twirp.WithClientPathPrefix("/twirp/admin"))
-							_, err := client.UpsertChallenge(ctx.Context, &ctfg.UpsertChallengeRequest{
+							client := xctfconnect.NewAdminClient(http.DefaultClient, url)
+							_, err := client.UpsertChallenge(ctx.Context, connect.NewRequest(&xctf.UpsertChallengeRequest{
 								ChallengeName: name,
 								Flag:          value,
-							})
+							}))
 							return err
 						},
 					},
@@ -160,11 +155,10 @@ func main() {
 							url := ctx.String("url")
 							name := ctx.String("challenge")
 
-							client := ctfg.NewAdminJSONClient(url, http.DefaultClient, twirp.WithClientPathPrefix("admin"))
-
-							_, err := client.DeleteChallenge(ctx.Context, &ctfg.DeleteChallengeRequest{
+							client := xctfconnect.NewAdminClient(http.DefaultClient, url)
+							_, err := client.DeleteChallenge(ctx.Context, connect.NewRequest(&xctf.DeleteChallengeRequest{
 								ChallengeName: name,
-							})
+							}))
 							return err
 						},
 					},

@@ -2,9 +2,8 @@ import esbuild from "esbuild";
 import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
 
 const devBuild = process.env.DEV === "true";
-const watchToggle = false;
 
-const watch = watchToggle
+const watch = devBuild
 	? {
 			onRebuild: () => {
 				console.log("rebuilt!");
@@ -39,23 +38,19 @@ const options = {
 	logLevel: "info",
 };
 
-if (!watchToggle) {
+if (!devBuild) {
 	await esbuild.build(options);
 } else {
 	const context = await esbuild.context(options);
 
 	const result = await context.rebuild();
+	console.log('serving', `public`)
+	context.serve({
+		servedir: `public`,
+		fallback: `public/index.html`,
+		onRequest: args => {
+			console.log(args.method, args.path)
+		}
+	})
 	await context.watch();
-	// maybe think of live reload? https://esbuild.github.io/api/#live-reload
-	// process.stdin.on('data', async () => {
-	//   try {
-	//     // Cancel the already-running build
-	//     await context.cancel()
-
-	//     // Then start a new build
-	//     console.log('build:', await context.rebuild())
-	//   } catch (err) {
-	//     console.error(err)
-	//   }
-	// })
 }

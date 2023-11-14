@@ -22,7 +22,7 @@ const SubmitWriteup = () => {
 		reader.onload = async () => {
 			try {
 				const fileData = reader.result as string;
-				const res = await ctfg.SubmitWriteup({
+				const res = await ctfg.submitWriteup({
 					content: fileData,
 				});
 				setFile(undefined);
@@ -59,7 +59,7 @@ const SubmitWriteup = () => {
 				className="mx-8 py-24 px-36 border border-2 rounded-lg border-dashed"
 				style={{
 					backgroundColor: dragActive
-						? dragColor
+						? 'white'
 						: theme.colors.accents0.toString(),
 					borderColor: theme.colors.accents4.toString(),
 				}}

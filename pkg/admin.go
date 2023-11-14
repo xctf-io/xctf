@@ -3,21 +3,22 @@ package pkg
 import (
 	"context"
 	"errors"
+	"github.com/bufbuild/connect-go"
+	"github.com/xctf-io/xctf/gen/xctf"
 
-	"github.com/ctfg/ctfg/gen/ctfg"
-	"github.com/ctfg/ctfg/pkg/models"
+	"github.com/xctf-io/xctf/pkg/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-type admin struct {
+type Admin struct {
 	db *gorm.DB
 }
 
-func (s *admin) UpsertChallenge(ctx context.Context, req *ctfg.UpsertChallengeRequest) (*ctfg.Empty, error) {
+func (s *Admin) UpsertChallenge(ctx context.Context, req *connect.Request[xctf.UpsertChallengeRequest]) (*connect.Response[xctf.Empty], error) {
 	challenge := models.Challenge{
-		Name: req.ChallengeName,
-		Flag: req.Flag,
+		Name: req.Msg.ChallengeName,
+		Flag: req.Msg.Flag,
 	}
 
 	if challenge.Name == "" || challenge.Flag == "" {
@@ -26,27 +27,27 @@ func (s *admin) UpsertChallenge(ctx context.Context, req *ctfg.UpsertChallengeRe
 
 	res := s.db.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "name"}},
-		DoUpdates: clause.Assignments(map[string]interface{}{"flag": req.Flag}),
+		DoUpdates: clause.Assignments(map[string]interface{}{"flag": req.Msg.Flag}),
 	}).Create(&challenge)
 	if res.Error != nil {
 		return nil, res.Error
 	}
-	return &ctfg.Empty{}, nil
+	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func (s *admin) DeleteChallenge(ctx context.Context, req *ctfg.DeleteChallengeRequest) (*ctfg.Empty, error) {
-	res := s.db.Delete(&models.Challenge{Name: req.ChallengeName})
+func (s *Admin) DeleteChallenge(ctx context.Context, req *connect.Request[xctf.DeleteChallengeRequest]) (*connect.Response[xctf.Empty], error) {
+	res := s.db.Delete(&models.Challenge{Name: req.Msg.ChallengeName})
 	if res != nil {
 		return nil, res.Error
 	}
-	return &ctfg.Empty{}, nil
+	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func (s* admin) GetTeamsProgress(ctx context.Context, request *ctfg.GetTeamsProgressRequest) (*ctfg.GetTeamsProgressResponse, error) {
+func (s *Admin) GetTeamsProgress(ctx context.Context, request *connect.Request[xctf.GetTeamsProgressRequest]) (*connect.Response[xctf.GetTeamsProgressResponse], error) {
 	// get all users in the database
 	var users []models.User
 	resp := s.db.Find(&users)
-	var scores []*ctfg.TeamProgress
+	var scores []*xctf.TeamProgress
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
@@ -59,96 +60,96 @@ func (s* admin) GetTeamsProgress(ctx context.Context, request *ctfg.GetTeamsProg
 				return nil, resp.Error
 			}
 
-			scores = append(scores, &ctfg.TeamProgress{
-				TeamName: user.Username,
+			scores = append(scores, &xctf.TeamProgress{
+				TeamName:   user.Username,
 				HasWriteup: user.HasWriteup,
-				Score:    uint32(count),
-				Grade:	uint32(user.Grade),
+				Score:      uint32(count),
+				Grade:      uint32(user.Grade),
 			})
 		}
 	}
-	return &ctfg.GetTeamsProgressResponse{
+	return connect.NewResponse(&xctf.GetTeamsProgressResponse{
 		Teams: scores,
-	}, nil
+	}), nil
 }
 
-func (s* admin) GetAllChallenges(ctx context.Context, request *ctfg.GetAllChallengesRequest) (*ctfg.GetAllChallengesResponse, error) {
+func (s *Admin) GetAllChallenges(ctx context.Context, request *connect.Request[xctf.GetAllChallengesRequest]) (*connect.Response[xctf.GetAllChallengesResponse], error) {
 	var challenges []models.Challenge
 	resp := s.db.Find(&challenges)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	var chals []*ctfg.Challenge
+	var chals []*xctf.Challenge
 	for _, challenge := range challenges {
-		chals = append(chals, &ctfg.Challenge{
+		chals = append(chals, &xctf.Challenge{
 			Name: challenge.Name,
 			Flag: challenge.Flag,
 		})
 	}
-	return &ctfg.GetAllChallengesResponse{
+	return connect.NewResponse(&xctf.GetAllChallengesResponse{
 		Challenges: chals,
-	}, nil
+	}), nil
 }
 
-func (s* admin) SetHomePage(ctx context.Context, request *ctfg.SetHomePageRequest) (*ctfg.Empty, error) {
+func (s *Admin) SetHomePage(ctx context.Context, request *connect.Request[xctf.SetHomePageRequest]) (*connect.Response[xctf.Empty], error) {
 	var homePage models.HomePage
 	resp := s.db.First(&homePage)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	homePage.Content = request.Content
+	homePage.Content = request.Msg.Content
 	resp = s.db.Save(&homePage)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	return &ctfg.Empty{}, nil
+	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func (s* admin) GetWriteup(ctx context.Context, request *ctfg.GetWriteupRequest) (*ctfg.GetWriteupResponse, error) {
+func (s *Admin) GetWriteup(ctx context.Context, request *connect.Request[xctf.GetWriteupRequest]) (*connect.Response[xctf.GetWriteupResponse], error) {
 	var writeup models.Writeup
-	resp := s.db.Where(&models.Writeup{Username: request.Username}).First(&writeup)
+	resp := s.db.Where(&models.Writeup{Username: request.Msg.Username}).First(&writeup)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	return &ctfg.GetWriteupResponse{
+	return connect.NewResponse(&xctf.GetWriteupResponse{
 		Content: writeup.Content,
-	}, nil
+	}), nil
 }
 
-func (s *admin) SubmitGrade(ctx context.Context, request *ctfg.SubmitGradeRequest) (*ctfg.Empty, error) {
+func (s *Admin) SubmitGrade(ctx context.Context, request *connect.Request[xctf.SubmitGradeRequest]) (*connect.Response[xctf.Empty], error) {
 	var user models.User
-	resp := s.db.Where(&models.User{Username: request.Username}).First(&user)
+	resp := s.db.Where(&models.User{Username: request.Msg.Username}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	if request.Score < 1 || request.Score > 100 {
+	if request.Msg.Score < 1 || request.Msg.Score > 100 {
 		return nil, errors.New("grade must be between 1 and 100")
 	}
-	user.Grade = int(request.Score)
+	user.Grade = int(request.Msg.Score)
 	resp = s.db.Save(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	return &ctfg.Empty{}, nil
+	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func (s *admin) SubmitComments(ctx context.Context, request *ctfg.SubmitCommentsRequest) (*ctfg.Empty, error) {
+func (s *Admin) SubmitComments(ctx context.Context, request *connect.Request[xctf.SubmitCommentsRequest]) (*connect.Response[xctf.Empty], error) {
 	var user models.User
-	resp := s.db.Where(&models.User{Username: request.Username}).First(&user)
+	resp := s.db.Where(&models.User{Username: request.Msg.Username}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	user.Comments = request.Comments
+	user.Comments = request.Msg.Content
 	resp = s.db.Save(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	return &ctfg.Empty{}, nil
+	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func (s *admin) GetUserGraph(ctx context.Context, request *ctfg.GetUserGraphRequest) (*ctfg.GetUserGraphResponse, error) {
+func (s *Admin) GetUserGraph(ctx context.Context, request *connect.Request[xctf.GetUserGraphRequest]) (*connect.Response[xctf.GetUserGraphResponse], error) {
 	var user models.User
-	resp := s.db.Where(&models.User{Username: request.Username}).First(&user)
+	resp := s.db.Where(&models.User{Username: request.Msg.Username}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
@@ -166,9 +167,9 @@ func (s *admin) GetUserGraph(ctx context.Context, request *ctfg.GetUserGraphRequ
 		return nil, connResp.Error
 	}
 
-	var discoveredEvidence []*ctfg.Evidence
+	var discoveredEvidence []*xctf.Evidence
 	for _, ev := range evidence {
-		chalEv := &ctfg.Evidence{
+		chalEv := &xctf.Evidence{
 			Id:     uint32(ev.ID),
 			Name:   ev.Name,
 			X:      int32(ev.PositionX),
@@ -181,23 +182,23 @@ func (s *admin) GetUserGraph(ctx context.Context, request *ctfg.GetUserGraphRequ
 		discoveredEvidence = append(discoveredEvidence, chalEv)
 	}
 
-	var discoveredConnections []*ctfg.Connection
+	var discoveredConnections []*xctf.Connection
 	for _, conn := range connections {
-		discoveredConnections = append(discoveredConnections, &ctfg.Connection{
+		discoveredConnections = append(discoveredConnections, &xctf.Connection{
 			Id:          uint32(conn.ID),
 			Source:      uint32(conn.SourceID),
 			Destination: uint32(conn.DestinationID),
 		})
 	}
 
-	return &ctfg.GetUserGraphResponse{
+	return connect.NewResponse(&xctf.GetUserGraphResponse{
 		Evidence:    discoveredEvidence,
 		Connections: discoveredConnections,
-	}, nil
+	}), nil
 }
 
-func NewAdmin(db *gorm.DB) ctfg.Admin {
-	return &admin{
+func NewAdmin(db *gorm.DB) *Admin {
+	return &Admin{
 		db: db,
 	}
 }
