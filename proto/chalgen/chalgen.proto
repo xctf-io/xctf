@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package chalgen;
+
+option go_package = "gen/xctf";
+
+service ChalgenService {
+  rpc Generate(GenerateRequest) returns (GenerateResponse);
+}
+
+message GenerateRequest {
+  Graph graph = 1;
+}
+
+message GenerateResponse {
+}
+
+message Graph {
+  repeated Node nodes = 1;
+  repeated Edge edges = 2;
+}
+
+message Edge {
+  string from = 1;
+  string to = 2;
+}
+
+message Node {
+  string id = 1;
+  string flag = 2;
+  oneof challenge {
+    Base64 base64 = 3;
+  }
+}
+
+message Base64 {
+  string data = 1;
+}

@@ -24,3 +24,7 @@ plugins:
   - plugin: connect-es
     opt: target=ts
     out: ./client/src/rpc
+  - plugin: buf.build/protocolbuffers/python
+    out: gen/python
+  - plugin: buf.build/grpc/python
+    out: gen/python
