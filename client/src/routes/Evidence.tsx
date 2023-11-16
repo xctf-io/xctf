@@ -6,11 +6,13 @@ import ReactFlow, {
 	Connection,
 	Controls,
 	Edge,
+	EdgeChange,
 	MarkerType,
 	NodeChange,
 	addEdge,
 	applyEdgeChanges,
 	applyNodeChanges,
+	Node
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {useState, useEffect, useRef, MutableRefObject} from "react";
@@ -217,7 +219,7 @@ export default function MyComponent() {
 	}));
 	const [edges, setEdges] = useState(initialEdges);
 	const onEdgesChange = useCallback(
-		(changes: string | any[]) =>
+		(changes: EdgeChange[]) =>
 			setEdges((eds) => {
 				if (changes[0].type === "remove" && changes.length === 1) {
 					const ids = changes[0]["id"].split("-");
@@ -242,7 +244,7 @@ export default function MyComponent() {
 	);
 	const [deleteNode, setDeleteNode] = useState<Node>();
 	const onNodesDelete = useCallback(
-		(deleted) => {
+		(deleted: Node[]) => {
 			setVisible2(true);
 			setDeleteNode(deleted[0]);
 		},
@@ -369,7 +371,7 @@ export default function MyComponent() {
 							auto
 							onPress={() => {
 								closeHandler2();
-								const id = Number(deleteNode["id"]);
+								const id = Number(deleteNode?.id);
 								for (let i = 0; i < graph.evidence.length; i++) {
 									if (graph.evidence[i]["id"] === id) {
 										evidence = graph.evidence[i]["name"];
