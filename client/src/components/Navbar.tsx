@@ -1,17 +1,23 @@
-import React from "react";
 import { useState } from "react";
 import { useUser } from "../store/user";
 import type { NavLink } from "../types/nav";
 import {
 	Link,
-	Navbar,
 	Text,
 	useTheme,
 	Dropdown,
 	Avatar,
-
 } from "@nextui-org/react";
 import {Link as RouterLink, useLocation, useNavigate} from 'react-router-dom';
+import {
+	Navbar, 
+	NavbarBrand, 
+	NavbarContent, 
+	NavbarItem, 
+	NavbarMenuToggle,
+	NavbarMenu,
+	NavbarMenuItem
+} from "@nextui-org/navbar";
 import useDarkMode from "use-dark-mode";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { GiFlyingFlag } from "react-icons/gi";
@@ -36,19 +42,15 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 		: "-translate-x-[49px]";
 
 	return (
-		<Navbar className="w-screen" variant="sticky" maxWidth="fluid">
-			<Navbar.Brand>
+		<Navbar className="w-screen">
+			<NavbarBrand>
 				<GiFlyingFlag className="ml-2 mr-2 w-10 h-10" />
 				<Text b color="inherit" className="text-2xl">
 					CTFg
 				</Text>
-			</Navbar.Brand>
-			<Navbar.Content
-				hideIn="xs"
-				enableCursorHighlight
-				variant="underline"
-				className={"absolute " + translate}
-				activeColor={themeColor}
+			</NavbarBrand>
+			<NavbarContent
+				className={"xs:block hidden absolute " + translate}
 			>
 				{links.map((l) => {
 					if (
@@ -57,28 +59,28 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<Navbar.Item key={l.label} isActive={l.to === location.pathname}>
+							<NavbarItem key={l.label} isActive={l.to === location.pathname}>
 								<Link
 									color="inherit"
 									onPress={() => navigate(l.to)}
 								>
 									{l.label}
 								</Link>
-							</Navbar.Item>
+							</NavbarItem>
 						);
 					}
 				})}
-			</Navbar.Content>
-			<Navbar.Content enableCursorHighlight hideIn="xs">
-				<Navbar.Link
+			</NavbarContent>
+			<NavbarContent>
+				<NavbarItem
 					className="justify-self-right"
-					onPress={darkMode.toggle}
+					onClick={darkMode.toggle}
 					key="toggle"
 				>
 					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
-				</Navbar.Link>
+				</NavbarItem>
 				{user && (
-					<Navbar.Item>
+					<NavbarItem>
 						<Dropdown placement="bottom-right">
 							<Dropdown.Trigger>
 								<Avatar
@@ -101,7 +103,6 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 										logout();
 									}
 								}}
-								containerCss={{ border: "none" }}
 							>
 								<Dropdown.Item
 									key="profile"
@@ -127,10 +128,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								</Dropdown.Item>
 							</Dropdown.Menu>
 						</Dropdown>
-					</Navbar.Item>
+					</NavbarItem>
 				)}
-			</Navbar.Content>
-			<Navbar.Collapse>
+			</NavbarContent>
+			<NavbarMenu>
 				{links.map((l) => {
 					if (
 						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
@@ -138,25 +139,25 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<Navbar.CollapseItem key={l.label} isActive={l.to === location.pathname}>
+							<NavbarMenuItem key={l.label} isActive={l.to === location.pathname}>
 								<Link color="inherit" onPress={() => navigate(l.to)}>
 								   {l.label}
 								</Link>
-							</Navbar.CollapseItem>
+							</NavbarMenuItem>
 						);
 					}
 				})}
-			</Navbar.Collapse>
-			<Navbar.Content showIn="xs">
-				<Navbar.Link
-					className="justify-self-right"
-					onPress={darkMode.toggle}
+			</NavbarMenu>
+			<NavbarContent>
+				<NavbarItem
+					className="justify-self-right xs:block hidden"
+					onClick={darkMode.toggle}
 					key="toggle"
 				>
 					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
-				</Navbar.Link>
+				</NavbarItem>
 				{user && (
-					<Navbar.Item>
+					<NavbarItem>
 						<Dropdown placement="bottom-right">
 							<Dropdown.Trigger>
 								<Avatar
@@ -181,7 +182,6 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 										navigate("/login");
 									}
 								}}
-								containerCss={{ border: "none" }}
 							>
 								<Dropdown.Item
 									key="profile"
@@ -207,10 +207,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								</Dropdown.Item>
 							</Dropdown.Menu>
 						</Dropdown>
-					</Navbar.Item>
+					</NavbarItem>
 				)}
-				<Navbar.Toggle />
-			</Navbar.Content>
+				<NavbarMenuToggle />
+			</NavbarContent>
 		</Navbar>
 	);
 };
