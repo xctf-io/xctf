@@ -11,6 +11,7 @@ cmd = "go build -o tmp/main cmd/main.go"
 # Array of commands to run after ^C
 # Binary file yields from `cmd`.
 bin = "tmp/main"
+full_bin = "CTFG_ADMIN_EMAIL=admin@admin.com CTFG_ADMIN_PASSWORD=password ./tmp/main"
 # Customize binary, can setup environment variables when run your app.
 # Watch these filename extensions.
 include_ext = ["go", "html", "tsx", "ts"]
