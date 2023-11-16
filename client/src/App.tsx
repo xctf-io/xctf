@@ -16,7 +16,7 @@ import { NavLink } from "./types/nav";
 import { ctfg } from "./service";
 import { useUser } from "./store/user";
 import { usePages } from "./store/pages";
-import useDarkMode from "use-dark-mode";
+import useDarkMode from "@fisch0920/use-dark-mode";
 import { NextUIProvider, createTheme } from "@nextui-org/react";
 import "react-toastify/dist/ReactToastify.min.css";
 import { ToastContainer } from "react-toastify";

@@ -18,7 +18,7 @@ import {
 	NavbarMenu,
 	NavbarMenuItem
 } from "@nextui-org/navbar";
-import useDarkMode from "use-dark-mode";
+import useDarkMode from "@fisch0920/use-dark-mode";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { GiFlyingFlag } from "react-icons/gi";
 

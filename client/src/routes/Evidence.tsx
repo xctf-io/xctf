@@ -31,7 +31,7 @@ import {
 	createErrorToast,
 	createCelebrateToast,
 } from "../store/user";
-import useDarkMode from "use-dark-mode";
+import useDarkMode from "@fisch0920/use-dark-mode";
 
 let evidence: string = "";
 let report: string = "";
