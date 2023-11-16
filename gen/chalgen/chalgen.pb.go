@@ -160,61 +160,6 @@ func (x *Graph) GetEdges() []*Edge {
 	return nil
 }
 
-type Edge struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	From string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
-	To   string `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
-}
-
-func (x *Edge) Reset() {
-	*x = Edge{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Edge) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Edge) ProtoMessage() {}
-
-func (x *Edge) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Edge.ProtoReflect.Descriptor instead.
-func (*Edge) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *Edge) GetFrom() string {
-	if x != nil {
-		return x.From
-	}
-	return ""
-}
-
-func (x *Edge) GetTo() string {
-	if x != nil {
-		return x.To
-	}
-	return ""
-}
-
 type Node struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -231,7 +176,7 @@ type Node struct {
 func (x *Node) Reset() {
 	*x = Node{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[4]
+		mi := &file_chalgen_chalgen_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -244,7 +189,7 @@ func (x *Node) String() string {
 func (*Node) ProtoMessage() {}
 
 func (x *Node) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[4]
+	mi := &file_chalgen_chalgen_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -257,7 +202,7 @@ func (x *Node) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Node.ProtoReflect.Descriptor instead.
 func (*Node) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{4}
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Node) GetId() string {
@@ -297,6 +242,61 @@ type Node_Base64 struct {
 }
 
 func (*Node_Base64) isNode_Challenge() {}
+
+type Edge struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	From string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
+	To   string `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
+}
+
+func (x *Edge) Reset() {
+	*x = Edge{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chalgen_chalgen_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Edge) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Edge) ProtoMessage() {}
+
+func (x *Edge) ProtoReflect() protoreflect.Message {
+	mi := &file_chalgen_chalgen_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Edge.ProtoReflect.Descriptor instead.
+func (*Edge) Descriptor() ([]byte, []int) {
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Edge) GetFrom() string {
+	if x != nil {
+		return x.From
+	}
+	return ""
+}
+
+func (x *Edge) GetTo() string {
+	if x != nil {
+		return x.To
+	}
+	return ""
+}
 
 type Base64 struct {
 	state         protoimpl.MessageState
@@ -360,15 +360,15 @@ var file_chalgen_chalgen_proto_rawDesc = []byte{
 	0x4e, 0x6f, 0x64, 0x65, 0x52, 0x05, 0x6e, 0x6f, 0x64, 0x65, 0x73, 0x12, 0x23, 0x0a, 0x05, 0x65,
 	0x64, 0x67, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x63, 0x68, 0x61,
 	0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x05, 0x65, 0x64, 0x67, 0x65, 0x73,
-	0x22, 0x2a, 0x0a, 0x04, 0x45, 0x64, 0x67, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x66, 0x72, 0x6f, 0x6d,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x66, 0x72, 0x6f, 0x6d, 0x12, 0x0e, 0x0a, 0x02,
-	0x74, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x74, 0x6f, 0x22, 0x62, 0x0a, 0x04,
-	0x4e, 0x6f, 0x64, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x66, 0x6c, 0x61, 0x67, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x04, 0x66, 0x6c, 0x61, 0x67, 0x12, 0x29, 0x0a, 0x06, 0x62, 0x61, 0x73, 0x65,
-	0x36, 0x34, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67,
-	0x65, 0x6e, 0x2e, 0x42, 0x61, 0x73, 0x65, 0x36, 0x34, 0x48, 0x00, 0x52, 0x06, 0x62, 0x61, 0x73,
-	0x65, 0x36, 0x34, 0x42, 0x0b, 0x0a, 0x09, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65,
+	0x22, 0x62, 0x0a, 0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x66, 0x6c, 0x61, 0x67,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x66, 0x6c, 0x61, 0x67, 0x12, 0x29, 0x0a, 0x06,
+	0x62, 0x61, 0x73, 0x65, 0x36, 0x34, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x63,
+	0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x42, 0x61, 0x73, 0x65, 0x36, 0x34, 0x48, 0x00, 0x52,
+	0x06, 0x62, 0x61, 0x73, 0x65, 0x36, 0x34, 0x42, 0x0b, 0x0a, 0x09, 0x63, 0x68, 0x61, 0x6c, 0x6c,
+	0x65, 0x6e, 0x67, 0x65, 0x22, 0x2a, 0x0a, 0x04, 0x45, 0x64, 0x67, 0x65, 0x12, 0x12, 0x0a, 0x04,
+	0x66, 0x72, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x66, 0x72, 0x6f, 0x6d,
+	0x12, 0x0e, 0x0a, 0x02, 0x74, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x74, 0x6f,
 	0x22, 0x1c, 0x0a, 0x06, 0x42, 0x61, 0x73, 0x65, 0x36, 0x34, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61,
 	0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0x51,
 	0x0a, 0x0e, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
@@ -404,14 +404,14 @@ var file_chalgen_chalgen_proto_goTypes = []interface{}{
 	(*GenerateRequest)(nil),  // 0: chalgen.GenerateRequest
 	(*GenerateResponse)(nil), // 1: chalgen.GenerateResponse
 	(*Graph)(nil),            // 2: chalgen.Graph
-	(*Edge)(nil),             // 3: chalgen.Edge
-	(*Node)(nil),             // 4: chalgen.Node
+	(*Node)(nil),             // 3: chalgen.Node
+	(*Edge)(nil),             // 4: chalgen.Edge
 	(*Base64)(nil),           // 5: chalgen.Base64
 }
 var file_chalgen_chalgen_proto_depIdxs = []int32{
 	2, // 0: chalgen.GenerateRequest.graph:type_name -> chalgen.Graph
-	4, // 1: chalgen.Graph.nodes:type_name -> chalgen.Node
-	3, // 2: chalgen.Graph.edges:type_name -> chalgen.Edge
+	3, // 1: chalgen.Graph.nodes:type_name -> chalgen.Node
+	4, // 2: chalgen.Graph.edges:type_name -> chalgen.Edge
 	5, // 3: chalgen.Node.base64:type_name -> chalgen.Base64
 	0, // 4: chalgen.ChalgenService.Generate:input_type -> chalgen.GenerateRequest
 	1, // 5: chalgen.ChalgenService.Generate:output_type -> chalgen.GenerateResponse
@@ -465,7 +465,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Edge); i {
+			switch v := v.(*Node); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -477,7 +477,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Node); i {
+			switch v := v.(*Edge); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -501,7 +501,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 	}
-	file_chalgen_chalgen_proto_msgTypes[4].OneofWrappers = []interface{}{
+	file_chalgen_chalgen_proto_msgTypes[3].OneofWrappers = []interface{}{
 		(*Node_Base64)(nil),
 	}
 	type x struct{}

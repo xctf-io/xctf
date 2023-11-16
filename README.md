@@ -22,25 +22,16 @@ CTFg is developed with:
 
 ### Running Locally
 #### Live reloads
-To enable live reloads, you will need to install [air](https://github.com/cosmtrek/air)
-```
-curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
-```
-Then run:
-```
-air
-```
-This will reload the website and server on any changes.
+TODO
+
 #### Web site
 Build the client for development:
 ```
-cd client
-yarn dev
+npm run dev
 ```
 Build the client for production:
 ```
-cd client
-yarn build
+npm run build
 ```
 
 #### Server
@@ -49,16 +40,3 @@ go run cmd/main.go
 ```
 
 ### Protoc Generation
-Install the necessary tools:
-```
-go install github.com/twitchtv/twirp/protoc-gen-twirp
-go install google.golang.org/protobuf/cmd/protoc-gen-go
-npm install -g @protobuf-ts/plugin twirp-ts
-```
-Then run:
-```
-protoc --go_out=. --twirp_out=. --ts_out=client/src --twirp_ts_out=client/src proto/ctfg.proto
-mv client/src/proto/ctfg.ts client/src/rpc/ctfg.ts
-mv client/src/proto/ctfg.twirp.ts client/src/rpc/ctfg.twirp.ts
-rm -rf client/src/proto
-```
