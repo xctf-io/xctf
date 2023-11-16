@@ -16,7 +16,7 @@ import { NavLink } from "./types/nav";
 import { ctfg } from "./service";
 import { useUser } from "./store/user";
 import { usePages } from "./store/pages";
-import useDarkMode from "@fisch0920/use-dark-mode";
+import { useDarkMode } from 'usehooks-ts'
 import { NextUIProvider, createTheme } from "@nextui-org/react";
 import "react-toastify/dist/ReactToastify.min.css";
 import { ToastContainer } from "react-toastify";
@@ -144,18 +144,18 @@ function App() {
 			},
 		},
 	});
-	const darkMode = useDarkMode(false);
+	const { isDarkMode, toggle, enable, disable } = useDarkMode()
 	const loggedIn = !!user;
 	const isAdmin = user?.type === "admin";
 	let selectColor = "";
-	selectColor = darkMode.value ? "#0D3868" : "#CEE4FE";
+	selectColor = isDarkMode ? "#0D3868" : "#CEE4FE";
 
 	if (isAdmin) {
-		selectColor = darkMode.value ? "#5C0523" : "#FF7377";
+		selectColor = isDarkMode? "#5C0523" : "#FF7377";
 	} 
 
 	return (
-		<NextUIProvider theme={darkMode.value ? darkTheme : lightTheme}>
+		<NextUIProvider theme={isDarkMode ? darkTheme : lightTheme}>
 			<main
 				style={{
 					"--nextui-colors-selection": selectColor,

@@ -31,13 +31,13 @@ import {
 	createErrorToast,
 	createCelebrateToast,
 } from "../store/user";
-import useDarkMode from "@fisch0920/use-dark-mode";
+import { useDarkMode } from 'usehooks-ts'
 
 let evidence: string = "";
 let report: string = "";
 
 export default function MyComponent() {
-	const darkMode = useDarkMode(false);
+	const { isDarkMode, toggle, enable, disable } = useDarkMode()
 	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>(new GetDiscoveredEvidenceResponse({
 		report: "",
 		connections: [],
@@ -121,7 +121,7 @@ export default function MyComponent() {
 			setEdges(edges);
 			report = resp.report;
 		} catch (e: any) {
-			createErrorToast(e, darkMode.value);
+			createErrorToast(e, isDarkMode);
 		}
 	}
 
@@ -167,16 +167,16 @@ export default function MyComponent() {
 				console.log(resp);
 				loadDiscoveredEvidence().then(() => {
 					if (remove) {
-						createSuccessToast("Removed evidence!", darkMode.value);
+						createSuccessToast("Removed evidence!", isDarkMode);
 					} else if (submittingFlag) {
-						createCelebrateToast("You got a flag!", darkMode.value);
+						createCelebrateToast("You got a flag!", isDarkMode);
 					} else {
-						createSuccessToast("Submitted evidence!", darkMode.value);
+						createSuccessToast("Submitted evidence!", isDarkMode);
 					}
 				});
 			})
 			.catch((e) => {
-				createErrorToast(e.toString(), darkMode.value);
+				createErrorToast(e.toString(), isDarkMode);
 			});
 	}
 
@@ -190,14 +190,14 @@ export default function MyComponent() {
 			.then((resp) => {
 				loadDiscoveredEvidence().then(() => {
 					if (remove) {
-						createSuccessToast("Removed connection!", darkMode.value);
+						createSuccessToast("Removed connection!", isDarkMode);
 					} else {
-						createSuccessToast("Created connection!", darkMode.value);
+						createSuccessToast("Created connection!", isDarkMode);
 					}
 				});
 			})
 			.catch((e) => {
-				createErrorToast(e.toString(), darkMode.value);
+				createErrorToast(e.toString(), isDarkMode);
 			});
 	}
 
