@@ -35,7 +35,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 	const isAdmin = user?.type === "admin";
 	const themeHexColor = isAdmin ? "DF3562" : "3070ED";
 	const themeColor = isAdmin ? "error" : "primary";
-	const { isDarkMode, toggle, enable, disable } = useDarkMode()
+	const { toggle } = useDarkMode(false)
 	const { type, isDark } = useTheme();
 	const translate = userLoggedIn
 		? "-translate-x-[15px]"

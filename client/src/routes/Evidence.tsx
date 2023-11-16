@@ -39,7 +39,7 @@ let evidence: string = "";
 let report: string = "";
 
 export default function MyComponent() {
-	const { isDarkMode, toggle, enable, disable } = useDarkMode()
+	const { isDarkMode } = useDarkMode(false)
 	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>(new GetDiscoveredEvidenceResponse({
 		report: "",
 		connections: [],

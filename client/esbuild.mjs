@@ -38,19 +38,20 @@ const options = {
 	logLevel: "info",
 };
 
-if (!devBuild) {
-	await esbuild.build(options);
-} else {
-	const context = await esbuild.context(options);
+await esbuild.build(options);
+// if (!devBuild) {
+// 	await esbuild.build(options);
+// } else {
+// 	const context = await esbuild.context(options);
 
-	const result = await context.rebuild();
-	console.log('serving', `public`)
-	context.serve({
-		servedir: `public`,
-		fallback: `public/index.html`,
-		onRequest: args => {
-			console.log(args.method, args.path)
-		}
-	})
-	await context.watch();
-}
+// 	const result = await context.rebuild();
+	// console.log('serving', `public`)
+	// context.serve({
+	// 	servedir: `public`,
+	// 	fallback: `public/index.html`,
+	// 	onRequest: args => {
+	// 		console.log(args.method, args.path)
+	// 	}
+	// })
+// 	await context.watch();
+// }
