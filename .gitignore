@@ -3,3 +3,4 @@ gorm.db
 tmp/
 data/
 **/node_modules
+.idea/

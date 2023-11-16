@@ -61,8 +61,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						return (
 							<NavbarItem key={l.label} isActive={l.to === location.pathname}>
 								<Link
-									color="inherit"
-									onPress={() => navigate(l.to)}
+									onClick={() => navigate(l.to)}
 								>
 									{l.label}
 								</Link>
@@ -140,7 +139,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 					) {
 						return (
 							<NavbarMenuItem key={l.label} isActive={l.to === location.pathname}>
-								<Link color="inherit" onPress={() => navigate(l.to)}>
+								<Link color="inherit" onClick={() => navigate(l.to)}>
 								   {l.label}
 								</Link>
 							</NavbarMenuItem>

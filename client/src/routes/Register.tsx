@@ -15,7 +15,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
 	const [registerUser, success, error] = useRegister();
 	const [doLogin, successLogin, errorLogin] = useLogin();
 	const { type, isDark } = useTheme();
-	async function loginAndRegister(user, mail, pass) {
+	async function loginAndRegister(user: string, mail: string, pass: string) {
 		const registrationSucceeded = Boolean(await registerUser(user, mail, pass, isDark));
 		if (registrationSucceeded) {
 			await doLogin(mail, pass, isDark);
