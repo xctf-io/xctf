@@ -48,7 +48,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 				</Text>
 			</NavbarBrand>
 			<NavbarContent
-				className={"xs:hidden absolute " + translate}
+				className={"xs:block hidden absolute " + translate}
 			>
 				{links.map((l) => {
 					if (
@@ -151,7 +151,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 			</NavbarMenu>
 			<NavbarContent>
 				<NavbarItem
-					className="justify-self-right xs:hidden"
+					className="justify-self-right xs:block hidden"
 					onClick={darkMode.toggle}
 					key="toggle"
 				>
