@@ -1,7 +1,7 @@
 import {
 	createConnectTransport,
-} from "@bufbuild/connect-web";
-import {createPromiseClient} from "@bufbuild/connect";
+} from "@connectrpc/connect-web";
+import {createPromiseClient} from "@connectrpc/connect";
 import {Admin, Backend} from "./rpc/xctf/xctf_connect";
 
 

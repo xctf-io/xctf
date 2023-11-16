@@ -34,13 +34,11 @@ This will reload the website and server on any changes.
 #### Web site
 Build the client for development:
 ```
-cd client
-yarn dev
+pnpm dev
 ```
 Build the client for production:
 ```
-cd client
-yarn build
+pnpm build
 ```
 
 #### Server
@@ -51,14 +49,12 @@ go run cmd/main.go
 ### Protoc Generation
 Install the necessary tools:
 ```
-go install github.com/twitchtv/twirp/protoc-gen-twirp
-go install google.golang.org/protobuf/cmd/protoc-gen-go
-npm install -g @protobuf-ts/plugin twirp-ts
+go install github.com/bufbuild/buf/cmd/buf@latest
+go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
 ```
 Then run:
 ```
-protoc --go_out=. --twirp_out=. --ts_out=client/src --twirp_ts_out=client/src proto/ctfg.proto
-mv client/src/proto/ctfg.ts client/src/rpc/ctfg.ts
-mv client/src/proto/ctfg.twirp.ts client/src/rpc/ctfg.twirp.ts
-rm -rf client/src/proto
+npx buf generate
 ```
