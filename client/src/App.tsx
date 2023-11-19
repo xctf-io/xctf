@@ -21,6 +21,7 @@ import { NextUIProvider, createTheme } from "@nextui-org/react";
 import "react-toastify/dist/ReactToastify.min.css";
 import { ToastContainer } from "react-toastify";
 import Redirect from "./components/Redirect";
+import {Build} from "@/routes/Build";
 
 interface Props {}
 
@@ -70,7 +71,7 @@ function App() {
 		{
 			label: "Build",
 			to: "/build",
-			Component: Grading,
+			Component: Build,
 			showWhenAuthed: false,
 			showWhenAdmin: true,
 			hideWhenUnauthed: true,
