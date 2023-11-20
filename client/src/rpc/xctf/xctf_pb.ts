@@ -1534,9 +1534,9 @@ export class HighlightArea extends Message<HighlightArea> {
 }
 
 /**
- * @generated from message xctf.SubmitCommentsRequest
+ * @generated from message xctf.SubmitCommentRequest
  */
-export class SubmitCommentsRequest extends Message<SubmitCommentsRequest> {
+export class SubmitCommentRequest extends Message<SubmitCommentRequest> {
   /**
    * @generated from field: string username = 1;
    */
@@ -1562,13 +1562,13 @@ export class SubmitCommentsRequest extends Message<SubmitCommentsRequest> {
    */
   quote = "";
 
-  constructor(data?: PartialMessage<SubmitCommentsRequest>) {
+  constructor(data?: PartialMessage<SubmitCommentRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "xctf.SubmitCommentsRequest";
+  static readonly typeName = "xctf.SubmitCommentRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "id", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
@@ -1577,20 +1577,149 @@ export class SubmitCommentsRequest extends Message<SubmitCommentsRequest> {
     { no: 5, name: "quote", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SubmitCommentsRequest {
-    return new SubmitCommentsRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SubmitCommentRequest {
+    return new SubmitCommentRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SubmitCommentsRequest {
-    return new SubmitCommentsRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SubmitCommentRequest {
+    return new SubmitCommentRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SubmitCommentsRequest {
-    return new SubmitCommentsRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SubmitCommentRequest {
+    return new SubmitCommentRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: SubmitCommentsRequest | PlainMessage<SubmitCommentsRequest> | undefined, b: SubmitCommentsRequest | PlainMessage<SubmitCommentsRequest> | undefined): boolean {
-    return proto3.util.equals(SubmitCommentsRequest, a, b);
+  static equals(a: SubmitCommentRequest | PlainMessage<SubmitCommentRequest> | undefined, b: SubmitCommentRequest | PlainMessage<SubmitCommentRequest> | undefined): boolean {
+    return proto3.util.equals(SubmitCommentRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.GetCommentsRequest
+ */
+export class GetCommentsRequest extends Message<GetCommentsRequest> {
+  /**
+   * @generated from field: string username = 1;
+   */
+  username = "";
+
+  constructor(data?: PartialMessage<GetCommentsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.GetCommentsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetCommentsRequest {
+    return new GetCommentsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetCommentsRequest {
+    return new GetCommentsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetCommentsRequest {
+    return new GetCommentsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetCommentsRequest | PlainMessage<GetCommentsRequest> | undefined, b: GetCommentsRequest | PlainMessage<GetCommentsRequest> | undefined): boolean {
+    return proto3.util.equals(GetCommentsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.Comment
+ */
+export class Comment extends Message<Comment> {
+  /**
+   * @generated from field: uint32 id = 2;
+   */
+  id = 0;
+
+  /**
+   * @generated from field: string content = 3;
+   */
+  content = "";
+
+  /**
+   * @generated from field: repeated xctf.HighlightArea areas = 4;
+   */
+  areas: HighlightArea[] = [];
+
+  /**
+   * @generated from field: string quote = 5;
+   */
+  quote = "";
+
+  constructor(data?: PartialMessage<Comment>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.Comment";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 2, name: "id", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 3, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "areas", kind: "message", T: HighlightArea, repeated: true },
+    { no: 5, name: "quote", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Comment {
+    return new Comment().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Comment {
+    return new Comment().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Comment {
+    return new Comment().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Comment | PlainMessage<Comment> | undefined, b: Comment | PlainMessage<Comment> | undefined): boolean {
+    return proto3.util.equals(Comment, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.GetCommentsResponse
+ */
+export class GetCommentsResponse extends Message<GetCommentsResponse> {
+  /**
+   * @generated from field: repeated xctf.Comment comments = 1;
+   */
+  comments: Comment[] = [];
+
+  constructor(data?: PartialMessage<GetCommentsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.GetCommentsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "comments", kind: "message", T: Comment, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetCommentsResponse {
+    return new GetCommentsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetCommentsResponse {
+    return new GetCommentsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetCommentsResponse {
+    return new GetCommentsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetCommentsResponse | PlainMessage<GetCommentsResponse> | undefined, b: GetCommentsResponse | PlainMessage<GetCommentsResponse> | undefined): boolean {
+    return proto3.util.equals(GetCommentsResponse, a, b);
   }
 }
 

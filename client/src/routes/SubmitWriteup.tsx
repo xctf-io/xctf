@@ -7,13 +7,16 @@ import { Button, Text, Link, useTheme, theme } from "@nextui-org/react";
 
 const SubmitWriteup = () => {
 	const [user, setUser, logout] = useUser();
-	const isAdmin = user?.type === "admin";
 	const [file, setFile] = useState<File>();
 	const { type, isDark } = useTheme();
 
 	async function uploadWriteup() {
-        if (file.type !== "application/pdf" && file.type !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && file.type !== "application/msword") {
-            createErrorToast("File must be a PDF or Word Doc!", isDark);
+		if (!file) {
+			createErrorToast("No file selected!", isDark);
+			return;
+		}
+        if (file.type !== "application/pdf") {
+            createErrorToast("File must be a PDF!", isDark);
             setFile(undefined);
             return;
         }
@@ -22,17 +25,17 @@ const SubmitWriteup = () => {
 		reader.onload = async () => {
 			try {
 				const fileData = reader.result as string;
-				const res = await ctfg.submitWriteup({
+				await ctfg.submitWriteup({
 					content: fileData,
 				});
 				setFile(undefined);
 				createSuccessToast("Submitted writeup!", isDark);
-			} catch (err) {
+			} catch (err: any) {
 				createErrorToast(err, isDark);
 			}
 		};
 		reader.onerror = (error) => {
-			createErrorToast(error, isDark);
+			createErrorToast(String(error), isDark);
 		};
 	}
 	const inputRef = React.useRef(null);
@@ -51,6 +54,7 @@ const SubmitWriteup = () => {
 				type="file"
 				onChange={(e) => {
 					e.preventDefault();
+					if(!e.target.files) return;
 					if (e.target.files.length === 0) return;
 					setFile(e.target.files[0]);
 				}}

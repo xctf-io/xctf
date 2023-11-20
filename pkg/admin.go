@@ -133,18 +133,62 @@ func (s *Admin) SubmitGrade(ctx context.Context, request *connect.Request[xctf.S
 	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func (s *Admin) SubmitComments(ctx context.Context, request *connect.Request[xctf.SubmitCommentsRequest]) (*connect.Response[xctf.Empty], error) {
-	var user models.User
-	resp := s.db.Where(&models.User{Username: request.Msg.Username}).First(&user)
-	if resp.Error != nil {
-		return nil, resp.Error
+func (s *Admin) SubmitComment(ctx context.Context, request *connect.Request[xctf.SubmitCommentRequest]) (*connect.Response[xctf.Empty], error) {
+	areas := []models.HighlightArea{}
+	for _, area := range request.Msg.Areas {
+		areas = append(areas, models.HighlightArea{
+			Height:    area.Height,
+			Width:     area.Width,
+			PageIndex: area.PageIndex,
+			Top:       area.Top,
+			Left:      area.Left,
+		})
 	}
-	user.Comments = request.Msg.Content
-	resp = s.db.Save(&user)
+	comment := models.Comment{
+		Username: request.Msg.Username,
+		Id:	   request.Msg.Id,
+		Content:  request.Msg.Content,
+		Areas:    areas,
+		Quote:    request.Msg.Quote,
+	}
+
+	resp := s.db.Save(&comment)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
 	return connect.NewResponse(&xctf.Empty{}), nil
+}
+
+func (s *Admin) GetComments(ctx context.Context, request *connect.Request[xctf.GetCommentsRequest]) (*connect.Response[xctf.GetCommentsResponse], error) {
+	var comments []models.Comment
+	resp := s.db.Where(&models.Comment{Username: request.Msg.Username}).Find(&comments)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+
+	var responseComments []*xctf.Comment
+	for _, comment := range comments {
+		var areas []*xctf.HighlightArea
+		for _, area := range comment.Areas {
+			areas = append(areas, &xctf.HighlightArea{
+				Height:    area.Height,
+				Width:     area.Width,
+				PageIndex: area.PageIndex,
+				Top:       area.Top,
+				Left:      area.Left,
+			})
+		}
+		responseComments = append(responseComments, &xctf.Comment{
+			Id:       comment.Id,
+			Content:  comment.Content,
+			Areas:    areas,
+			Quote:    comment.Quote,
+		})
+	}
+
+	return connect.NewResponse(&xctf.GetCommentsResponse{
+		Comments: responseComments,
+	}), nil
 }
 
 func (s *Admin) GetUserGraph(ctx context.Context, request *connect.Request[xctf.GetUserGraphRequest]) (*connect.Response[xctf.GetUserGraphResponse], error) {

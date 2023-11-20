@@ -76,8 +76,10 @@ const (
 	AdminGetWriteupProcedure = "/xctf.Admin/GetWriteup"
 	// AdminSubmitGradeProcedure is the fully-qualified name of the Admin's SubmitGrade RPC.
 	AdminSubmitGradeProcedure = "/xctf.Admin/SubmitGrade"
-	// AdminSubmitCommentsProcedure is the fully-qualified name of the Admin's SubmitComments RPC.
-	AdminSubmitCommentsProcedure = "/xctf.Admin/SubmitComments"
+	// AdminSubmitCommentProcedure is the fully-qualified name of the Admin's SubmitComment RPC.
+	AdminSubmitCommentProcedure = "/xctf.Admin/SubmitComment"
+	// AdminGetCommentsProcedure is the fully-qualified name of the Admin's GetComments RPC.
+	AdminGetCommentsProcedure = "/xctf.Admin/GetComments"
 	// AdminGetUserGraphProcedure is the fully-qualified name of the Admin's GetUserGraph RPC.
 	AdminGetUserGraphProcedure = "/xctf.Admin/GetUserGraph"
 )
@@ -421,7 +423,8 @@ type AdminClient interface {
 	SetHomePage(context.Context, *connect_go.Request[xctf.SetHomePageRequest]) (*connect_go.Response[xctf.Empty], error)
 	GetWriteup(context.Context, *connect_go.Request[xctf.GetWriteupRequest]) (*connect_go.Response[xctf.GetWriteupResponse], error)
 	SubmitGrade(context.Context, *connect_go.Request[xctf.SubmitGradeRequest]) (*connect_go.Response[xctf.Empty], error)
-	SubmitComments(context.Context, *connect_go.Request[xctf.SubmitCommentsRequest]) (*connect_go.Response[xctf.Empty], error)
+	SubmitComment(context.Context, *connect_go.Request[xctf.SubmitCommentRequest]) (*connect_go.Response[xctf.Empty], error)
+	GetComments(context.Context, *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error)
 	GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error)
 }
 
@@ -470,9 +473,14 @@ func NewAdminClient(httpClient connect_go.HTTPClient, baseURL string, opts ...co
 			baseURL+AdminSubmitGradeProcedure,
 			opts...,
 		),
-		submitComments: connect_go.NewClient[xctf.SubmitCommentsRequest, xctf.Empty](
+		submitComment: connect_go.NewClient[xctf.SubmitCommentRequest, xctf.Empty](
 			httpClient,
-			baseURL+AdminSubmitCommentsProcedure,
+			baseURL+AdminSubmitCommentProcedure,
+			opts...,
+		),
+		getComments: connect_go.NewClient[xctf.GetCommentsRequest, xctf.GetCommentsResponse](
+			httpClient,
+			baseURL+AdminGetCommentsProcedure,
 			opts...,
 		),
 		getUserGraph: connect_go.NewClient[xctf.GetUserGraphRequest, xctf.GetUserGraphResponse](
@@ -492,7 +500,8 @@ type adminClient struct {
 	setHomePage      *connect_go.Client[xctf.SetHomePageRequest, xctf.Empty]
 	getWriteup       *connect_go.Client[xctf.GetWriteupRequest, xctf.GetWriteupResponse]
 	submitGrade      *connect_go.Client[xctf.SubmitGradeRequest, xctf.Empty]
-	submitComments   *connect_go.Client[xctf.SubmitCommentsRequest, xctf.Empty]
+	submitComment    *connect_go.Client[xctf.SubmitCommentRequest, xctf.Empty]
+	getComments      *connect_go.Client[xctf.GetCommentsRequest, xctf.GetCommentsResponse]
 	getUserGraph     *connect_go.Client[xctf.GetUserGraphRequest, xctf.GetUserGraphResponse]
 }
 
@@ -531,9 +540,14 @@ func (c *adminClient) SubmitGrade(ctx context.Context, req *connect_go.Request[x
 	return c.submitGrade.CallUnary(ctx, req)
 }
 
-// SubmitComments calls xctf.Admin.SubmitComments.
-func (c *adminClient) SubmitComments(ctx context.Context, req *connect_go.Request[xctf.SubmitCommentsRequest]) (*connect_go.Response[xctf.Empty], error) {
-	return c.submitComments.CallUnary(ctx, req)
+// SubmitComment calls xctf.Admin.SubmitComment.
+func (c *adminClient) SubmitComment(ctx context.Context, req *connect_go.Request[xctf.SubmitCommentRequest]) (*connect_go.Response[xctf.Empty], error) {
+	return c.submitComment.CallUnary(ctx, req)
+}
+
+// GetComments calls xctf.Admin.GetComments.
+func (c *adminClient) GetComments(ctx context.Context, req *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error) {
+	return c.getComments.CallUnary(ctx, req)
 }
 
 // GetUserGraph calls xctf.Admin.GetUserGraph.
@@ -550,7 +564,8 @@ type AdminHandler interface {
 	SetHomePage(context.Context, *connect_go.Request[xctf.SetHomePageRequest]) (*connect_go.Response[xctf.Empty], error)
 	GetWriteup(context.Context, *connect_go.Request[xctf.GetWriteupRequest]) (*connect_go.Response[xctf.GetWriteupResponse], error)
 	SubmitGrade(context.Context, *connect_go.Request[xctf.SubmitGradeRequest]) (*connect_go.Response[xctf.Empty], error)
-	SubmitComments(context.Context, *connect_go.Request[xctf.SubmitCommentsRequest]) (*connect_go.Response[xctf.Empty], error)
+	SubmitComment(context.Context, *connect_go.Request[xctf.SubmitCommentRequest]) (*connect_go.Response[xctf.Empty], error)
+	GetComments(context.Context, *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error)
 	GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error)
 }
 
@@ -595,9 +610,14 @@ func NewAdminHandler(svc AdminHandler, opts ...connect_go.HandlerOption) (string
 		svc.SubmitGrade,
 		opts...,
 	)
-	adminSubmitCommentsHandler := connect_go.NewUnaryHandler(
-		AdminSubmitCommentsProcedure,
-		svc.SubmitComments,
+	adminSubmitCommentHandler := connect_go.NewUnaryHandler(
+		AdminSubmitCommentProcedure,
+		svc.SubmitComment,
+		opts...,
+	)
+	adminGetCommentsHandler := connect_go.NewUnaryHandler(
+		AdminGetCommentsProcedure,
+		svc.GetComments,
 		opts...,
 	)
 	adminGetUserGraphHandler := connect_go.NewUnaryHandler(
@@ -621,8 +641,10 @@ func NewAdminHandler(svc AdminHandler, opts ...connect_go.HandlerOption) (string
 			adminGetWriteupHandler.ServeHTTP(w, r)
 		case AdminSubmitGradeProcedure:
 			adminSubmitGradeHandler.ServeHTTP(w, r)
-		case AdminSubmitCommentsProcedure:
-			adminSubmitCommentsHandler.ServeHTTP(w, r)
+		case AdminSubmitCommentProcedure:
+			adminSubmitCommentHandler.ServeHTTP(w, r)
+		case AdminGetCommentsProcedure:
+			adminGetCommentsHandler.ServeHTTP(w, r)
 		case AdminGetUserGraphProcedure:
 			adminGetUserGraphHandler.ServeHTTP(w, r)
 		default:
@@ -662,8 +684,12 @@ func (UnimplementedAdminHandler) SubmitGrade(context.Context, *connect_go.Reques
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.SubmitGrade is not implemented"))
 }
 
-func (UnimplementedAdminHandler) SubmitComments(context.Context, *connect_go.Request[xctf.SubmitCommentsRequest]) (*connect_go.Response[xctf.Empty], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.SubmitComments is not implemented"))
+func (UnimplementedAdminHandler) SubmitComment(context.Context, *connect_go.Request[xctf.SubmitCommentRequest]) (*connect_go.Response[xctf.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.SubmitComment is not implemented"))
+}
+
+func (UnimplementedAdminHandler) GetComments(context.Context, *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.GetComments is not implemented"))
 }
 
 func (UnimplementedAdminHandler) GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error) {

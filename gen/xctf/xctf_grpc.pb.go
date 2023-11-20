@@ -509,7 +509,8 @@ type AdminClient interface {
 	SetHomePage(ctx context.Context, in *SetHomePageRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetWriteup(ctx context.Context, in *GetWriteupRequest, opts ...grpc.CallOption) (*GetWriteupResponse, error)
 	SubmitGrade(ctx context.Context, in *SubmitGradeRequest, opts ...grpc.CallOption) (*Empty, error)
-	SubmitComments(ctx context.Context, in *SubmitCommentsRequest, opts ...grpc.CallOption) (*Empty, error)
+	SubmitComment(ctx context.Context, in *SubmitCommentRequest, opts ...grpc.CallOption) (*Empty, error)
+	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
 	GetUserGraph(ctx context.Context, in *GetUserGraphRequest, opts ...grpc.CallOption) (*GetUserGraphResponse, error)
 }
 
@@ -584,9 +585,18 @@ func (c *adminClient) SubmitGrade(ctx context.Context, in *SubmitGradeRequest, o
 	return out, nil
 }
 
-func (c *adminClient) SubmitComments(ctx context.Context, in *SubmitCommentsRequest, opts ...grpc.CallOption) (*Empty, error) {
+func (c *adminClient) SubmitComment(ctx context.Context, in *SubmitCommentRequest, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/xctf.Admin/SubmitComments", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/xctf.Admin/SubmitComment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error) {
+	out := new(GetCommentsResponse)
+	err := c.cc.Invoke(ctx, "/xctf.Admin/GetComments", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -613,7 +623,8 @@ type AdminServer interface {
 	SetHomePage(context.Context, *SetHomePageRequest) (*Empty, error)
 	GetWriteup(context.Context, *GetWriteupRequest) (*GetWriteupResponse, error)
 	SubmitGrade(context.Context, *SubmitGradeRequest) (*Empty, error)
-	SubmitComments(context.Context, *SubmitCommentsRequest) (*Empty, error)
+	SubmitComment(context.Context, *SubmitCommentRequest) (*Empty, error)
+	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
 	GetUserGraph(context.Context, *GetUserGraphRequest) (*GetUserGraphResponse, error)
 }
 
@@ -642,8 +653,11 @@ func (UnimplementedAdminServer) GetWriteup(context.Context, *GetWriteupRequest) 
 func (UnimplementedAdminServer) SubmitGrade(context.Context, *SubmitGradeRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitGrade not implemented")
 }
-func (UnimplementedAdminServer) SubmitComments(context.Context, *SubmitCommentsRequest) (*Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubmitComments not implemented")
+func (UnimplementedAdminServer) SubmitComment(context.Context, *SubmitCommentRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitComment not implemented")
+}
+func (UnimplementedAdminServer) GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetComments not implemented")
 }
 func (UnimplementedAdminServer) GetUserGraph(context.Context, *GetUserGraphRequest) (*GetUserGraphResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserGraph not implemented")
@@ -786,20 +800,38 @@ func _Admin_SubmitGrade_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Admin_SubmitComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubmitCommentsRequest)
+func _Admin_SubmitComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitCommentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminServer).SubmitComments(ctx, in)
+		return srv.(AdminServer).SubmitComment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/xctf.Admin/SubmitComments",
+		FullMethod: "/xctf.Admin/SubmitComment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).SubmitComments(ctx, req.(*SubmitCommentsRequest))
+		return srv.(AdminServer).SubmitComment(ctx, req.(*SubmitCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_GetComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetComments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Admin/GetComments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetComments(ctx, req.(*GetCommentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -858,8 +890,12 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Admin_SubmitGrade_Handler,
 		},
 		{
-			MethodName: "SubmitComments",
-			Handler:    _Admin_SubmitComments_Handler,
+			MethodName: "SubmitComment",
+			Handler:    _Admin_SubmitComment_Handler,
+		},
+		{
+			MethodName: "GetComments",
+			Handler:    _Admin_GetComments_Handler,
 		},
 		{
 			MethodName: "GetUserGraph",

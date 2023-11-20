@@ -31,8 +31,8 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 	const { type, isDark } = useTheme();
 
 	return (
-		<Navbar className="w-screen" variant="sticky" maxWidth="fluid">
-			<Navbar.Brand>
+		<Navbar className="w-screen relative" variant="sticky" maxWidth="fluid">
+			<Navbar.Brand className="w-32">
 				<GiFlyingFlag className="ml-2 mr-2 w-10 h-10" />
 				<Text b color="inherit" className="text-2xl">
 					CTFg
@@ -64,9 +64,9 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 					}
 				})}
 			</Navbar.Content>
-			<Navbar.Content enableCursorHighlight hideIn="xs">
+			<Navbar.Content enableCursorHighlight hideIn="xs" className="w-32">
 				<Navbar.Link
-					className="justify-self-right"
+					className={user ? "ml-8" : "ml-24"}
 					onPress={toggle}
 					key="toggle"
 				>

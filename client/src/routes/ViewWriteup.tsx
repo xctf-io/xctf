@@ -47,6 +47,7 @@ import ReactFlow, {
 	Background,
 	Controls,
 	MarkerType,
+	NodeChange,
 	applyNodeChanges,
 } from "reactflow";
 
@@ -111,6 +112,13 @@ const ViewWriteup = () => {
 					quote: props.selectedText,
 				};
 				setNotes(notes.concat([note]));
+				ctfgAdmin.submitComments({
+					username: name,
+					id: note.id,
+					content: note.content,
+					areas: note.highlightAreas,
+					quote: note.quote,
+				});
 				props.cancel();
 			}
 		};
@@ -160,9 +168,10 @@ const ViewWriteup = () => {
 		activateTab(3);
 		const notesContainer = notesContainerRef.current;
 		if (noteEles.has(note.id) && notesContainer) {
-			notesContainer.scrollTop = noteEles
-				.get(note.id)
-				.getBoundingClientRect().top;
+			const scrollTop = noteEles?.get(note.id)?.getBoundingClientRect().top;
+			if (scrollTop) {
+				notesContainer.scrollTop = scrollTop;
+			}
 		}
 	};
 
@@ -240,7 +249,7 @@ const ViewWriteup = () => {
 								textAlign: "justify",
 							}}
 						>
-							{note.quote}
+							{note.quote.substring(0, 25)}...
 						</blockquote>
 						{note.content}
 					</div>
@@ -392,7 +401,7 @@ const ViewWriteup = () => {
 			const [nodes, edges] = getLayoutedElements(tempNodes, tempEdges);
 			setNodes(nodes);
 			setEdges(edges);
-		} catch (e) {
+		} catch (e: any) {
 			createErrorToast(e, isDark);
 		}
 	}
@@ -405,7 +414,7 @@ const ViewWriteup = () => {
 
 	const [nodes, setNodes] = useState();
 	const onNodesChange = useCallback(
-		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		(changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
 		[]
 	);
 	const [edges, setEdges] = useState();

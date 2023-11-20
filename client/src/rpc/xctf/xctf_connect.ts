@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CurrentUserRequest, CurrentUserResponse, DeleteChallengeRequest, Empty, ForgotPasswordRequest, GetAllChallengesRequest, GetAllChallengesResponse, GetDiscoveredEvidenceRequest, GetDiscoveredEvidenceResponse, GetHomePageRequest, GetHomePageResponse, GetTeamsProgressRequest, GetTeamsProgressResponse, GetUserGraphRequest, GetUserGraphResponse, GetWriteupRequest, GetWriteupResponse, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, SetHomePageRequest, SubmitCommentsRequest, SubmitEvidenceConnectionRequest, SubmitEvidenceConnectionResponse, SubmitEvidenceReportRequest, SubmitEvidenceRequest, SubmitEvidenceResponse, SubmitFlagRequest, SubmitFlagResponse, SubmitGradeRequest, SubmitWriteupRequest, UpsertChallengeRequest } from "./xctf_pb.js";
+import { CurrentUserRequest, CurrentUserResponse, DeleteChallengeRequest, Empty, ForgotPasswordRequest, GetAllChallengesRequest, GetAllChallengesResponse, GetCommentsRequest, GetCommentsResponse, GetDiscoveredEvidenceRequest, GetDiscoveredEvidenceResponse, GetHomePageRequest, GetHomePageResponse, GetTeamsProgressRequest, GetTeamsProgressResponse, GetUserGraphRequest, GetUserGraphResponse, GetWriteupRequest, GetWriteupResponse, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, SetHomePageRequest, SubmitCommentRequest, SubmitEvidenceConnectionRequest, SubmitEvidenceConnectionResponse, SubmitEvidenceReportRequest, SubmitEvidenceRequest, SubmitEvidenceResponse, SubmitFlagRequest, SubmitFlagResponse, SubmitGradeRequest, SubmitWriteupRequest, UpsertChallengeRequest } from "./xctf_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -193,12 +193,21 @@ export const Admin = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc xctf.Admin.SubmitComments
+     * @generated from rpc xctf.Admin.SubmitComment
      */
-    submitComments: {
-      name: "SubmitComments",
-      I: SubmitCommentsRequest,
+    submitComment: {
+      name: "SubmitComment",
+      I: SubmitCommentRequest,
       O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc xctf.Admin.GetComments
+     */
+    getComments: {
+      name: "GetComments",
+      I: GetCommentsRequest,
+      O: GetCommentsResponse,
       kind: MethodKind.Unary,
     },
     /**

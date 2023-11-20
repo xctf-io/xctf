@@ -29,7 +29,8 @@ service Admin {
   rpc SetHomePage(SetHomePageRequest) returns (Empty);
   rpc GetWriteup(GetWriteupRequest) returns (GetWriteupResponse);
   rpc SubmitGrade(SubmitGradeRequest) returns (Empty);
-  rpc SubmitComments(SubmitCommentsRequest) returns (Empty);
+  rpc SubmitComment(SubmitCommentRequest) returns (Empty);
+  rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
   rpc GetUserGraph(GetUserGraphRequest) returns (GetUserGraphResponse);
 }
 
@@ -195,12 +196,27 @@ message HighlightArea {
   int32 left = 5;
 }
 
-message SubmitCommentsRequest {
+message SubmitCommentRequest {
   string username = 1;
   uint32 id = 2;
   string content = 3;
   repeated HighlightArea areas = 4;
   string quote = 5;
+}
+
+message GetCommentsRequest {
+  string username = 1;
+}
+
+message Comment {
+  uint32 id = 2;
+  string content = 3;
+  repeated HighlightArea areas = 4;
+  string quote = 5;
+}
+
+message GetCommentsResponse {
+  repeated Comment comments = 1;
 }
 
 message GetUserGraphRequest {
