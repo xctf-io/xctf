@@ -154,10 +154,11 @@ function App() {
 	if (isAdmin) {
 		selectColor = isDarkMode? "#5C0523" : "#FF7377";
 	} 
+	const highlightStyle = { "--nextui-colors-selection": selectColor } as React.CSSProperties;
 
 	return (
 		<NextUIProvider theme={isDarkMode ? darkTheme : lightTheme}>
-			<main>
+			<main style={highlightStyle}>
 				<Router>
 					<Navbar links={links} />
 					<Routes>
