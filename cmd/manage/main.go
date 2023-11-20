@@ -1,44 +1,18 @@
 package main
 
 import (
-	"context"
 	"github.com/bufbuild/connect-go"
 	"github.com/rs/zerolog/log"
 	"github.com/xctf-io/xctf/gen/xctf"
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/twitchtv/twirp"
 	"github.com/urfave/cli/v2"
 )
-
-func cliLogin(cliCtx *cli.Context) (ctx context.Context, err error) {
-	url := cliCtx.String("url")
-	email := cliCtx.String("email")
-	password := cliCtx.String("password")
-
-	backend := xctfconnect.NewBackendClient(http.DefaultClient, url)
-
-	_, err = backend.Login(cliCtx.Context, connect.NewRequest(&xctf.LoginRequest{
-		Email:    email,
-		Password: password,
-	}))
-	if err != nil {
-		return cliCtx.Context, err
-	}
-
-	headers := http.Header{
-		//"session": []string{resp.Session},
-	}
-
-	ctx, err = twirp.WithHTTPRequestHeaders(cliCtx.Context, headers)
-	return
-}
 
 type Challenge struct {
 	Name string `yaml:"name"`
@@ -54,7 +28,7 @@ func crawlDir(dir string, cb func(chal Challenge) error) error {
 			return nil
 		}
 		if info.Name() == "chal.yaml" {
-			data, err := ioutil.ReadFile(path)
+			data, err := os.ReadFile(path)
 			if err != nil {
 				return err
 			}
