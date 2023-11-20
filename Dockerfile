@@ -14,7 +14,7 @@ WORKDIR /build/
 COPY . /build
 COPY --from=client /build/public/build /build/client/public/build
 
-RUN go build -o ctfg cmd/main.go
+RUN go build -o ctfg main.go
 
 FROM alpine
 
