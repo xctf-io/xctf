@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package kubes;
+
+service KubesService {
+  rpc ListDeployments(ListDeploymentsRequest) returns (ListDeploymentsResponse);
+  rpc NewDeployment(NewDeploymentRequest) returns (NewDeploymentResponse);
+}
+
+message ListDeploymentsRequest {
+  string namespace = 1;
+}
+
+message ListDeploymentsResponse {
+  repeated Deployment deployments = 1;
+}
+
+message NewDeploymentRequest {
+  string namespace = 1;
+  Deployment deployment = 2;
+  string name = 3;
+  int32 replicas = 4;
+  string image = 5;
+}
+
+message NewDeploymentResponse {
+  Deployment deployment = 1;
+}
+
+message Deployment {
+  string name = 1;
+  string namespace = 2;
+  string image = 3;
+  int32 replicas = 4;
+  string status = 5;
+}
