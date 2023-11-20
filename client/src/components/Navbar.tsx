@@ -29,9 +29,6 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 	const themeColor = isAdmin ? "error" : "primary";
 	const { toggle } = useDarkMode(false);
 	const { type, isDark } = useTheme();
-	const translate = userLoggedIn
-		? "-translate-x-[15px]"
-		: "-translate-x-[49px]";
 
 	return (
 		<Navbar className="w-screen" variant="sticky" maxWidth="fluid">
@@ -45,7 +42,6 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 				hideIn="xs"
 				enableCursorHighlight
 				variant="underline"
-				className={"absolute " + translate}
 				activeColor={themeColor}
 			>
 				{links.map((l) => {

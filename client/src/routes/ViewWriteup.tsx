@@ -528,9 +528,9 @@ const ViewWriteup = () => {
 					/>
 					<Select
 						defaultValue={{ value: name, label: name }}
-						onChange={(e) => window.location.replace(`/view/${e.value}`)}
+						onChange={(e) => window.location.replace(`/view/${e?.value}`)}
 						options={teams.map((t) => ({ value: t.name, label: t.name }))}
-						className="w-80 mx-1"
+						className="w-64 mx-1"
 						styles={{
 							control: (provided, state) => ({
 								...provided,
@@ -578,7 +578,7 @@ const ViewWriteup = () => {
 									<>
 										<p className="text-3xl font-bold text-center mb-1">Grade</p>
 										<div
-											className="h-56"
+											className="h-52"
 											style={{
 												marginBottom: isEditing ? "20px" : "8px",
 											}}
@@ -653,7 +653,7 @@ const ViewWriteup = () => {
 							</div>
 							<div>
 								<p className="text-3xl font-bold text-center mb-1">Flags</p>
-								<div className="h-64 mb-2">
+								<div className="h-52 mb-2">
 									<Pie data={chartData} />
 								</div>
 								<p className="text-lg font-thin text-center">
