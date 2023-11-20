@@ -1477,12 +1477,12 @@ export class SubmitGradeRequest extends Message<SubmitGradeRequest> {
  */
 export class HighlightArea extends Message<HighlightArea> {
   /**
-   * @generated from field: int32 height = 1;
+   * @generated from field: float height = 1;
    */
   height = 0;
 
   /**
-   * @generated from field: int32 width = 2;
+   * @generated from field: float width = 2;
    */
   width = 0;
 
@@ -1492,12 +1492,12 @@ export class HighlightArea extends Message<HighlightArea> {
   pageIndex = 0;
 
   /**
-   * @generated from field: int32 top = 4;
+   * @generated from field: float top = 4;
    */
   top = 0;
 
   /**
-   * @generated from field: int32 left = 5;
+   * @generated from field: float left = 5;
    */
   left = 0;
 
@@ -1509,11 +1509,11 @@ export class HighlightArea extends Message<HighlightArea> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "xctf.HighlightArea";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "height", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 2, name: "width", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 1, name: "height", kind: "scalar", T: 2 /* ScalarType.FLOAT */ },
+    { no: 2, name: "width", kind: "scalar", T: 2 /* ScalarType.FLOAT */ },
     { no: 3, name: "pageIndex", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
-    { no: 4, name: "top", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 5, name: "left", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 4, name: "top", kind: "scalar", T: 2 /* ScalarType.FLOAT */ },
+    { no: 5, name: "left", kind: "scalar", T: 2 /* ScalarType.FLOAT */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): HighlightArea {

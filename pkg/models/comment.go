@@ -5,17 +5,18 @@ import "gorm.io/gorm"
 type Comment struct {
 	gorm.Model
 	Username string
-	Id uint32 `gorm:"uniqueIndex"`
+	Id uint32 `gorm:"uniqueIndex;primaryKey"`
 	Content string
-	Areas []HighlightArea
+	Areas []HighlightArea `gorm:"foreignKey:CommentId;references:Id"`
 	Quote string
 }
 
 type HighlightArea struct {
 	gorm.Model
-	Height int32
-	Width int32
+	CommentId uint32
+	Height float32
+	Width float32
 	PageIndex uint32
-	Top int32
-	Left int32
+	Top float32
+	Left float32
 }

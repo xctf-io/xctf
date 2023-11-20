@@ -40,6 +40,8 @@ func Migrate(db *gorm.DB) {
 		&models.Page{},
 		&models.HomePage{},
 		&models.Writeup{},
+		&models.Comment{},
+		&models.HighlightArea{},
 	}
 
 	for _, model := range modelsToMigrate {

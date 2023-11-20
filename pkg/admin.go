@@ -137,6 +137,7 @@ func (s *Admin) SubmitComment(ctx context.Context, request *connect.Request[xctf
 	areas := []models.HighlightArea{}
 	for _, area := range request.Msg.Areas {
 		areas = append(areas, models.HighlightArea{
+			CommentId: request.Msg.Id,
 			Height:    area.Height,
 			Width:     area.Width,
 			PageIndex: area.PageIndex,

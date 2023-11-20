@@ -189,11 +189,11 @@ message SubmitGradeRequest {
 }
 
 message HighlightArea {
-  int32 height = 1;
-  int32 width = 2;
+  float height = 1;
+  float width = 2;
   uint32 pageIndex = 3;
-  int32 top = 4;
-  int32 left = 5;
+  float top = 4;
+  float left = 5;
 }
 
 message SubmitCommentRequest {
