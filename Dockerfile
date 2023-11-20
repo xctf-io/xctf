@@ -5,7 +5,7 @@ RUN apk add git
 COPY client /build
 WORKDIR /build
 
-RUN yarn && yarn run build
+RUN npm i && npm run build
 
 FROM golang:alpine as server
 
