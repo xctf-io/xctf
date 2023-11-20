@@ -11,9 +11,10 @@ import {
 	Avatar,
 
 } from "@nextui-org/react";
-import { useDarkMode } from 'usehooks-ts'
+import {Link as RouterLink, useLocation, useNavigate} from 'react-router-dom';
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { GiFlyingFlag } from "react-icons/gi";
+import { useDarkMode } from "usehooks-ts";
 import {Link as RouterLink, useLocation, useNavigate} from 'react-router-dom';
 
 interface NavbarProps {
@@ -29,12 +30,15 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 	const isAdmin = user?.type === "admin";
 	const themeHexColor = isAdmin ? "DF3562" : "3070ED";
 	const themeColor = isAdmin ? "error" : "primary";
-	const { toggle } = useDarkMode(false);
+	const {toggle} = useDarkMode(false);
 	const { type, isDark } = useTheme();
+	const translate = userLoggedIn
+		? "-translate-x-[15px]"
+		: "-translate-x-[49px]";
 
 	return (
-		<Navbar className="w-screen relative" variant="sticky" maxWidth="fluid">
-			<Navbar.Brand className="w-32">
+		<Navbar className="w-screen" variant="sticky" maxWidth="fluid">
+			<Navbar.Brand>
 				<GiFlyingFlag className="ml-2 mr-2 w-10 h-10" />
 				<Text b color="inherit" className="text-2xl">
 					CTFg
@@ -44,6 +48,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 				hideIn="xs"
 				enableCursorHighlight
 				variant="underline"
+				className={"absolute " + translate}
 				activeColor={themeColor}
 			>
 				{links.map((l) => {
@@ -56,7 +61,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 							<Navbar.Item key={l.label} isActive={l.to === location.pathname}>
 								<Link
 									color="inherit"
-									onPress={() => navigate(l.to)}
+									onPress={() => updatePath(l.to)}
 									href={l.to}
 								>
 									{l.label}
@@ -66,9 +71,9 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 					}
 				})}
 			</Navbar.Content>
-			<Navbar.Content enableCursorHighlight hideIn="xs" className="w-32">
+			<Navbar.Content enableCursorHighlight hideIn="xs">
 				<Navbar.Link
-					className={user ? "ml-8" : "ml-24"}
+					className="justify-self-right"
 					onPress={toggle}
 					key="toggle"
 				>
@@ -135,10 +140,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<Navbar.CollapseItem key={l.label} isActive={l.to === location.pathname}>
+							<Navbar.CollapseItem key={l.label} isActive={l.to === path}>
 								<Link
 									color="inherit"
-									onPress={() => navigate(l.to)}
+									onPress={() => updatePath(l.to)}
 									href={l.to}
 								>
 									{l.label}

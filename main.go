@@ -1,5 +1,7 @@
 package main
 
+//go:generate npx buf generate proto
+
 import (
 	"context"
 	"fmt"
@@ -20,9 +22,24 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"github.com/protoflow-labs/protoflow/pkg/util/reload"
 	"github.com/twitchtv/twirp"
 	"github.com/urfave/cli/v2"
 )
+
+func liveReload() error {
+	// TODO breadchris makes this a config that can be set
+	c := reload.Config{
+		// TODO breadchris do not hardcode proxy url
+		Cmd: []string{"go", "run", "main.go", "--proxy", "http://localhost:8001"},
+		// ideally we use tilt here
+		Targets:  []string{"pkg", "gen"},
+		Patterns: []string{"**/*.go"},
+	}
+	slog.Debug("starting live reload", "config", fmt.Sprintf("%+v", c))
+	// TODO breadchris this code needs to be refactored to use observability
+	return reload.Reload(c)
+}
 
 func startHttpServer(httpApiHandler http.Handler) {
 	port := os.Getenv("PORT")
@@ -128,12 +145,29 @@ func crawlDir(dir string, cb func(chal Challenge) error) error {
 func main() {
 	app := &cli.App{
 		Name: "xctf",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:  "proxy",
+				Usage: "Proxy URL for the frontend. (The url the react app is reachable at.)",
+			},
+			&cli.BoolFlag{
+				Name:  "dev",
+				Usage: "Run in development mode.",
+			},
+		},
 		Action: func(c *cli.Context) error {
+			proxy := c.String("proxy")
+			dev := c.Bool("dev")
+
+			if dev {
+				return liveReload()
+			}
+
 			db := database.Connect()
 			database.Migrate(db)
 
 			//fsys := os.DirFS("client/public")
-			httpApiHandler := pkg.NewAPIHandler(public.Assets, db)
+			httpApiHandler := pkg.NewAPIHandler(public.Assets, db, proxy)
 
 			startHttpServer(h2c.NewHandler(corsMiddleware(httpApiHandler), &http2.Server{}))
 			return nil

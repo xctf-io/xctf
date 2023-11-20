@@ -13,6 +13,8 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"strings"
 )
@@ -33,7 +35,7 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 	return interceptor
 }
 
-func NewAPIHandler(assets fs.FS, db *gorm.DB) http.Handler {
+func NewAPIHandler(assets fs.FS, db *gorm.DB, proxyURL string) http.Handler {
 	muxRoot := http.NewServeMux()
 
 	interceptors := connect.WithInterceptors(NewLogInterceptor())
@@ -65,6 +67,13 @@ func NewAPIHandler(assets fs.FS, db *gorm.DB) http.Handler {
 	// most servers should mount both handlers.
 	muxRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
 
+	u, err := url.Parse(proxyURL)
+	if err != nil {
+		slog.Error("failed to parse proxy", "error", err)
+		return nil
+	}
+	proxy := httputil.NewSingleHostReverseProxy(u)
+
 	a := http.FS(assets)
 	httpFileServer := http.FileServer(a)
 	muxRoot.Handle("/", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
@@ -79,18 +88,21 @@ func NewAPIHandler(assets fs.FS, db *gorm.DB) http.Handler {
 			return
 		}
 
-		f, err := assets.Open(filePath)
-		if os.IsNotExist(err) {
-			r.URL.Path = "/"
+		if proxyURL != "" {
+			slog.Debug("proxying request", "path", r.URL.Path)
+			proxy.ServeHTTP(rw, r)
+		} else {
+			f, err := assets.Open(filePath)
+			if os.IsNotExist(err) {
+				r.URL.Path = "/"
+			}
+			if err == nil {
+				f.Close()
+			}
+			slog.Debug("serving file", "path", filePath)
+			httpFileServer.ServeHTTP(rw, r)
 		}
-
-		if err == nil {
-			f.Close()
-		}
-
-		log.Printf("%s - err: %v", r.URL.Path, err)
-
-		httpFileServer.ServeHTTP(rw, r)
+		return
 	}))
 	return store.LoadAndSave(muxRoot)
 }

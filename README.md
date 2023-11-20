@@ -21,14 +21,9 @@ CTFg is developed with:
 	- Reasoning: This was chosen because using react has the best libraries and support by the community. While we prefer other frameworks, React's ecosystem is simply unmatched. If you are not familiar with React, the [tutorial](https://react.dev/learn) should teach you all you need to know.
 
 ### Running Locally
-#### Live reloads
-To enable live reloads, install air by running the following command:
+#### Server
 ```
-go install github.com/cosmtrek/air@latest
-```
-Then run the following command:
-```
-air
+go run main.go --dev
 ```
 
 #### Web site
@@ -39,11 +34,6 @@ npm run dev
 Build the client for production:
 ```
 npm run build
-```
-
-#### Server
-```
-go run cmd/main.go
 ```
 
 ### Protoc Generation
