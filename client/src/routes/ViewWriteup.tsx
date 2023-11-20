@@ -112,7 +112,7 @@ const ViewWriteup = () => {
 					quote: props.selectedText,
 				};
 				setNotes(notes.concat([note]));
-				ctfgAdmin.submitComments({
+				ctfgAdmin.submitComment({
 					username: name,
 					id: note.id,
 					content: note.content,
