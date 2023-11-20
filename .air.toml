@@ -6,8 +6,7 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-pre_cmd = "npm run dev"
-cmd = "go build -o tmp/main cmd/main.go"
+cmd = "npm run dev && go build -o tmp/main cmd/main.go"
 # Array of commands to run after ^C
 # Binary file yields from `cmd`.
 bin = "tmp/main"
