@@ -11,7 +11,6 @@ import {
 	Avatar,
 
 } from "@nextui-org/react";
-import {Link as RouterLink, useLocation, useNavigate} from 'react-router-dom';
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { GiFlyingFlag } from "react-icons/gi";
 import { useDarkMode } from "usehooks-ts";
@@ -61,7 +60,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 							<Navbar.Item key={l.label} isActive={l.to === location.pathname}>
 								<Link
 									color="inherit"
-									onPress={() => updatePath(l.to)}
+									onPress={() => navigate(l.to)}
 									href={l.to}
 								>
 									{l.label}
@@ -140,10 +139,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<Navbar.CollapseItem key={l.label} isActive={l.to === path}>
+							<Navbar.CollapseItem key={l.label} isActive={l.to === location.pathname}>
 								<Link
 									color="inherit"
-									onPress={() => updatePath(l.to)}
+									onPress={() => navigate(l.to)}
 									href={l.to}
 								>
 									{l.label}
