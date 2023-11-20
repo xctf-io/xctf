@@ -76,7 +76,6 @@ const ViewWriteup = () => {
 	useEffect(() => {
 		async function getNotes() {
 			const storedNotes = await ctfgAdmin.getComments({ username: name });
-			console.log(storedNotes);
 			const notes = storedNotes.comments.map((n) => ({
 				id: n.id,
 				content: n.content,
@@ -227,10 +226,7 @@ const ViewWriteup = () => {
 	const sidebarNotes = (
 		<div
 			ref={notesContainerRef}
-			style={{
-				overflow: "auto",
-				width: "100%",
-			}}
+			className="w-full overflow-auto absolute"
 		>
 			{notes.length === 0 && (
 				<div style={{ textAlign: "center" }}>There is no note</div>
@@ -283,10 +279,10 @@ const ViewWriteup = () => {
 		...slot,
 		// These slots will be empty
 		SwitchTheme: () => <></>,
+		Open: () => <></>,
 	});
 	const defaultLayoutPluginInstance = defaultLayoutPlugin({
 		sidebarTabs: (defaultTabs) => [
-			defaultTabs[1],
 			{
 				content: sidebarNotes,
 				icon: <MessageIcon />,
@@ -597,7 +593,6 @@ const ViewWriteup = () => {
 									<>
 										<p className="text-3xl font-bold text-center mb-1">Grade</p>
 										<div
-											className="h-52"
 											style={{
 												marginBottom: isEditing ? "20px" : "8px",
 											}}
