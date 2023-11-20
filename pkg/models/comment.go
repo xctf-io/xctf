@@ -7,7 +7,6 @@ type Comment struct {
 	Username string
 	Id uint32 `gorm:"uniqueIndex;primaryKey"`
 	Content string
-	Areas []HighlightArea `gorm:"foreignKey:CommentId;references:Id"`
 	Quote string
 }
 

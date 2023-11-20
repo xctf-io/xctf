@@ -80,13 +80,7 @@ const ViewWriteup = () => {
 			const notes = storedNotes.comments.map((n) => ({
 				id: n.id,
 				content: n.content,
-				highlightAreas: n.areas.map((a) => ({
-					height: a.height,
-					width: a.width,
-					pageIndex: a.pageIndex,
-					top: a.top,
-					left: a.left,
-				})),
+				highlightAreas: n.areas,
 				quote: n.quote,
 			}));
 			setNotes(notes);

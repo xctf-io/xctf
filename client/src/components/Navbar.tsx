@@ -14,13 +14,15 @@ import {
 import { useDarkMode } from 'usehooks-ts'
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { GiFlyingFlag } from "react-icons/gi";
+import {Link as RouterLink, useLocation, useNavigate} from 'react-router-dom';
 
 interface NavbarProps {
 	links: NavLink[];
 }
 
 const NavbarComponent = ({ links }: NavbarProps) => {
-	const [path, updatePath] = useState(window.location.pathname);
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [user, setUser, logout] = useUser();
 
 	const userLoggedIn = !!user;
@@ -51,10 +53,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<Navbar.Item key={l.label} isActive={l.to === path}>
+							<Navbar.Item key={l.label} isActive={l.to === location.pathname}>
 								<Link
 									color="inherit"
-									onPress={() => updatePath(l.to)}
+									onPress={() => navigate(l.to)}
 									href={l.to}
 								>
 									{l.label}
@@ -133,10 +135,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<Navbar.CollapseItem key={l.label} isActive={l.to === path}>
+							<Navbar.CollapseItem key={l.label} isActive={l.to === location.pathname}>
 								<Link
 									color="inherit"
-									onPress={() => updatePath(l.to)}
+									onPress={() => navigate(l.to)}
 									href={l.to}
 								>
 									{l.label}
@@ -177,7 +179,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 									if (actionKey === "logout") {
 										logout();
 										document.location.href = "/login";
-										updatePath("/login");
+										navigate("/login");
 									}
 								}}
 								containerCss={{ border: "none" }}
