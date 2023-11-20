@@ -73,6 +73,27 @@ const ViewWriteup = () => {
 	const notesContainerRef = React.useRef<HTMLDivElement | null>(null);
 	let noteId = notes.length;
 
+	useEffect(() => {
+		async function getNotes() {
+			const storedNotes = await ctfgAdmin.getComments({ username: name });
+			console.log(storedNotes);
+			const notes = storedNotes.comments.map((n) => ({
+				id: n.id,
+				content: n.content,
+				highlightAreas: n.areas.map((a) => ({
+					height: a.height,
+					width: a.width,
+					pageIndex: a.pageIndex,
+					top: a.top,
+					left: a.left,
+				})),
+				quote: n.quote,
+			}));
+			setNotes(notes);
+		}
+		getNotes();
+	}, [notes]);
+
 	const noteEles: Map<number, HTMLElement> = new Map();
 
 	const renderHighlightTarget = (props: RenderHighlightTargetProps) => (
@@ -111,7 +132,6 @@ const ViewWriteup = () => {
 					highlightAreas: props.highlightAreas,
 					quote: props.selectedText,
 				};
-				setNotes(notes.concat([note]));
 				ctfgAdmin.submitComment({
 					username: name,
 					id: note.id,
@@ -119,6 +139,7 @@ const ViewWriteup = () => {
 					areas: note.highlightAreas,
 					quote: note.quote,
 				});
+				setNotes(notes.concat([note]));
 				props.cancel();
 			}
 		};
@@ -208,11 +229,6 @@ const ViewWriteup = () => {
 
 	const { jumpToHighlightArea } = highlightPluginInstance;
 
-	React.useEffect(() => {
-		return () => {
-			noteEles.clear();
-		};
-	}, []);
 
 	const sidebarNotes = (
 		<div
