@@ -6,11 +6,13 @@ import ReactFlow, {
 	Connection,
 	Controls,
 	Edge,
+	EdgeChange,
 	MarkerType,
 	NodeChange,
 	addEdge,
 	applyEdgeChanges,
 	applyNodeChanges,
+	Node
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {useState, useEffect, useRef, MutableRefObject} from "react";
@@ -31,13 +33,13 @@ import {
 	createErrorToast,
 	createCelebrateToast,
 } from "../store/user";
-import useDarkMode from "use-dark-mode";
+import { useDarkMode } from 'usehooks-ts'
 
 let evidence: string = "";
 let report: string = "";
 
 export default function MyComponent() {
-	const darkMode = useDarkMode(false);
+	const { isDarkMode } = useDarkMode(false)
 	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>(new GetDiscoveredEvidenceResponse({
 		report: "",
 		connections: [],
@@ -121,7 +123,7 @@ export default function MyComponent() {
 			setEdges(edges);
 			report = resp.report;
 		} catch (e: any) {
-			createErrorToast(e, darkMode.value);
+			createErrorToast(e, isDarkMode);
 		}
 	}
 
@@ -167,16 +169,16 @@ export default function MyComponent() {
 				console.log(resp);
 				loadDiscoveredEvidence().then(() => {
 					if (remove) {
-						createSuccessToast("Removed evidence!", darkMode.value);
+						createSuccessToast("Removed evidence!", isDarkMode);
 					} else if (submittingFlag) {
-						createCelebrateToast("You got a flag!", darkMode.value);
+						createCelebrateToast("You got a flag!", isDarkMode);
 					} else {
-						createSuccessToast("Submitted evidence!", darkMode.value);
+						createSuccessToast("Submitted evidence!", isDarkMode);
 					}
 				});
 			})
 			.catch((e) => {
-				createErrorToast(e.toString(), darkMode.value);
+				createErrorToast(e.toString(), isDarkMode);
 			});
 	}
 
@@ -190,14 +192,14 @@ export default function MyComponent() {
 			.then((resp) => {
 				loadDiscoveredEvidence().then(() => {
 					if (remove) {
-						createSuccessToast("Removed connection!", darkMode.value);
+						createSuccessToast("Removed connection!", isDarkMode);
 					} else {
-						createSuccessToast("Created connection!", darkMode.value);
+						createSuccessToast("Created connection!", isDarkMode);
 					}
 				});
 			})
 			.catch((e) => {
-				createErrorToast(e.toString(), darkMode.value);
+				createErrorToast(e.toString(), isDarkMode);
 			});
 	}
 
@@ -217,7 +219,7 @@ export default function MyComponent() {
 	}));
 	const [edges, setEdges] = useState(initialEdges);
 	const onEdgesChange = useCallback(
-		(changes: string | any[]) =>
+		(changes: EdgeChange[]) =>
 			setEdges((eds) => {
 				if (changes[0].type === "remove" && changes.length === 1) {
 					const ids = changes[0]["id"].split("-");
@@ -242,7 +244,7 @@ export default function MyComponent() {
 	);
 	const [deleteNode, setDeleteNode] = useState<Node>();
 	const onNodesDelete = useCallback(
-		(deleted) => {
+		(deleted: Node[]) => {
 			setVisible2(true);
 			setDeleteNode(deleted[0]);
 		},
@@ -369,7 +371,7 @@ export default function MyComponent() {
 							auto
 							onPress={() => {
 								closeHandler2();
-								const id = Number(deleteNode["id"]);
+								const id = Number(deleteNode?.id);
 								for (let i = 0; i < graph.evidence.length; i++) {
 									if (graph.evidence[i]["id"] === id) {
 										evidence = graph.evidence[i]["name"];

@@ -22,7 +22,14 @@ CTFg is developed with:
 
 ### Running Locally
 #### Live reloads
-TODO
+To enable live reloads, install air by running the following command:
+```
+go install github.com/cosmtrek/air@latest
+```
+Then run the following command:
+```
+air
+```
 
 #### Web site
 Build the client for development:
@@ -40,3 +47,6 @@ go run cmd/main.go
 ```
 
 ### Protoc Generation
+```
+go generate ./...
+```

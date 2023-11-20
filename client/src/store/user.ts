@@ -1,20 +1,20 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ctfg } from "../service";
 import { atomWithStorage } from "jotai/utils";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
 
-export const createSuccessToast = (success: string, isDark: boolean) => {
+export const createSuccessToast = (success: string, isDark: boolean | undefined) => {
 	const theme = isDark ? "dark" : "light";
 	toast.success(success, { theme: theme, autoClose: 2000 });
 };
 
-export const createErrorToast = (error: string, isDark: boolean) => {
+export const createErrorToast = (error: string, isDark: boolean | undefined) => {
 	const theme = isDark ? "dark" : "light";
 	toast.error(error, { theme: theme, autoClose: 2000 });
 };
 
-export const createCelebrateToast = (celebrate: string, isDark: boolean) => {
+export const createCelebrateToast = (celebrate: string, isDark: boolean | undefined) => {
 	const theme = isDark ? "dark" : "light";
 	toast(celebrate, { theme: theme, autoClose: 2000 });
 };
@@ -39,26 +39,21 @@ export const useUser = (): [
 	return [user, setUser, logout];
 };
 
-export const useAuthStatus = (): [
-	string | null,
-	(string) => void,
-	string | null,
-	(string) => void
-] => {
+export const useAuthStatus = () => {
 	const [success, setSuccess] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	return [success, setSuccess, error, setError];
 };
 
 export const useLogin = (): [
-	(email: string, password: string, isDark: boolean) => void,
-	string,
-	string
+	(email: string, password: string, isDark: boolean | undefined) => void,
+	string | Dispatch<SetStateAction<string | null>> | null,
+	string | Dispatch<SetStateAction<string | null>> | null
 ] => {
 	const [user, setUser] = useUser();
 	const [success, setSuccess, error, setError] = useAuthStatus();
 
-	const login = async (email: string, password: string, isDark: boolean) => {
+	const login = async (email: string, password: string, isDark: boolean | undefined) => {
 		try {
 			const resp = await ctfg.login({
 				email,
@@ -70,7 +65,7 @@ export const useLogin = (): [
 			});
 			console.log(resp.userRole)
 			createSuccessToast("Login success!", isDark);
-		} catch (e) {
+		} catch (e: any) {
 			createErrorToast(e.toString(), isDark);
 		}
 	};
@@ -78,9 +73,9 @@ export const useLogin = (): [
 };
 
 export const useRegister = (): [
-	(username: string, email: string, password: string, isDark: boolean) => void,
-	string,
-	string
+	(username: string, email: string, password: string, isDark: boolean | undefined) => Promise<boolean>,
+	string | Dispatch<SetStateAction<string | null>> | null,
+	string | Dispatch<SetStateAction<string | null>> | null
 ] => {
 	const [success, setSuccess, error, setError] = useAuthStatus();
 
@@ -88,7 +83,7 @@ export const useRegister = (): [
 		username: string,
 		email: string,
 		password: string,
-		isDark: boolean
+		isDark: boolean | undefined
 	) => {
 		try {
 			const resp = await ctfg.register({
@@ -98,7 +93,7 @@ export const useRegister = (): [
 			});
 			createSuccessToast("Registration success!", isDark);
 			return true
-		} catch (e) {
+		} catch (e: any) {
 			createErrorToast(e.toString(), isDark);
 			return false
 		}

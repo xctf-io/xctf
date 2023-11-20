@@ -18,7 +18,7 @@ import {
 	NavbarMenu,
 	NavbarMenuItem
 } from "@nextui-org/navbar";
-import useDarkMode from "use-dark-mode";
+import { useDarkMode } from 'usehooks-ts'
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { GiFlyingFlag } from "react-icons/gi";
 
@@ -35,7 +35,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 	const isAdmin = user?.type === "admin";
 	const themeHexColor = isAdmin ? "DF3562" : "3070ED";
 	const themeColor = isAdmin ? "error" : "primary";
-	const darkMode = useDarkMode(false);
+	const { toggle } = useDarkMode(false)
 	const { type, isDark } = useTheme();
 	const translate = userLoggedIn
 		? "-translate-x-[15px]"
@@ -61,8 +61,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						return (
 							<NavbarItem key={l.label} isActive={l.to === location.pathname}>
 								<Link
-									color="inherit"
-									onPress={() => navigate(l.to)}
+									onClick={() => navigate(l.to)}
 								>
 									{l.label}
 								</Link>
@@ -74,7 +73,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 			<NavbarContent>
 				<NavbarItem
 					className="justify-self-right"
-					onClick={darkMode.toggle}
+					onClick={toggle}
 					key="toggle"
 				>
 					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
@@ -140,7 +139,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 					) {
 						return (
 							<NavbarMenuItem key={l.label} isActive={l.to === location.pathname}>
-								<Link color="inherit" onPress={() => navigate(l.to)}>
+								<Link onClick={() => navigate(l.to)}>
 								   {l.label}
 								</Link>
 							</NavbarMenuItem>
@@ -151,7 +150,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 			<NavbarContent>
 				<NavbarItem
 					className="justify-self-right xs:block hidden"
-					onClick={darkMode.toggle}
+					onClick={toggle}
 					key="toggle"
 				>
 					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}

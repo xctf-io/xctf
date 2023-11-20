@@ -85,7 +85,7 @@ const SubmitWriteup = () => {
 				<Text className="text-3xl">Drag or drop a file here or</Text>
 				<Link
 					className="mt-4 text-2xl"
-					onPress={() => inputRef.current.click()}
+					onClick={() => inputRef.current.click()}
 				>
 					Upload a file
 				</Link>

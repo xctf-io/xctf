@@ -92,7 +92,7 @@ const ViewWriteup = () => {
 						auto
 						color="error"
 						icon={<MessageIcon />}
-						onClick={props.toggle}
+						onPress={props.toggle}
 					/>
 				}
 				content={() => <div style={{ width: "100px" }}>Add a note</div>}
@@ -144,11 +144,11 @@ const ViewWriteup = () => {
 					}}
 				>
 					<div style={{ marginRight: "8px" }}>
-						<Button color="error" auto flat onClick={addNote}>
+						<Button color="error" auto flat onPress={addNote}>
 							Add
 						</Button>
 					</div>
-					<Button auto disabled onClick={props.cancel}>
+					<Button auto disabled onPress={props.cancel}>
 						Cancel
 					</Button>
 				</div>
@@ -522,7 +522,7 @@ const ViewWriteup = () => {
 						flat={!isDark}
 						disabled={index === 0}
 						icon={<TbArrowBigLeftFilled />}
-						onClick={() =>
+						onPress={() =>
 							window.location.replace(`/view/${teams[index - 1].name}`)
 						}
 					/>
@@ -559,7 +559,7 @@ const ViewWriteup = () => {
 						flat={!isDark}
 						disabled={index === teams.length - 1}
 						icon={<TbArrowBigRightFilled />}
-						onClick={() =>
+						onPress={() =>
 							window.location.replace(`/view/${teams[index + 1].name}`)
 						}
 					/>

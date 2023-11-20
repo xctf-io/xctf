@@ -39,7 +39,7 @@ const Menu: React.FC<Props> = ({ openModal }) => {
 			bordered
 		>
 			<Button
-				onClick={openModal}
+				onPress={openModal}
 				iconRight={<HiOutlinePlus />}
 				style={{
 					color: "black",
@@ -53,7 +53,7 @@ const Menu: React.FC<Props> = ({ openModal }) => {
 				Add evidence
 			</Button>
 			<Button
-				onClick={onClick}
+				onPress={onClick}
 				iconRight={<HiDownload />}
 				style={{
 					color: "black",
