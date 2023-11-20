@@ -1,23 +1,16 @@
+import React from "react";
 import { useState } from "react";
 import { useUser } from "../store/user";
 import type { NavLink } from "../types/nav";
 import {
 	Link,
+	Navbar,
 	Text,
 	useTheme,
 	Dropdown,
 	Avatar,
+
 } from "@nextui-org/react";
-import {Link as RouterLink, useLocation, useNavigate} from 'react-router-dom';
-import {
-	Navbar, 
-	NavbarBrand, 
-	NavbarContent, 
-	NavbarItem, 
-	NavbarMenuToggle,
-	NavbarMenu,
-	NavbarMenuItem
-} from "@nextui-org/navbar";
 import { useDarkMode } from 'usehooks-ts'
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { GiFlyingFlag } from "react-icons/gi";
@@ -27,30 +20,33 @@ interface NavbarProps {
 }
 
 const NavbarComponent = ({ links }: NavbarProps) => {
-	const navigate = useNavigate();
-	const location = useLocation();
+	const [path, updatePath] = useState(window.location.pathname);
 	const [user, setUser, logout] = useUser();
 
 	const userLoggedIn = !!user;
 	const isAdmin = user?.type === "admin";
 	const themeHexColor = isAdmin ? "DF3562" : "3070ED";
 	const themeColor = isAdmin ? "error" : "primary";
-	const { toggle } = useDarkMode(false)
+	const { toggle } = useDarkMode(false);
 	const { type, isDark } = useTheme();
 	const translate = userLoggedIn
 		? "-translate-x-[15px]"
 		: "-translate-x-[49px]";
 
 	return (
-		<Navbar className="w-screen">
-			<NavbarBrand>
+		<Navbar className="w-screen" variant="sticky" maxWidth="fluid">
+			<Navbar.Brand>
 				<GiFlyingFlag className="ml-2 mr-2 w-10 h-10" />
 				<Text b color="inherit" className="text-2xl">
 					CTFg
 				</Text>
-			</NavbarBrand>
-			<NavbarContent
-				className={"xs:block hidden absolute " + translate}
+			</Navbar.Brand>
+			<Navbar.Content
+				hideIn="xs"
+				enableCursorHighlight
+				variant="underline"
+				className={"absolute " + translate}
+				activeColor={themeColor}
 			>
 				{links.map((l) => {
 					if (
@@ -59,27 +55,29 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<NavbarItem key={l.label} isActive={l.to === location.pathname}>
+							<Navbar.Item key={l.label} isActive={l.to === path}>
 								<Link
-									onClick={() => navigate(l.to)}
+									color="inherit"
+									onPress={() => updatePath(l.to)}
+									href={l.to}
 								>
 									{l.label}
 								</Link>
-							</NavbarItem>
+							</Navbar.Item>
 						);
 					}
 				})}
-			</NavbarContent>
-			<NavbarContent>
-				<NavbarItem
+			</Navbar.Content>
+			<Navbar.Content enableCursorHighlight hideIn="xs">
+				<Navbar.Link
 					className="justify-self-right"
-					onClick={toggle}
+					onPress={toggle}
 					key="toggle"
 				>
 					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
-				</NavbarItem>
+				</Navbar.Link>
 				{user && (
-					<NavbarItem>
+					<Navbar.Item>
 						<Dropdown placement="bottom-right">
 							<Dropdown.Trigger>
 								<Avatar
@@ -102,6 +100,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 										logout();
 									}
 								}}
+								containerCss={{ border: "none" }}
 							>
 								<Dropdown.Item
 									key="profile"
@@ -127,10 +126,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								</Dropdown.Item>
 							</Dropdown.Menu>
 						</Dropdown>
-					</NavbarItem>
+					</Navbar.Item>
 				)}
-			</NavbarContent>
-			<NavbarMenu>
+			</Navbar.Content>
+			<Navbar.Collapse>
 				{links.map((l) => {
 					if (
 						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
@@ -138,25 +137,29 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<NavbarMenuItem key={l.label} isActive={l.to === location.pathname}>
-								<Link onClick={() => navigate(l.to)}>
-								   {l.label}
+							<Navbar.CollapseItem key={l.label} isActive={l.to === path}>
+								<Link
+									color="inherit"
+									onPress={() => updatePath(l.to)}
+									href={l.to}
+								>
+									{l.label}
 								</Link>
-							</NavbarMenuItem>
+							</Navbar.CollapseItem>
 						);
 					}
 				})}
-			</NavbarMenu>
-			<NavbarContent>
-				<NavbarItem
-					className="justify-self-right xs:block hidden"
-					onClick={toggle}
+			</Navbar.Collapse>
+			<Navbar.Content showIn="xs">
+				<Navbar.Link
+					className="justify-self-right"
+					onPress={toggle}
 					key="toggle"
 				>
 					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
-				</NavbarItem>
+				</Navbar.Link>
 				{user && (
-					<NavbarItem>
+					<Navbar.Item>
 						<Dropdown placement="bottom-right">
 							<Dropdown.Trigger>
 								<Avatar
@@ -178,9 +181,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 									if (actionKey === "logout") {
 										logout();
 										document.location.href = "/login";
-										navigate("/login");
+										updatePath("/login");
 									}
 								}}
+								containerCss={{ border: "none" }}
 							>
 								<Dropdown.Item
 									key="profile"
@@ -206,10 +210,10 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								</Dropdown.Item>
 							</Dropdown.Menu>
 						</Dropdown>
-					</NavbarItem>
+					</Navbar.Item>
 				)}
-				<NavbarMenuToggle />
-			</NavbarContent>
+				<Navbar.Toggle />
+			</Navbar.Content>
 		</Navbar>
 	);
 };
