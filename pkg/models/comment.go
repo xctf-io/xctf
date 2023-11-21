@@ -12,6 +12,7 @@ type Comment struct {
 
 type HighlightArea struct {
 	gorm.Model
+	Username string
 	CommentId uint32
 	Height float32
 	Width float32

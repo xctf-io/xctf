@@ -593,6 +593,7 @@ const ViewWriteup = () => {
 									<>
 										<p className="text-3xl font-bold text-center mb-1">Grade</p>
 										<div
+											
 											style={{
 												marginBottom: isEditing ? "20px" : "8px",
 											}}
@@ -667,7 +668,7 @@ const ViewWriteup = () => {
 							</div>
 							<div>
 								<p className="text-3xl font-bold text-center mb-1">Flags</p>
-								<div className="h-52 mb-2">
+								<div className="h-full mb-2">
 									<Pie data={chartData} />
 								</div>
 								<p className="text-lg font-thin text-center">

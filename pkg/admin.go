@@ -136,6 +136,7 @@ func (s *Admin) SubmitGrade(ctx context.Context, request *connect.Request[xctf.S
 func (s *Admin) SubmitComment(ctx context.Context, request *connect.Request[xctf.SubmitCommentRequest]) (*connect.Response[xctf.Empty], error) {
 	for _, area := range request.Msg.Areas {
 		highlightArea := models.HighlightArea{
+			Username:  request.Msg.Username,
 			CommentId: request.Msg.Id,
 			Height:    area.Height,
 			Width:     area.Width,
@@ -169,7 +170,7 @@ func (s *Admin) GetComments(ctx context.Context, request *connect.Request[xctf.G
 	var responseComments []*xctf.Comment
 	for _, comment := range comments {
 		var areas []*xctf.HighlightArea
-		resp := s.db.Where(&models.HighlightArea{CommentId: comment.Id}).Find(&areas)
+		resp := s.db.Where(&models.HighlightArea{Username: request.Msg.Username, CommentId: comment.Id}).Find(&areas)
 		if resp.Error != nil {
 			return nil, resp.Error
 		}
