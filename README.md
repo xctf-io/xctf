@@ -21,6 +21,12 @@ CTFg is developed with:
 	- Reasoning: This was chosen because using React has the best libraries and support by the community. While we prefer other frameworks, React's ecosystem is simply unmatched. If you are not familiar with React, the [tutorial](https://react.dev/learn) should teach you all you need to know.
 
 ### Running Locally
+#### Docker
+Run this command to start xCTF in a docker container with postgres:
+```
+docker-compose up
+```
+
 #### Server
 Run this command to start the backend:
 ```
@@ -40,4 +46,14 @@ npm run build
 ### Protoc Generation
 ```
 go generate ./...
+```
+
+### Flag Synchronization
+```
+go run main.go manage --url {xctf_url}/api --email {admin email} --password {admin password} flags sync {path to challenges}
+```
+
+Example:
+```
+go run main.go manage --url http://localhost:8000/api --email admin@admin.com --password password flags sync ../chalgen/competitions/mcpshsf-2023/chals
 ```

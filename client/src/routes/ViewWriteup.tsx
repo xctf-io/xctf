@@ -5,7 +5,7 @@ import React, {
 	useRef,
 	useCallback,
 } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ctfgAdmin } from "../service";
 import { createErrorToast, createSuccessToast } from "../store/user";
 import { Button, theme, Input, Switch, useTheme } from "@nextui-org/react";
@@ -75,7 +75,7 @@ const ViewWriteup = () => {
 
 	useEffect(() => {
 		async function getNotes() {
-			const storedNotes = await ctfgAdmin.getComments({ username: name });
+			const storedNotes = await ctfgAdmin.getComments({ username: teams[index].name });
 			const notes = storedNotes.comments.map((n) => ({
 				id: n.id,
 				content: n.content,
@@ -126,7 +126,7 @@ const ViewWriteup = () => {
 					quote: props.selectedText,
 				};
 				ctfgAdmin.submitComment({
-					username: name,
+					username: teams[index].name,
 					id: note.id,
 					content: note.content,
 					areas: note.highlightAreas,
@@ -472,6 +472,8 @@ const ViewWriteup = () => {
 		}
 	};
 
+	const navigate = useNavigate();
+
 	return (
 		<div className="xl:grid xl:grid-cols-5 xl:my-2 relative">
 			{writeup && !showChart && (
@@ -538,12 +540,12 @@ const ViewWriteup = () => {
 						disabled={index === 0}
 						icon={<TbArrowBigLeftFilled />}
 						onPress={() =>
-							window.location.replace(`/view/${teams[index - 1].name}`)
+							navigate(`/view/${teams[index - 1].name}`)
 						}
 					/>
 					<Select
 						defaultValue={{ value: name, label: name }}
-						onChange={(e) => window.location.replace(`/view/${e?.value}`)}
+						onChange={(e) => navigate(`/view/${e?.value}`)}
 						options={teams.map((t) => ({ value: t.name, label: t.name }))}
 						className="w-64 mx-1"
 						styles={{

@@ -21,7 +21,7 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: password
-      PGDATA: /var/lib/postgresqldata/db
+      PGDATA: /var/lib/postgresql/data/db
     ports:
       - 5432:5432
     volumes:

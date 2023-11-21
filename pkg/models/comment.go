@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type Comment struct {
 	gorm.Model
 	Username string
-	Id uint32 `gorm:"uniqueIndex;primaryKey"`
+	CommentId uint32
 	Content string
 	Quote string
 }

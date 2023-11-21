@@ -144,16 +144,16 @@ func (s *Admin) SubmitComment(ctx context.Context, request *connect.Request[xctf
 			Top:       area.Top,
 			Left:      area.Left,
 		}
-		s.db.Save(&highlightArea)
+		s.db.Create(&highlightArea)
 	}
 	comment := models.Comment{
 		Username: request.Msg.Username,
-		Id:	   request.Msg.Id,
+		CommentId:	   request.Msg.Id,
 		Content:  request.Msg.Content,
 		Quote:    request.Msg.Quote,
 	}
 
-	resp := s.db.Save(&comment)
+	resp := s.db.Create(&comment)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
@@ -170,12 +170,12 @@ func (s *Admin) GetComments(ctx context.Context, request *connect.Request[xctf.G
 	var responseComments []*xctf.Comment
 	for _, comment := range comments {
 		var areas []*xctf.HighlightArea
-		resp := s.db.Where(&models.HighlightArea{Username: request.Msg.Username, CommentId: comment.Id}).Find(&areas)
+		resp := s.db.Where(&models.HighlightArea{Username: request.Msg.Username, CommentId: comment.CommentId}).Find(&areas)
 		if resp.Error != nil {
 			return nil, resp.Error
 		}
 		responseComments = append(responseComments, &xctf.Comment{
-			Id:       comment.Id,
+			Id:       comment.CommentId,
 			Content:  comment.Content,
 			Areas:    areas,
 			Quote:    comment.Quote,
