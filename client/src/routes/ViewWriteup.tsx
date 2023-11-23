@@ -5,7 +5,7 @@ import React, {
 	useRef,
 	useCallback,
 } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ctfgAdmin } from "../service";
 import { createErrorToast, createSuccessToast } from "../store/user";
 import { Button, theme, Input, Switch, useTheme } from "@nextui-org/react";
@@ -46,10 +46,13 @@ import dagre from "dagre";
 import ReactFlow, {
 	Background,
 	Controls,
+	Edge,
 	MarkerType,
+	Node,
 	NodeChange,
 	applyNodeChanges,
 } from "reactflow";
+import { BsWindowSidebar } from "react-icons/bs";
 
 interface Team {
 	name: string;
@@ -72,27 +75,6 @@ const ViewWriteup = () => {
 	const [notes, setNotes] = React.useState<Note[]>([]);
 	const notesContainerRef = React.useRef<HTMLDivElement | null>(null);
 	let noteId = notes.length;
-
-	useEffect(() => {
-		async function getNotes() {
-			const storedNotes = await ctfgAdmin.getComments({ username: name });
-			console.log(storedNotes);
-			const notes = storedNotes.comments.map((n) => ({
-				id: n.id,
-				content: n.content,
-				highlightAreas: n.areas.map((a) => ({
-					height: a.height,
-					width: a.width,
-					pageIndex: a.pageIndex,
-					top: a.top,
-					left: a.left,
-				})),
-				quote: n.quote,
-			}));
-			setNotes(notes);
-		}
-		getNotes();
-	}, [notes]);
 
 	const noteEles: Map<number, HTMLElement> = new Map();
 
@@ -233,10 +215,7 @@ const ViewWriteup = () => {
 	const sidebarNotes = (
 		<div
 			ref={notesContainerRef}
-			style={{
-				overflow: "auto",
-				width: "100%",
-			}}
+			className="w-full overflow-auto absolute"
 		>
 			{notes.length === 0 && (
 				<div style={{ textAlign: "center" }}>There is no note</div>
@@ -289,10 +268,10 @@ const ViewWriteup = () => {
 		...slot,
 		// These slots will be empty
 		SwitchTheme: () => <></>,
+		Open: () => <></>,
 	});
 	const defaultLayoutPluginInstance = defaultLayoutPlugin({
 		sidebarTabs: (defaultTabs) => [
-			defaultTabs[1],
 			{
 				content: sidebarNotes,
 				icon: <MessageIcon />,
@@ -422,18 +401,37 @@ const ViewWriteup = () => {
 		}
 	}
 
+	async function getNotes() {
+		const storedNotes = await ctfgAdmin.getComments({ username: name });
+		const notes = storedNotes.comments.map((n) => ({
+			id: n.id,
+			content: n.content,
+			highlightAreas: n.areas,
+			quote: n.quote,
+		}));
+		setNotes(notes);
+	}
+
 	useEffect(() => {
-		getWriteup();
 		getTeams();
 		loadDiscoveredEvidence();
-	}, []);
+		getWriteup();
+	}, [name]);
 
-	const [nodes, setNodes] = useState();
+	useEffect(() => {
+		getNotes();
+	}, [notes]);
+
+	const [nodes, setNodes] = useState<Node[]>();
 	const onNodesChange = useCallback(
-		(changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		(changes: NodeChange[]) => setNodes((nds) => {
+			if (nds != undefined) {
+				return applyNodeChanges(changes, nds)
+			}
+		}),
 		[]
 	);
-	const [edges, setEdges] = useState();
+	const [edges, setEdges] = useState<Edge[]>();
 
 	const index = teams.findIndex((t) => t.name === name);
 	const chartData = {
@@ -481,6 +479,8 @@ const ViewWriteup = () => {
 			createErrorToast("Failed to submit grade", isDark);
 		}
 	};
+
+	const navigate = useNavigate();
 
 	return (
 		<div className="xl:grid xl:grid-cols-5 xl:my-2 relative">
@@ -547,13 +547,13 @@ const ViewWriteup = () => {
 						flat={!isDark}
 						disabled={index === 0}
 						icon={<TbArrowBigLeftFilled />}
-						onPress={() =>
-							window.location.replace(`/view/${teams[index - 1].name}`)
-						}
+						onPress={() => {
+							navigate(`/view/${teams[index - 1].name}`);
+						}}
 					/>
 					<Select
 						defaultValue={{ value: name, label: name }}
-						onChange={(e) => window.location.replace(`/view/${e?.value}`)}
+						onChange={(e) => navigate(`/view/${e?.value}`)}
 						options={teams.map((t) => ({ value: t.name, label: t.name }))}
 						className="w-64 mx-1"
 						styles={{
@@ -603,12 +603,12 @@ const ViewWriteup = () => {
 									<>
 										<p className="text-3xl font-bold text-center mb-1">Grade</p>
 										<div
-											className="h-52"
+											className="h-56"
 											style={{
 												marginBottom: isEditing ? "20px" : "8px",
 											}}
 										>
-											<Pie data={chartData2} />
+											<Pie data={chartData2} updateMode="none" />
 										</div>
 										<div className="flex flex-row justify-center items-center gap-2">
 											{isEditing ? (
@@ -678,8 +678,8 @@ const ViewWriteup = () => {
 							</div>
 							<div>
 								<p className="text-3xl font-bold text-center mb-1">Flags</p>
-								<div className="h-52 mb-2">
-									<Pie data={chartData} />
+								<div className="h-56 mb-2">
+									<Pie data={chartData} updateMode="none"/>
 								</div>
 								<p className="text-lg font-thin text-center">
 									{teams[index].score}/{numChallenges}

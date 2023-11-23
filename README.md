@@ -1,4 +1,4 @@
-# CTFg
+# xCTF
 A simple CTF platform written in go. An ode to the illustrious [CTFd](https://github.com/CTFd/CTFd).
 
 We just [ran a competition](https://www.youtube.com/watch?v=2AOxuHuHS1U) for 200 high schoolers in person using this framework.
@@ -16,18 +16,25 @@ Currently in alpha.
 ### Tech Stack
 CTFg is developed with:
 - [Go](https://go.dev/): This is used for the server.
-	- Reasoning: This was chosen to make development and deployment easy and consistent. While python or javascript would be more approachable languages to more people, Go's types and tools are more conducive for CTFg being extendable. Additionally, plugins for CTFg, written in any language, are made possible through projects such as [this](https://github.com/hashicorp/go-plugin).
+	- Reasoning: This was chosen to make development and deployment easy and consistent. While Python or Javascript would be more approachable languages to more people, Go's types and tools are more conducive for CTFg being extendable. Additionally, plugins for CTFg, written in any language, are made possible through projects such as [this](https://github.com/hashicorp/go-plugin).
 - [React](https://react.dev/): This is used for client.
-	- Reasoning: This was chosen because using react has the best libraries and support by the community. While we prefer other frameworks, React's ecosystem is simply unmatched. If you are not familiar with React, the [tutorial](https://react.dev/learn) should teach you all you need to know.
+	- Reasoning: This was chosen because using React has the best libraries and support by the community. While we prefer other frameworks, React's ecosystem is simply unmatched. If you are not familiar with React, the [tutorial](https://react.dev/learn) should teach you all you need to know.
 
 ### Running Locally
+#### Docker
+Run this command to start xCTF in a docker container with postgres:
+```
+docker-compose up
+```
+
 #### Server
+Run this command to start the backend:
 ```
 go run main.go --dev
 ```
 
 #### Web site
-Build the client for development:
+Run this command to start the frontend:
 ```
 npm run dev
 ```
@@ -39,4 +46,14 @@ npm run build
 ### Protoc Generation
 ```
 go generate ./...
+```
+
+### Flag Synchronization
+```
+go run main.go manage --url {xctf_url}/api --email {admin email} --password {admin password} flags sync {path to challenges}
+```
+
+Example:
+```
+go run main.go manage --url http://localhost:8000/api --email admin@admin.com --password password flags sync ../chalgen/competitions/mcpshsf-2023/chals
 ```

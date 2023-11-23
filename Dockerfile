@@ -1,8 +1,9 @@
 FROM node:lts-alpine as client
 
-RUN apk add git
+COPY client /build/client
+COPY package.json /build/package.json
+COPY package-lock.json /build/package-lock.json
 
-COPY client /build
 WORKDIR /build
 
 RUN npm i && npm run build
@@ -12,7 +13,7 @@ FROM golang:alpine as server
 WORKDIR /build/
 
 COPY . /build
-COPY --from=client /build/public/build /build/client/public/build
+COPY --from=client /build/client/public/build /build/client/public/build
 
 RUN go build -o ctfg main.go
 

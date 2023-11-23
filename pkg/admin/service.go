@@ -134,26 +134,27 @@ func (s *Admin) SubmitGrade(ctx context.Context, request *connect.Request[xctf.S
 }
 
 func (s *Admin) SubmitComment(ctx context.Context, request *connect.Request[xctf.SubmitCommentRequest]) (*connect.Response[xctf.Empty], error) {
-	areas := []models.HighlightArea{}
 	for _, area := range request.Msg.Areas {
-		areas = append(areas, models.HighlightArea{
+		highlightArea := models.HighlightArea{
+			Username:  request.Msg.Username,
 			CommentId: request.Msg.Id,
 			Height:    area.Height,
 			Width:     area.Width,
 			PageIndex: area.PageIndex,
 			Top:       area.Top,
 			Left:      area.Left,
-		})
+		}
+		s.db.Create(&highlightArea)
 	}
 	comment := models.Comment{
-		Username: request.Msg.Username,
-		Id:       request.Msg.Id,
-		Content:  request.Msg.Content,
-		Areas:    areas,
-		Quote:    request.Msg.Quote,
+		Username:  request.Msg.Username,
+		Id:        request.Msg.Id,
+		CommentId: request.Msg.Id,
+		Content:   request.Msg.Content,
+		Quote:     request.Msg.Quote,
 	}
 
-	resp := s.db.Save(&comment)
+	resp := s.db.Create(&comment)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
@@ -170,17 +171,12 @@ func (s *Admin) GetComments(ctx context.Context, request *connect.Request[xctf.G
 	var responseComments []*xctf.Comment
 	for _, comment := range comments {
 		var areas []*xctf.HighlightArea
-		for _, area := range comment.Areas {
-			areas = append(areas, &xctf.HighlightArea{
-				Height:    area.Height,
-				Width:     area.Width,
-				PageIndex: area.PageIndex,
-				Top:       area.Top,
-				Left:      area.Left,
-			})
+		resp := s.db.Where(&models.HighlightArea{Username: request.Msg.Username, CommentId: comment.CommentId}).Find(&areas)
+		if resp.Error != nil {
+			return nil, resp.Error
 		}
 		responseComments = append(responseComments, &xctf.Comment{
-			Id:      comment.Id,
+			Id:      comment.CommentId,
 			Content: comment.Content,
 			Areas:   areas,
 			Quote:   comment.Quote,
