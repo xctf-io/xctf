@@ -111,6 +111,22 @@ func (b *Backend) Register(ctx context.Context, request *connect.Request[xctf.Re
 		return nil, errors.New("fields cannot be empty")
 	}
 
+	// var hasNumber, hasCapital, hasSpecial bool
+	// for _, c := range request.Msg.Password {
+	// 	if c >= '0' && c <= '9' {
+	// 		hasNumber = true
+	// 	}
+	// 	if c >= 'A' && c <= 'Z' {
+	// 		hasCapital = true
+	// 	}
+	// 	if c == '!' || c == '@' || c == '#' || c == '$' || c == '%' || c == '^' || c == '&' || c == '*' {
+	// 		hasSpecial = true
+	// 	}
+	// }
+	// if len(request.Msg.Password) < 8 || !hasNumber || !hasCapital || !hasSpecial {
+	// 	return nil, errors.New("password must contain at least one number, one capital letter, and one special character")
+	// }
+
 	err := user.HashPassword(request.Msg.Password)
 	if err != nil {
 		return nil, err

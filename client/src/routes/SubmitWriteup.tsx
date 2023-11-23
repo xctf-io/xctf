@@ -38,7 +38,7 @@ const SubmitWriteup = () => {
 			createErrorToast(String(error), isDark);
 		};
 	}
-	const inputRef = React.useRef(null);
+	const inputRef = React.useRef<HTMLInputElement>(null);
 	const [dragActive, setDragActive] = React.useState(false);
 
 	return (
@@ -89,7 +89,11 @@ const SubmitWriteup = () => {
 				<Text className="text-3xl">Drag or drop a file here or</Text>
 				<Link
 					className="mt-4 text-2xl"
-					onClick={() => inputRef.current.click()}
+					onPress={(e) => {
+						if (inputRef.current) {
+							inputRef.current.click();
+						}
+					}} 
 				>
 					Upload a file
 				</Link>

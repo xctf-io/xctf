@@ -46,10 +46,13 @@ import dagre from "dagre";
 import ReactFlow, {
 	Background,
 	Controls,
+	Edge,
 	MarkerType,
+	Node,
 	NodeChange,
 	applyNodeChanges,
 } from "reactflow";
+import { BsWindowSidebar } from "react-icons/bs";
 
 interface Team {
 	name: string;
@@ -72,20 +75,6 @@ const ViewWriteup = () => {
 	const [notes, setNotes] = React.useState<Note[]>([]);
 	const notesContainerRef = React.useRef<HTMLDivElement | null>(null);
 	let noteId = notes.length;
-
-	useEffect(() => {
-		async function getNotes() {
-			const storedNotes = await ctfgAdmin.getComments({ username: teams[index].name });
-			const notes = storedNotes.comments.map((n) => ({
-				id: n.id,
-				content: n.content,
-				highlightAreas: n.areas,
-				quote: n.quote,
-			}));
-			setNotes(notes);
-		}
-		getNotes();
-	}, [notes]);
 
 	const noteEles: Map<number, HTMLElement> = new Map();
 
@@ -126,7 +115,7 @@ const ViewWriteup = () => {
 					quote: props.selectedText,
 				};
 				ctfgAdmin.submitComment({
-					username: teams[index].name,
+					username: name,
 					id: note.id,
 					content: note.content,
 					areas: note.highlightAreas,
@@ -412,18 +401,37 @@ const ViewWriteup = () => {
 		}
 	}
 
+	async function getNotes() {
+		const storedNotes = await ctfgAdmin.getComments({ username: name });
+		const notes = storedNotes.comments.map((n) => ({
+			id: n.id,
+			content: n.content,
+			highlightAreas: n.areas,
+			quote: n.quote,
+		}));
+		setNotes(notes);
+	}
+
 	useEffect(() => {
-		getWriteup();
 		getTeams();
 		loadDiscoveredEvidence();
-	}, []);
+		getWriteup();
+	}, [name]);
 
-	const [nodes, setNodes] = useState();
+	useEffect(() => {
+		getNotes();
+	}, [notes]);
+
+	const [nodes, setNodes] = useState<Node[]>();
 	const onNodesChange = useCallback(
-		(changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		(changes: NodeChange[]) => setNodes((nds) => {
+			if (nds != undefined) {
+				return applyNodeChanges(changes, nds)
+			}
+		}),
 		[]
 	);
-	const [edges, setEdges] = useState();
+	const [edges, setEdges] = useState<Edge[]>();
 
 	const index = teams.findIndex((t) => t.name === name);
 	const chartData = {
@@ -539,9 +547,9 @@ const ViewWriteup = () => {
 						flat={!isDark}
 						disabled={index === 0}
 						icon={<TbArrowBigLeftFilled />}
-						onPress={() =>
-							navigate(`/view/${teams[index - 1].name}`)
-						}
+						onPress={() => {
+							navigate(`/view/${teams[index - 1].name}`);
+						}}
 					/>
 					<Select
 						defaultValue={{ value: name, label: name }}
@@ -595,12 +603,12 @@ const ViewWriteup = () => {
 									<>
 										<p className="text-3xl font-bold text-center mb-1">Grade</p>
 										<div
-											
+											className="h-56"
 											style={{
 												marginBottom: isEditing ? "20px" : "8px",
 											}}
 										>
-											<Pie data={chartData2} />
+											<Pie data={chartData2} updateMode="none" />
 										</div>
 										<div className="flex flex-row justify-center items-center gap-2">
 											{isEditing ? (
@@ -670,8 +678,8 @@ const ViewWriteup = () => {
 							</div>
 							<div>
 								<p className="text-3xl font-bold text-center mb-1">Flags</p>
-								<div className="h-full mb-2">
-									<Pie data={chartData} />
+								<div className="h-56 mb-2">
+									<Pie data={chartData} updateMode="none"/>
 								</div>
 								<p className="text-lg font-thin text-center">
 									{teams[index].score}/{numChallenges}
