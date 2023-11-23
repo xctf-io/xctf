@@ -1,14 +1,14 @@
 //go:build wireinject
 // +build wireinject
 
-package pkg
+package cli
 
 import (
 	"github.com/google/wire"
 	urfavcli "github.com/urfave/cli/v2"
 )
 
-func Wire(cacheConfig bucket.Config) (*urfavcli.App, error) {
+func Wire() (*urfavcli.App, error) {
 	panic(wire.Build(
 		ProviderSet,
 	))

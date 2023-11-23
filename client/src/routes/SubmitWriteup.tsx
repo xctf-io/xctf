@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { createErrorToast, createSuccessToast, useUser } from "../store/user";
-import { ctfg } from "../service";
+import { xctf } from "../service";
 
 import { Button, Text, Link, useTheme, theme } from "@nextui-org/react";
 
@@ -25,7 +25,7 @@ const SubmitWriteup = () => {
 		reader.onload = async () => {
 			try {
 				const fileData = reader.result as string;
-				await ctfg.submitWriteup({
+				await xctf.submitWriteup({
 					content: fileData,
 				});
 				setFile(undefined);

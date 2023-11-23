@@ -11,5 +11,5 @@ export const transport = createConnectTransport({
 	baseUrl: `/api`,
 });
 
-export const ctfg = createPromiseClient(Backend, transport);
+export const xctf = createPromiseClient(Backend, transport);
 export const ctfgAdmin = createPromiseClient(Admin, transport);

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { ctfg } from "../service";
+import { xctf } from "../service";
 import { GetDiscoveredEvidenceResponse } from "@/rpc/xctf/xctf_pb";
 import ReactFlow, {
 	Background,
@@ -38,7 +38,7 @@ import { useDarkMode } from 'usehooks-ts'
 let evidence: string = "";
 let report: string = "";
 
-export default function MyComponent() {
+export function Evidence() {
 	const { isDarkMode } = useDarkMode(false)
 	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>(new GetDiscoveredEvidenceResponse({
 		report: "",
@@ -82,7 +82,7 @@ export default function MyComponent() {
 
 	async function loadDiscoveredEvidence() {
 		try {
-			const resp = await ctfg.getDiscoveredEvidence({});
+			const resp = await xctf.getDiscoveredEvidence({});
 			graphRef.current = resp;
 			setGraph(resp);
 			const tempNodes = resp.evidence.map((e) => {
@@ -157,7 +157,7 @@ export default function MyComponent() {
 	);
 
 	function submitEvidence(remove: boolean) {
-		ctfg
+		xctf
 			.submitEvidence({
 				evidence: evidence,
 				x: 100,
@@ -183,7 +183,7 @@ export default function MyComponent() {
 	}
 
 	function submitConnection(src: number, dst: number, remove?: boolean) {
-		ctfg
+		xctf
 			.submitEvidenceConnection({
 				source: src,
 				destination: dst,

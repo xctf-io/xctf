@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Link, Textarea, Tooltip, useTheme } from "@nextui-org/react";
 import { useUser } from "../store/user";
-import { ctfg, ctfgAdmin } from "../service";
+import { xctf, ctfgAdmin } from "../service";
 import Markdown from "markdown-to-jsx";
 import { HiPencilSquare } from "react-icons/hi2";
 
@@ -15,7 +15,7 @@ const CTFComponent: React.FC<Props> = () => {
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	useEffect(() => {
 		async function getHomePage() {
-			const res = await ctfg.getHomePage({});
+			const res = await xctf.getHomePage({});
 			setHomePage(res.content);
 		}
 		getHomePage();

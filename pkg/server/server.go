@@ -1,16 +1,19 @@
-package pkg
+package server
 
 import (
 	"context"
 	"fmt"
-	"github.com/alexedwards/scs/gormstore"
-	"github.com/breadchris/scs/v2"
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
+	"github.com/google/wire"
+	"github.com/samber/lo"
+	"github.com/xctf-io/xctf/client/public"
+	"github.com/xctf-io/xctf/gen/kubes/kubesconnect"
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
-	"gorm.io/gorm"
-	"io/fs"
-	"log"
+	"github.com/xctf-io/xctf/pkg/admin"
+	"github.com/xctf-io/xctf/pkg/backend"
+	xhttp "github.com/xctf-io/xctf/pkg/http"
+	"github.com/xctf-io/xctf/pkg/kubes"
 	"log/slog"
 	"net/http"
 	"net/http/httputil"
@@ -19,41 +22,39 @@ import (
 	"strings"
 )
 
-func NewLogInterceptor() connect.UnaryInterceptorFunc {
-	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
-		return func(
-			ctx context.Context,
-			req connect.AnyRequest,
-		) (connect.AnyResponse, error) {
-			resp, err := next(ctx, req)
-			if err != nil {
-				slog.Error("connect error", "err", fmt.Sprintf("%+v", err))
-			}
-			return resp, err
-		}
-	}
-	return interceptor
-}
+var ProviderSet = wire.NewSet(
+	NewDB,
+	NewConfig,
+	xhttp.New,
+	kubes.NewService,
+	backend.NewBackend,
+	admin.NewAdmin,
+	New,
+)
 
-func NewAPIHandler(assets fs.FS, db *gorm.DB, proxyURL string) http.Handler {
+func New(
+	c Config,
+	store *xhttp.Store,
+	k *kubes.Service,
+	b *backend.Backend,
+	a *admin.Admin,
+) http.Handler {
 	muxRoot := http.NewServeMux()
 
 	interceptors := connect.WithInterceptors(NewLogInterceptor())
 
 	apiRoot := http.NewServeMux()
-	apiRoot.Handle(xctfconnect.NewBackendHandler(NewBackend(db), interceptors))
-	apiRoot.Handle(xctfconnect.NewAdminHandler(NewAdmin(db), interceptors))
+	apiRoot.Handle(xctfconnect.NewBackendHandler(b, interceptors))
+	apiRoot.Handle(xctfconnect.NewAdminHandler(a, interceptors))
+	apiRoot.Handle(kubesconnect.NewKubesServiceHandler(k, interceptors))
 
-	store = scs.New()
-	var err error
-	if store.Store, err = gormstore.New(db); err != nil {
-		log.Fatal(err)
-	}
-
-	reflector := grpcreflect.NewStaticReflector(
+	services := []string{
 		"xctf.Backend",
 		"xctf.Admin",
-	)
+		"kubes.KubesService",
+	}
+
+	reflector := grpcreflect.NewStaticReflector(services...)
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
 		slog.Error("panic", "err", fmt.Sprintf("%+v", p))
 		if err, ok := p.(error); ok {
@@ -67,15 +68,17 @@ func NewAPIHandler(assets fs.FS, db *gorm.DB, proxyURL string) http.Handler {
 	// most servers should mount both handlers.
 	muxRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
 
-	u, err := url.Parse(proxyURL)
+	u, err := url.Parse(c.ProxyURL)
 	if err != nil {
 		slog.Error("failed to parse proxy", "error", err)
 		return nil
 	}
 	proxy := httputil.NewSingleHostReverseProxy(u)
 
-	a := http.FS(assets)
-	httpFileServer := http.FileServer(a)
+	assets := public.Assets
+	hfs := http.FS(assets)
+	httpFileServer := http.FileServer(hfs)
+
 	muxRoot.Handle("/", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		filePath := r.URL.Path
 		if strings.Index(r.URL.Path, "/") == 0 {
@@ -88,7 +91,15 @@ func NewAPIHandler(assets fs.FS, db *gorm.DB, proxyURL string) http.Handler {
 			return
 		}
 
-		if proxyURL != "" {
+		parts := strings.Split(r.URL.Path, "/")
+		if len(parts) >= 2 && lo.SomeBy(services, func(service string) bool {
+			return service == parts[1]
+		}) {
+			apiRoot.ServeHTTP(rw, r)
+			return
+		}
+
+		if c.ProxyURL != "" {
 			slog.Debug("proxying request", "path", r.URL.Path)
 			proxy.ServeHTTP(rw, r)
 		} else {
@@ -105,4 +116,20 @@ func NewAPIHandler(assets fs.FS, db *gorm.DB, proxyURL string) http.Handler {
 		return
 	}))
 	return store.LoadAndSave(muxRoot)
+}
+
+func NewLogInterceptor() connect.UnaryInterceptorFunc {
+	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
+		return func(
+			ctx context.Context,
+			req connect.AnyRequest,
+		) (connect.AnyResponse, error) {
+			resp, err := next(ctx, req)
+			if err != nil {
+				slog.Error("connect error", "err", fmt.Sprintf("%+v", err))
+			}
+			return resp, err
+		}
+	}
+	return interceptor
 }

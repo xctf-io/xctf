@@ -1,4 +1,4 @@
-package pkg
+package admin
 
 import (
 	"context"
@@ -147,7 +147,7 @@ func (s *Admin) SubmitComment(ctx context.Context, request *connect.Request[xctf
 	}
 	comment := models.Comment{
 		Username: request.Msg.Username,
-		Id:	   request.Msg.Id,
+		Id:       request.Msg.Id,
 		Content:  request.Msg.Content,
 		Areas:    areas,
 		Quote:    request.Msg.Quote,
@@ -180,10 +180,10 @@ func (s *Admin) GetComments(ctx context.Context, request *connect.Request[xctf.G
 			})
 		}
 		responseComments = append(responseComments, &xctf.Comment{
-			Id:       comment.Id,
-			Content:  comment.Content,
-			Areas:    areas,
-			Quote:    comment.Quote,
+			Id:      comment.Id,
+			Content: comment.Content,
+			Areas:   areas,
+			Quote:   comment.Quote,
 		})
 	}
 

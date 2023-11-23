@@ -19,7 +19,7 @@ interface Team {
 	grade: number;
 }
 
-const Grading: React.FC<Props> = () => {
+export const Grading: React.FC<Props> = () => {
 	const [teams, setTeams] = useState<Team[]>([]);
 	const [numChallenges, setNumChallenges] = useState<number>(0);
 	useEffect(() => {
@@ -137,5 +137,3 @@ const Grading: React.FC<Props> = () => {
 		</>
 	);
 };
-
-export default Grading;

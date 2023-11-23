@@ -1,11 +1,11 @@
-package litestream
+package main
 
 import (
 	"context"
 	"database/sql"
 	"flag"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -21,13 +21,6 @@ import (
 const addr = ":8080"
 
 func main() {
-	if err := run(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-}
-
-func run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM)
 	defer stop()
 
@@ -37,29 +30,33 @@ func run() error {
 	flag.Parse()
 	if *dsn == "" {
 		flag.Usage()
-		return fmt.Errorf("required: -dsn PATH")
+		slog.Error("required: -dsn PATH")
+		return
 	} else if *bucket == "" {
 		flag.Usage()
-		return fmt.Errorf("required: -bucket NAME")
+		slog.Error("required: -bucket NAME")
+		return
 	}
 
 	// Create a Litestream DB and attached replica to manage background replication.
 	lsdb, err := replicate(ctx, *dsn, *bucket)
 	if err != nil {
-		return err
+		slog.Error("replicate: %v", "error", err)
+		return
 	}
 	defer lsdb.Close()
 
 	// Open database file.
 	db, err := sql.Open("sqlite3", *dsn)
 	if err != nil {
-		return err
+		slog.Error("sql.Open", "error", err)
 	}
 	defer db.Close()
 
 	// Create table for storing page views.
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS page_views (id INTEGER PRIMARY KEY, timestamp TEXT);`); err != nil {
-		return fmt.Errorf("cannot create table: %w", err)
+		slog.Error("db.Exec", "error", err)
+		return
 	}
 
 	// Run web server.
@@ -125,7 +122,7 @@ func run() error {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			log.Printf("new transaction: pre=%s post=%s elapsed=%s", pos.String(), newPos.String(), time.Since(startTime))
+			slog.Info("new transaction", "pre", pos.String(), "post", newPos.String(), "elapsed", time.Since(startTime))
 
 			// Print total page views.
 			fmt.Fprintf(w, "This server has been visited %d times.\n", n)
@@ -134,9 +131,8 @@ func run() error {
 
 	// Wait for signal.
 	<-ctx.Done()
-	log.Print("myapp received signal, shutting down")
-
-	return nil
+	slog.Info("myapp received signal, shutting down")
+	return
 }
 
 func replicate(ctx context.Context, dsn, bucket string) (*litestream.DB, error) {
@@ -146,6 +142,9 @@ func replicate(ctx context.Context, dsn, bucket string) (*litestream.DB, error) 
 	// Build S3 replica and attach to database.
 	client := lss3.NewReplicaClient()
 	client.Bucket = bucket
+	client.Endpoint = "http://localhost:9000"
+	client.SkipVerify = true
+	client.ForcePathStyle = true
 
 	replica := litestream.NewReplica(lsdb, "s3")
 	replica.Client = client

@@ -1,10 +1,11 @@
-package pkg
+package backend
 
 import (
 	"context"
 	"errors"
 	"github.com/xctf-io/xctf/gen/xctf"
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
+	"github.com/xctf-io/xctf/pkg/http"
 
 	connect "github.com/bufbuild/connect-go"
 	"github.com/rs/zerolog/log"
@@ -13,13 +14,14 @@ import (
 )
 
 type Backend struct {
-	db *gorm.DB
+	db      *gorm.DB
+	manager *http.Store
 }
 
 var _ xctfconnect.BackendHandler = (*Backend)(nil)
 
 func (b *Backend) SubmitEvidence(ctx context.Context, request *connect.Request[xctf.SubmitEvidenceRequest]) (*connect.Response[xctf.SubmitEvidenceResponse], error) {
-	userID, _, err := GetUserFromSession(ctx)
+	userID, _, err := b.manager.GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +80,7 @@ func (b *Backend) SubmitEvidence(ctx context.Context, request *connect.Request[x
 }
 
 func (b *Backend) SubmitEvidenceReport(ctx context.Context, req *connect.Request[xctf.SubmitEvidenceReportRequest]) (*connect.Response[xctf.SubmitEvidenceReportRequest], error) {
-	userID, _, err := GetUserFromSession(ctx)
+	userID, _, err := b.manager.GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +139,7 @@ func (b *Backend) Login(ctx context.Context, request *connect.Request[xctf.Login
 		return nil, errors.New("incorrect password for user")
 	}
 
-	SetUserForSession(ctx, user.ID, user.Type)
+	b.manager.SetUserForSession(ctx, user.ID, user.Type)
 
 	return connect.NewResponse(&xctf.LoginResponse{
 		Username: user.Username,
@@ -146,12 +148,12 @@ func (b *Backend) Login(ctx context.Context, request *connect.Request[xctf.Login
 }
 
 func (b *Backend) Logout(ctx context.Context, request *connect.Request[xctf.Empty]) (*connect.Response[xctf.Empty], error) {
-	RemoveUserFromSession(ctx)
+	b.manager.RemoveUserFromSession(ctx)
 	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
 func (b *Backend) CurrentUser(ctx context.Context, request *connect.Request[xctf.CurrentUserRequest]) (*connect.Response[xctf.CurrentUserResponse], error) {
-	userID, userType, err := GetUserFromSession(ctx)
+	userID, userType, err := b.manager.GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +193,7 @@ func (b *Backend) SubmitFlag(ctx context.Context, request *connect.Request[xctf.
 }
 
 func (b *Backend) GetDiscoveredEvidence(ctx context.Context, request *connect.Request[xctf.GetDiscoveredEvidenceRequest]) (*connect.Response[xctf.GetDiscoveredEvidenceResponse], error) {
-	userID, _, err := GetUserFromSession(ctx)
+	userID, _, err := b.manager.GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -245,7 +247,7 @@ func (b *Backend) SubmitEvidenceConnection(
 	ctx context.Context,
 	request *connect.Request[xctf.SubmitEvidenceConnectionRequest],
 ) (*connect.Response[xctf.SubmitEvidenceConnectionResponse], error) {
-	userID, _, err := GetUserFromSession(ctx)
+	userID, _, err := b.manager.GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -298,7 +300,7 @@ func (b *Backend) ForgotPassword(ctx context.Context, request *connect.Request[x
 }
 
 func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xctf.SubmitWriteupRequest]) (*connect.Response[xctf.Empty], error) {
-	userId, _, err := GetUserFromSession(ctx)
+	userId, _, err := b.manager.GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -335,8 +337,9 @@ func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xc
 	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func NewBackend(db *gorm.DB) *Backend {
+func NewBackend(db *gorm.DB, manager *http.Store) *Backend {
 	return &Backend{
-		db: db,
+		db:      db,
+		manager: manager,
 	}
 }

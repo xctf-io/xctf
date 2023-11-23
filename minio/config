@@ -1,0 +1,3 @@
+MINIO_ROOT_USER=myminioadmin
+MINIO_ROOT_PASSWORD=minio-secret-key-change-me
+MINIO_VOLUMES="/mnt/data"

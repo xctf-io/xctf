@@ -1,7 +1,8 @@
-package database
+package server
 
 import (
 	"log"
+	"log/slog"
 	"os"
 
 	"github.com/glebarez/sqlite"
@@ -11,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Connect() *gorm.DB {
+func NewDB() *gorm.DB {
 	dbType := os.Getenv("DB_TYPE")
 	dsn := os.Getenv("DB_DSN")
 
@@ -26,11 +27,11 @@ func Connect() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Connected to Database!")
+	migrate(db)
 	return db
 }
 
-func Migrate(db *gorm.DB) {
+func migrate(db *gorm.DB) {
 	modelsToMigrate := []interface{}{
 		&models.User{},
 		&models.Challenge{},
@@ -81,5 +82,5 @@ func Migrate(db *gorm.DB) {
 	}
 	db.Save(&homePage)
 
-	log.Println("Database Migration Completed!")
+	slog.Debug("database migrated")
 }

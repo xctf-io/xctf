@@ -19,9 +19,10 @@ message Graph {
 
 message Node {
   string id = 1;
-  string flag = 2;
+  string name = 2;
+  string flag = 3;
   oneof challenge {
-    Base64 base64 = 3;
+    Base64 base64 = 4;
   }
 }
 

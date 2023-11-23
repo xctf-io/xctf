@@ -7,13 +7,13 @@ import Navbar from "./components/Navbar";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
 import Home from "./routes/Home";
-import Evidence from "./routes/Evidence";
-import Grading from "./routes/Grading";
+import {Evidence} from "./routes/Evidence";
+import {Grading} from "./routes/Grading";
 import ForgotPassword from "./routes/ForgotPassword";
 import SubmitWriteup from "./routes/SubmitWriteup";
 import ViewWriteup from "./routes/ViewWriteup";
 import { NavLink } from "./types/nav";
-import { ctfg } from "./service";
+import { xctf } from "./service";
 import { useUser } from "./store/user";
 import { usePages } from "./store/pages";
 import { useDarkMode } from 'usehooks-ts'
@@ -21,7 +21,8 @@ import { NextUIProvider, createTheme } from "@nextui-org/react";
 import "react-toastify/dist/ReactToastify.min.css";
 import { ToastContainer } from "react-toastify";
 import Redirect from "./components/Redirect";
-import {Build} from "@/routes/Build";
+import {Build} from "@/routes/build/Build";
+import {Toaster} from "react-hot-toast";
 
 interface Props {}
 
@@ -109,7 +110,7 @@ function App() {
 				if (!user) {
 					return;
 				}
-				const resp = await ctfg.currentUser({});
+				const resp = await xctf.currentUser({});
 				setUser({
 					username: resp.username,
 					type: resp.userRole,
@@ -188,6 +189,7 @@ function App() {
 						)}
 					</Routes>
 				</Router>
+				<Toaster/>
 			</main>
 			<ToastContainer />
 		</NextUIProvider>

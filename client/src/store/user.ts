@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { ctfg } from "../service";
+import { xctf } from "../service";
 import { atomWithStorage } from "jotai/utils";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
@@ -32,7 +32,7 @@ export const useUser = (): [
 ] => {
 	const [user, setUser] = useAtom(userAtom);
 	const logout = () => {
-		ctfg.logout({});
+		xctf.logout({});
 		setUser(null);
 		document.location.href = "/";
 	};
@@ -55,7 +55,7 @@ export const useLogin = (): [
 
 	const login = async (email: string, password: string, isDark: boolean | undefined) => {
 		try {
-			const resp = await ctfg.login({
+			const resp = await xctf.login({
 				email,
 				password,
 			});
@@ -86,7 +86,7 @@ export const useRegister = (): [
 		isDark: boolean | undefined
 	) => {
 		try {
-			const resp = await ctfg.register({
+			const resp = await xctf.register({
 				username,
 				email,
 				password,
