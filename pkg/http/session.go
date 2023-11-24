@@ -6,7 +6,7 @@ import (
 	"github.com/alexedwards/scs/gormstore"
 	"github.com/breadchris/scs/v2"
 	"github.com/google/wire"
-	"gorm.io/gorm"
+	"github.com/xctf-io/xctf/pkg/db"
 	"net/http"
 )
 
@@ -16,11 +16,11 @@ type Store struct {
 
 var ProviderSet = wire.NewSet(New)
 
-func New(db *gorm.DB) (*Store, error) {
+func New(s *db.Service) (*Store, error) {
 	manager := scs.New()
 
 	var err error
-	if manager.Store, err = gormstore.New(db); err != nil {
+	if manager.Store, err = gormstore.New(s.DB); err != nil {
 		return nil, err
 	}
 	return &Store{

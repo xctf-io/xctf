@@ -30,9 +30,9 @@ spec:
     spec:
       containers:
         - env:
-            - name: CTFG_ADMIN_EMAIL
+            - name: XCTF_ADMIN_EMAIL
               value: admin@admin.com
-            - name: CTFG_ADMIN_PASSWORD
+            - name: XCTF_ADMIN_PASSWORD
               value: password
             - name: DB_DSN
               value: host=postgres user=postgres password=password sslmode=disable

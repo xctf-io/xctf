@@ -33,6 +33,14 @@ Run this command to start the backend:
 go run main.go --dev
 ```
 
+#### Backups
+To have automatic backups with sqlite, run minio:
+```shell
+docker run -t -p 9000:9000 -p 9090:9090 -v PATH:/mnt/data -v "$(pwd)/minio/config:/etc/config.env" -e "MINIO_CONFIG_ENV_FILE=/etc/config.env" --rm quay.io/minio/minio server --console-address ":9090"
+```
+
+Open up `http://localhost:9090`, login with `minio:minio123`, and create the bucket `xctf`.
+
 #### Web site
 Run this command to start the frontend:
 ```

@@ -6,12 +6,12 @@ import (
 	"github.com/bufbuild/connect-go"
 	"github.com/google/wire"
 	"github.com/protoflow-labs/protoflow/pkg/util/reload"
-	"github.com/rs/zerolog/log"
 	"github.com/twitchtv/twirp"
 	"github.com/urfave/cli/v2"
 	"github.com/xctf-io/xctf/gen/xctf"
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
 	"github.com/xctf-io/xctf/pkg/config"
+	"github.com/xctf-io/xctf/pkg/log"
 	"github.com/xctf-io/xctf/pkg/server"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -24,12 +24,13 @@ import (
 )
 
 var ProviderSet = wire.NewSet(
+	log.ProviderSet,
 	config.New,
 	server.ProviderSet,
 	New,
 )
 
-func New(handler http.Handler) *cli.App {
+func New(l *log.Log, handler http.Handler) *cli.App {
 	return &cli.App{
 		Name: "xctf",
 		Flags: []cli.Flag{
@@ -78,7 +79,7 @@ func New(handler http.Handler) *cli.App {
 									// for each file, read the yaml and upsert the challenge
 									cb := func(chal Challenge) error {
 										if chal.Flag == "" {
-											log.Warn().Str("name", chal.Name).Msg("skipping challenge with empty flag")
+											slog.Warn("skipping challenge with empty flag", "name", chal.Name)
 											return nil
 										}
 
@@ -171,7 +172,7 @@ func startHttpServer(httpApiHandler http.Handler) {
 		Handler: httpApiHandler,
 	}
 
-	log.Printf("Listening @ %s", addr)
+	slog.Info("Listening", "addr", addr)
 	if err := httpServer.ListenAndServe(); err != nil {
 		slog.Error("failed to start http server", "err", err)
 	}
@@ -249,9 +250,8 @@ func crawlDir(dir string, cb func(chal Challenge) error) error {
 				return err
 			}
 			chal := challenge[0]
-			log.Info().Str("name", chal.Name).Str("flag", chal.Flag).Msg("found challenge")
+			slog.Info("found challenge", "name", chal.Name, "flag", chal.Flag)
 			if err = cb(chal); err != nil {
-				log.Error().Err(err).Msg("failed to submit challenge")
 				return err
 			}
 		}

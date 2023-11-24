@@ -12,6 +12,7 @@ import (
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
 	"github.com/xctf-io/xctf/pkg/admin"
 	"github.com/xctf-io/xctf/pkg/backend"
+	"github.com/xctf-io/xctf/pkg/db"
 	xhttp "github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/kubes"
 	"log/slog"
@@ -23,8 +24,8 @@ import (
 )
 
 var ProviderSet = wire.NewSet(
-	NewDB,
 	NewConfig,
+	db.ProviderSet,
 	xhttp.New,
 	kubes.NewService,
 	backend.NewBackend,
@@ -38,7 +39,8 @@ func New(
 	k *kubes.Service,
 	b *backend.Backend,
 	a *admin.Admin,
-) http.Handler {
+	s *db.Service,
+) (http.Handler, error) {
 	muxRoot := http.NewServeMux()
 
 	interceptors := connect.WithInterceptors(NewLogInterceptor())
@@ -70,8 +72,7 @@ func New(
 
 	u, err := url.Parse(c.ProxyURL)
 	if err != nil {
-		slog.Error("failed to parse proxy", "error", err)
-		return nil
+		return nil, err
 	}
 	proxy := httputil.NewSingleHostReverseProxy(u)
 
@@ -115,7 +116,7 @@ func New(
 		}
 		return
 	}))
-	return store.LoadAndSave(muxRoot)
+	return store.LoadAndSave(muxRoot), nil
 }
 
 func NewLogInterceptor() connect.UnaryInterceptorFunc {

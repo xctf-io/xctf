@@ -1,6 +1,5 @@
 bin/
-gorm.db
-tmp/
+xctf.db
 data/
 **/node_modules
 .idea/

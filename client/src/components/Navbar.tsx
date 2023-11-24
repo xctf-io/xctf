@@ -58,7 +58,6 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								<Link
 									color="inherit"
 									onPress={() => navigate(l.to)}
-									href={l.to}
 								>
 									{l.label}
 								</Link>
@@ -89,7 +88,6 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								<Link
 									color="inherit"
 									onPress={() => navigate(l.to)}
-									href={l.to}
 								>
 									{l.label}
 								</Link>

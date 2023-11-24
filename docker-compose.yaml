@@ -11,8 +11,8 @@ services:
       PORT: 8000
       DB_TYPE: "postgres"
       DB_DSN: "host=postgres user=postgres password=password sslmode=disable"
-      CTFG_ADMIN_EMAIL: admin@admin.com
-      CTFG_ADMIN_PASSWORD: password
+      XCTF_ADMIN_EMAIL: admin@admin.com
+      XCTF_ADMIN_PASSWORD: password
     labels:
       kompose.service.type: clusterip
       kompose.image-pull-secret: "ghcr-pull-secret"

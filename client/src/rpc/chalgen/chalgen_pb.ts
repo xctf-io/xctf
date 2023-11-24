@@ -129,7 +129,12 @@ export class Node extends Message<Node> {
   id = "";
 
   /**
-   * @generated from field: string flag = 2;
+   * @generated from field: string name = 2;
+   */
+  name = "";
+
+  /**
+   * @generated from field: string flag = 3;
    */
   flag = "";
 
@@ -138,7 +143,7 @@ export class Node extends Message<Node> {
    */
   challenge: {
     /**
-     * @generated from field: chalgen.Base64 base64 = 3;
+     * @generated from field: chalgen.Base64 base64 = 4;
      */
     value: Base64;
     case: "base64";
@@ -153,8 +158,9 @@ export class Node extends Message<Node> {
   static readonly typeName = "chalgen.Node";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "flag", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "base64", kind: "message", T: Base64, oneof: "challenge" },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "flag", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "base64", kind: "message", T: Base64, oneof: "challenge" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Node {

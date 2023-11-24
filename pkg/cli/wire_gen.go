@@ -11,8 +11,10 @@ import (
 	"github.com/xctf-io/xctf/pkg/admin"
 	"github.com/xctf-io/xctf/pkg/backend"
 	"github.com/xctf-io/xctf/pkg/config"
+	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/kubes"
+	"github.com/xctf-io/xctf/pkg/log"
 	"github.com/xctf-io/xctf/pkg/server"
 )
 
@@ -23,22 +25,37 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	logConfig, err := log.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	logLog := log.NewLog(logConfig)
 	serverConfig, err := server.NewConfig(provider)
 	if err != nil {
 		return nil, err
 	}
-	db := server.NewDB()
-	store, err := http.New(db)
+	dbConfig, err := db.NewConfig(provider)
 	if err != nil {
 		return nil, err
 	}
-	service, err := kubes.NewService()
+	service, err := db.New(dbConfig)
 	if err != nil {
 		return nil, err
 	}
-	backendBackend := backend.NewBackend(db, store)
-	adminAdmin := admin.NewAdmin(db)
-	handler := server.New(serverConfig, store, service, backendBackend, adminAdmin)
-	app := New(handler)
+	store, err := http.New(service)
+	if err != nil {
+		return nil, err
+	}
+	kubesService, err := kubes.NewService()
+	if err != nil {
+		return nil, err
+	}
+	backendBackend := backend.NewBackend(service, store)
+	adminAdmin := admin.NewAdmin(service)
+	handler, err := server.New(serverConfig, store, kubesService, backendBackend, adminAdmin, service)
+	if err != nil {
+		return nil, err
+	}
+	app := New(logLog, handler)
 	return app, nil
 }

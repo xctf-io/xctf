@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/xctf-io/xctf/gen/xctf"
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
+	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/http"
 
 	connect "github.com/bufbuild/connect-go"
@@ -14,7 +15,7 @@ import (
 )
 
 type Backend struct {
-	db      *gorm.DB
+	s       *db.Service
 	manager *http.Store
 }
 
@@ -32,7 +33,7 @@ func (b *Backend) SubmitEvidence(ctx context.Context, request *connect.Request[x
 	}
 
 	var chal models.Challenge
-	res := b.db.Where(models.Challenge{Flag: request.Msg.Evidence}).First(&chal)
+	res := b.s.DB.Where(models.Challenge{Flag: request.Msg.Evidence}).First(&chal)
 	if res.Error != nil && request.Msg.IsFlag {
 		return nil, errors.New("invalid flag")
 	}
@@ -43,20 +44,20 @@ func (b *Backend) SubmitEvidence(ctx context.Context, request *connect.Request[x
 	}
 
 	var evidence models.Evidence
-	res = b.db.Where(models.Evidence{Name: name, UserID: int(userID)}).First(&evidence)
+	res = b.s.DB.Where(models.Evidence{Name: name, UserID: int(userID)}).First(&evidence)
 	if res.Error == nil {
 		if request.Msg.Remove {
 			log.Debug().
 				Str("name", name).
 				Msg("deleting existing evidence")
-			b.db.Delete(&evidence)
+			b.s.DB.Delete(&evidence)
 		} else {
 			log.Debug().
 				Str("name", name).
 				Msg("updating existing evidence")
 			evidence.PositionX = int(request.Msg.X)
 			evidence.PositionY = int(request.Msg.Y)
-			b.db.Save(&evidence)
+			b.s.DB.Save(&evidence)
 		}
 	} else {
 		evidence := models.Evidence{
@@ -69,7 +70,7 @@ func (b *Backend) SubmitEvidence(ctx context.Context, request *connect.Request[x
 			},
 			IsFlag: request.Msg.IsFlag,
 		}
-		res = b.db.Create(&evidence)
+		res = b.s.DB.Create(&evidence)
 		if res.Error != nil {
 			return nil, res.Error
 		}
@@ -86,20 +87,20 @@ func (b *Backend) SubmitEvidenceReport(ctx context.Context, req *connect.Request
 	}
 
 	var report models.EvidenceReport
-	res := b.db.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
+	res := b.s.DB.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
 	if res.Error != nil {
 		newReport := &models.EvidenceReport{
 			UserID: int(userID),
 			URL:    req.Msg.Url,
 		}
-		if res = b.db.Create(&newReport); res.Error != nil {
+		if res = b.s.DB.Create(&newReport); res.Error != nil {
 			return nil, res.Error
 		}
 		return connect.NewResponse(&xctf.SubmitEvidenceReportRequest{}), nil
 	}
 
 	report.URL = req.Msg.Url
-	b.db.Save(report)
+	b.s.DB.Save(report)
 	return connect.NewResponse(&xctf.SubmitEvidenceReportRequest{}), nil
 }
 
@@ -134,7 +135,7 @@ func (b *Backend) Register(ctx context.Context, request *connect.Request[xctf.Re
 		return nil, err
 	}
 
-	result := b.db.Create(&user)
+	result := b.s.DB.Create(&user)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -145,7 +146,7 @@ func (b *Backend) Register(ctx context.Context, request *connect.Request[xctf.Re
 
 func (b *Backend) Login(ctx context.Context, request *connect.Request[xctf.LoginRequest]) (*connect.Response[xctf.LoginResponse], error) {
 	var user models.User
-	resp := b.db.Where(&models.User{Email: request.Msg.Email}).First(&user)
+	resp := b.s.DB.Where(&models.User{Email: request.Msg.Email}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
@@ -175,7 +176,7 @@ func (b *Backend) CurrentUser(ctx context.Context, request *connect.Request[xctf
 	}
 
 	var pages []models.Page
-	resp := b.db.Find(&pages)
+	resp := b.s.DB.Find(&pages)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
@@ -190,7 +191,7 @@ func (b *Backend) CurrentUser(ctx context.Context, request *connect.Request[xctf
 	}
 
 	var user models.User
-	resp = b.db.Where(&models.User{Model: gorm.Model{ID: userID}}).First(&user)
+	resp = b.s.DB.Where(&models.User{Model: gorm.Model{ID: userID}}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
@@ -215,16 +216,16 @@ func (b *Backend) GetDiscoveredEvidence(ctx context.Context, request *connect.Re
 	}
 
 	// var report models.EvidenceReport
-	// b.db.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
+	// b.s.DB.Where(&models.EvidenceReport{UserID: int(userID)}).First(&report)
 
 	var evidence []models.Evidence
-	evResp := b.db.Where(models.Evidence{UserID: int(userID)}).Find(&evidence)
+	evResp := b.s.DB.Where(models.Evidence{UserID: int(userID)}).Find(&evidence)
 	if evResp.Error != nil {
 		return nil, evResp.Error
 	}
 
 	var connections []models.EvidenceConnection
-	connResp := b.db.Where(models.EvidenceConnection{UserID: int(userID)}).Find(&connections)
+	connResp := b.s.DB.Where(models.EvidenceConnection{UserID: int(userID)}).Find(&connections)
 	if connResp.Error != nil {
 		return nil, connResp.Error
 	}
@@ -274,15 +275,15 @@ func (b *Backend) SubmitEvidenceConnection(
 		DestinationID: int(request.Msg.Destination),
 		UserID:        int(userID),
 	}
-	res := b.db.Where(evidenceConn).First(&evidenceConn)
+	res := b.s.DB.Where(evidenceConn).First(&evidenceConn)
 	if res.Error != nil {
-		res = b.db.Create(&evidenceConn)
+		res = b.s.DB.Create(&evidenceConn)
 		if res.Error != nil {
 			return nil, res.Error
 		}
 	} else {
 		if request.Msg.Remove {
-			res = b.db.Delete(&evidenceConn)
+			res = b.s.DB.Delete(&evidenceConn)
 			if res.Error != nil {
 				return nil, res.Error
 			}
@@ -296,7 +297,7 @@ func (b *Backend) GetHomePage(
 	request *connect.Request[xctf.GetHomePageRequest],
 ) (*connect.Response[xctf.GetHomePageResponse], error) {
 	var homePage models.HomePage
-	resp := b.db.First(&homePage)
+	resp := b.s.DB.First(&homePage)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
@@ -308,7 +309,7 @@ func (b *Backend) GetHomePage(
 func (b *Backend) ForgotPassword(ctx context.Context, request *connect.Request[xctf.ForgotPasswordRequest]) (*connect.Response[xctf.Empty], error) {
 	// check if user exists
 	var user models.User
-	resp := b.db.Where(models.User{Email: request.Msg.Email}).First(&user)
+	resp := b.s.DB.Where(models.User{Email: request.Msg.Email}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
@@ -322,30 +323,30 @@ func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xc
 	}
 
 	var user models.User
-	resp := b.db.Where(models.User{Model: gorm.Model{ID: userId}}).First(&user)
+	resp := b.s.DB.Where(models.User{Model: gorm.Model{ID: userId}}).First(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
 	user.HasWriteup = true
-	resp = b.db.Save(&user)
+	resp = b.s.DB.Save(&user)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
 
 	var writeup models.Writeup
-	resp = b.db.Where(models.Writeup{Username: user.Username}).First(&writeup)
+	resp = b.s.DB.Where(models.Writeup{Username: user.Username}).First(&writeup)
 	if resp.Error != nil {
 		writeup := models.Writeup{
 			Username: user.Username,
 			Content:  request.Msg.Content,
 		}
-		resp = b.db.Create(&writeup)
+		resp = b.s.DB.Create(&writeup)
 		if resp.Error != nil {
 			return nil, resp.Error
 		}
 	} else {
 		writeup.Content = request.Msg.Content
-		resp = b.db.Save(&writeup)
+		resp = b.s.DB.Save(&writeup)
 		if resp.Error != nil {
 			return nil, resp.Error
 		}
@@ -353,9 +354,9 @@ func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xc
 	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func NewBackend(db *gorm.DB, manager *http.Store) *Backend {
+func NewBackend(s *db.Service, manager *http.Store) *Backend {
 	return &Backend{
-		db:      db,
+		s:       s,
 		manager: manager,
 	}
 }
