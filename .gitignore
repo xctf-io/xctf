@@ -3,3 +3,4 @@ xctf.db
 data/
 **/node_modules
 .idea/
+config.yaml

@@ -8,6 +8,7 @@ package xctf
 
 import (
 	context "context"
+	chalgen "github.com/xctf-io/xctf/gen/chalgen"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -34,6 +35,8 @@ type BackendClient interface {
 	GetHomePage(ctx context.Context, in *GetHomePageRequest, opts ...grpc.CallOption) (*GetHomePageResponse, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*Empty, error)
 	SubmitWriteup(ctx context.Context, in *SubmitWriteupRequest, opts ...grpc.CallOption) (*Empty, error)
+	Generate(ctx context.Context, in *chalgen.GenerateRequest, opts ...grpc.CallOption) (*chalgen.GenerateResponse, error)
+	ChallengeType(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ChallengeTypeResponse, error)
 }
 
 type backendClient struct {
@@ -152,6 +155,24 @@ func (c *backendClient) SubmitWriteup(ctx context.Context, in *SubmitWriteupRequ
 	return out, nil
 }
 
+func (c *backendClient) Generate(ctx context.Context, in *chalgen.GenerateRequest, opts ...grpc.CallOption) (*chalgen.GenerateResponse, error) {
+	out := new(chalgen.GenerateResponse)
+	err := c.cc.Invoke(ctx, "/xctf.Backend/Generate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *backendClient) ChallengeType(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ChallengeTypeResponse, error) {
+	out := new(ChallengeTypeResponse)
+	err := c.cc.Invoke(ctx, "/xctf.Backend/ChallengeType", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BackendServer is the server API for Backend service.
 // All implementations should embed UnimplementedBackendServer
 // for forward compatibility
@@ -168,6 +189,8 @@ type BackendServer interface {
 	GetHomePage(context.Context, *GetHomePageRequest) (*GetHomePageResponse, error)
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*Empty, error)
 	SubmitWriteup(context.Context, *SubmitWriteupRequest) (*Empty, error)
+	Generate(context.Context, *chalgen.GenerateRequest) (*chalgen.GenerateResponse, error)
+	ChallengeType(context.Context, *Empty) (*ChallengeTypeResponse, error)
 }
 
 // UnimplementedBackendServer should be embedded to have forward compatible implementations.
@@ -209,6 +232,12 @@ func (UnimplementedBackendServer) ForgotPassword(context.Context, *ForgotPasswor
 }
 func (UnimplementedBackendServer) SubmitWriteup(context.Context, *SubmitWriteupRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitWriteup not implemented")
+}
+func (UnimplementedBackendServer) Generate(context.Context, *chalgen.GenerateRequest) (*chalgen.GenerateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Generate not implemented")
+}
+func (UnimplementedBackendServer) ChallengeType(context.Context, *Empty) (*ChallengeTypeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChallengeType not implemented")
 }
 
 // UnsafeBackendServer may be embedded to opt out of forward compatibility for this service.
@@ -438,6 +467,42 @@ func _Backend_SubmitWriteup_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Backend_Generate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(chalgen.GenerateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BackendServer).Generate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Backend/Generate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BackendServer).Generate(ctx, req.(*chalgen.GenerateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Backend_ChallengeType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BackendServer).ChallengeType(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Backend/ChallengeType",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BackendServer).ChallengeType(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Backend_ServiceDesc is the grpc.ServiceDesc for Backend service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -492,6 +557,14 @@ var Backend_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SubmitWriteup",
 			Handler:    _Backend_SubmitWriteup_Handler,
+		},
+		{
+			MethodName: "Generate",
+			Handler:    _Backend_Generate_Handler,
+		},
+		{
+			MethodName: "ChallengeType",
+			Handler:    _Backend_ChallengeType_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

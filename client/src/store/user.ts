@@ -4,12 +4,12 @@ import { atomWithStorage } from "jotai/utils";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
 
-export const createSuccessToast = (success: string, isDark: boolean | undefined) => {
+export const createSuccessToast = (success: string, isDark?: boolean) => {
 	const theme = isDark ? "dark" : "light";
 	toast.success(success, { theme: theme, autoClose: 2000 });
 };
 
-export const createErrorToast = (error: string, isDark: boolean | undefined) => {
+export const createErrorToast = (error: string, isDark?: boolean) => {
 	const theme = isDark ? "dark" : "light";
 	toast.error(error, { theme: theme, autoClose: 2000 });
 };
@@ -46,14 +46,14 @@ export const useAuthStatus = () => {
 };
 
 export const useLogin = (): [
-	(email: string, password: string, isDark: boolean | undefined) => void,
+	(email: string, password: string) => void,
 	string | Dispatch<SetStateAction<string | null>> | null,
 	string | Dispatch<SetStateAction<string | null>> | null
 ] => {
 	const [user, setUser] = useUser();
 	const [success, setSuccess, error, setError] = useAuthStatus();
 
-	const login = async (email: string, password: string, isDark: boolean | undefined) => {
+	const login = async (email: string, password: string) => {
 		try {
 			const resp = await xctf.login({
 				email,
@@ -64,16 +64,16 @@ export const useLogin = (): [
 				type: resp.userRole,
 			});
 			console.log(resp.userRole)
-			createSuccessToast("Login success!", isDark);
+			createSuccessToast("Login success!");
 		} catch (e: any) {
-			createErrorToast(e.toString(), isDark);
+			createErrorToast(e.toString());
 		}
 	};
 	return [login, success, error];
 };
 
 export const useRegister = (): [
-	(username: string, email: string, password: string, isDark: boolean | undefined) => Promise<boolean>,
+	(username: string, email: string, password: string) => Promise<boolean>,
 	string | Dispatch<SetStateAction<string | null>> | null,
 	string | Dispatch<SetStateAction<string | null>> | null
 ] => {
@@ -83,7 +83,6 @@ export const useRegister = (): [
 		username: string,
 		email: string,
 		password: string,
-		isDark: boolean | undefined
 	) => {
 		try {
 			const resp = await xctf.register({
@@ -91,10 +90,10 @@ export const useRegister = (): [
 				email,
 				password,
 			});
-			createSuccessToast("Registration success!", isDark);
+			createSuccessToast("Registration success!");
 			return true
 		} catch (e: any) {
-			createErrorToast(e.toString(), isDark);
+			createErrorToast(e.toString());
 			return false
 		}
 	};

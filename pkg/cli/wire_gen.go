@@ -46,7 +46,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	kubesService, err := kubes.NewService()
+	kubesConfig, err := kubes.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	kubesService, err := kubes.New(kubesConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -56,6 +60,6 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	app := New(logLog, handler)
+	app := New(logLog, serverConfig, handler)
 	return app, nil
 }

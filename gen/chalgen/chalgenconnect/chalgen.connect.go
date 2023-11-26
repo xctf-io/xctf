@@ -5,10 +5,8 @@
 package chalgenconnect
 
 import (
-	context "context"
-	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
-	chalgen "github.com/xctf-io/xctf/gen/chalgen"
+	_ "github.com/xctf-io/xctf/gen/chalgen"
 	http "net/http"
 	strings "strings"
 )
@@ -25,21 +23,8 @@ const (
 	ChalgenServiceName = "chalgen.ChalgenService"
 )
 
-// These constants are the fully-qualified names of the RPCs defined in this package. They're
-// exposed at runtime as Spec.Procedure and as the final two segments of the HTTP route.
-//
-// Note that these are different from the fully-qualified method names used by
-// google.golang.org/protobuf/reflect/protoreflect. To convert from these constants to
-// reflection-formatted method names, remove the leading slash and convert the remaining slash to a
-// period.
-const (
-	// ChalgenServiceGenerateProcedure is the fully-qualified name of the ChalgenService's Generate RPC.
-	ChalgenServiceGenerateProcedure = "/chalgen.ChalgenService/Generate"
-)
-
 // ChalgenServiceClient is a client for the chalgen.ChalgenService service.
 type ChalgenServiceClient interface {
-	Generate(context.Context, *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error)
 }
 
 // NewChalgenServiceClient constructs a client for the chalgen.ChalgenService service. By default,
@@ -51,28 +36,15 @@ type ChalgenServiceClient interface {
 // http://api.acme.com or https://acme.com/grpc).
 func NewChalgenServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) ChalgenServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
-	return &chalgenServiceClient{
-		generate: connect_go.NewClient[chalgen.GenerateRequest, chalgen.GenerateResponse](
-			httpClient,
-			baseURL+ChalgenServiceGenerateProcedure,
-			opts...,
-		),
-	}
+	return &chalgenServiceClient{}
 }
 
 // chalgenServiceClient implements ChalgenServiceClient.
 type chalgenServiceClient struct {
-	generate *connect_go.Client[chalgen.GenerateRequest, chalgen.GenerateResponse]
-}
-
-// Generate calls chalgen.ChalgenService.Generate.
-func (c *chalgenServiceClient) Generate(ctx context.Context, req *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error) {
-	return c.generate.CallUnary(ctx, req)
 }
 
 // ChalgenServiceHandler is an implementation of the chalgen.ChalgenService service.
 type ChalgenServiceHandler interface {
-	Generate(context.Context, *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error)
 }
 
 // NewChalgenServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -81,15 +53,8 @@ type ChalgenServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewChalgenServiceHandler(svc ChalgenServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
-	chalgenServiceGenerateHandler := connect_go.NewUnaryHandler(
-		ChalgenServiceGenerateProcedure,
-		svc.Generate,
-		opts...,
-	)
 	return "/chalgen.ChalgenService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case ChalgenServiceGenerateProcedure:
-			chalgenServiceGenerateHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -98,7 +63,3 @@ func NewChalgenServiceHandler(svc ChalgenServiceHandler, opts ...connect_go.Hand
 
 // UnimplementedChalgenServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedChalgenServiceHandler struct{}
-
-func (UnimplementedChalgenServiceHandler) Generate(context.Context, *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("chalgen.ChalgenService.Generate is not implemented"))
-}

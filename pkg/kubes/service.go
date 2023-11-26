@@ -2,26 +2,35 @@ package kubes
 
 import (
 	"context"
+	"fmt"
 	"github.com/bufbuild/connect-go"
+	"github.com/google/wire"
 	"github.com/xctf-io/xctf/gen/kubes"
 	"github.com/xctf-io/xctf/gen/kubes/kubesconnect"
+	networkingv1 "k8s.io/api/networking/v1"
 	"path/filepath"
+	"regexp"
 
 	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
 )
 
+var ProviderSet = wire.NewSet(
+	New,
+	NewConfig,
+)
+
 type Service struct {
+	c         Config
 	clientSet *kubernetes.Clientset
 }
 
 var _ kubesconnect.KubesServiceHandler = (*Service)(nil)
 
-func NewService() (*Service, error) {
+func New(c Config) (*Service, error) {
 	kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
 
 	// Build the configuration from the kubeconfig
@@ -36,12 +45,13 @@ func NewService() (*Service, error) {
 		return nil, err
 	}
 	return &Service{
+		c:         c,
 		clientSet: clientset,
 	}, nil
 }
 
 func (s *Service) ListDeployments(ctx context.Context, c *connect.Request[kubes.ListDeploymentsRequest]) (*connect.Response[kubes.ListDeploymentsResponse], error) {
-	deployments, err := s.deploymentsForNamespace(ctx, c.Msg.Namespace)
+	deployments, err := s.deploymentsForNamespace(ctx, s.c.DefaultNamespace)
 	if err != nil {
 		return nil, err
 	}
@@ -49,6 +59,7 @@ func (s *Service) ListDeployments(ctx context.Context, c *connect.Request[kubes.
 	var deploymentList []*kubes.Deployment
 	for _, deployment := range deployments.Items {
 		deploymentList = append(deploymentList, &kubes.Deployment{
+			Id:        string(deployment.UID),
 			Name:      deployment.Name,
 			Namespace: deployment.Namespace,
 			Image:     deployment.Spec.Template.Spec.Containers[0].Image,
@@ -62,40 +73,41 @@ func (s *Service) ListDeployments(ctx context.Context, c *connect.Request[kubes.
 	}), nil
 }
 
-func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.NewDeploymentRequest]) (*connect.Response[kubes.NewDeploymentResponse], error) {
-	deployment := &appsv1.Deployment{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      c.Msg.Name,
-			Namespace: c.Msg.Namespace,
-		},
-		Spec: appsv1.DeploymentSpec{
-			Replicas: &c.Msg.Replicas,
-			Selector: &metav1.LabelSelector{
-				MatchLabels: map[string]string{
-					"app": c.Msg.Name,
-				},
-			},
-			Template: corev1.PodTemplateSpec{
-				ObjectMeta: metav1.ObjectMeta{
-					Labels: map[string]string{"app": c.Msg.Name},
-				},
-				Spec: corev1.PodSpec{
-					Containers: []corev1.Container{
-						{
-							Name:  c.Msg.Name,
-							Image: c.Msg.Image,
-						},
-					},
-				},
-			},
-		},
+func isValidK8sServiceName(name string) bool {
+	if len(name) == 0 || len(name) > 63 {
+		return false
 	}
 
-	_, err := s.newDeployment(ctx, c.Msg.Namespace, deployment)
+	// Kubernetes service names must conform to RFC 1123. This includes the DNS label standard,
+	// which requires the name to consist of only lowercase alphanumeric characters or '-',
+	// and must start and end with an alphanumeric character.
+	match, _ := regexp.MatchString("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", name)
+
+	return match
+}
+
+func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.NewDeploymentRequest]) (*connect.Response[kubes.NewDeploymentResponse], error) {
+	port := int32(80)
+	_, err := s.newDeployment(ctx, s.c.DefaultNamespace, NewXCtfDeployment(s.c.Container, port))
 	if err != nil {
 		return nil, err
 	}
 
+	// TODO breadchris how should this be managed?
+	challengeIngress := "challenge-ingress"
+	domainBase := "nicek12.xctf.io"
+
+	name := c.Msg.Name
+	if !isValidK8sServiceName(name) {
+		return nil, fmt.Errorf("invalid service name: %s", name)
+	}
+
+	domain := fmt.Sprintf("%s.%s", name, domainBase)
+
+	err = s.updateIngress(ctx, s.c.DefaultNamespace, challengeIngress, NewIngressRule(domain, name, port))
+	if err != nil {
+		return nil, err
+	}
 	return connect.NewResponse(&kubes.NewDeploymentResponse{}), nil
 }
 
@@ -107,4 +119,14 @@ func (s *Service) deploymentsForNamespace(ctx context.Context, namespace string)
 func (s *Service) newDeployment(ctx context.Context, namespace string, deployment *appsv1.Deployment) (*appsv1.Deployment, error) {
 	deploymentsClient := s.clientSet.AppsV1().Deployments(namespace)
 	return deploymentsClient.Create(ctx, deployment, metav1.CreateOptions{})
+}
+
+func (s *Service) updateIngress(ctx context.Context, namespace, ingressName string, ingressRule *networkingv1.IngressRule) error {
+	ingress, err := s.clientSet.NetworkingV1().Ingresses(namespace).Get(ctx, ingressName, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+	ingress.Spec.Rules = append(ingress.Spec.Rules, *ingressRule)
+	_, err = s.clientSet.NetworkingV1().Ingresses(namespace).Update(ctx, ingress, metav1.UpdateOptions{})
+	return err
 }

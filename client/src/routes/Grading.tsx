@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { ctfgAdmin } from "../service";
+import { xctfAdmin } from "../service";
 import {
 	Progress,
 	Text,
@@ -25,8 +25,8 @@ export const Grading: React.FC<Props> = () => {
 	useEffect(() => {
 		async function fetchCurrentProgress() {
 			try {
-				const resp = await ctfgAdmin.getTeamsProgress({});
-				const allChallenges = await ctfgAdmin.getAllChallenges({});
+				const resp = await xctfAdmin.getTeamsProgress({});
+				const allChallenges = await xctfAdmin.getAllChallenges({});
 				setNumChallenges(allChallenges.challenges.length);
 				const teams = resp.teams.map((t) => ({
 					name: t.teamName,

@@ -1,9 +1,9 @@
 import {FieldDescriptorProto, FieldDescriptorProto_Type} from "@bufbuild/protobuf";
 import React, {FC, useState} from "react";
 import {useWatch} from "react-hook-form";
-import {Button, Field, Select, Textarea} from "@fluentui/react-components";
-import {GRPCInputFormProps, ProtobufInputFormSimple} from "@/components/ProtobufFormSimple/ProtobufInputForm";
-import { GRPCTypeInfo } from "@/rpc/project_pb";
+import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
+import { GRPCTypeInfo } from "@/rpc/xctf/xctf_pb";
+import {Input, Text} from "@nextui-org/react";
 
 const getFieldName = (baseFieldName: string | undefined, field: FieldDescriptorProto, idx?: number): string => {
     if (!baseFieldName) {
@@ -46,11 +46,11 @@ export const InputFormContents: FC<InputFormContentsProps> = (props) => {
         const fieldType = descLookup[typeName];
         if (fieldType) {
             return (
-                <ProtobufInputFormSimple
+                <ProtobufMessageForm
                     {...props}
                     grpcInfo={new GRPCTypeInfo({
                         ...grpcInfo,
-                        input: fieldType,
+                        msg: fieldType,
                     })}
                     baseFieldName={fieldFormName}
                     fieldPath={`${fieldPath}.${field.name}`}
@@ -74,18 +74,18 @@ export const InputFormContents: FC<InputFormContentsProps> = (props) => {
         return (
             <>
                 <label htmlFor={field.name}>{field.name}</label>
-                <Select id={field.name}>
+                <select id={field.name}>
                     {enumType.value.map((e) => (
                         <option key={e.name} value={e.name}>{e.name}</option>
                     ))}
-                </Select>
+                </select>
             </>
         )
     }
     return (
-        <Field key={field.number} label={field.name} required>
-            <Textarea value={fieldValue} {...register(fieldFormName)} resize={'vertical'} />
-        </Field>
+        <div key={field.number}>
+            <Input aria-label={"field-input"} value={fieldValue} {...register(fieldFormName)} />
+        </div>
     )
 }
 

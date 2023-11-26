@@ -23,6 +23,7 @@ import { ToastContainer } from "react-toastify";
 import Redirect from "./components/Redirect";
 import {Build} from "@/routes/build/Build";
 import {Toaster} from "react-hot-toast";
+import {Manage} from "@/routes/Manage";
 
 interface Props {}
 
@@ -73,6 +74,14 @@ function App() {
 			label: "Build",
 			to: "/build",
 			Component: Build,
+			showWhenAuthed: false,
+			showWhenAdmin: true,
+			hideWhenUnauthed: true,
+		},
+		{
+			label: "Manage",
+			to: "/manage",
+			Component: Manage,
 			showWhenAuthed: false,
 			showWhenAdmin: true,
 			hideWhenUnauthed: true,

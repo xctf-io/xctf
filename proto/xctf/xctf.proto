@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package xctf;
 
+import "chalgen/chalgen.proto";
+import "google/protobuf/descriptor.proto";
+
 option go_package = "gen/xctf";
 
 service Backend {
@@ -19,6 +22,9 @@ service Backend {
   rpc GetHomePage(GetHomePageRequest) returns (GetHomePageResponse);
   rpc ForgotPassword(ForgotPasswordRequest) returns (Empty);
   rpc SubmitWriteup(SubmitWriteupRequest) returns (Empty);
+
+  rpc Generate(chalgen.GenerateRequest) returns (chalgen.GenerateResponse);
+  rpc ChallengeType(Empty) returns (ChallengeTypeResponse);
 }
 
 service Admin {
@@ -32,6 +38,17 @@ service Admin {
   rpc SubmitComment(SubmitCommentRequest) returns (Empty);
   rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
   rpc GetUserGraph(GetUserGraphRequest) returns (GetUserGraphResponse);
+}
+
+message GRPCTypeInfo {
+  google.protobuf.DescriptorProto msg = 1;
+  map<string, google.protobuf.DescriptorProto> desc_lookup = 3;
+  map<string, google.protobuf.EnumDescriptorProto> enum_lookup = 4;
+  string package_name = 6;
+}
+
+message ChallengeTypeResponse {
+  GRPCTypeInfo type_info = 1;
 }
 
 message Empty {}

@@ -6,7 +6,7 @@ import React, {
 	useCallback,
 } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ctfgAdmin } from "../service";
+import { xctfAdmin } from "../service";
 import { createErrorToast, createSuccessToast } from "../store/user";
 import { Button, theme, Input, Switch, useTheme } from "@nextui-org/react";
 import {
@@ -114,7 +114,7 @@ const ViewWriteup = () => {
 					highlightAreas: props.highlightAreas,
 					quote: props.selectedText,
 				};
-				ctfgAdmin.submitComment({
+				xctfAdmin.submitComment({
 					username: name,
 					id: note.id,
 					content: note.content,
@@ -287,7 +287,7 @@ const ViewWriteup = () => {
 	const [showChart, setShowChart] = useState<boolean>(false);
 	async function getWriteup() {
 		try {
-			const wp = await ctfgAdmin.getWriteup({ username: name });
+			const wp = await xctfAdmin.getWriteup({ username: name });
 			setWriteup(wp.content);
 		} catch (error) {
 			createErrorToast("User does not have a writeup", isDark);
@@ -295,8 +295,8 @@ const ViewWriteup = () => {
 	}
 	async function getTeams() {
 		try {
-			const resp = await ctfgAdmin.getTeamsProgress({});
-			const allChallenges = await ctfgAdmin.getAllChallenges({});
+			const resp = await xctfAdmin.getTeamsProgress({});
+			const allChallenges = await xctfAdmin.getAllChallenges({});
 			const teams = resp.teams.map((t) => ({
 				name: t.teamName,
 				hasWriteup: t.hasWriteup,
@@ -355,7 +355,7 @@ const ViewWriteup = () => {
 	};
 	async function loadDiscoveredEvidence() {
 		try {
-			const resp = await ctfgAdmin.getUserGraph({
+			const resp = await xctfAdmin.getUserGraph({
 				username: name,
 			});
 			graphRef.current = resp;
@@ -402,7 +402,7 @@ const ViewWriteup = () => {
 	}
 
 	async function getNotes() {
-		const storedNotes = await ctfgAdmin.getComments({ username: name });
+		const storedNotes = await xctfAdmin.getComments({ username: name });
 		const notes = storedNotes.comments.map((n) => ({
 			id: n.id,
 			content: n.content,
@@ -469,7 +469,7 @@ const ViewWriteup = () => {
 				createErrorToast("Grade must be between 1 and 100", isDark);
 				return;
 			}
-			ctfgAdmin.submitGrade({
+			xctfAdmin.submitGrade({
 				username: name,
 				score: grade,
 			});

@@ -2,7 +2,6 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from chalgen import chalgen_pb2 as chalgen_dot_chalgen__pb2
 
 
 class ChalgenServiceStub(object):
@@ -14,30 +13,14 @@ class ChalgenServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Generate = channel.unary_unary(
-                '/chalgen.ChalgenService/Generate',
-                request_serializer=chalgen_dot_chalgen__pb2.GenerateRequest.SerializeToString,
-                response_deserializer=chalgen_dot_chalgen__pb2.GenerateResponse.FromString,
-                )
 
 
 class ChalgenServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def Generate(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
 
 def add_ChalgenServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Generate': grpc.unary_unary_rpc_method_handler(
-                    servicer.Generate,
-                    request_deserializer=chalgen_dot_chalgen__pb2.GenerateRequest.FromString,
-                    response_serializer=chalgen_dot_chalgen__pb2.GenerateResponse.SerializeToString,
-            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
             'chalgen.ChalgenService', rpc_method_handlers)
@@ -47,20 +30,3 @@ def add_ChalgenServiceServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class ChalgenService(object):
     """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def Generate(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/chalgen.ChalgenService/Generate',
-            chalgen_dot_chalgen__pb2.GenerateRequest.SerializeToString,
-            chalgen_dot_chalgen__pb2.GenerateResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

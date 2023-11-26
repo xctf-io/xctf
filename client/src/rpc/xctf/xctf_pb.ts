@@ -4,7 +4,99 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3 } from "@bufbuild/protobuf";
+import { DescriptorProto, EnumDescriptorProto, Message, proto3 } from "@bufbuild/protobuf";
+
+/**
+ * @generated from message xctf.GRPCTypeInfo
+ */
+export class GRPCTypeInfo extends Message<GRPCTypeInfo> {
+  /**
+   * @generated from field: google.protobuf.DescriptorProto msg = 1;
+   */
+  msg?: DescriptorProto;
+
+  /**
+   * @generated from field: map<string, google.protobuf.DescriptorProto> desc_lookup = 3;
+   */
+  descLookup: { [key: string]: DescriptorProto } = {};
+
+  /**
+   * @generated from field: map<string, google.protobuf.EnumDescriptorProto> enum_lookup = 4;
+   */
+  enumLookup: { [key: string]: EnumDescriptorProto } = {};
+
+  /**
+   * @generated from field: string package_name = 6;
+   */
+  packageName = "";
+
+  constructor(data?: PartialMessage<GRPCTypeInfo>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.GRPCTypeInfo";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "msg", kind: "message", T: DescriptorProto },
+    { no: 3, name: "desc_lookup", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: DescriptorProto} },
+    { no: 4, name: "enum_lookup", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: EnumDescriptorProto} },
+    { no: 6, name: "package_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GRPCTypeInfo {
+    return new GRPCTypeInfo().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GRPCTypeInfo {
+    return new GRPCTypeInfo().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GRPCTypeInfo {
+    return new GRPCTypeInfo().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GRPCTypeInfo | PlainMessage<GRPCTypeInfo> | undefined, b: GRPCTypeInfo | PlainMessage<GRPCTypeInfo> | undefined): boolean {
+    return proto3.util.equals(GRPCTypeInfo, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.ChallengeTypeResponse
+ */
+export class ChallengeTypeResponse extends Message<ChallengeTypeResponse> {
+  /**
+   * @generated from field: xctf.GRPCTypeInfo type_info = 1;
+   */
+  typeInfo?: GRPCTypeInfo;
+
+  constructor(data?: PartialMessage<ChallengeTypeResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.ChallengeTypeResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "type_info", kind: "message", T: GRPCTypeInfo },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChallengeTypeResponse {
+    return new ChallengeTypeResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChallengeTypeResponse {
+    return new ChallengeTypeResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChallengeTypeResponse {
+    return new ChallengeTypeResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChallengeTypeResponse | PlainMessage<ChallengeTypeResponse> | undefined, b: ChallengeTypeResponse | PlainMessage<ChallengeTypeResponse> | undefined): boolean {
+    return proto3.util.equals(ChallengeTypeResponse, a, b);
+  }
+}
 
 /**
  * @generated from message xctf.Empty

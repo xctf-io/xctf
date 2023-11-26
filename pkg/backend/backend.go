@@ -2,7 +2,9 @@ package backend
 
 import (
 	"context"
-	"errors"
+	"github.com/pkg/errors"
+	"github.com/protoflow-labs/protoflow/pkg/grpc"
+	"github.com/xctf-io/xctf/gen/chalgen"
 	"github.com/xctf-io/xctf/gen/xctf"
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
 	"github.com/xctf-io/xctf/pkg/db"
@@ -20,6 +22,33 @@ type Backend struct {
 }
 
 var _ xctfconnect.BackendHandler = (*Backend)(nil)
+
+func (b *Backend) Generate(ctx context.Context, c *connect.Request[chalgen.GenerateRequest]) (*connect.Response[chalgen.GenerateResponse], error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (b *Backend) ChallengeType(ctx context.Context, c *connect.Request[xctf.Empty]) (*connect.Response[xctf.ChallengeTypeResponse], error) {
+	e := &chalgen.Node{}
+	ed, err := grpc.SerializeType(e)
+	if err != nil {
+		return nil, errors.Wrapf(err, "error serializing node type")
+	}
+
+	// TODO breadchris cleanup this code, see blocks.go:76
+	tr := grpc.NewTypeResolver()
+	tr = tr.ResolveLookup(e)
+
+	sr := tr.Serialize()
+
+	return connect.NewResponse(&xctf.ChallengeTypeResponse{
+		TypeInfo: &xctf.GRPCTypeInfo{
+			Msg:        ed.AsDescriptorProto(),
+			DescLookup: sr.DescLookup,
+			EnumLookup: sr.EnumLookup,
+		},
+	}), nil
+}
 
 func (b *Backend) SubmitEvidence(ctx context.Context, request *connect.Request[xctf.SubmitEvidenceRequest]) (*connect.Response[xctf.SubmitEvidenceResponse], error) {
 	userID, _, err := b.manager.GetUserFromSession(ctx)

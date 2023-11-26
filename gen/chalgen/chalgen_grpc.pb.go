@@ -7,10 +7,7 @@
 package chalgen
 
 import (
-	context "context"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChalgenServiceClient interface {
-	Generate(ctx context.Context, in *GenerateRequest, opts ...grpc.CallOption) (*GenerateResponse, error)
 }
 
 type chalgenServiceClient struct {
@@ -33,28 +29,14 @@ func NewChalgenServiceClient(cc grpc.ClientConnInterface) ChalgenServiceClient {
 	return &chalgenServiceClient{cc}
 }
 
-func (c *chalgenServiceClient) Generate(ctx context.Context, in *GenerateRequest, opts ...grpc.CallOption) (*GenerateResponse, error) {
-	out := new(GenerateResponse)
-	err := c.cc.Invoke(ctx, "/chalgen.ChalgenService/Generate", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ChalgenServiceServer is the server API for ChalgenService service.
 // All implementations should embed UnimplementedChalgenServiceServer
 // for forward compatibility
 type ChalgenServiceServer interface {
-	Generate(context.Context, *GenerateRequest) (*GenerateResponse, error)
 }
 
 // UnimplementedChalgenServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedChalgenServiceServer struct {
-}
-
-func (UnimplementedChalgenServiceServer) Generate(context.Context, *GenerateRequest) (*GenerateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Generate not implemented")
 }
 
 // UnsafeChalgenServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -68,36 +50,13 @@ func RegisterChalgenServiceServer(s grpc.ServiceRegistrar, srv ChalgenServiceSer
 	s.RegisterService(&ChalgenService_ServiceDesc, srv)
 }
 
-func _ChalgenService_Generate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChalgenServiceServer).Generate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/chalgen.ChalgenService/Generate",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChalgenServiceServer).Generate(ctx, req.(*GenerateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ChalgenService_ServiceDesc is the grpc.ServiceDesc for ChalgenService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ChalgenService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "chalgen.ChalgenService",
 	HandlerType: (*ChalgenServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Generate",
-			Handler:    _ChalgenService_Generate_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "chalgen/chalgen.proto",
+	Methods:     []grpc.MethodDesc{},
+	Streams:     []grpc.StreamDesc{},
+	Metadata:    "chalgen/chalgen.proto",
 }

@@ -3,9 +3,9 @@ import {
 } from "@bufbuild/protobuf";
 import React, {FC} from "react";
 import {Control, UseFormRegister} from "react-hook-form";
-import {GRPCTypeInfo} from "@/rpc/project_pb";
-import {Field, ProtobufFormFieldType} from "@/components/ProtobufFormSimple/Field";
-import {Stack} from "@fluentui/react";
+import {GRPCTypeInfo} from "@/rpc/xctf/xctf_pb";
+import {MessageField, ProtobufFormFieldType} from "@/components/ProtobufFormSimple/MessageField";
+import "./styles.css";
 
 export interface GRPCInputFormProps {
     grpcInfo: GRPCTypeInfo
@@ -16,12 +16,12 @@ export interface GRPCInputFormProps {
     setValue: (name: any, value: any) => void
 }
 
-export const ProtobufInputFormSimple: FC<GRPCInputFormProps> = (props) => {
+export const ProtobufMessageForm: FC<GRPCInputFormProps> = (props) => {
     const {
         grpcInfo,
     } = props;
 
-    const { input: desc } = grpcInfo;
+    const { msg: desc } = grpcInfo;
     if (!desc) {
         return null;
     }
@@ -51,14 +51,27 @@ export const ProtobufInputFormSimple: FC<GRPCInputFormProps> = (props) => {
         }
     });
     return (
-        <Stack>
-            {formattedFields.map((field) => {
-                return (
-                    <Stack.Item key={field.name}>
-                        <Field {...props} field={field} desc={desc} />
-                    </Stack.Item>
-                )
-            })}
-        </Stack>
+        <div className={"grpc-request-form"}>
+            <table>
+                <tr>
+                    <th>{desc.name}</th>
+                </tr>
+                {formattedFields.map((field) => {
+                    return (
+                        <tr key={field.name} className={"message_field"}>
+                            <td className={"name"}>
+                                <strong>{field.name}</strong>
+                            </td>
+                            <td className={"toggle_prescence"}>
+                                <input type={"checkbox"} />
+                            </td>
+                            <td>
+                                <MessageField {...props} field={field} desc={desc} />
+                            </td>
+                        </tr>
+                    )
+                })}
+            </table>
+        </div>
     )
 }

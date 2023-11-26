@@ -85,29 +85,9 @@ export class ListDeploymentsResponse extends Message<ListDeploymentsResponse> {
  */
 export class NewDeploymentRequest extends Message<NewDeploymentRequest> {
   /**
-   * @generated from field: string namespace = 1;
-   */
-  namespace = "";
-
-  /**
-   * @generated from field: kubes.Deployment deployment = 2;
-   */
-  deployment?: Deployment;
-
-  /**
-   * @generated from field: string name = 3;
+   * @generated from field: string name = 1;
    */
   name = "";
-
-  /**
-   * @generated from field: int32 replicas = 4;
-   */
-  replicas = 0;
-
-  /**
-   * @generated from field: string image = 5;
-   */
-  image = "";
 
   constructor(data?: PartialMessage<NewDeploymentRequest>) {
     super();
@@ -117,11 +97,7 @@ export class NewDeploymentRequest extends Message<NewDeploymentRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "kubes.NewDeploymentRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "namespace", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "deployment", kind: "message", T: Deployment },
-    { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "replicas", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 5, name: "image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): NewDeploymentRequest {
@@ -207,6 +183,11 @@ export class Deployment extends Message<Deployment> {
    */
   status = "";
 
+  /**
+   * @generated from field: string id = 6;
+   */
+  id = "";
+
   constructor(data?: PartialMessage<Deployment>) {
     super();
     proto3.util.initPartial(data, this);
@@ -220,6 +201,7 @@ export class Deployment extends Message<Deployment> {
     { no: 3, name: "image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "replicas", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 5, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Deployment {

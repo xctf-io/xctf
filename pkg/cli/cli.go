@@ -30,7 +30,11 @@ var ProviderSet = wire.NewSet(
 	New,
 )
 
-func New(l *log.Log, handler http.Handler) *cli.App {
+func New(
+	l *log.Log,
+	cfg server.Config,
+	handler http.Handler,
+) *cli.App {
 	return &cli.App{
 		Name: "xctf",
 		Flags: []cli.Flag{
@@ -45,7 +49,7 @@ func New(l *log.Log, handler http.Handler) *cli.App {
 				return liveReload()
 			}
 
-			startHttpServer(h2c.NewHandler(corsMiddleware(handler), &http2.Server{}))
+			startHttpServer(cfg, h2c.NewHandler(corsMiddleware(handler), &http2.Server{}))
 			return nil
 		},
 		Commands: []*cli.Command{
@@ -159,13 +163,11 @@ func liveReload() error {
 	return reload.Reload(c)
 }
 
-func startHttpServer(httpApiHandler http.Handler) {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8000"
-	}
-
-	addr := fmt.Sprintf(":%s", port)
+func startHttpServer(
+	c server.Config,
+	httpApiHandler http.Handler,
+) {
+	addr := fmt.Sprintf(":%s", c.Port)
 
 	httpServer := &http.Server{
 		Addr:    addr,

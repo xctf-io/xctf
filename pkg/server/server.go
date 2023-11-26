@@ -26,8 +26,8 @@ import (
 var ProviderSet = wire.NewSet(
 	NewConfig,
 	db.ProviderSet,
+	kubes.ProviderSet,
 	xhttp.New,
-	kubes.NewService,
 	backend.NewBackend,
 	admin.NewAdmin,
 	New,

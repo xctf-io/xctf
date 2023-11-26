@@ -3,24 +3,12 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GenerateRequest, GenerateResponse } from "./chalgen_pb.js";
-import { MethodKind } from "@bufbuild/protobuf";
-
 /**
  * @generated from service chalgen.ChalgenService
  */
 export const ChalgenService = {
   typeName: "chalgen.ChalgenService",
   methods: {
-    /**
-     * @generated from rpc chalgen.ChalgenService.Generate
-     */
-    generate: {
-      name: "Generate",
-      I: GenerateRequest,
-      O: GenerateResponse,
-      kind: MethodKind.Unary,
-    },
   }
 } as const;
 

@@ -11,12 +11,14 @@ const watch = devBuild
 	  }
 	: undefined;
 
-const minify = devBuild ? false : true;
+const minify = !devBuild;
 
 const nodeEnv = devBuild ? '"development"' : '"production"';
 
 const options = {
-	entryPoints: ["./src/index.tsx"],
+	entryPoints: [
+		"./src/index.tsx",
+	],
 	outdir: "public/build/",
 	format: "esm",
 	bundle: true,
@@ -24,7 +26,7 @@ const options = {
 		".ts": "tsx",
 		".tsx": "tsx",
 		".woff2": "file",
-		".woff": "file",
+		".woff": "file"
 	},
 	plugins: [nodeModulesPolyfillPlugin()],
 	minify: minify,
@@ -46,6 +48,7 @@ if (!devBuild) {
 	const result = await context.rebuild();
 	console.log('serving', `public`)
 	context.serve({
+		port: 8001,
 		servedir: `public`,
 		fallback: `public/index.html`,
 		onRequest: args => {

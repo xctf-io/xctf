@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 	"log/slog"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/glebarez/sqlite"
@@ -30,6 +31,10 @@ func NewGorm(c Config) (*gorm.DB, error) {
 	if strings.Contains(c.DSN, "postgres") {
 		openedDb = postgres.Open(c.DSN)
 	} else {
+		dir, _ := path.Split(c.DSN)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return nil, err
+		}
 		openedDb = sqlite.Open(c.DSN)
 	}
 
@@ -46,7 +51,7 @@ func New(c Config) (*Service, error) {
 	}
 
 	var lsdb *litestream.DB
-	if s.c.Backups {
+	if s.c.BackupsEnabled {
 		lsdb = litestream.NewDB(s.c.DSN)
 
 		if err := lsdb.Open(); err != nil {
@@ -65,7 +70,7 @@ func New(c Config) (*Service, error) {
 		return nil, err
 	}
 
-	if s.c.Backups {
+	if s.c.BackupsEnabled {
 		if lsdb == nil {
 			return nil, errors.New("lsdb is nil")
 		}

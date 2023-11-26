@@ -2,6 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
+from chalgen import chalgen_pb2 as chalgen_dot_chalgen__pb2
 from xctf import xctf_pb2 as xctf_dot_xctf__pb2
 
 
@@ -73,6 +74,16 @@ class BackendStub(object):
                 '/xctf.Backend/SubmitWriteup',
                 request_serializer=xctf_dot_xctf__pb2.SubmitWriteupRequest.SerializeToString,
                 response_deserializer=xctf_dot_xctf__pb2.Empty.FromString,
+                )
+        self.Generate = channel.unary_unary(
+                '/xctf.Backend/Generate',
+                request_serializer=chalgen_dot_chalgen__pb2.GenerateRequest.SerializeToString,
+                response_deserializer=chalgen_dot_chalgen__pb2.GenerateResponse.FromString,
+                )
+        self.ChallengeType = channel.unary_unary(
+                '/xctf.Backend/ChallengeType',
+                request_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
+                response_deserializer=xctf_dot_xctf__pb2.ChallengeTypeResponse.FromString,
                 )
 
 
@@ -151,6 +162,18 @@ class BackendServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Generate(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ChallengeType(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_BackendServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -213,6 +236,16 @@ def add_BackendServicer_to_server(servicer, server):
                     servicer.SubmitWriteup,
                     request_deserializer=xctf_dot_xctf__pb2.SubmitWriteupRequest.FromString,
                     response_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
+            ),
+            'Generate': grpc.unary_unary_rpc_method_handler(
+                    servicer.Generate,
+                    request_deserializer=chalgen_dot_chalgen__pb2.GenerateRequest.FromString,
+                    response_serializer=chalgen_dot_chalgen__pb2.GenerateResponse.SerializeToString,
+            ),
+            'ChallengeType': grpc.unary_unary_rpc_method_handler(
+                    servicer.ChallengeType,
+                    request_deserializer=xctf_dot_xctf__pb2.Empty.FromString,
+                    response_serializer=xctf_dot_xctf__pb2.ChallengeTypeResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -425,6 +458,40 @@ class Backend(object):
         return grpc.experimental.unary_unary(request, target, '/xctf.Backend/SubmitWriteup',
             xctf_dot_xctf__pb2.SubmitWriteupRequest.SerializeToString,
             xctf_dot_xctf__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Generate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Backend/Generate',
+            chalgen_dot_chalgen__pb2.GenerateRequest.SerializeToString,
+            chalgen_dot_chalgen__pb2.GenerateResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ChallengeType(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Backend/ChallengeType',
+            xctf_dot_xctf__pb2.Empty.SerializeToString,
+            xctf_dot_xctf__pb2.ChallengeTypeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

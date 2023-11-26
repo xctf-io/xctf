@@ -8,6 +8,7 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
+	chalgen "github.com/xctf-io/xctf/gen/chalgen"
 	xctf "github.com/xctf-io/xctf/gen/xctf"
 	http "net/http"
 	strings "strings"
@@ -62,6 +63,10 @@ const (
 	BackendForgotPasswordProcedure = "/xctf.Backend/ForgotPassword"
 	// BackendSubmitWriteupProcedure is the fully-qualified name of the Backend's SubmitWriteup RPC.
 	BackendSubmitWriteupProcedure = "/xctf.Backend/SubmitWriteup"
+	// BackendGenerateProcedure is the fully-qualified name of the Backend's Generate RPC.
+	BackendGenerateProcedure = "/xctf.Backend/Generate"
+	// BackendChallengeTypeProcedure is the fully-qualified name of the Backend's ChallengeType RPC.
+	BackendChallengeTypeProcedure = "/xctf.Backend/ChallengeType"
 	// AdminUpsertChallengeProcedure is the fully-qualified name of the Admin's UpsertChallenge RPC.
 	AdminUpsertChallengeProcedure = "/xctf.Admin/UpsertChallenge"
 	// AdminDeleteChallengeProcedure is the fully-qualified name of the Admin's DeleteChallenge RPC.
@@ -98,6 +103,8 @@ type BackendClient interface {
 	GetHomePage(context.Context, *connect_go.Request[xctf.GetHomePageRequest]) (*connect_go.Response[xctf.GetHomePageResponse], error)
 	ForgotPassword(context.Context, *connect_go.Request[xctf.ForgotPasswordRequest]) (*connect_go.Response[xctf.Empty], error)
 	SubmitWriteup(context.Context, *connect_go.Request[xctf.SubmitWriteupRequest]) (*connect_go.Response[xctf.Empty], error)
+	Generate(context.Context, *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error)
+	ChallengeType(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error)
 }
 
 // NewBackendClient constructs a client for the xctf.Backend service. By default, it uses the
@@ -170,6 +177,16 @@ func NewBackendClient(httpClient connect_go.HTTPClient, baseURL string, opts ...
 			baseURL+BackendSubmitWriteupProcedure,
 			opts...,
 		),
+		generate: connect_go.NewClient[chalgen.GenerateRequest, chalgen.GenerateResponse](
+			httpClient,
+			baseURL+BackendGenerateProcedure,
+			opts...,
+		),
+		challengeType: connect_go.NewClient[xctf.Empty, xctf.ChallengeTypeResponse](
+			httpClient,
+			baseURL+BackendChallengeTypeProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -187,6 +204,8 @@ type backendClient struct {
 	getHomePage              *connect_go.Client[xctf.GetHomePageRequest, xctf.GetHomePageResponse]
 	forgotPassword           *connect_go.Client[xctf.ForgotPasswordRequest, xctf.Empty]
 	submitWriteup            *connect_go.Client[xctf.SubmitWriteupRequest, xctf.Empty]
+	generate                 *connect_go.Client[chalgen.GenerateRequest, chalgen.GenerateResponse]
+	challengeType            *connect_go.Client[xctf.Empty, xctf.ChallengeTypeResponse]
 }
 
 // Register calls xctf.Backend.Register.
@@ -249,6 +268,16 @@ func (c *backendClient) SubmitWriteup(ctx context.Context, req *connect_go.Reque
 	return c.submitWriteup.CallUnary(ctx, req)
 }
 
+// Generate calls xctf.Backend.Generate.
+func (c *backendClient) Generate(ctx context.Context, req *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error) {
+	return c.generate.CallUnary(ctx, req)
+}
+
+// ChallengeType calls xctf.Backend.ChallengeType.
+func (c *backendClient) ChallengeType(ctx context.Context, req *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error) {
+	return c.challengeType.CallUnary(ctx, req)
+}
+
 // BackendHandler is an implementation of the xctf.Backend service.
 type BackendHandler interface {
 	Register(context.Context, *connect_go.Request[xctf.RegisterRequest]) (*connect_go.Response[xctf.RegisterResponse], error)
@@ -263,6 +292,8 @@ type BackendHandler interface {
 	GetHomePage(context.Context, *connect_go.Request[xctf.GetHomePageRequest]) (*connect_go.Response[xctf.GetHomePageResponse], error)
 	ForgotPassword(context.Context, *connect_go.Request[xctf.ForgotPasswordRequest]) (*connect_go.Response[xctf.Empty], error)
 	SubmitWriteup(context.Context, *connect_go.Request[xctf.SubmitWriteupRequest]) (*connect_go.Response[xctf.Empty], error)
+	Generate(context.Context, *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error)
+	ChallengeType(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error)
 }
 
 // NewBackendHandler builds an HTTP handler from the service implementation. It returns the path on
@@ -331,6 +362,16 @@ func NewBackendHandler(svc BackendHandler, opts ...connect_go.HandlerOption) (st
 		svc.SubmitWriteup,
 		opts...,
 	)
+	backendGenerateHandler := connect_go.NewUnaryHandler(
+		BackendGenerateProcedure,
+		svc.Generate,
+		opts...,
+	)
+	backendChallengeTypeHandler := connect_go.NewUnaryHandler(
+		BackendChallengeTypeProcedure,
+		svc.ChallengeType,
+		opts...,
+	)
 	return "/xctf.Backend/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case BackendRegisterProcedure:
@@ -357,6 +398,10 @@ func NewBackendHandler(svc BackendHandler, opts ...connect_go.HandlerOption) (st
 			backendForgotPasswordHandler.ServeHTTP(w, r)
 		case BackendSubmitWriteupProcedure:
 			backendSubmitWriteupHandler.ServeHTTP(w, r)
+		case BackendGenerateProcedure:
+			backendGenerateHandler.ServeHTTP(w, r)
+		case BackendChallengeTypeProcedure:
+			backendChallengeTypeHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -412,6 +457,14 @@ func (UnimplementedBackendHandler) ForgotPassword(context.Context, *connect_go.R
 
 func (UnimplementedBackendHandler) SubmitWriteup(context.Context, *connect_go.Request[xctf.SubmitWriteupRequest]) (*connect_go.Response[xctf.Empty], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.SubmitWriteup is not implemented"))
+}
+
+func (UnimplementedBackendHandler) Generate(context.Context, *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.Generate is not implemented"))
+}
+
+func (UnimplementedBackendHandler) ChallengeType(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.ChallengeType is not implemented"))
 }
 
 // AdminClient is a client for the xctf.Admin service.

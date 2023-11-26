@@ -3,12 +3,14 @@ package server
 import "go.uber.org/config"
 
 type Config struct {
+	Port     string `yaml:"port"`
 	ProxyURL string `yaml:"proxy_url"`
 }
 
 func NewDefaultConfig() Config {
 	return Config{
 		ProxyURL: "http://localhost:8001",
+		Port:     "${PORT:\"8000\"}",
 	}
 }
 

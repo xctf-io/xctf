@@ -1,0 +1,3 @@
+kubes:
+  container: ghcr.io/xctf-io/xctf@sha256:eff524bee475a4f199b0f3e3e40d229218e38d8dfd74af874eea275d7c9b4790
+  default_namespace: nicek12

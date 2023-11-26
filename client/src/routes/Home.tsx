@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Link, Textarea, Tooltip, useTheme } from "@nextui-org/react";
 import { useUser } from "../store/user";
-import { xctf, ctfgAdmin } from "../service";
+import { xctf, xctfAdmin } from "../service";
 import Markdown from "markdown-to-jsx";
 import { HiPencilSquare } from "react-icons/hi2";
 
@@ -21,7 +21,7 @@ const CTFComponent: React.FC<Props> = () => {
 		getHomePage();
 	}, []);
 	const updateHomePage = async () => {
-		const res = await ctfgAdmin.setHomePage({ content: homePage });
+		const res = await xctfAdmin.setHomePage({ content: homePage });
 		setIsEditing(false);
 	};
 	const isAdmin = user?.type === "admin";
@@ -31,7 +31,7 @@ const CTFComponent: React.FC<Props> = () => {
 		<div className="text-center font-medium mx-[15vw] lg:mx-[25vw] mt-8 flex flex-col gap-4 relative">
 			{!loggedIn && (
 				<div>
-					<span className="mb-0 text-5xl font-extrabold">Welcome to CTFg!</span>
+					<span className="mb-0 text-5xl font-extrabold">Welcome to xctf!</span>
 					<h4>Register/Login to get started.</h4>
 				</div>
 			)}
@@ -116,7 +116,7 @@ const CTFComponent: React.FC<Props> = () => {
 					<Button
 						size="lg"
 						color={themeColor}
-						onPress={() => (document.location = "https://wiki.ctfg.io")}
+						onPress={() => (document.location = "https://wiki.xctf.io")}
 					>
 						wiki
 					</Button>

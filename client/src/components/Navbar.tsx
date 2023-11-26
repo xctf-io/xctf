@@ -37,7 +37,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 			<Navbar.Brand>
 				<GiFlyingFlag className="ml-2 mr-2 w-10 h-10" />
 				<Text b color="inherit" className="text-2xl">
-					CTFg
+					xctf
 				</Text>
 			</Navbar.Brand>
 			<Navbar.Content

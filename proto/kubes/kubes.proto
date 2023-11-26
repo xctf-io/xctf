@@ -16,11 +16,7 @@ message ListDeploymentsResponse {
 }
 
 message NewDeploymentRequest {
-  string namespace = 1;
-  Deployment deployment = 2;
-  string name = 3;
-  int32 replicas = 4;
-  string image = 5;
+  string name = 1;
 }
 
 message NewDeploymentResponse {
@@ -33,4 +29,5 @@ message Deployment {
   string image = 3;
   int32 replicas = 4;
   string status = 5;
+  string id = 6;
 }
