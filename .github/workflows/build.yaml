@@ -24,7 +24,7 @@ jobs:
           yq: "4.16.2"
 
       - name: Docker Build 
-        run: docker build . -t ctfg
+        run: docker build . -t xctf
 
       - if: ${{ !(github.event_name == 'push' && github.ref == 'refs/heads/main') }}
         run: exit 0
@@ -53,24 +53,5 @@ jobs:
           echo SERVER_IMAGE_ID=$SERVER_IMAGE_ID
           echo VERSION=$VERSION
           
-          docker tag ctfg $SERVER_IMAGE_ID:$VERSION
+          docker tag xctf $SERVER_IMAGE_ID:$VERSION
           docker push $SERVER_IMAGE_ID:$VERSION
-          
-          yq -i e ".services.ctfg.image |= \"$(docker inspect --format='{{index .RepoDigests 0}}' $SERVER_IMAGE_ID:$VERSION)\"" docker-compose.prod.yaml
-      - name: Create commit
-        id: create-commit
-        if: steps.branch-name.outputs.current_branch == 'main'
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          file_pattern: docker-compose.prod.yaml
-          commit_message: "chore: update container hash [skip ci]"
-
-      - run: sleep 10
-
-      - name: Invoke deploy on new commit
-        if: steps.branch-name.outputs.current_branch == 'main'
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: Kompose
-          token: ${{ secrets.GH_TOKEN }}
-          ref: master

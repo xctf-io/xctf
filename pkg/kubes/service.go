@@ -92,19 +92,19 @@ func isValidK8sServiceName(name string) bool {
 
 func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.NewDeploymentRequest]) (*connect.Response[kubes.NewDeploymentResponse], error) {
 	port := int32(80)
-	_, err := s.newDeployment(ctx, s.c.DefaultNamespace, NewXCtfDeployment(s.c.Container, port))
+	name := fmt.Sprintf("%s-xctf", c.Msg.Name)
+	if !isValidK8sServiceName(name) {
+		return nil, fmt.Errorf("invalid service name: %s", name)
+	}
+
+	_, err := s.newDeployment(ctx, s.c.DefaultNamespace, NewXCtfDeployment(s.c.Container, name, port))
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO breadchris how should this be managed?
-	challengeIngress := "challenge-ingress"
+	challengeIngress := "xctf-ingress"
 	domainBase := "nicek12.xctf.io"
-
-	name := c.Msg.Name
-	if !isValidK8sServiceName(name) {
-		return nil, fmt.Errorf("invalid service name: %s", name)
-	}
 
 	domain := fmt.Sprintf("%s.%s", name, domainBase)
 
@@ -113,6 +113,13 @@ func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.Ne
 		return nil, err
 	}
 	return connect.NewResponse(&kubes.NewDeploymentResponse{}), nil
+}
+
+func (s *Service) deleteDeployment(clientset *kubernetes.Clientset, namespace string, deploymentName string) error {
+	deletePolicy := metav1.DeletePropagationForeground
+	return clientset.AppsV1().Deployments(namespace).Delete(context.TODO(), deploymentName, metav1.DeleteOptions{
+		PropagationPolicy: &deletePolicy,
+	})
 }
 
 func (s *Service) deploymentsForNamespace(ctx context.Context, namespace string) (*appsv1.DeploymentList, error) {

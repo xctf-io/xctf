@@ -5,6 +5,14 @@ package kubes;
 service KubesService {
   rpc ListDeployments(ListDeploymentsRequest) returns (ListDeploymentsResponse);
   rpc NewDeployment(NewDeploymentRequest) returns (NewDeploymentResponse);
+  rpc DeleteDeployment(DeleteDeploymentRequest) returns (DeleteDeploymentResponse);
+}
+
+message DeleteDeploymentRequest {
+  string name = 1;
+}
+
+message DeleteDeploymentResponse {
 }
 
 message ListDeploymentsRequest {

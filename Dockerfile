@@ -8,7 +8,9 @@ WORKDIR /build
 
 RUN npm i && npm run build
 
-FROM golang:1.21 as server
+FROM golang:1.21-alpine as server
+
+RUN apk add --no-cache gcc g++ musl-dev
 
 WORKDIR /build/
 

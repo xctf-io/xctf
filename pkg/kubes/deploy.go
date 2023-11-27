@@ -8,12 +8,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func NewXCtfDeployment(container string, port int32) *appsv1.Deployment {
+func NewXCtfDeployment(container, name string, port int32) *appsv1.Deployment {
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "xctf",
+			Name: name,
 			Labels: map[string]string{
-				"io.kompose.service": "xctf",
+				"io.kompose.service": name,
 			},
 			Annotations: map[string]string{},
 		},
@@ -21,14 +21,14 @@ func NewXCtfDeployment(container string, port int32) *appsv1.Deployment {
 			Replicas: util.Ptr[int32](1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"io.kompose.service": "xctf",
+					"io.kompose.service": name,
 				},
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
 						"io.kompose.network/xctf-default": "true",
-						"io.kompose.service":              "xctf",
+						"io.kompose.service":              name,
 					},
 					Annotations: map[string]string{},
 				},
