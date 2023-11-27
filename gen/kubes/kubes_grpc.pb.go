@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type KubesServiceClient interface {
 	ListDeployments(ctx context.Context, in *ListDeploymentsRequest, opts ...grpc.CallOption) (*ListDeploymentsResponse, error)
 	NewDeployment(ctx context.Context, in *NewDeploymentRequest, opts ...grpc.CallOption) (*NewDeploymentResponse, error)
+	DeleteDeployment(ctx context.Context, in *DeleteDeploymentRequest, opts ...grpc.CallOption) (*DeleteDeploymentResponse, error)
 }
 
 type kubesServiceClient struct {
@@ -52,12 +53,22 @@ func (c *kubesServiceClient) NewDeployment(ctx context.Context, in *NewDeploymen
 	return out, nil
 }
 
+func (c *kubesServiceClient) DeleteDeployment(ctx context.Context, in *DeleteDeploymentRequest, opts ...grpc.CallOption) (*DeleteDeploymentResponse, error) {
+	out := new(DeleteDeploymentResponse)
+	err := c.cc.Invoke(ctx, "/kubes.KubesService/DeleteDeployment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // KubesServiceServer is the server API for KubesService service.
 // All implementations should embed UnimplementedKubesServiceServer
 // for forward compatibility
 type KubesServiceServer interface {
 	ListDeployments(context.Context, *ListDeploymentsRequest) (*ListDeploymentsResponse, error)
 	NewDeployment(context.Context, *NewDeploymentRequest) (*NewDeploymentResponse, error)
+	DeleteDeployment(context.Context, *DeleteDeploymentRequest) (*DeleteDeploymentResponse, error)
 }
 
 // UnimplementedKubesServiceServer should be embedded to have forward compatible implementations.
@@ -69,6 +80,9 @@ func (UnimplementedKubesServiceServer) ListDeployments(context.Context, *ListDep
 }
 func (UnimplementedKubesServiceServer) NewDeployment(context.Context, *NewDeploymentRequest) (*NewDeploymentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewDeployment not implemented")
+}
+func (UnimplementedKubesServiceServer) DeleteDeployment(context.Context, *DeleteDeploymentRequest) (*DeleteDeploymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteDeployment not implemented")
 }
 
 // UnsafeKubesServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -118,6 +132,24 @@ func _KubesService_NewDeployment_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _KubesService_DeleteDeployment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDeploymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KubesServiceServer).DeleteDeployment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kubes.KubesService/DeleteDeployment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KubesServiceServer).DeleteDeployment(ctx, req.(*DeleteDeploymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // KubesService_ServiceDesc is the grpc.ServiceDesc for KubesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -132,6 +164,10 @@ var KubesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NewDeployment",
 			Handler:    _KubesService_NewDeployment_Handler,
+		},
+		{
+			MethodName: "DeleteDeployment",
+			Handler:    _KubesService_DeleteDeployment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

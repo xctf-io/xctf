@@ -7,6 +7,7 @@ import (
 	"github.com/google/wire"
 	"github.com/xctf-io/xctf/gen/kubes"
 	"github.com/xctf-io/xctf/gen/kubes/kubesconnect"
+	corev1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
 	"path/filepath"
 	"regexp"
@@ -90,9 +91,25 @@ func isValidK8sServiceName(name string) bool {
 	return match
 }
 
+func deploymentName(name string) string {
+	return fmt.Sprintf("%s-xctf", name)
+}
+
+func hostName(name string) string {
+	// TODO breadchris make this domain configurable
+	return fmt.Sprintf("%s.nicek12.xctf.io", name)
+}
+
+func serviceName(name string) string {
+	return fmt.Sprintf("%s-svc", name)
+}
+
 func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.NewDeploymentRequest]) (*connect.Response[kubes.NewDeploymentResponse], error) {
 	port := int32(80)
-	name := fmt.Sprintf("%s-xctf", c.Msg.Name)
+	name := deploymentName(c.Msg.Name)
+	service := serviceName(name)
+	domain := hostName(name)
+
 	if !isValidK8sServiceName(name) {
 		return nil, fmt.Errorf("invalid service name: %s", name)
 	}
@@ -102,17 +119,70 @@ func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.Ne
 		return nil, err
 	}
 
-	// TODO breadchris how should this be managed?
-	challengeIngress := "xctf-ingress"
-	domainBase := "nicek12.xctf.io"
+	err = createService(s.clientSet, service, name, s.c.DefaultNamespace)
+	if err != nil {
+		return nil, err
+	}
 
-	domain := fmt.Sprintf("%s.%s", name, domainBase)
-
-	err = s.updateIngress(ctx, s.c.DefaultNamespace, challengeIngress, NewIngressRule(domain, name, port))
+	err = s.updateIngress(ctx, s.c.DefaultNamespace, s.c.DefaultIngress, NewIngressRule(domain, service, port))
 	if err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&kubes.NewDeploymentResponse{}), nil
+}
+
+func (s *Service) DeleteDeployment(ctx context.Context, c *connect.Request[kubes.DeleteDeploymentRequest]) (*connect.Response[kubes.DeleteDeploymentResponse], error) {
+	name := c.Msg.Name
+	domain := hostName(name)
+
+	err := s.deleteDeployment(s.clientSet, s.c.DefaultNamespace, name)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.deleteService(ctx, serviceName(name), s.c.DefaultNamespace)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.removeIngressRule(ctx, s.c.DefaultNamespace, s.c.DefaultIngress, domain)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(&kubes.DeleteDeploymentResponse{}), nil
+}
+
+func createService(clientset *kubernetes.Clientset, serviceName, deploymentName, namespace string) error {
+	service := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: serviceName,
+		},
+		Spec: corev1.ServiceSpec{
+			Selector: map[string]string{
+				"app": deploymentName,
+			},
+			Ports: []corev1.ServicePort{
+				{
+					Port: 80,
+				},
+			},
+			Type: corev1.ServiceTypeClusterIP,
+		},
+	}
+
+	_, err := clientset.CoreV1().Services(namespace).Create(context.TODO(), service, metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Service) deleteService(ctx context.Context, serviceName, namespace string) error {
+	deletePolicy := metav1.DeletePropagationForeground
+	err := s.clientSet.CoreV1().Services(namespace).Delete(ctx, serviceName, metav1.DeleteOptions{
+		PropagationPolicy: &deletePolicy,
+	})
+	return err
 }
 
 func (s *Service) deleteDeployment(clientset *kubernetes.Clientset, namespace string, deploymentName string) error {
@@ -137,7 +207,47 @@ func (s *Service) updateIngress(ctx context.Context, namespace, ingressName stri
 	if err != nil {
 		return err
 	}
+
+	// TODO breadchris check if rule already exists?
 	ingress.Spec.Rules = append(ingress.Spec.Rules, *ingressRule)
+
+	// TODO breadchris check if host already exists?
+	hosts := ingress.Spec.TLS[0].Hosts
+	hosts = append(hosts, ingressRule.Host)
+	ingress.Spec.TLS[0].Hosts = hosts
+
+	_, err = s.clientSet.NetworkingV1().Ingresses(namespace).Update(ctx, ingress, metav1.UpdateOptions{})
+	return err
+}
+
+func (s *Service) removeIngressRule(ctx context.Context, namespace, ingressName, hostToRemove string) error {
+	ingress, err := s.clientSet.NetworkingV1().Ingresses(namespace).Get(ctx, ingressName, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	var updatedRules []networkingv1.IngressRule
+	for _, rule := range ingress.Spec.Rules {
+		if rule.Host != hostToRemove {
+			updatedRules = append(updatedRules, rule)
+		}
+	}
+	ingress.Spec.Rules = updatedRules
+
+	var updatedTLS []networkingv1.IngressTLS
+	for _, tls := range ingress.Spec.TLS {
+		var hosts []string
+		for _, host := range tls.Hosts {
+			if host != hostToRemove {
+				hosts = append(hosts, host)
+			}
+		}
+		tls.Hosts = hosts
+		updatedTLS = append(updatedTLS, tls)
+	}
+	ingress.Spec.Rules = updatedRules
+	ingress.Spec.TLS = updatedTLS
+
 	_, err = s.clientSet.NetworkingV1().Ingresses(namespace).Update(ctx, ingress, metav1.UpdateOptions{})
 	return err
 }

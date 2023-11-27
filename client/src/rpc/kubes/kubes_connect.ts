@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ListDeploymentsRequest, ListDeploymentsResponse, NewDeploymentRequest, NewDeploymentResponse } from "./kubes_pb.js";
+import { DeleteDeploymentRequest, DeleteDeploymentResponse, ListDeploymentsRequest, ListDeploymentsResponse, NewDeploymentRequest, NewDeploymentResponse } from "./kubes_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -28,6 +28,15 @@ export const KubesService = {
       name: "NewDeployment",
       I: NewDeploymentRequest,
       O: NewDeploymentResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc kubes.KubesService.DeleteDeployment
+     */
+    deleteDeployment: {
+      name: "DeleteDeployment",
+      I: DeleteDeploymentRequest,
+      O: DeleteDeploymentResponse,
       kind: MethodKind.Unary,
     },
   }

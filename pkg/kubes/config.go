@@ -8,6 +8,7 @@ type Config struct {
 	Enabled          bool   `yaml:"enabled"`
 	Container        string `yaml:"container"`
 	DefaultNamespace string `yaml:"default_namespace"`
+	DefaultIngress   string `yaml:"default_ingress"`
 }
 
 func NewDefaultConfig() Config {
@@ -15,6 +16,7 @@ func NewDefaultConfig() Config {
 		Enabled:          false,
 		Container:        "${CONTAINER:\"\"}",
 		DefaultNamespace: "${DEFAULT_NAMESPACE:\"challenges\"}",
+		DefaultIngress:   "${DEFAULT_INGRESS:\"xctf-ingress\"}",
 	}
 }
 

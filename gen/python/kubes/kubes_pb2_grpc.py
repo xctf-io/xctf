@@ -24,6 +24,11 @@ class KubesServiceStub(object):
                 request_serializer=kubes_dot_kubes__pb2.NewDeploymentRequest.SerializeToString,
                 response_deserializer=kubes_dot_kubes__pb2.NewDeploymentResponse.FromString,
                 )
+        self.DeleteDeployment = channel.unary_unary(
+                '/kubes.KubesService/DeleteDeployment',
+                request_serializer=kubes_dot_kubes__pb2.DeleteDeploymentRequest.SerializeToString,
+                response_deserializer=kubes_dot_kubes__pb2.DeleteDeploymentResponse.FromString,
+                )
 
 
 class KubesServiceServicer(object):
@@ -41,6 +46,12 @@ class KubesServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def DeleteDeployment(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_KubesServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +64,11 @@ def add_KubesServiceServicer_to_server(servicer, server):
                     servicer.NewDeployment,
                     request_deserializer=kubes_dot_kubes__pb2.NewDeploymentRequest.FromString,
                     response_serializer=kubes_dot_kubes__pb2.NewDeploymentResponse.SerializeToString,
+            ),
+            'DeleteDeployment': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteDeployment,
+                    request_deserializer=kubes_dot_kubes__pb2.DeleteDeploymentRequest.FromString,
+                    response_serializer=kubes_dot_kubes__pb2.DeleteDeploymentResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -95,5 +111,22 @@ class KubesService(object):
         return grpc.experimental.unary_unary(request, target, '/kubes.KubesService/NewDeployment',
             kubes_dot_kubes__pb2.NewDeploymentRequest.SerializeToString,
             kubes_dot_kubes__pb2.NewDeploymentResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DeleteDeployment(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/kubes.KubesService/DeleteDeployment',
+            kubes_dot_kubes__pb2.DeleteDeploymentRequest.SerializeToString,
+            kubes_dot_kubes__pb2.DeleteDeploymentResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

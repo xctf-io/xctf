@@ -39,12 +39,16 @@ const (
 	// KubesServiceNewDeploymentProcedure is the fully-qualified name of the KubesService's
 	// NewDeployment RPC.
 	KubesServiceNewDeploymentProcedure = "/kubes.KubesService/NewDeployment"
+	// KubesServiceDeleteDeploymentProcedure is the fully-qualified name of the KubesService's
+	// DeleteDeployment RPC.
+	KubesServiceDeleteDeploymentProcedure = "/kubes.KubesService/DeleteDeployment"
 )
 
 // KubesServiceClient is a client for the kubes.KubesService service.
 type KubesServiceClient interface {
 	ListDeployments(context.Context, *connect_go.Request[kubes.ListDeploymentsRequest]) (*connect_go.Response[kubes.ListDeploymentsResponse], error)
 	NewDeployment(context.Context, *connect_go.Request[kubes.NewDeploymentRequest]) (*connect_go.Response[kubes.NewDeploymentResponse], error)
+	DeleteDeployment(context.Context, *connect_go.Request[kubes.DeleteDeploymentRequest]) (*connect_go.Response[kubes.DeleteDeploymentResponse], error)
 }
 
 // NewKubesServiceClient constructs a client for the kubes.KubesService service. By default, it uses
@@ -67,13 +71,19 @@ func NewKubesServiceClient(httpClient connect_go.HTTPClient, baseURL string, opt
 			baseURL+KubesServiceNewDeploymentProcedure,
 			opts...,
 		),
+		deleteDeployment: connect_go.NewClient[kubes.DeleteDeploymentRequest, kubes.DeleteDeploymentResponse](
+			httpClient,
+			baseURL+KubesServiceDeleteDeploymentProcedure,
+			opts...,
+		),
 	}
 }
 
 // kubesServiceClient implements KubesServiceClient.
 type kubesServiceClient struct {
-	listDeployments *connect_go.Client[kubes.ListDeploymentsRequest, kubes.ListDeploymentsResponse]
-	newDeployment   *connect_go.Client[kubes.NewDeploymentRequest, kubes.NewDeploymentResponse]
+	listDeployments  *connect_go.Client[kubes.ListDeploymentsRequest, kubes.ListDeploymentsResponse]
+	newDeployment    *connect_go.Client[kubes.NewDeploymentRequest, kubes.NewDeploymentResponse]
+	deleteDeployment *connect_go.Client[kubes.DeleteDeploymentRequest, kubes.DeleteDeploymentResponse]
 }
 
 // ListDeployments calls kubes.KubesService.ListDeployments.
@@ -86,10 +96,16 @@ func (c *kubesServiceClient) NewDeployment(ctx context.Context, req *connect_go.
 	return c.newDeployment.CallUnary(ctx, req)
 }
 
+// DeleteDeployment calls kubes.KubesService.DeleteDeployment.
+func (c *kubesServiceClient) DeleteDeployment(ctx context.Context, req *connect_go.Request[kubes.DeleteDeploymentRequest]) (*connect_go.Response[kubes.DeleteDeploymentResponse], error) {
+	return c.deleteDeployment.CallUnary(ctx, req)
+}
+
 // KubesServiceHandler is an implementation of the kubes.KubesService service.
 type KubesServiceHandler interface {
 	ListDeployments(context.Context, *connect_go.Request[kubes.ListDeploymentsRequest]) (*connect_go.Response[kubes.ListDeploymentsResponse], error)
 	NewDeployment(context.Context, *connect_go.Request[kubes.NewDeploymentRequest]) (*connect_go.Response[kubes.NewDeploymentResponse], error)
+	DeleteDeployment(context.Context, *connect_go.Request[kubes.DeleteDeploymentRequest]) (*connect_go.Response[kubes.DeleteDeploymentResponse], error)
 }
 
 // NewKubesServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -108,12 +124,19 @@ func NewKubesServiceHandler(svc KubesServiceHandler, opts ...connect_go.HandlerO
 		svc.NewDeployment,
 		opts...,
 	)
+	kubesServiceDeleteDeploymentHandler := connect_go.NewUnaryHandler(
+		KubesServiceDeleteDeploymentProcedure,
+		svc.DeleteDeployment,
+		opts...,
+	)
 	return "/kubes.KubesService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case KubesServiceListDeploymentsProcedure:
 			kubesServiceListDeploymentsHandler.ServeHTTP(w, r)
 		case KubesServiceNewDeploymentProcedure:
 			kubesServiceNewDeploymentHandler.ServeHTTP(w, r)
+		case KubesServiceDeleteDeploymentProcedure:
+			kubesServiceDeleteDeploymentHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -129,4 +152,8 @@ func (UnimplementedKubesServiceHandler) ListDeployments(context.Context, *connec
 
 func (UnimplementedKubesServiceHandler) NewDeployment(context.Context, *connect_go.Request[kubes.NewDeploymentRequest]) (*connect_go.Response[kubes.NewDeploymentResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("kubes.KubesService.NewDeployment is not implemented"))
+}
+
+func (UnimplementedKubesServiceHandler) DeleteDeployment(context.Context, *connect_go.Request[kubes.DeleteDeploymentRequest]) (*connect_go.Response[kubes.DeleteDeploymentResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("kubes.KubesService.DeleteDeployment is not implemented"))
 }

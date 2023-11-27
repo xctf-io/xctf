@@ -13,7 +13,7 @@ func NewXCtfDeployment(container, name string, port int32) *appsv1.Deployment {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
 			Labels: map[string]string{
-				"io.kompose.service": name,
+				"app": name,
 			},
 			Annotations: map[string]string{},
 		},
@@ -21,14 +21,13 @@ func NewXCtfDeployment(container, name string, port int32) *appsv1.Deployment {
 			Replicas: util.Ptr[int32](1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"io.kompose.service": name,
+					"app": name,
 				},
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						"io.kompose.network/xctf-default": "true",
-						"io.kompose.service":              name,
+						"app": name,
 					},
 					Annotations: map[string]string{},
 				},
@@ -46,6 +45,10 @@ func NewXCtfDeployment(container, name string, port int32) *appsv1.Deployment {
 								{
 									Name:  "PORT",
 									Value: fmt.Sprintf("%d", port),
+								},
+								{
+									Name:  "PROXY_URL",
+									Value: "",
 								},
 							},
 						},

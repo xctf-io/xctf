@@ -10,6 +10,7 @@ require (
 	github.com/breadchris/scs/v2 v2.0.0-20230909081317-6125300685dd
 	github.com/bufbuild/connect-go v1.10.0
 	github.com/bufbuild/connect-grpcreflect-go v1.1.0
+	github.com/fsouza/go-dockerclient v1.10.0
 	github.com/glebarez/sqlite v1.10.0
 	github.com/google/wire v0.5.0
 	github.com/lmittmann/tint v1.0.3
@@ -35,13 +36,19 @@ require (
 
 require (
 	filippo.io/age v1.1.1 // indirect
+	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
+	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/aws/aws-sdk-go v1.44.318 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/bufbuild/protocompile v0.5.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/containerd/containerd v1.6.18 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/docker/docker v24.0.6+incompatible // indirect
+	github.com/docker/go-connections v0.4.0 // indirect
+	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.2 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -69,13 +76,21 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/klauspost/compress v1.16.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
+	github.com/moby/patternmatcher v0.6.0 // indirect
+	github.com/moby/sys/sequential v0.5.0 // indirect
+	github.com/moby/term v0.0.0-20221205130635-1aeaba878587 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/opencontainers/image-spec v1.1.0-rc2 // indirect
+	github.com/opencontainers/runc v1.1.5 // indirect
 	github.com/pierrec/lz4/v4 v4.1.18 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.16.0 // indirect
@@ -84,6 +99,7 @@ require (
 	github.com/prometheus/procfs v0.11.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	go.uber.org/multierr v1.11.0 // indirect

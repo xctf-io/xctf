@@ -7,6 +7,74 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from message kubes.DeleteDeploymentRequest
+ */
+export class DeleteDeploymentRequest extends Message<DeleteDeploymentRequest> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  constructor(data?: PartialMessage<DeleteDeploymentRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "kubes.DeleteDeploymentRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteDeploymentRequest {
+    return new DeleteDeploymentRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteDeploymentRequest {
+    return new DeleteDeploymentRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteDeploymentRequest {
+    return new DeleteDeploymentRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeleteDeploymentRequest | PlainMessage<DeleteDeploymentRequest> | undefined, b: DeleteDeploymentRequest | PlainMessage<DeleteDeploymentRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteDeploymentRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message kubes.DeleteDeploymentResponse
+ */
+export class DeleteDeploymentResponse extends Message<DeleteDeploymentResponse> {
+  constructor(data?: PartialMessage<DeleteDeploymentResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "kubes.DeleteDeploymentResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteDeploymentResponse {
+    return new DeleteDeploymentResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteDeploymentResponse {
+    return new DeleteDeploymentResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteDeploymentResponse {
+    return new DeleteDeploymentResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeleteDeploymentResponse | PlainMessage<DeleteDeploymentResponse> | undefined, b: DeleteDeploymentResponse | PlainMessage<DeleteDeploymentResponse> | undefined): boolean {
+    return proto3.util.equals(DeleteDeploymentResponse, a, b);
+  }
+}
+
+/**
  * @generated from message kubes.ListDeploymentsRequest
  */
 export class ListDeploymentsRequest extends Message<ListDeploymentsRequest> {
