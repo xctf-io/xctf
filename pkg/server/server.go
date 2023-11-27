@@ -48,7 +48,9 @@ func New(
 	apiRoot := http.NewServeMux()
 	apiRoot.Handle(xctfconnect.NewBackendHandler(b, interceptors))
 	apiRoot.Handle(xctfconnect.NewAdminHandler(a, interceptors))
-	apiRoot.Handle(kubesconnect.NewKubesServiceHandler(k, interceptors))
+	if k != nil {
+		apiRoot.Handle(kubesconnect.NewKubesServiceHandler(k, interceptors))
+	}
 
 	services := []string{
 		"xctf.Backend",

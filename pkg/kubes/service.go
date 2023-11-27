@@ -31,6 +31,10 @@ type Service struct {
 var _ kubesconnect.KubesServiceHandler = (*Service)(nil)
 
 func New(c Config) (*Service, error) {
+	if !c.Enabled {
+		return nil, nil
+	}
+
 	kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
 
 	// Build the configuration from the kubeconfig

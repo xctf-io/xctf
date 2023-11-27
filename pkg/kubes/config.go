@@ -5,12 +5,14 @@ import (
 )
 
 type Config struct {
+	Enabled          bool   `yaml:"enabled"`
 	Container        string `yaml:"container"`
 	DefaultNamespace string `yaml:"default_namespace"`
 }
 
 func NewDefaultConfig() Config {
 	return Config{
+		Enabled:          false,
 		Container:        "${CONTAINER:\"\"}",
 		DefaultNamespace: "${DEFAULT_NAMESPACE:\"challenges\"}",
 	}
