@@ -7,72 +7,88 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 
 /**
- * @generated from message chalgen.GenerateRequest
+ * @generated from message chalgen.CompetitionList
  */
-export class GenerateRequest extends Message<GenerateRequest> {
+export class CompetitionList extends Message<CompetitionList> {
   /**
-   * @generated from field: chalgen.Graph graph = 1;
+   * @generated from field: repeated chalgen.Competition competitions = 1;
    */
-  graph?: Graph;
+  competitions: Competition[] = [];
 
-  constructor(data?: PartialMessage<GenerateRequest>) {
+  constructor(data?: PartialMessage<CompetitionList>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "chalgen.GenerateRequest";
+  static readonly typeName = "chalgen.CompetitionList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "graph", kind: "message", T: Graph },
+    { no: 1, name: "competitions", kind: "message", T: Competition, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateRequest {
-    return new GenerateRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CompetitionList {
+    return new CompetitionList().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GenerateRequest {
-    return new GenerateRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CompetitionList {
+    return new CompetitionList().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GenerateRequest {
-    return new GenerateRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CompetitionList {
+    return new CompetitionList().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GenerateRequest | PlainMessage<GenerateRequest> | undefined, b: GenerateRequest | PlainMessage<GenerateRequest> | undefined): boolean {
-    return proto3.util.equals(GenerateRequest, a, b);
+  static equals(a: CompetitionList | PlainMessage<CompetitionList> | undefined, b: CompetitionList | PlainMessage<CompetitionList> | undefined): boolean {
+    return proto3.util.equals(CompetitionList, a, b);
   }
 }
 
 /**
- * Define the response structure here
- *
- * @generated from message chalgen.GenerateResponse
+ * @generated from message chalgen.Competition
  */
-export class GenerateResponse extends Message<GenerateResponse> {
-  constructor(data?: PartialMessage<GenerateResponse>) {
+export class Competition extends Message<Competition> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name = "";
+
+  /**
+   * @generated from field: chalgen.Graph graph = 3;
+   */
+  graph?: Graph;
+
+  constructor(data?: PartialMessage<Competition>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "chalgen.GenerateResponse";
+  static readonly typeName = "chalgen.Competition";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "graph", kind: "message", T: Graph },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateResponse {
-    return new GenerateResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Competition {
+    return new Competition().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GenerateResponse {
-    return new GenerateResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Competition {
+    return new Competition().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GenerateResponse {
-    return new GenerateResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Competition {
+    return new Competition().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GenerateResponse | PlainMessage<GenerateResponse> | undefined, b: GenerateResponse | PlainMessage<GenerateResponse> | undefined): boolean {
-    return proto3.util.equals(GenerateResponse, a, b);
+  static equals(a: Competition | PlainMessage<Competition> | undefined, b: Competition | PlainMessage<Competition> | undefined): boolean {
+    return proto3.util.equals(Competition, a, b);
   }
 }
 
@@ -81,12 +97,12 @@ export class GenerateResponse extends Message<GenerateResponse> {
  */
 export class Graph extends Message<Graph> {
   /**
-   * @generated from field: repeated chalgen.Node nodes = 1;
+   * @generated from field: repeated chalgen.Node nodes = 3;
    */
   nodes: Node[] = [];
 
   /**
-   * @generated from field: repeated chalgen.Edge edges = 2;
+   * @generated from field: repeated chalgen.Edge edges = 4;
    */
   edges: Edge[] = [];
 
@@ -98,8 +114,8 @@ export class Graph extends Message<Graph> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chalgen.Graph";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "nodes", kind: "message", T: Node, repeated: true },
-    { no: 2, name: "edges", kind: "message", T: Edge, repeated: true },
+    { no: 3, name: "nodes", kind: "message", T: Node, repeated: true },
+    { no: 4, name: "edges", kind: "message", T: Edge, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Graph {
@@ -120,21 +136,70 @@ export class Graph extends Message<Graph> {
 }
 
 /**
- * @generated from message chalgen.Node
+ * @generated from message chalgen.Meta
  */
-export class Node extends Message<Node> {
+export class Meta extends Message<Meta> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
-   * @generated from field: string name = 2;
+   * @generated from field: int32 x = 2;
+   */
+  x = 0;
+
+  /**
+   * @generated from field: int32 y = 3;
+   */
+  y = 0;
+
+  constructor(data?: PartialMessage<Meta>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Meta";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "x", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "y", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Meta {
+    return new Meta().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Meta {
+    return new Meta().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Meta {
+    return new Meta().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Meta | PlainMessage<Meta> | undefined, b: Meta | PlainMessage<Meta> | undefined): boolean {
+    return proto3.util.equals(Meta, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Node
+ */
+export class Node extends Message<Node> {
+  /**
+   * @generated from field: chalgen.Meta meta = 1;
+   */
+  meta?: Meta;
+
+  /**
+   * @generated from field: string name = 4;
    */
   name = "";
 
   /**
-   * @generated from field: string flag = 3;
+   * @generated from field: string flag = 5;
    */
   flag = "";
 
@@ -143,19 +208,19 @@ export class Node extends Message<Node> {
    */
   challenge: {
     /**
-     * @generated from field: chalgen.Base64 base64 = 4;
+     * @generated from field: chalgen.Base64 base64 = 6;
      */
     value: Base64;
     case: "base64";
   } | {
     /**
-     * @generated from field: chalgen.Twitter twitter = 5;
+     * @generated from field: chalgen.Twitter twitter = 7;
      */
     value: Twitter;
     case: "twitter";
   } | {
     /**
-     * @generated from field: chalgen.CaesarCipher caesar = 6;
+     * @generated from field: chalgen.CaesarCipher caesar = 8;
      */
     value: CaesarCipher;
     case: "caesar";
@@ -169,12 +234,12 @@ export class Node extends Message<Node> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chalgen.Node";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "flag", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "base64", kind: "message", T: Base64, oneof: "challenge" },
-    { no: 5, name: "twitter", kind: "message", T: Twitter, oneof: "challenge" },
-    { no: 6, name: "caesar", kind: "message", T: CaesarCipher, oneof: "challenge" },
+    { no: 1, name: "meta", kind: "message", T: Meta },
+    { no: 4, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "flag", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "base64", kind: "message", T: Base64, oneof: "challenge" },
+    { no: 7, name: "twitter", kind: "message", T: Twitter, oneof: "challenge" },
+    { no: 8, name: "caesar", kind: "message", T: CaesarCipher, oneof: "challenge" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Node {
@@ -371,17 +436,12 @@ export class Twitter extends Message<Twitter> {
  */
 export class User extends Message<User> {
   /**
-   * @generated from field: int64 id = 1;
-   */
-  id = protoInt64.zero;
-
-  /**
-   * @generated from field: string username = 2;
+   * @generated from field: string username = 1;
    */
   username = "";
 
   /**
-   * @generated from field: string bio = 3;
+   * @generated from field: string bio = 2;
    */
   bio = "";
 
@@ -393,9 +453,8 @@ export class User extends Message<User> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chalgen.User";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 2, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "bio", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "bio", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): User {
@@ -422,26 +481,14 @@ export class User extends Message<User> {
  */
 export class Post extends Message<Post> {
   /**
-   * @generated from field: int64 id = 1;
+   * @generated from field: int64 username = 1;
    */
-  id = protoInt64.zero;
+  username = protoInt64.zero;
 
   /**
-   * @generated from field: int64 user_id = 2;
-   */
-  userId = protoInt64.zero;
-
-  /**
-   * @generated from field: string content = 3;
+   * @generated from field: string content = 2;
    */
   content = "";
-
-  /**
-   * Unix timestamp
-   *
-   * @generated from field: int64 timestamp = 4;
-   */
-  timestamp = protoInt64.zero;
 
   constructor(data?: PartialMessage<Post>) {
     super();
@@ -451,10 +498,8 @@ export class Post extends Message<Post> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chalgen.Post";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 2, name: "user_id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 3, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "timestamp", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 1, name: "username", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 2, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Post {
@@ -481,31 +526,19 @@ export class Post extends Message<Post> {
  */
 export class Comment extends Message<Comment> {
   /**
-   * @generated from field: int64 id = 1;
+   * @generated from field: int64 post_number = 1;
    */
-  id = protoInt64.zero;
+  postNumber = protoInt64.zero;
 
   /**
-   * @generated from field: int64 post_id = 2;
+   * @generated from field: int64 username = 2;
    */
-  postId = protoInt64.zero;
+  username = protoInt64.zero;
 
   /**
-   * @generated from field: int64 user_id = 3;
-   */
-  userId = protoInt64.zero;
-
-  /**
-   * @generated from field: string content = 4;
+   * @generated from field: string content = 3;
    */
   content = "";
-
-  /**
-   * Unix timestamp
-   *
-   * @generated from field: int64 timestamp = 5;
-   */
-  timestamp = protoInt64.zero;
 
   constructor(data?: PartialMessage<Comment>) {
     super();
@@ -515,11 +548,9 @@ export class Comment extends Message<Comment> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chalgen.Comment";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 2, name: "post_id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 3, name: "user_id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 4, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "timestamp", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 1, name: "post_number", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 2, name: "username", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 3, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Comment {

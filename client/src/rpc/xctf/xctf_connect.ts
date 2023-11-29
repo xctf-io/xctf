@@ -5,7 +5,7 @@
 
 import { ChallengeTypeResponse, CurrentUserRequest, CurrentUserResponse, DeleteChallengeRequest, Empty, ForgotPasswordRequest, GetAllChallengesRequest, GetAllChallengesResponse, GetCommentsRequest, GetCommentsResponse, GetDiscoveredEvidenceRequest, GetDiscoveredEvidenceResponse, GetHomePageRequest, GetHomePageResponse, GetTeamsProgressRequest, GetTeamsProgressResponse, GetUserGraphRequest, GetUserGraphResponse, GetWriteupRequest, GetWriteupResponse, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, SetHomePageRequest, SubmitCommentRequest, SubmitEvidenceConnectionRequest, SubmitEvidenceConnectionResponse, SubmitEvidenceReportRequest, SubmitEvidenceRequest, SubmitEvidenceResponse, SubmitFlagRequest, SubmitFlagResponse, SubmitGradeRequest, SubmitWriteupRequest, UpsertChallengeRequest } from "./xctf_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
-import { GenerateRequest, GenerateResponse } from "../chalgen/chalgen_pb.js";
+import { Competition, CompetitionList } from "../chalgen/chalgen_pb.js";
 
 /**
  * @generated from service xctf.Backend
@@ -122,12 +122,30 @@ export const Backend = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc xctf.Backend.Generate
+     * @generated from rpc xctf.Backend.GetCompetitions
      */
-    generate: {
-      name: "Generate",
-      I: GenerateRequest,
-      O: GenerateResponse,
+    getCompetitions: {
+      name: "GetCompetitions",
+      I: Empty,
+      O: CompetitionList,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc xctf.Backend.UpdateCompetition
+     */
+    updateCompetition: {
+      name: "UpdateCompetition",
+      I: Competition,
+      O: Competition,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc xctf.Backend.DeleteCompetition
+     */
+    deleteCompetition: {
+      name: "DeleteCompetition",
+      I: Competition,
+      O: Empty,
       kind: MethodKind.Unary,
     },
     /**

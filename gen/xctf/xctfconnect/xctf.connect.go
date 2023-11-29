@@ -63,8 +63,14 @@ const (
 	BackendForgotPasswordProcedure = "/xctf.Backend/ForgotPassword"
 	// BackendSubmitWriteupProcedure is the fully-qualified name of the Backend's SubmitWriteup RPC.
 	BackendSubmitWriteupProcedure = "/xctf.Backend/SubmitWriteup"
-	// BackendGenerateProcedure is the fully-qualified name of the Backend's Generate RPC.
-	BackendGenerateProcedure = "/xctf.Backend/Generate"
+	// BackendGetCompetitionsProcedure is the fully-qualified name of the Backend's GetCompetitions RPC.
+	BackendGetCompetitionsProcedure = "/xctf.Backend/GetCompetitions"
+	// BackendUpdateCompetitionProcedure is the fully-qualified name of the Backend's UpdateCompetition
+	// RPC.
+	BackendUpdateCompetitionProcedure = "/xctf.Backend/UpdateCompetition"
+	// BackendDeleteCompetitionProcedure is the fully-qualified name of the Backend's DeleteCompetition
+	// RPC.
+	BackendDeleteCompetitionProcedure = "/xctf.Backend/DeleteCompetition"
 	// BackendChallengeTypeProcedure is the fully-qualified name of the Backend's ChallengeType RPC.
 	BackendChallengeTypeProcedure = "/xctf.Backend/ChallengeType"
 	// AdminUpsertChallengeProcedure is the fully-qualified name of the Admin's UpsertChallenge RPC.
@@ -103,7 +109,9 @@ type BackendClient interface {
 	GetHomePage(context.Context, *connect_go.Request[xctf.GetHomePageRequest]) (*connect_go.Response[xctf.GetHomePageResponse], error)
 	ForgotPassword(context.Context, *connect_go.Request[xctf.ForgotPasswordRequest]) (*connect_go.Response[xctf.Empty], error)
 	SubmitWriteup(context.Context, *connect_go.Request[xctf.SubmitWriteupRequest]) (*connect_go.Response[xctf.Empty], error)
-	Generate(context.Context, *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error)
+	GetCompetitions(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[chalgen.CompetitionList], error)
+	UpdateCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[chalgen.Competition], error)
+	DeleteCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[xctf.Empty], error)
 	ChallengeType(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error)
 }
 
@@ -177,9 +185,19 @@ func NewBackendClient(httpClient connect_go.HTTPClient, baseURL string, opts ...
 			baseURL+BackendSubmitWriteupProcedure,
 			opts...,
 		),
-		generate: connect_go.NewClient[chalgen.GenerateRequest, chalgen.GenerateResponse](
+		getCompetitions: connect_go.NewClient[xctf.Empty, chalgen.CompetitionList](
 			httpClient,
-			baseURL+BackendGenerateProcedure,
+			baseURL+BackendGetCompetitionsProcedure,
+			opts...,
+		),
+		updateCompetition: connect_go.NewClient[chalgen.Competition, chalgen.Competition](
+			httpClient,
+			baseURL+BackendUpdateCompetitionProcedure,
+			opts...,
+		),
+		deleteCompetition: connect_go.NewClient[chalgen.Competition, xctf.Empty](
+			httpClient,
+			baseURL+BackendDeleteCompetitionProcedure,
 			opts...,
 		),
 		challengeType: connect_go.NewClient[xctf.Empty, xctf.ChallengeTypeResponse](
@@ -204,7 +222,9 @@ type backendClient struct {
 	getHomePage              *connect_go.Client[xctf.GetHomePageRequest, xctf.GetHomePageResponse]
 	forgotPassword           *connect_go.Client[xctf.ForgotPasswordRequest, xctf.Empty]
 	submitWriteup            *connect_go.Client[xctf.SubmitWriteupRequest, xctf.Empty]
-	generate                 *connect_go.Client[chalgen.GenerateRequest, chalgen.GenerateResponse]
+	getCompetitions          *connect_go.Client[xctf.Empty, chalgen.CompetitionList]
+	updateCompetition        *connect_go.Client[chalgen.Competition, chalgen.Competition]
+	deleteCompetition        *connect_go.Client[chalgen.Competition, xctf.Empty]
 	challengeType            *connect_go.Client[xctf.Empty, xctf.ChallengeTypeResponse]
 }
 
@@ -268,9 +288,19 @@ func (c *backendClient) SubmitWriteup(ctx context.Context, req *connect_go.Reque
 	return c.submitWriteup.CallUnary(ctx, req)
 }
 
-// Generate calls xctf.Backend.Generate.
-func (c *backendClient) Generate(ctx context.Context, req *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error) {
-	return c.generate.CallUnary(ctx, req)
+// GetCompetitions calls xctf.Backend.GetCompetitions.
+func (c *backendClient) GetCompetitions(ctx context.Context, req *connect_go.Request[xctf.Empty]) (*connect_go.Response[chalgen.CompetitionList], error) {
+	return c.getCompetitions.CallUnary(ctx, req)
+}
+
+// UpdateCompetition calls xctf.Backend.UpdateCompetition.
+func (c *backendClient) UpdateCompetition(ctx context.Context, req *connect_go.Request[chalgen.Competition]) (*connect_go.Response[chalgen.Competition], error) {
+	return c.updateCompetition.CallUnary(ctx, req)
+}
+
+// DeleteCompetition calls xctf.Backend.DeleteCompetition.
+func (c *backendClient) DeleteCompetition(ctx context.Context, req *connect_go.Request[chalgen.Competition]) (*connect_go.Response[xctf.Empty], error) {
+	return c.deleteCompetition.CallUnary(ctx, req)
 }
 
 // ChallengeType calls xctf.Backend.ChallengeType.
@@ -292,7 +322,9 @@ type BackendHandler interface {
 	GetHomePage(context.Context, *connect_go.Request[xctf.GetHomePageRequest]) (*connect_go.Response[xctf.GetHomePageResponse], error)
 	ForgotPassword(context.Context, *connect_go.Request[xctf.ForgotPasswordRequest]) (*connect_go.Response[xctf.Empty], error)
 	SubmitWriteup(context.Context, *connect_go.Request[xctf.SubmitWriteupRequest]) (*connect_go.Response[xctf.Empty], error)
-	Generate(context.Context, *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error)
+	GetCompetitions(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[chalgen.CompetitionList], error)
+	UpdateCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[chalgen.Competition], error)
+	DeleteCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[xctf.Empty], error)
 	ChallengeType(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error)
 }
 
@@ -362,9 +394,19 @@ func NewBackendHandler(svc BackendHandler, opts ...connect_go.HandlerOption) (st
 		svc.SubmitWriteup,
 		opts...,
 	)
-	backendGenerateHandler := connect_go.NewUnaryHandler(
-		BackendGenerateProcedure,
-		svc.Generate,
+	backendGetCompetitionsHandler := connect_go.NewUnaryHandler(
+		BackendGetCompetitionsProcedure,
+		svc.GetCompetitions,
+		opts...,
+	)
+	backendUpdateCompetitionHandler := connect_go.NewUnaryHandler(
+		BackendUpdateCompetitionProcedure,
+		svc.UpdateCompetition,
+		opts...,
+	)
+	backendDeleteCompetitionHandler := connect_go.NewUnaryHandler(
+		BackendDeleteCompetitionProcedure,
+		svc.DeleteCompetition,
 		opts...,
 	)
 	backendChallengeTypeHandler := connect_go.NewUnaryHandler(
@@ -398,8 +440,12 @@ func NewBackendHandler(svc BackendHandler, opts ...connect_go.HandlerOption) (st
 			backendForgotPasswordHandler.ServeHTTP(w, r)
 		case BackendSubmitWriteupProcedure:
 			backendSubmitWriteupHandler.ServeHTTP(w, r)
-		case BackendGenerateProcedure:
-			backendGenerateHandler.ServeHTTP(w, r)
+		case BackendGetCompetitionsProcedure:
+			backendGetCompetitionsHandler.ServeHTTP(w, r)
+		case BackendUpdateCompetitionProcedure:
+			backendUpdateCompetitionHandler.ServeHTTP(w, r)
+		case BackendDeleteCompetitionProcedure:
+			backendDeleteCompetitionHandler.ServeHTTP(w, r)
 		case BackendChallengeTypeProcedure:
 			backendChallengeTypeHandler.ServeHTTP(w, r)
 		default:
@@ -459,8 +505,16 @@ func (UnimplementedBackendHandler) SubmitWriteup(context.Context, *connect_go.Re
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.SubmitWriteup is not implemented"))
 }
 
-func (UnimplementedBackendHandler) Generate(context.Context, *connect_go.Request[chalgen.GenerateRequest]) (*connect_go.Response[chalgen.GenerateResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.Generate is not implemented"))
+func (UnimplementedBackendHandler) GetCompetitions(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[chalgen.CompetitionList], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.GetCompetitions is not implemented"))
+}
+
+func (UnimplementedBackendHandler) UpdateCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[chalgen.Competition], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.UpdateCompetition is not implemented"))
+}
+
+func (UnimplementedBackendHandler) DeleteCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[xctf.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.DeleteCompetition is not implemented"))
 }
 
 func (UnimplementedBackendHandler) ChallengeType(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error) {

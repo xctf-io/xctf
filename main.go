@@ -3,6 +3,7 @@ package main
 //go:generate npx buf generate proto
 
 import (
+	_ "github.com/google/wire"
 	"github.com/xctf-io/xctf/pkg/cli"
 	"log/slog"
 	"os"

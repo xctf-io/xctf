@@ -10,27 +10,32 @@ const getFieldName = (baseFieldName: string | undefined, field: FieldDescriptorP
         return field.name || '';
     }
     if (idx !== undefined) {
-        return `${baseFieldName}.${idx}.${field.name}`;
+        return `${baseFieldName}.${idx}`;
     }
-    return `${baseFieldName}.${field.name}`;
+    return `${baseFieldName}`;
 }
 
-export interface InputFormContentsProps extends GRPCInputFormProps {
+export interface InputFormContentsProps {
+    inputFormProps: GRPCInputFormProps
     field: FieldDescriptorProto
     index?: number
 }
 
 export const InputFormContents: FC<InputFormContentsProps> = (props) => {
     const {
+        inputFormProps,
+        field,
+        index,
+    } = props;
+    const {
         grpcInfo,
         baseFieldName,
-        field,
         register,
         control,
-        index,
         fieldPath,
+        parentFieldName,
         setValue,
-    } = props;
+    } = inputFormProps;
     const { enumLookup, descLookup } = grpcInfo;
 
     const fieldFormName = getFieldName(baseFieldName, field, index);
@@ -47,11 +52,12 @@ export const InputFormContents: FC<InputFormContentsProps> = (props) => {
         if (fieldType) {
             return (
                 <ProtobufMessageForm
-                    {...props}
+                    {...inputFormProps}
                     grpcInfo={new GRPCTypeInfo({
                         ...grpcInfo,
                         msg: fieldType,
                     })}
+                    parentFieldName={parentFieldName}
                     baseFieldName={fieldFormName}
                     fieldPath={`${fieldPath}.${field.name}`}
                 />

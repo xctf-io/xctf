@@ -75,10 +75,20 @@ class BackendStub(object):
                 request_serializer=xctf_dot_xctf__pb2.SubmitWriteupRequest.SerializeToString,
                 response_deserializer=xctf_dot_xctf__pb2.Empty.FromString,
                 )
-        self.Generate = channel.unary_unary(
-                '/xctf.Backend/Generate',
-                request_serializer=chalgen_dot_chalgen__pb2.GenerateRequest.SerializeToString,
-                response_deserializer=chalgen_dot_chalgen__pb2.GenerateResponse.FromString,
+        self.GetCompetitions = channel.unary_unary(
+                '/xctf.Backend/GetCompetitions',
+                request_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
+                response_deserializer=chalgen_dot_chalgen__pb2.CompetitionList.FromString,
+                )
+        self.UpdateCompetition = channel.unary_unary(
+                '/xctf.Backend/UpdateCompetition',
+                request_serializer=chalgen_dot_chalgen__pb2.Competition.SerializeToString,
+                response_deserializer=chalgen_dot_chalgen__pb2.Competition.FromString,
+                )
+        self.DeleteCompetition = channel.unary_unary(
+                '/xctf.Backend/DeleteCompetition',
+                request_serializer=chalgen_dot_chalgen__pb2.Competition.SerializeToString,
+                response_deserializer=xctf_dot_xctf__pb2.Empty.FromString,
                 )
         self.ChallengeType = channel.unary_unary(
                 '/xctf.Backend/ChallengeType',
@@ -162,7 +172,19 @@ class BackendServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Generate(self, request, context):
+    def GetCompetitions(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateCompetition(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteCompetition(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -237,10 +259,20 @@ def add_BackendServicer_to_server(servicer, server):
                     request_deserializer=xctf_dot_xctf__pb2.SubmitWriteupRequest.FromString,
                     response_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
             ),
-            'Generate': grpc.unary_unary_rpc_method_handler(
-                    servicer.Generate,
-                    request_deserializer=chalgen_dot_chalgen__pb2.GenerateRequest.FromString,
-                    response_serializer=chalgen_dot_chalgen__pb2.GenerateResponse.SerializeToString,
+            'GetCompetitions': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCompetitions,
+                    request_deserializer=xctf_dot_xctf__pb2.Empty.FromString,
+                    response_serializer=chalgen_dot_chalgen__pb2.CompetitionList.SerializeToString,
+            ),
+            'UpdateCompetition': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateCompetition,
+                    request_deserializer=chalgen_dot_chalgen__pb2.Competition.FromString,
+                    response_serializer=chalgen_dot_chalgen__pb2.Competition.SerializeToString,
+            ),
+            'DeleteCompetition': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteCompetition,
+                    request_deserializer=chalgen_dot_chalgen__pb2.Competition.FromString,
+                    response_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
             ),
             'ChallengeType': grpc.unary_unary_rpc_method_handler(
                     servicer.ChallengeType,
@@ -462,7 +494,7 @@ class Backend(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Generate(request,
+    def GetCompetitions(request,
             target,
             options=(),
             channel_credentials=None,
@@ -472,9 +504,43 @@ class Backend(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/xctf.Backend/Generate',
-            chalgen_dot_chalgen__pb2.GenerateRequest.SerializeToString,
-            chalgen_dot_chalgen__pb2.GenerateResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/xctf.Backend/GetCompetitions',
+            xctf_dot_xctf__pb2.Empty.SerializeToString,
+            chalgen_dot_chalgen__pb2.CompetitionList.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateCompetition(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Backend/UpdateCompetition',
+            chalgen_dot_chalgen__pb2.Competition.SerializeToString,
+            chalgen_dot_chalgen__pb2.Competition.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DeleteCompetition(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Backend/DeleteCompetition',
+            chalgen_dot_chalgen__pb2.Competition.SerializeToString,
+            xctf_dot_xctf__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

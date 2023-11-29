@@ -57,7 +57,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 							<Navbar.Item key={l.label} isActive={l.to === location.pathname}>
 								<Link
 									color="inherit"
-									onPress={() => navigate(l.to)}
+									onClick={() => navigate(l.to)}
 								>
 									{l.label}
 								</Link>
@@ -69,7 +69,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 			<Navbar.Content enableCursorHighlight hideIn="xs">
 				<Navbar.Link
 					className="justify-self-right"
-					onPress={toggle}
+					onClick={toggle}
 					key="toggle"
 				>
 					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
@@ -87,7 +87,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 							<Navbar.CollapseItem key={l.label} isActive={l.to === location.pathname}>
 								<Link
 									color="inherit"
-									onPress={() => navigate(l.to)}
+									onClick={() => navigate(l.to)}
 								>
 									{l.label}
 								</Link>
@@ -99,7 +99,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 			<Navbar.Content showIn="xs">
 				<Navbar.Link
 					className="justify-self-right"
-					onPress={toggle}
+					onClick={toggle}
 					key="toggle"
 				>
 					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}

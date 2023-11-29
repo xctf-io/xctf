@@ -2,29 +2,35 @@ syntax = "proto3";
 
 package chalgen;
 
-// The protobuf definition for a graph-based challenge generation system.
-
-message GenerateRequest {
-  Graph graph = 1;
+message CompetitionList {
+  repeated Competition competitions = 1;
 }
 
-message GenerateResponse {
-  // Define the response structure here
+message Competition {
+  string id = 1;
+  string name = 2;
+  Graph graph = 3;
 }
 
 message Graph {
-  repeated Node nodes = 1;
-  repeated Edge edges = 2;
+  repeated Node nodes = 3;
+  repeated Edge edges = 4;
+}
+
+message Meta {
+  string id = 1;
+  int32 x = 2;
+  int32 y = 3;
 }
 
 message Node {
-  string id = 1;
-  string name = 2;
-  string flag = 3;
+  Meta meta = 1;
+  string name = 4;
+  string flag = 5;
   oneof challenge {
-    Base64 base64 = 4;
-    Twitter twitter = 5;
-    CaesarCipher caesar = 6;
+    Base64 base64 = 6;
+    Twitter twitter = 7;
+    CaesarCipher caesar = 8;
   }
 }
 
@@ -49,26 +55,21 @@ message Twitter {
 }
 
 message User {
-  int64 id = 1;
-  string username = 2;
-  string bio = 3;
+  string username = 1;
+  string bio = 2;
 }
 
 // Post represents a user's post.
 message Post {
-  int64 id = 1;
-  int64 user_id = 2;
-  string content = 3;
-  int64 timestamp = 4; // Unix timestamp
+  int64 username = 1;
+  string content = 2;
 }
 
 // Comment represents a comment on a post.
 message Comment {
-  int64 id = 1;
-  int64 post_id = 2;
-  int64 user_id = 3;
-  string content = 4;
-  int64 timestamp = 5; // Unix timestamp
+  int64 post_number = 1;
+  int64 username = 2;
+  string content = 3;
 }
 
 service ChalgenService {

@@ -5,6 +5,7 @@ import (
 	"embed"
 	"errors"
 	"github.com/benbjohnson/litestream"
+	lsgcs "github.com/benbjohnson/litestream/gcs"
 	lss3 "github.com/benbjohnson/litestream/s3"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/xctf-io/xctf/pkg/models"
@@ -99,8 +100,7 @@ func (s *Service) Migrate() error {
 		&models.Writeup{},
 		&models.Comment{},
 		&models.HighlightArea{},
-		&models.CompetitionNode{},
-		&models.CompetitionEdge{},
+		&models.Competition{},
 	}
 
 	for _, model := range modelsToMigrate {
@@ -165,6 +165,9 @@ func (s *Service) registerDBCallbacks(ctx context.Context, lsdb *litestream.DB) 
 }
 
 func (s *Service) newReplica(lsdb *litestream.DB) *litestream.Replica {
+	// TODO breadchris support gcs https://litestream.io/guides/gcs/
+	_ = lsgcs.NewReplicaClient()
+
 	client := lss3.NewReplicaClient()
 	client.Bucket = s.c.Bucket
 	client.Endpoint = s.c.Endpoint

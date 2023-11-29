@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x63halgen/chalgen.proto\x12\x07\x63halgen\"7\n\x0fGenerateRequest\x12$\n\x05graph\x18\x01 \x01(\x0b\x32\x0e.chalgen.GraphR\x05graph\"\x12\n\x10GenerateResponse\"Q\n\x05Graph\x12#\n\x05nodes\x18\x01 \x03(\x0b\x32\r.chalgen.NodeR\x05nodes\x12#\n\x05\x65\x64ges\x18\x02 \x03(\x0b\x32\r.chalgen.EdgeR\x05\x65\x64ges\"\xd5\x01\n\x04Node\x12\x0e\n\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n\x04\x66lag\x18\x03 \x01(\tR\x04\x66lag\x12)\n\x06\x62\x61se64\x18\x04 \x01(\x0b\x32\x0f.chalgen.Base64H\x00R\x06\x62\x61se64\x12,\n\x07twitter\x18\x05 \x01(\x0b\x32\x10.chalgen.TwitterH\x00R\x07twitter\x12/\n\x06\x63\x61\x65sar\x18\x06 \x01(\x0b\x32\x15.chalgen.CaesarCipherH\x00R\x06\x63\x61\x65sarB\x0b\n\tchallenge\"*\n\x04\x45\x64ge\x12\x12\n\x04\x66rom\x18\x01 \x01(\tR\x04\x66rom\x12\x0e\n\x02to\x18\x02 \x01(\tR\x02to\"B\n\x0c\x43\x61\x65sarCipher\x12\x1c\n\tplaintext\x18\x01 \x01(\tR\tplaintext\x12\x14\n\x05shift\x18\x02 \x01(\x05R\x05shift\"\x1c\n\x06\x42\x61se64\x12\x12\n\x04\x64\x61ta\x18\x01 \x01(\tR\x04\x64\x61ta\"\x81\x01\n\x07Twitter\x12#\n\x05users\x18\x01 \x03(\x0b\x32\r.chalgen.UserR\x05users\x12#\n\x05posts\x18\x02 \x03(\x0b\x32\r.chalgen.PostR\x05posts\x12,\n\x08\x63omments\x18\x03 \x03(\x0b\x32\x10.chalgen.CommentR\x08\x63omments\"D\n\x04User\x12\x0e\n\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n\x08username\x18\x02 \x01(\tR\x08username\x12\x10\n\x03\x62io\x18\x03 \x01(\tR\x03\x62io\"g\n\x04Post\x12\x0e\n\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n\x07user_id\x18\x02 \x01(\x03R\x06userId\x12\x18\n\x07\x63ontent\x18\x03 \x01(\tR\x07\x63ontent\x12\x1c\n\ttimestamp\x18\x04 \x01(\x03R\ttimestamp\"\x83\x01\n\x07\x43omment\x12\x0e\n\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n\x07post_id\x18\x02 \x01(\x03R\x06postId\x12\x17\n\x07user_id\x18\x03 \x01(\x03R\x06userId\x12\x18\n\x07\x63ontent\x18\x04 \x01(\tR\x07\x63ontent\x12\x1c\n\ttimestamp\x18\x05 \x01(\x03R\ttimestamp2\x10\n\x0e\x43halgenServiceB|\n\x0b\x63om.chalgenB\x0c\x43halgenProtoP\x01Z#github.com/xctf-io/xctf/gen/chalgen\xa2\x02\x03\x43XX\xaa\x02\x07\x43halgen\xca\x02\x07\x43halgen\xe2\x02\x13\x43halgen\\GPBMetadata\xea\x02\x07\x43halgenb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x63halgen/chalgen.proto\x12\x07\x63halgen\"K\n\x0f\x43ompetitionList\x12\x38\n\x0c\x63ompetitions\x18\x01 \x03(\x0b\x32\x14.chalgen.CompetitionR\x0c\x63ompetitions\"W\n\x0b\x43ompetition\x12\x0e\n\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n\x04name\x18\x02 \x01(\tR\x04name\x12$\n\x05graph\x18\x03 \x01(\x0b\x32\x0e.chalgen.GraphR\x05graph\"Q\n\x05Graph\x12#\n\x05nodes\x18\x03 \x03(\x0b\x32\r.chalgen.NodeR\x05nodes\x12#\n\x05\x65\x64ges\x18\x04 \x03(\x0b\x32\r.chalgen.EdgeR\x05\x65\x64ges\"2\n\x04Meta\x12\x0e\n\x02id\x18\x01 \x01(\tR\x02id\x12\x0c\n\x01x\x18\x02 \x01(\x05R\x01x\x12\x0c\n\x01y\x18\x03 \x01(\x05R\x01y\"\xe8\x01\n\x04Node\x12!\n\x04meta\x18\x01 \x01(\x0b\x32\r.chalgen.MetaR\x04meta\x12\x12\n\x04name\x18\x04 \x01(\tR\x04name\x12\x12\n\x04\x66lag\x18\x05 \x01(\tR\x04\x66lag\x12)\n\x06\x62\x61se64\x18\x06 \x01(\x0b\x32\x0f.chalgen.Base64H\x00R\x06\x62\x61se64\x12,\n\x07twitter\x18\x07 \x01(\x0b\x32\x10.chalgen.TwitterH\x00R\x07twitter\x12/\n\x06\x63\x61\x65sar\x18\x08 \x01(\x0b\x32\x15.chalgen.CaesarCipherH\x00R\x06\x63\x61\x65sarB\x0b\n\tchallenge\"*\n\x04\x45\x64ge\x12\x12\n\x04\x66rom\x18\x01 \x01(\tR\x04\x66rom\x12\x0e\n\x02to\x18\x02 \x01(\tR\x02to\"B\n\x0c\x43\x61\x65sarCipher\x12\x1c\n\tplaintext\x18\x01 \x01(\tR\tplaintext\x12\x14\n\x05shift\x18\x02 \x01(\x05R\x05shift\"\x1c\n\x06\x42\x61se64\x12\x12\n\x04\x64\x61ta\x18\x01 \x01(\tR\x04\x64\x61ta\"\x81\x01\n\x07Twitter\x12#\n\x05users\x18\x01 \x03(\x0b\x32\r.chalgen.UserR\x05users\x12#\n\x05posts\x18\x02 \x03(\x0b\x32\r.chalgen.PostR\x05posts\x12,\n\x08\x63omments\x18\x03 \x03(\x0b\x32\x10.chalgen.CommentR\x08\x63omments\"4\n\x04User\x12\x1a\n\x08username\x18\x01 \x01(\tR\x08username\x12\x10\n\x03\x62io\x18\x02 \x01(\tR\x03\x62io\"<\n\x04Post\x12\x1a\n\x08username\x18\x01 \x01(\x03R\x08username\x12\x18\n\x07\x63ontent\x18\x02 \x01(\tR\x07\x63ontent\"`\n\x07\x43omment\x12\x1f\n\x0bpost_number\x18\x01 \x01(\x03R\npostNumber\x12\x1a\n\x08username\x18\x02 \x01(\x03R\x08username\x12\x18\n\x07\x63ontent\x18\x03 \x01(\tR\x07\x63ontent2\x10\n\x0e\x43halgenServiceB|\n\x0b\x63om.chalgenB\x0c\x43halgenProtoP\x01Z#github.com/xctf-io/xctf/gen/chalgen\xa2\x02\x03\x43XX\xaa\x02\x07\x43halgen\xca\x02\x07\x43halgen\xe2\x02\x13\x43halgen\\GPBMetadata\xea\x02\x07\x43halgenb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,28 +22,30 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'chalgen.chalgen_pb2', _glob
 if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['DESCRIPTOR']._options = None
   _globals['DESCRIPTOR']._serialized_options = b'\n\013com.chalgenB\014ChalgenProtoP\001Z#github.com/xctf-io/xctf/gen/chalgen\242\002\003CXX\252\002\007Chalgen\312\002\007Chalgen\342\002\023Chalgen\\GPBMetadata\352\002\007Chalgen'
-  _globals['_GENERATEREQUEST']._serialized_start=34
-  _globals['_GENERATEREQUEST']._serialized_end=89
-  _globals['_GENERATERESPONSE']._serialized_start=91
-  _globals['_GENERATERESPONSE']._serialized_end=109
-  _globals['_GRAPH']._serialized_start=111
-  _globals['_GRAPH']._serialized_end=192
-  _globals['_NODE']._serialized_start=195
-  _globals['_NODE']._serialized_end=408
-  _globals['_EDGE']._serialized_start=410
-  _globals['_EDGE']._serialized_end=452
-  _globals['_CAESARCIPHER']._serialized_start=454
-  _globals['_CAESARCIPHER']._serialized_end=520
-  _globals['_BASE64']._serialized_start=522
-  _globals['_BASE64']._serialized_end=550
-  _globals['_TWITTER']._serialized_start=553
-  _globals['_TWITTER']._serialized_end=682
-  _globals['_USER']._serialized_start=684
-  _globals['_USER']._serialized_end=752
-  _globals['_POST']._serialized_start=754
-  _globals['_POST']._serialized_end=857
-  _globals['_COMMENT']._serialized_start=860
-  _globals['_COMMENT']._serialized_end=991
-  _globals['_CHALGENSERVICE']._serialized_start=993
-  _globals['_CHALGENSERVICE']._serialized_end=1009
+  _globals['_COMPETITIONLIST']._serialized_start=34
+  _globals['_COMPETITIONLIST']._serialized_end=109
+  _globals['_COMPETITION']._serialized_start=111
+  _globals['_COMPETITION']._serialized_end=198
+  _globals['_GRAPH']._serialized_start=200
+  _globals['_GRAPH']._serialized_end=281
+  _globals['_META']._serialized_start=283
+  _globals['_META']._serialized_end=333
+  _globals['_NODE']._serialized_start=336
+  _globals['_NODE']._serialized_end=568
+  _globals['_EDGE']._serialized_start=570
+  _globals['_EDGE']._serialized_end=612
+  _globals['_CAESARCIPHER']._serialized_start=614
+  _globals['_CAESARCIPHER']._serialized_end=680
+  _globals['_BASE64']._serialized_start=682
+  _globals['_BASE64']._serialized_end=710
+  _globals['_TWITTER']._serialized_start=713
+  _globals['_TWITTER']._serialized_end=842
+  _globals['_USER']._serialized_start=844
+  _globals['_USER']._serialized_end=896
+  _globals['_POST']._serialized_start=898
+  _globals['_POST']._serialized_end=958
+  _globals['_COMMENT']._serialized_start=960
+  _globals['_COMMENT']._serialized_end=1056
+  _globals['_CHALGENSERVICE']._serialized_start=1058
+  _globals['_CHALGENSERVICE']._serialized_end=1074
 # @@protoc_insertion_point(module_scope)

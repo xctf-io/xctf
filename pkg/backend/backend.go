@@ -2,17 +2,19 @@ package backend
 
 import (
 	"context"
+	"fmt"
+	connect "github.com/bufbuild/connect-go"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/pkg/grpc"
+	"github.com/rs/zerolog/log"
 	"github.com/xctf-io/xctf/gen/chalgen"
 	"github.com/xctf-io/xctf/gen/xctf"
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
 	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/http"
-
-	connect "github.com/bufbuild/connect-go"
-	"github.com/rs/zerolog/log"
 	"github.com/xctf-io/xctf/pkg/models"
+	"google.golang.org/protobuf/encoding/protojson"
 	"gorm.io/gorm"
 )
 
@@ -23,9 +25,77 @@ type Backend struct {
 
 var _ xctfconnect.BackendHandler = (*Backend)(nil)
 
-func (b *Backend) Generate(ctx context.Context, c *connect.Request[chalgen.GenerateRequest]) (*connect.Response[chalgen.GenerateResponse], error) {
-	//TODO implement me
-	panic("implement me")
+func (b *Backend) DeleteCompetition(ctx context.Context, c *connect.Request[chalgen.Competition]) (*connect.Response[xctf.Empty], error) {
+	var comp models.Competition
+	result := b.s.DB.Where("id = ?", c.Msg.Id).Delete(&comp)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return connect.NewResponse(&xctf.Empty{}), nil
+}
+
+func (b *Backend) GetCompetitions(ctx context.Context, c *connect.Request[xctf.Empty]) (*connect.Response[chalgen.CompetitionList], error) {
+	var comps []models.Competition
+	result := b.s.DB.Find(&comps)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var cl []*chalgen.Competition
+	for _, comp := range comps {
+		var graph chalgen.Graph
+		unm := protojson.UnmarshalOptions{DiscardUnknown: true}
+		if err := unm.Unmarshal([]byte(comp.Graph), &graph); err != nil {
+			log.Error().Err(err).Msg("unable to unmarshal graph")
+			continue
+		}
+		cl = append(cl, &chalgen.Competition{
+			Id:    fmt.Sprintf("%d", comp.ID),
+			Name:  comp.Name,
+			Graph: &graph,
+		})
+	}
+
+	return connect.NewResponse(&chalgen.CompetitionList{
+		Competitions: cl,
+	}), nil
+}
+
+func (b *Backend) UpdateCompetition(ctx context.Context, c *connect.Request[chalgen.Competition]) (*connect.Response[chalgen.Competition], error) {
+	existingIds := map[string]*chalgen.Node{}
+	for _, node := range c.Msg.Graph.Nodes {
+		if en, ok := existingIds[node.Meta.Id]; ok {
+			return nil, errors.New(fmt.Sprintf("duplicate node id: %s and %s", node.Name, en.Name))
+		}
+		if node.Meta.Id == "" {
+			node.Meta.Id = uuid.NewString()
+		}
+		existingIds[node.Meta.Id] = node
+	}
+	m := &protojson.MarshalOptions{}
+	bm, err := m.Marshal(c.Msg.Graph)
+	if err != nil {
+		return nil, err
+	}
+
+	var cm models.Competition
+	result := b.s.DB.Where("id = ?", c.Msg.Id).First(&cm)
+	if result.Error != nil {
+		cm = models.Competition{
+			Name:  c.Msg.Name,
+			Graph: string(bm),
+		}
+		b.s.DB.Create(&cm)
+	} else {
+		cm.Graph = string(bm)
+		cm.Name = c.Msg.Name
+		b.s.DB.Save(&cm)
+	}
+	return connect.NewResponse(&chalgen.Competition{
+		Id:    fmt.Sprintf("%d", cm.ID),
+		Name:  c.Msg.Name,
+		Graph: c.Msg.Graph,
+	}), nil
 }
 
 func (b *Backend) ChallengeType(ctx context.Context, c *connect.Request[xctf.Empty]) (*connect.Response[xctf.ChallengeTypeResponse], error) {

@@ -10,6 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"github.com/xctf-io/xctf/pkg/admin"
 	"github.com/xctf-io/xctf/pkg/backend"
+	"github.com/xctf-io/xctf/pkg/chals"
 	"github.com/xctf-io/xctf/pkg/config"
 	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/http"
@@ -56,10 +57,11 @@ func Wire() (*cli.App, error) {
 	}
 	backendBackend := backend.NewBackend(service, store)
 	adminAdmin := admin.NewAdmin(service)
-	handler, err := server.New(serverConfig, store, kubesService, backendBackend, adminAdmin, service)
+	handler := chals.NewHandler(service)
+	httpHandler, err := server.New(serverConfig, store, kubesService, backendBackend, adminAdmin, service, handler)
 	if err != nil {
 		return nil, err
 	}
-	app := New(logLog, serverConfig, handler)
+	app := New(logLog, serverConfig, httpHandler)
 	return app, nil
 }

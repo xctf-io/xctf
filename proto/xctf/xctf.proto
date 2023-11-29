@@ -23,7 +23,10 @@ service Backend {
   rpc ForgotPassword(ForgotPasswordRequest) returns (Empty);
   rpc SubmitWriteup(SubmitWriteupRequest) returns (Empty);
 
-  rpc Generate(chalgen.GenerateRequest) returns (chalgen.GenerateResponse);
+  rpc GetCompetitions(Empty) returns (chalgen.CompetitionList);
+  rpc UpdateCompetition(chalgen.Competition) returns (chalgen.Competition);
+  rpc DeleteCompetition(chalgen.Competition) returns (Empty);
+
   rpc ChallengeType(Empty) returns (ChallengeTypeResponse);
 }
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter-like Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>Twitter Feed</h1>
+
+    {{range .Users}}
+    <div class="card my-3">
+        <div class="card-body">
+            <h5 class="card-title">{{.Username}}</h5>
+            <p class="card-text">{{.Bio}}</p>
+        </div>
+    </div>
+    {{end}}
+
+    {{range .Posts}}
+    <div class="card my-3">
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Post by User #{{.Username}}</h6>
+            <p class="card-text">{{.Content}}</p>
+        </div>
+    </div>
+    {{end}}
+
+    {{range .Comments}}
+    <div class="card my-3">
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Comment on Post #{{.PostNumber}} by User #{{.Username}}</h6>
+            <p class="card-text">{{.Content}}</p>
+        </div>
+    </div>
+    {{end}}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.5/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

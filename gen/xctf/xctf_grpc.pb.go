@@ -35,7 +35,9 @@ type BackendClient interface {
 	GetHomePage(ctx context.Context, in *GetHomePageRequest, opts ...grpc.CallOption) (*GetHomePageResponse, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*Empty, error)
 	SubmitWriteup(ctx context.Context, in *SubmitWriteupRequest, opts ...grpc.CallOption) (*Empty, error)
-	Generate(ctx context.Context, in *chalgen.GenerateRequest, opts ...grpc.CallOption) (*chalgen.GenerateResponse, error)
+	GetCompetitions(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*chalgen.CompetitionList, error)
+	UpdateCompetition(ctx context.Context, in *chalgen.Competition, opts ...grpc.CallOption) (*chalgen.Competition, error)
+	DeleteCompetition(ctx context.Context, in *chalgen.Competition, opts ...grpc.CallOption) (*Empty, error)
 	ChallengeType(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ChallengeTypeResponse, error)
 }
 
@@ -155,9 +157,27 @@ func (c *backendClient) SubmitWriteup(ctx context.Context, in *SubmitWriteupRequ
 	return out, nil
 }
 
-func (c *backendClient) Generate(ctx context.Context, in *chalgen.GenerateRequest, opts ...grpc.CallOption) (*chalgen.GenerateResponse, error) {
-	out := new(chalgen.GenerateResponse)
-	err := c.cc.Invoke(ctx, "/xctf.Backend/Generate", in, out, opts...)
+func (c *backendClient) GetCompetitions(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*chalgen.CompetitionList, error) {
+	out := new(chalgen.CompetitionList)
+	err := c.cc.Invoke(ctx, "/xctf.Backend/GetCompetitions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *backendClient) UpdateCompetition(ctx context.Context, in *chalgen.Competition, opts ...grpc.CallOption) (*chalgen.Competition, error) {
+	out := new(chalgen.Competition)
+	err := c.cc.Invoke(ctx, "/xctf.Backend/UpdateCompetition", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *backendClient) DeleteCompetition(ctx context.Context, in *chalgen.Competition, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/xctf.Backend/DeleteCompetition", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +209,9 @@ type BackendServer interface {
 	GetHomePage(context.Context, *GetHomePageRequest) (*GetHomePageResponse, error)
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*Empty, error)
 	SubmitWriteup(context.Context, *SubmitWriteupRequest) (*Empty, error)
-	Generate(context.Context, *chalgen.GenerateRequest) (*chalgen.GenerateResponse, error)
+	GetCompetitions(context.Context, *Empty) (*chalgen.CompetitionList, error)
+	UpdateCompetition(context.Context, *chalgen.Competition) (*chalgen.Competition, error)
+	DeleteCompetition(context.Context, *chalgen.Competition) (*Empty, error)
 	ChallengeType(context.Context, *Empty) (*ChallengeTypeResponse, error)
 }
 
@@ -233,8 +255,14 @@ func (UnimplementedBackendServer) ForgotPassword(context.Context, *ForgotPasswor
 func (UnimplementedBackendServer) SubmitWriteup(context.Context, *SubmitWriteupRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitWriteup not implemented")
 }
-func (UnimplementedBackendServer) Generate(context.Context, *chalgen.GenerateRequest) (*chalgen.GenerateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Generate not implemented")
+func (UnimplementedBackendServer) GetCompetitions(context.Context, *Empty) (*chalgen.CompetitionList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCompetitions not implemented")
+}
+func (UnimplementedBackendServer) UpdateCompetition(context.Context, *chalgen.Competition) (*chalgen.Competition, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCompetition not implemented")
+}
+func (UnimplementedBackendServer) DeleteCompetition(context.Context, *chalgen.Competition) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCompetition not implemented")
 }
 func (UnimplementedBackendServer) ChallengeType(context.Context, *Empty) (*ChallengeTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChallengeType not implemented")
@@ -467,20 +495,56 @@ func _Backend_SubmitWriteup_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Backend_Generate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(chalgen.GenerateRequest)
+func _Backend_GetCompetitions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BackendServer).Generate(ctx, in)
+		return srv.(BackendServer).GetCompetitions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/xctf.Backend/Generate",
+		FullMethod: "/xctf.Backend/GetCompetitions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BackendServer).Generate(ctx, req.(*chalgen.GenerateRequest))
+		return srv.(BackendServer).GetCompetitions(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Backend_UpdateCompetition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(chalgen.Competition)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BackendServer).UpdateCompetition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Backend/UpdateCompetition",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BackendServer).UpdateCompetition(ctx, req.(*chalgen.Competition))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Backend_DeleteCompetition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(chalgen.Competition)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BackendServer).DeleteCompetition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Backend/DeleteCompetition",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BackendServer).DeleteCompetition(ctx, req.(*chalgen.Competition))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -559,8 +623,16 @@ var Backend_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Backend_SubmitWriteup_Handler,
 		},
 		{
-			MethodName: "Generate",
-			Handler:    _Backend_Generate_Handler,
+			MethodName: "GetCompetitions",
+			Handler:    _Backend_GetCompetitions_Handler,
+		},
+		{
+			MethodName: "UpdateCompetition",
+			Handler:    _Backend_UpdateCompetition_Handler,
+		},
+		{
+			MethodName: "DeleteCompetition",
+			Handler:    _Backend_DeleteCompetition_Handler,
 		},
 		{
 			MethodName: "ChallengeType",

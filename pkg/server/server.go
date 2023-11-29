@@ -12,6 +12,7 @@ import (
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
 	"github.com/xctf-io/xctf/pkg/admin"
 	"github.com/xctf-io/xctf/pkg/backend"
+	"github.com/xctf-io/xctf/pkg/chals"
 	"github.com/xctf-io/xctf/pkg/db"
 	xhttp "github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/kubes"
@@ -30,6 +31,7 @@ var ProviderSet = wire.NewSet(
 	xhttp.New,
 	backend.NewBackend,
 	admin.NewAdmin,
+	chals.NewHandler,
 	New,
 )
 
@@ -40,6 +42,7 @@ func New(
 	b *backend.Backend,
 	a *admin.Admin,
 	s *db.Service,
+	h *chals.Handler,
 ) (http.Handler, error) {
 	muxRoot := http.NewServeMux()
 
@@ -51,6 +54,9 @@ func New(
 	if k != nil {
 		apiRoot.Handle(kubesconnect.NewKubesServiceHandler(k, interceptors))
 	}
+
+	playRoot := http.NewServeMux()
+	playRoot.Handle(h.Handle())
 
 	services := []string{
 		"xctf.Backend",
@@ -82,6 +88,7 @@ func New(
 	hfs := http.FS(assets)
 	httpFileServer := http.FileServer(hfs)
 
+	// TODO breadchris there has to be a better way to handle routes than this
 	muxRoot.Handle("/", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		filePath := r.URL.Path
 		if strings.Index(r.URL.Path, "/") == 0 {
@@ -91,6 +98,12 @@ func New(
 		if strings.Index(r.URL.Path, "/api") == 0 {
 			r.URL.Path = r.URL.Path[4:]
 			apiRoot.ServeHTTP(rw, r)
+			return
+		}
+
+		if strings.Index(r.URL.Path, "/play") == 0 {
+			r.URL.Path = r.URL.Path[5:]
+			playRoot.ServeHTTP(rw, r)
 			return
 		}
 

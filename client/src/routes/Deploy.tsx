@@ -4,7 +4,7 @@ import {Deployment} from "@/rpc/kubes/kubes_pb";
 import {Button, Input} from "@nextui-org/react";
 import {toast} from "react-toastify";
 
-export const Manage: React.FC = () => {
+export const Deploy: React.FC = () => {
     const [deployments, setDeployments] = React.useState<Deployment[]>([]);
     const [name, setName] = React.useState<string>('');
     useEffect(() => {
@@ -35,7 +35,6 @@ export const Manage: React.FC = () => {
     }
     return (
         <div className="mx-[3vw] lg:mx-[6vw] mt-8">
-            <h1>Manage</h1>
             <h3>New</h3>
             <Input aria-label={"name"} placeholder="Name" onChange={(e) => setName(e.target.value)} />
             <Button aria-label={"create"} onClick={newDeployment}>Create</Button>

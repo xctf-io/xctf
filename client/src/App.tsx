@@ -21,9 +21,9 @@ import { NextUIProvider, createTheme } from "@nextui-org/react";
 import "react-toastify/dist/ReactToastify.min.css";
 import { ToastContainer } from "react-toastify";
 import Redirect from "./components/Redirect";
-import {Build} from "@/routes/build/Build";
+import {Competitions} from "@/routes/build/Competitions";
 import {Toaster} from "react-hot-toast";
-import {Manage} from "@/routes/Manage";
+import {Deploy} from "@/routes/Deploy";
 
 interface Props {}
 
@@ -71,9 +71,9 @@ function App() {
 			hideWhenUnauthed: true,
 		},
 		{
-			label: "Build",
-			to: "/build",
-			Component: Build,
+			label: "Competitions",
+			to: "/competitions",
+			Component: Competitions,
 			showWhenAuthed: false,
 			showWhenAdmin: true,
 			hideWhenUnauthed: true,
@@ -81,7 +81,7 @@ function App() {
 		{
 			label: "Manage",
 			to: "/manage",
-			Component: Manage,
+			Component: Deploy,
 			showWhenAuthed: false,
 			showWhenAdmin: true,
 			hideWhenUnauthed: true,

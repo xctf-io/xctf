@@ -20,16 +20,16 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type GenerateRequest struct {
+type CompetitionList struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Graph *Graph `protobuf:"bytes,1,opt,name=graph,proto3" json:"graph,omitempty"`
+	Competitions []*Competition `protobuf:"bytes,1,rep,name=competitions,proto3" json:"competitions,omitempty"`
 }
 
-func (x *GenerateRequest) Reset() {
-	*x = GenerateRequest{}
+func (x *CompetitionList) Reset() {
+	*x = CompetitionList{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_chalgen_chalgen_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -37,13 +37,13 @@ func (x *GenerateRequest) Reset() {
 	}
 }
 
-func (x *GenerateRequest) String() string {
+func (x *CompetitionList) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GenerateRequest) ProtoMessage() {}
+func (*CompetitionList) ProtoMessage() {}
 
-func (x *GenerateRequest) ProtoReflect() protoreflect.Message {
+func (x *CompetitionList) ProtoReflect() protoreflect.Message {
 	mi := &file_chalgen_chalgen_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,26 +55,30 @@ func (x *GenerateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GenerateRequest.ProtoReflect.Descriptor instead.
-func (*GenerateRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CompetitionList.ProtoReflect.Descriptor instead.
+func (*CompetitionList) Descriptor() ([]byte, []int) {
 	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *GenerateRequest) GetGraph() *Graph {
+func (x *CompetitionList) GetCompetitions() []*Competition {
 	if x != nil {
-		return x.Graph
+		return x.Competitions
 	}
 	return nil
 }
 
-type GenerateResponse struct {
+type Competition struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name  string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Graph *Graph `protobuf:"bytes,3,opt,name=graph,proto3" json:"graph,omitempty"`
 }
 
-func (x *GenerateResponse) Reset() {
-	*x = GenerateResponse{}
+func (x *Competition) Reset() {
+	*x = Competition{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_chalgen_chalgen_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -82,13 +86,13 @@ func (x *GenerateResponse) Reset() {
 	}
 }
 
-func (x *GenerateResponse) String() string {
+func (x *Competition) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GenerateResponse) ProtoMessage() {}
+func (*Competition) ProtoMessage() {}
 
-func (x *GenerateResponse) ProtoReflect() protoreflect.Message {
+func (x *Competition) ProtoReflect() protoreflect.Message {
 	mi := &file_chalgen_chalgen_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -100,9 +104,30 @@ func (x *GenerateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GenerateResponse.ProtoReflect.Descriptor instead.
-func (*GenerateResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use Competition.ProtoReflect.Descriptor instead.
+func (*Competition) Descriptor() ([]byte, []int) {
 	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Competition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Competition) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Competition) GetGraph() *Graph {
+	if x != nil {
+		return x.Graph
+	}
+	return nil
 }
 
 type Graph struct {
@@ -110,8 +135,8 @@ type Graph struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Nodes []*Node `protobuf:"bytes,1,rep,name=nodes,proto3" json:"nodes,omitempty"`
-	Edges []*Edge `protobuf:"bytes,2,rep,name=edges,proto3" json:"edges,omitempty"`
+	Nodes []*Node `protobuf:"bytes,3,rep,name=nodes,proto3" json:"nodes,omitempty"`
+	Edges []*Edge `protobuf:"bytes,4,rep,name=edges,proto3" json:"edges,omitempty"`
 }
 
 func (x *Graph) Reset() {
@@ -160,14 +185,77 @@ func (x *Graph) GetEdges() []*Edge {
 	return nil
 }
 
+type Meta struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	X  int32  `protobuf:"varint,2,opt,name=x,proto3" json:"x,omitempty"`
+	Y  int32  `protobuf:"varint,3,opt,name=y,proto3" json:"y,omitempty"`
+}
+
+func (x *Meta) Reset() {
+	*x = Meta{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chalgen_chalgen_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Meta) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Meta) ProtoMessage() {}
+
+func (x *Meta) ProtoReflect() protoreflect.Message {
+	mi := &file_chalgen_chalgen_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Meta.ProtoReflect.Descriptor instead.
+func (*Meta) Descriptor() ([]byte, []int) {
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Meta) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Meta) GetX() int32 {
+	if x != nil {
+		return x.X
+	}
+	return 0
+}
+
+func (x *Meta) GetY() int32 {
+	if x != nil {
+		return x.Y
+	}
+	return 0
+}
+
 type Node struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Flag string `protobuf:"bytes,3,opt,name=flag,proto3" json:"flag,omitempty"`
+	Meta *Meta  `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Flag string `protobuf:"bytes,5,opt,name=flag,proto3" json:"flag,omitempty"`
 	// Types that are assignable to Challenge:
 	//
 	//	*Node_Base64
@@ -179,7 +267,7 @@ type Node struct {
 func (x *Node) Reset() {
 	*x = Node{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[3]
+		mi := &file_chalgen_chalgen_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -192,7 +280,7 @@ func (x *Node) String() string {
 func (*Node) ProtoMessage() {}
 
 func (x *Node) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[3]
+	mi := &file_chalgen_chalgen_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -205,14 +293,14 @@ func (x *Node) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Node.ProtoReflect.Descriptor instead.
 func (*Node) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{3}
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *Node) GetId() string {
+func (x *Node) GetMeta() *Meta {
 	if x != nil {
-		return x.Id
+		return x.Meta
 	}
-	return ""
+	return nil
 }
 
 func (x *Node) GetName() string {
@@ -262,15 +350,15 @@ type isNode_Challenge interface {
 }
 
 type Node_Base64 struct {
-	Base64 *Base64 `protobuf:"bytes,4,opt,name=base64,proto3,oneof"`
+	Base64 *Base64 `protobuf:"bytes,6,opt,name=base64,proto3,oneof"`
 }
 
 type Node_Twitter struct {
-	Twitter *Twitter `protobuf:"bytes,5,opt,name=twitter,proto3,oneof"`
+	Twitter *Twitter `protobuf:"bytes,7,opt,name=twitter,proto3,oneof"`
 }
 
 type Node_Caesar struct {
-	Caesar *CaesarCipher `protobuf:"bytes,6,opt,name=caesar,proto3,oneof"`
+	Caesar *CaesarCipher `protobuf:"bytes,8,opt,name=caesar,proto3,oneof"`
 }
 
 func (*Node_Base64) isNode_Challenge() {}
@@ -291,7 +379,7 @@ type Edge struct {
 func (x *Edge) Reset() {
 	*x = Edge{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[4]
+		mi := &file_chalgen_chalgen_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -304,7 +392,7 @@ func (x *Edge) String() string {
 func (*Edge) ProtoMessage() {}
 
 func (x *Edge) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[4]
+	mi := &file_chalgen_chalgen_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -317,7 +405,7 @@ func (x *Edge) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Edge.ProtoReflect.Descriptor instead.
 func (*Edge) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{4}
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Edge) GetFrom() string {
@@ -346,7 +434,7 @@ type CaesarCipher struct {
 func (x *CaesarCipher) Reset() {
 	*x = CaesarCipher{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[5]
+		mi := &file_chalgen_chalgen_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -359,7 +447,7 @@ func (x *CaesarCipher) String() string {
 func (*CaesarCipher) ProtoMessage() {}
 
 func (x *CaesarCipher) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[5]
+	mi := &file_chalgen_chalgen_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -372,7 +460,7 @@ func (x *CaesarCipher) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CaesarCipher.ProtoReflect.Descriptor instead.
 func (*CaesarCipher) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{5}
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CaesarCipher) GetPlaintext() string {
@@ -400,7 +488,7 @@ type Base64 struct {
 func (x *Base64) Reset() {
 	*x = Base64{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[6]
+		mi := &file_chalgen_chalgen_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -413,7 +501,7 @@ func (x *Base64) String() string {
 func (*Base64) ProtoMessage() {}
 
 func (x *Base64) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[6]
+	mi := &file_chalgen_chalgen_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -426,7 +514,7 @@ func (x *Base64) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Base64.ProtoReflect.Descriptor instead.
 func (*Base64) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{6}
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Base64) GetData() string {
@@ -449,7 +537,7 @@ type Twitter struct {
 func (x *Twitter) Reset() {
 	*x = Twitter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[7]
+		mi := &file_chalgen_chalgen_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -462,7 +550,7 @@ func (x *Twitter) String() string {
 func (*Twitter) ProtoMessage() {}
 
 func (x *Twitter) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[7]
+	mi := &file_chalgen_chalgen_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -475,7 +563,7 @@ func (x *Twitter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Twitter.ProtoReflect.Descriptor instead.
 func (*Twitter) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{7}
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Twitter) GetUsers() []*User {
@@ -504,15 +592,14 @@ type User struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id       int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Username string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Bio      string `protobuf:"bytes,3,opt,name=bio,proto3" json:"bio,omitempty"`
+	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Bio      string `protobuf:"bytes,2,opt,name=bio,proto3" json:"bio,omitempty"`
 }
 
 func (x *User) Reset() {
 	*x = User{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[8]
+		mi := &file_chalgen_chalgen_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -525,7 +612,7 @@ func (x *User) String() string {
 func (*User) ProtoMessage() {}
 
 func (x *User) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[8]
+	mi := &file_chalgen_chalgen_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -538,14 +625,7 @@ func (x *User) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use User.ProtoReflect.Descriptor instead.
 func (*User) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *User) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *User) GetUsername() string {
@@ -568,16 +648,14 @@ type Post struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId    int64  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Content   string `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
-	Timestamp int64  `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"` // Unix timestamp
+	Username int64  `protobuf:"varint,1,opt,name=username,proto3" json:"username,omitempty"`
+	Content  string `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
 }
 
 func (x *Post) Reset() {
 	*x = Post{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[9]
+		mi := &file_chalgen_chalgen_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -590,7 +668,7 @@ func (x *Post) String() string {
 func (*Post) ProtoMessage() {}
 
 func (x *Post) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[9]
+	mi := &file_chalgen_chalgen_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -603,19 +681,12 @@ func (x *Post) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Post.ProtoReflect.Descriptor instead.
 func (*Post) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{9}
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *Post) GetId() int64 {
+func (x *Post) GetUsername() int64 {
 	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *Post) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
+		return x.Username
 	}
 	return 0
 }
@@ -627,30 +698,21 @@ func (x *Post) GetContent() string {
 	return ""
 }
 
-func (x *Post) GetTimestamp() int64 {
-	if x != nil {
-		return x.Timestamp
-	}
-	return 0
-}
-
 // Comment represents a comment on a post.
 type Comment struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PostId    int64  `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
-	UserId    int64  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Content   string `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
-	Timestamp int64  `protobuf:"varint,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"` // Unix timestamp
+	PostNumber int64  `protobuf:"varint,1,opt,name=post_number,json=postNumber,proto3" json:"post_number,omitempty"`
+	Username   int64  `protobuf:"varint,2,opt,name=username,proto3" json:"username,omitempty"`
+	Content    string `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
 }
 
 func (x *Comment) Reset() {
 	*x = Comment{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chalgen_chalgen_proto_msgTypes[10]
+		mi := &file_chalgen_chalgen_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -663,7 +725,7 @@ func (x *Comment) String() string {
 func (*Comment) ProtoMessage() {}
 
 func (x *Comment) ProtoReflect() protoreflect.Message {
-	mi := &file_chalgen_chalgen_proto_msgTypes[10]
+	mi := &file_chalgen_chalgen_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -676,26 +738,19 @@ func (x *Comment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Comment.ProtoReflect.Descriptor instead.
 func (*Comment) Descriptor() ([]byte, []int) {
-	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{10}
+	return file_chalgen_chalgen_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *Comment) GetId() int64 {
+func (x *Comment) GetPostNumber() int64 {
 	if x != nil {
-		return x.Id
+		return x.PostNumber
 	}
 	return 0
 }
 
-func (x *Comment) GetPostId() int64 {
+func (x *Comment) GetUsername() int64 {
 	if x != nil {
-		return x.PostId
-	}
-	return 0
-}
-
-func (x *Comment) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
+		return x.Username
 	}
 	return 0
 }
@@ -707,39 +762,42 @@ func (x *Comment) GetContent() string {
 	return ""
 }
 
-func (x *Comment) GetTimestamp() int64 {
-	if x != nil {
-		return x.Timestamp
-	}
-	return 0
-}
-
 var File_chalgen_chalgen_proto protoreflect.FileDescriptor
 
 var file_chalgen_chalgen_proto_rawDesc = []byte{
 	0x0a, 0x15, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2f, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65,
 	0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x07, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e,
-	0x22, 0x37, 0x0a, 0x0f, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x12, 0x24, 0x0a, 0x05, 0x67, 0x72, 0x61, 0x70, 0x68, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x47, 0x72, 0x61,
-	0x70, 0x68, 0x52, 0x05, 0x67, 0x72, 0x61, 0x70, 0x68, 0x22, 0x12, 0x0a, 0x10, 0x47, 0x65, 0x6e,
-	0x65, 0x72, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x51, 0x0a,
-	0x05, 0x47, 0x72, 0x61, 0x70, 0x68, 0x12, 0x23, 0x0a, 0x05, 0x6e, 0x6f, 0x64, 0x65, 0x73, 0x18,
-	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e,
-	0x4e, 0x6f, 0x64, 0x65, 0x52, 0x05, 0x6e, 0x6f, 0x64, 0x65, 0x73, 0x12, 0x23, 0x0a, 0x05, 0x65,
-	0x64, 0x67, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x63, 0x68, 0x61,
-	0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x05, 0x65, 0x64, 0x67, 0x65, 0x73,
-	0x22, 0xd5, 0x01, 0x0a, 0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d,
-	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x0a,
-	0x04, 0x66, 0x6c, 0x61, 0x67, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x66, 0x6c, 0x61,
-	0x67, 0x12, 0x29, 0x0a, 0x06, 0x62, 0x61, 0x73, 0x65, 0x36, 0x34, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x22, 0x4b, 0x0a, 0x0f, 0x43, 0x6f, 0x6d, 0x70, 0x65, 0x74, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x4c,
+	0x69, 0x73, 0x74, 0x12, 0x38, 0x0a, 0x0c, 0x63, 0x6f, 0x6d, 0x70, 0x65, 0x74, 0x69, 0x74, 0x69,
+	0x6f, 0x6e, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x63, 0x68, 0x61, 0x6c,
+	0x67, 0x65, 0x6e, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x65, 0x74, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x52,
+	0x0c, 0x63, 0x6f, 0x6d, 0x70, 0x65, 0x74, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0x57, 0x0a,
+	0x0b, 0x43, 0x6f, 0x6d, 0x70, 0x65, 0x74, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x12, 0x24, 0x0a, 0x05, 0x67, 0x72, 0x61, 0x70, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0e, 0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x47, 0x72, 0x61, 0x70, 0x68, 0x52,
+	0x05, 0x67, 0x72, 0x61, 0x70, 0x68, 0x22, 0x51, 0x0a, 0x05, 0x47, 0x72, 0x61, 0x70, 0x68, 0x12,
+	0x23, 0x0a, 0x05, 0x6e, 0x6f, 0x64, 0x65, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d,
+	0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x05, 0x6e,
+	0x6f, 0x64, 0x65, 0x73, 0x12, 0x23, 0x0a, 0x05, 0x65, 0x64, 0x67, 0x65, 0x73, 0x18, 0x04, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x45, 0x64,
+	0x67, 0x65, 0x52, 0x05, 0x65, 0x64, 0x67, 0x65, 0x73, 0x22, 0x32, 0x0a, 0x04, 0x4d, 0x65, 0x74,
+	0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69,
+	0x64, 0x12, 0x0c, 0x0a, 0x01, 0x78, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x01, 0x78, 0x12,
+	0x0c, 0x0a, 0x01, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x01, 0x79, 0x22, 0xe8, 0x01,
+	0x0a, 0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x21, 0x0a, 0x04, 0x6d, 0x65, 0x74, 0x61, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x4d,
+	0x65, 0x74, 0x61, 0x52, 0x04, 0x6d, 0x65, 0x74, 0x61, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d,
+	0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x0a,
+	0x04, 0x66, 0x6c, 0x61, 0x67, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x66, 0x6c, 0x61,
+	0x67, 0x12, 0x29, 0x0a, 0x06, 0x62, 0x61, 0x73, 0x65, 0x36, 0x34, 0x18, 0x06, 0x20, 0x01, 0x28,
 	0x0b, 0x32, 0x0f, 0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x42, 0x61, 0x73, 0x65,
 	0x36, 0x34, 0x48, 0x00, 0x52, 0x06, 0x62, 0x61, 0x73, 0x65, 0x36, 0x34, 0x12, 0x2c, 0x0a, 0x07,
-	0x74, 0x77, 0x69, 0x74, 0x74, 0x65, 0x72, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e,
+	0x74, 0x77, 0x69, 0x74, 0x74, 0x65, 0x72, 0x18, 0x07, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e,
 	0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x54, 0x77, 0x69, 0x74, 0x74, 0x65, 0x72, 0x48,
 	0x00, 0x52, 0x07, 0x74, 0x77, 0x69, 0x74, 0x74, 0x65, 0x72, 0x12, 0x2f, 0x0a, 0x06, 0x63, 0x61,
-	0x65, 0x73, 0x61, 0x72, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x63, 0x68, 0x61,
+	0x65, 0x73, 0x61, 0x72, 0x18, 0x08, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x63, 0x68, 0x61,
 	0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x43, 0x61, 0x65, 0x73, 0x61, 0x72, 0x43, 0x69, 0x70, 0x68, 0x65,
 	0x72, 0x48, 0x00, 0x52, 0x06, 0x63, 0x61, 0x65, 0x73, 0x61, 0x72, 0x42, 0x0b, 0x0a, 0x09, 0x63,
 	0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x22, 0x2a, 0x0a, 0x04, 0x45, 0x64, 0x67, 0x65,
@@ -759,36 +817,30 @@ var file_chalgen_chalgen_proto_rawDesc = []byte{
 	0x2e, 0x50, 0x6f, 0x73, 0x74, 0x52, 0x05, 0x70, 0x6f, 0x73, 0x74, 0x73, 0x12, 0x2c, 0x0a, 0x08,
 	0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x10,
 	0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74,
-	0x52, 0x08, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x22, 0x44, 0x0a, 0x04, 0x55, 0x73,
-	0x65, 0x72, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02,
-	0x69, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02,
+	0x52, 0x08, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x22, 0x34, 0x0a, 0x04, 0x55, 0x73,
+	0x65, 0x72, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10,
-	0x0a, 0x03, 0x62, 0x69, 0x6f, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x62, 0x69, 0x6f,
-	0x22, 0x67, 0x0a, 0x04, 0x50, 0x6f, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72,
-	0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49,
-	0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x74,
-	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09,
-	0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x22, 0x83, 0x01, 0x0a, 0x07, 0x43, 0x6f,
-	0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x70, 0x6f, 0x73, 0x74, 0x5f, 0x69, 0x64,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x70, 0x6f, 0x73, 0x74, 0x49, 0x64, 0x12, 0x17,
-	0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52,
-	0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65,
-	0x6e, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e,
-	0x74, 0x12, 0x1c, 0x0a, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18, 0x05,
-	0x20, 0x01, 0x28, 0x03, 0x52, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x32,
-	0x10, 0x0a, 0x0e, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x42, 0x7c, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e,
-	0x42, 0x0c, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01,
-	0x5a, 0x23, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x63, 0x74,
-	0x66, 0x2d, 0x69, 0x6f, 0x2f, 0x78, 0x63, 0x74, 0x66, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x63, 0x68,
-	0x61, 0x6c, 0x67, 0x65, 0x6e, 0xa2, 0x02, 0x03, 0x43, 0x58, 0x58, 0xaa, 0x02, 0x07, 0x43, 0x68,
-	0x61, 0x6c, 0x67, 0x65, 0x6e, 0xca, 0x02, 0x07, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0xe2,
-	0x02, 0x13, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74,
-	0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x07, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x0a, 0x03, 0x62, 0x69, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x62, 0x69, 0x6f,
+	0x22, 0x3c, 0x0a, 0x04, 0x50, 0x6f, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72,
+	0x6e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x22, 0x60,
+	0x0a, 0x07, 0x43, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x70, 0x6f, 0x73,
+	0x74, 0x5f, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0a,
+	0x70, 0x6f, 0x73, 0x74, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73,
+	0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x75, 0x73,
+	0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e,
+	0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74,
+	0x32, 0x10, 0x0a, 0x0e, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x42, 0x7c, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x6c, 0x67, 0x65,
+	0x6e, 0x42, 0x0c, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50,
+	0x01, 0x5a, 0x23, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x63,
+	0x74, 0x66, 0x2d, 0x69, 0x6f, 0x2f, 0x78, 0x63, 0x74, 0x66, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x63,
+	0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0xa2, 0x02, 0x03, 0x43, 0x58, 0x58, 0xaa, 0x02, 0x07, 0x43,
+	0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0xca, 0x02, 0x07, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e,
+	0xe2, 0x02, 0x13, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65,
+	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x07, 0x43, 0x68, 0x61, 0x6c, 0x67, 0x65, 0x6e,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -803,35 +855,38 @@ func file_chalgen_chalgen_proto_rawDescGZIP() []byte {
 	return file_chalgen_chalgen_proto_rawDescData
 }
 
-var file_chalgen_chalgen_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_chalgen_chalgen_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_chalgen_chalgen_proto_goTypes = []interface{}{
-	(*GenerateRequest)(nil),  // 0: chalgen.GenerateRequest
-	(*GenerateResponse)(nil), // 1: chalgen.GenerateResponse
-	(*Graph)(nil),            // 2: chalgen.Graph
-	(*Node)(nil),             // 3: chalgen.Node
-	(*Edge)(nil),             // 4: chalgen.Edge
-	(*CaesarCipher)(nil),     // 5: chalgen.CaesarCipher
-	(*Base64)(nil),           // 6: chalgen.Base64
-	(*Twitter)(nil),          // 7: chalgen.Twitter
-	(*User)(nil),             // 8: chalgen.User
-	(*Post)(nil),             // 9: chalgen.Post
-	(*Comment)(nil),          // 10: chalgen.Comment
+	(*CompetitionList)(nil), // 0: chalgen.CompetitionList
+	(*Competition)(nil),     // 1: chalgen.Competition
+	(*Graph)(nil),           // 2: chalgen.Graph
+	(*Meta)(nil),            // 3: chalgen.Meta
+	(*Node)(nil),            // 4: chalgen.Node
+	(*Edge)(nil),            // 5: chalgen.Edge
+	(*CaesarCipher)(nil),    // 6: chalgen.CaesarCipher
+	(*Base64)(nil),          // 7: chalgen.Base64
+	(*Twitter)(nil),         // 8: chalgen.Twitter
+	(*User)(nil),            // 9: chalgen.User
+	(*Post)(nil),            // 10: chalgen.Post
+	(*Comment)(nil),         // 11: chalgen.Comment
 }
 var file_chalgen_chalgen_proto_depIdxs = []int32{
-	2,  // 0: chalgen.GenerateRequest.graph:type_name -> chalgen.Graph
-	3,  // 1: chalgen.Graph.nodes:type_name -> chalgen.Node
-	4,  // 2: chalgen.Graph.edges:type_name -> chalgen.Edge
-	6,  // 3: chalgen.Node.base64:type_name -> chalgen.Base64
-	7,  // 4: chalgen.Node.twitter:type_name -> chalgen.Twitter
-	5,  // 5: chalgen.Node.caesar:type_name -> chalgen.CaesarCipher
-	8,  // 6: chalgen.Twitter.users:type_name -> chalgen.User
-	9,  // 7: chalgen.Twitter.posts:type_name -> chalgen.Post
-	10, // 8: chalgen.Twitter.comments:type_name -> chalgen.Comment
-	9,  // [9:9] is the sub-list for method output_type
-	9,  // [9:9] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	1,  // 0: chalgen.CompetitionList.competitions:type_name -> chalgen.Competition
+	2,  // 1: chalgen.Competition.graph:type_name -> chalgen.Graph
+	4,  // 2: chalgen.Graph.nodes:type_name -> chalgen.Node
+	5,  // 3: chalgen.Graph.edges:type_name -> chalgen.Edge
+	3,  // 4: chalgen.Node.meta:type_name -> chalgen.Meta
+	7,  // 5: chalgen.Node.base64:type_name -> chalgen.Base64
+	8,  // 6: chalgen.Node.twitter:type_name -> chalgen.Twitter
+	6,  // 7: chalgen.Node.caesar:type_name -> chalgen.CaesarCipher
+	9,  // 8: chalgen.Twitter.users:type_name -> chalgen.User
+	10, // 9: chalgen.Twitter.posts:type_name -> chalgen.Post
+	11, // 10: chalgen.Twitter.comments:type_name -> chalgen.Comment
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_chalgen_chalgen_proto_init() }
@@ -841,7 +896,7 @@ func file_chalgen_chalgen_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_chalgen_chalgen_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GenerateRequest); i {
+			switch v := v.(*CompetitionList); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -853,7 +908,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GenerateResponse); i {
+			switch v := v.(*Competition); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -877,7 +932,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Node); i {
+			switch v := v.(*Meta); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -889,7 +944,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Edge); i {
+			switch v := v.(*Node); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -901,7 +956,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CaesarCipher); i {
+			switch v := v.(*Edge); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -913,7 +968,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Base64); i {
+			switch v := v.(*CaesarCipher); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -925,7 +980,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Twitter); i {
+			switch v := v.(*Base64); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -937,7 +992,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*User); i {
+			switch v := v.(*Twitter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -949,7 +1004,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Post); i {
+			switch v := v.(*User); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -961,6 +1016,18 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 		file_chalgen_chalgen_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Post); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chalgen_chalgen_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Comment); i {
 			case 0:
 				return &v.state
@@ -973,7 +1040,7 @@ func file_chalgen_chalgen_proto_init() {
 			}
 		}
 	}
-	file_chalgen_chalgen_proto_msgTypes[3].OneofWrappers = []interface{}{
+	file_chalgen_chalgen_proto_msgTypes[4].OneofWrappers = []interface{}{
 		(*Node_Base64)(nil),
 		(*Node_Twitter)(nil),
 		(*Node_Caesar)(nil),
@@ -984,7 +1051,7 @@ func file_chalgen_chalgen_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_chalgen_chalgen_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
