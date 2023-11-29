@@ -1,15 +1,18 @@
 import esbuild from "esbuild";
 import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
+import { execSync } from "child_process";
+
+const runTailwindBuild = () => {
+	console.log("Building Tailwind CSS...");
+	try {
+	  execSync("npx tailwindcss build -o public/build/tailwind.css");
+	  console.log("Tailwind CSS build successful!");
+	} catch (error) {
+	  console.error("Error building Tailwind CSS:", error.message);
+	}
+  };
 
 const devBuild = process.env.DEV === "true";
-
-const watch = devBuild
-	? {
-			onRebuild: () => {
-				console.log("rebuilt!");
-			},
-	  }
-	: undefined;
 
 const minify = !devBuild;
 
@@ -37,10 +40,12 @@ const options = {
 		"process.env": "{}",
 		"process.env.NODE_ENV": nodeEnv,
 	},
-	logLevel: "info",
+	logLevel: "info"
 };
 
+
 if (!devBuild) {
+	runTailwindBuild();
 	await esbuild.build(options);
 } else {
 	const context = await esbuild.context(options);
@@ -53,7 +58,7 @@ if (!devBuild) {
 		fallback: `public/index.html`,
 		onRequest: args => {
 			console.log(args.method, args.path)
-		}
+		},
 	})
 	await context.watch();
 }

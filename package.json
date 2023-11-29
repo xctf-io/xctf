@@ -4,7 +4,9 @@
   "version": "0.0.1",
   "module": "true",
   "scripts": {
-    "dev": "cd client && DEV=true node esbuild.mjs",
+    "watch-js": "cd client && DEV=true node esbuild.mjs",
+    "watch-css": "cd client && npx tailwindcss build -o public/build/tailwind.css --watch",
+    "dev": "concurrently --kill-others \"npm run watch-css\" \"npm run watch-js\"",
     "build": "cd client && DEV=false node esbuild.mjs"
   },
   "devDependencies": {
@@ -17,8 +19,11 @@
     "@protobuf-ts/plugin": "^2.2.3-alpha.1",
     "@types/node": "^20.1.0",
     "autoprefixer": "^10.2.3",
+    "concurrently": "^8.2.2",
+    "daisyui": "^4.4.10",
     "esbuild-plugins-node-modules-polyfill": "^1.0.9",
     "fastify-plugin": "^4.5.0",
+    "tailwindcss": "^3.3.5",
     "tslib": "^2.0.0",
     "typescript": "^5.0.4"
   },
@@ -54,7 +59,6 @@
     "reactflow": "^11.7.0",
     "redux": "^4.2.1",
     "rollup": "^3.21.5",
-    "tailwindcss": "^3.3.2",
     "usehooks-ts": "^2.9.1"
   }
 }
