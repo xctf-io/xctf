@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useRef} from 'react'
 import {Button, Col, Row, Spinner, Dropdown, Table, Input, Card} from "@nextui-org/react";
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import {useForm} from "react-hook-form";
@@ -7,11 +7,25 @@ import {Competition, CompetitionList, Graph, Node} from "@/rpc/chalgen/chalgen_p
 import {toast} from "react-toastify";
 
 export const Competitions: React.FC = () => {
+    return (
+        <Edit />
+    )
+}
+
+const Edit: React.FC = () => {
     const [nodeInfo, setNodeInfo] = React.useState<any>(null);
     const [selectedCompetition, setSelectedCompetition] = React.useState<Competition|undefined>(undefined);
     const [competitionList, setCompetitionList] = React.useState<CompetitionList|null>(null);
     const [competitionName, setCompetitionName] = React.useState<string>('');
     const [currentChallenge, setCurrentChallenge] = React.useState<Node|undefined>(undefined);
+    const [preview, setPreview] = React.useState<boolean>(false);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+
+    const reloadIframe = () => {
+        if (iframeRef.current) {
+            iframeRef.current.contentWindow?.location.reload();
+        }
+    };
 
     const loadCompetitions = async () => {
         try {
@@ -69,10 +83,11 @@ export const Competitions: React.FC = () => {
             return [...acc, n];
         }, [] as Node[]) || [node];
         const newNodes = updatedNodes.some((n) => n.meta?.id === node.meta?.id) ? updatedNodes : [...updatedNodes, node];
-        void updateCompetition(new Graph({
+        await updateCompetition(new Graph({
             nodes: newNodes,
             edges: [],
         }));
+        reloadIframe();
     }
 
     const updateCompetition = async (g: Graph) => {
@@ -176,6 +191,10 @@ export const Competitions: React.FC = () => {
         return null;
     }
 
+    const togglePreview = () => {
+        setPreview(!preview);
+    }
+
     return (
         <>
             <div className="mx-[3vw] lg:mx-[6vw] mt-8">
@@ -211,6 +230,9 @@ export const Competitions: React.FC = () => {
                     ) : (
                         <Spinner />
                     )}
+                    <Button onClick={togglePreview}>
+                        Preview
+                    </Button>
                 </Row>
                 <Row>
                     <Col span={3}>
@@ -253,12 +275,19 @@ export const Competitions: React.FC = () => {
                             <div className="flex flex-col gap-2 p-3">
                                 {form()}
                             </div>
-                            <Button type="submit">
-                                Save
-                            </Button>
+                            <Row>
+                                <Button type="submit">
+                                    Save
+                                </Button>
+                            </Row>
                         </form>
                     </Col>
                 </Row>
+                {preview && (
+                    <Row>
+                        <iframe ref={iframeRef} style={{width: '100%', height: 200}} src={`http://localhost:8000/play/${selectedCompetition?.id}/${currentChallenge?.meta?.id}`} />
+                    </Row>
+                )}
                 <Row>
                     <Button color={"error"} onClick={onCompDelete}>Delete Competition</Button>
                 </Row>

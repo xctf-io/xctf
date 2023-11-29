@@ -61,7 +61,7 @@ message User {
 
 // Post represents a user's post.
 message Post {
-  int64 username = 1;
+  string username = 1;
   string content = 2;
 }
 

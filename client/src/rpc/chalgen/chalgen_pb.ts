@@ -481,9 +481,9 @@ export class User extends Message<User> {
  */
 export class Post extends Message<Post> {
   /**
-   * @generated from field: int64 username = 1;
+   * @generated from field: string username = 1;
    */
-  username = protoInt64.zero;
+  username = "";
 
   /**
    * @generated from field: string content = 2;
@@ -498,7 +498,7 @@ export class Post extends Message<Post> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chalgen.Post";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "username", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 1, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 

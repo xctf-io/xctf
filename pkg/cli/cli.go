@@ -156,7 +156,7 @@ func liveReload() error {
 		Cmd: []string{"go", "run", "main.go"},
 		// ideally we use tilt here
 		Targets:  []string{"pkg", "gen"},
-		Patterns: []string{"**/*.go"},
+		Patterns: []string{"**/*.go", "**/*.tmpl.html"},
 	}
 	slog.Debug("starting live reload", "config", fmt.Sprintf("%+v", c))
 	// TODO breadchris this code needs to be refactored to use observability
