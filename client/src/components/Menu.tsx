@@ -1,9 +1,9 @@
 import React from "react";
 import { toPng } from "html-to-image";
-import { Button } from "@nextui-org/react";
+import { Button, ButtonGroup } from "@nextui-org/react";
 import { HiDownload, HiOutlinePlus } from "react-icons/hi";
 
-function downloadImage(dataUrl) {
+function downloadImage(dataUrl: string) {
 	const a = document.createElement("a");
 
 	a.setAttribute("download", "evidence_graph.png");
@@ -32,20 +32,18 @@ const Menu: React.FC<Props> = ({ openModal }) => {
 	};
 
 	return (
-		<Button.Group
+		<ButtonGroup
 			size="lg"
-			className="absolute left-[35px] top-[85px] z-10"
-			vertical
-			bordered
+			className="absolute left-[35px] top-[85px] z-10 flex-col"
+			variant="bordered"
 		>
 			<Button
+				radius="none"
 				onPress={openModal}
-				iconRight={<HiOutlinePlus />}
+				endContent={<HiOutlinePlus />}
 				style={{
 					color: "black",
 					backgroundColor: "white",
-					borderTopRightRadius: 0,
-					borderTopLeftRadius: 0,
 					height: "54px",
 					borderColor: "#EEEEEE"
 				}}
@@ -53,20 +51,19 @@ const Menu: React.FC<Props> = ({ openModal }) => {
 				Add evidence
 			</Button>
 			<Button
+				radius="none"
 				onPress={onClick}
-				iconRight={<HiDownload />}
+				endContent={<HiDownload />}
 				style={{
 					color: "black",
 					backgroundColor: "white",
-					borderBottomRightRadius: 0,
-					borderBottomLeftRadius: 0,
 					height: "54px",
 					borderColor: "#EEEEEE"
 				}}
 			>
 				Download
 			</Button>
-		</Button.Group>
+		</ButtonGroup>
 	);
 };
 

@@ -3,20 +3,21 @@ import { useState } from "react";
 import { createErrorToast, createSuccessToast, useUser } from "../store/user";
 import { xctf } from "../service";
 
-import { Button, Text, Link, useTheme, theme } from "@nextui-org/react";
+import { Button, Link} from "@nextui-org/react";
+import { useDarkMode } from "usehooks-ts";
 
 const SubmitWriteup = () => {
 	const [user, setUser, logout] = useUser();
 	const [file, setFile] = useState<File>();
-	const { type, isDark } = useTheme();
+	const { isDarkMode } = useDarkMode();
 
 	async function uploadWriteup() {
 		if (!file) {
-			createErrorToast("No file selected!", isDark);
+			createErrorToast("No file selected!", isDarkMode);
 			return;
 		}
         if (file.type !== "application/pdf") {
-            createErrorToast("File must be a PDF!", isDark);
+            createErrorToast("File must be a PDF!", isDarkMode);
             setFile(undefined);
             return;
         }
@@ -29,13 +30,13 @@ const SubmitWriteup = () => {
 					content: fileData,
 				});
 				setFile(undefined);
-				createSuccessToast("Submitted writeup!", isDark);
+				createSuccessToast("Submitted writeup!", isDarkMode);
 			} catch (err: any) {
-				createErrorToast(err, isDark);
+				createErrorToast(err, isDarkMode);
 			}
 		};
 		reader.onerror = (error) => {
-			createErrorToast(String(error), isDark);
+			createErrorToast(String(error), isDarkMode);
 		};
 	}
 	const inputRef = React.useRef<HTMLInputElement>(null);
@@ -60,12 +61,12 @@ const SubmitWriteup = () => {
 				}}
 			/>
 			<div
-				className="mx-8 py-24 px-36 border border-2 rounded-lg border-dashed"
+				className="mx-8 py-24 px-36 border-2 rounded-lg border-dashed"
 				style={{
 					backgroundColor: dragActive
 						? 'white'
-						: theme.colors.accents0.toString(),
-					borderColor: theme.colors.accents4.toString(),
+						: (isDarkMode ? "#18181b":  "#f4f4f5"),
+					borderColor: (isDarkMode ? "#27272a" : "#d4d4d8")
 				}}
 				onDragEnter={(e) => {
 					e.preventDefault();
@@ -86,7 +87,7 @@ const SubmitWriteup = () => {
 					setFile(e.dataTransfer.files[0]);
 				}}
 			>
-				<Text className="text-3xl">Drag or drop a file here or</Text>
+				<p className="text-3xl">Drag and drop a file here or</p>
 				<Link
 					className="mt-4 text-2xl"
 					onPress={(e) => {
@@ -99,7 +100,7 @@ const SubmitWriteup = () => {
 				</Link>
 			</div>
             {file && <p className="text-2xl">Uploaded: <span className="font-thin">{file.name}</span></p>}
-			<Button size="lg" onPress={() => uploadWriteup()}>
+			<Button as={Link} color="primary" className="w-64 h-16 text-lg" onPress={() => uploadWriteup()}>
 				Submit Writeup
 			</Button>
 		</div>

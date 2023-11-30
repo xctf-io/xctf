@@ -1,4 +1,4 @@
-import { Avatar, Dropdown, Navbar, Text } from "@nextui-org/react";
+import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Navbar, NavbarItem } from "@nextui-org/react";
 import { useUser } from "../store/user";
 import { useNavigate } from "react-router-dom";
 
@@ -7,13 +7,13 @@ const UserDropdown = () => {
     const navigate = useNavigate();
     const isAdmin = user?.type === "admin";
     const themeHexColor = isAdmin ? "DF3562" : "3070ED";
-	const themeColor = isAdmin ? "error" : "primary";
+	const themeColor = isAdmin ? "danger" : "primary";
     return (
-        <Navbar.Item>
-            <Dropdown placement="bottom-right">
-                <Dropdown.Trigger>
+        <NavbarItem>
+            <Dropdown placement="bottom-end">
+                <DropdownTrigger>
                     <Avatar
-                        bordered
+                        isBordered
                         as="button"
                         color={themeColor}
                         size="md"
@@ -24,8 +24,8 @@ const UserDropdown = () => {
                             user?.username
                         }
                     />
-                </Dropdown.Trigger>
-                <Dropdown.Menu
+                </DropdownTrigger>
+                <DropdownMenu
                     aria-label="User menu actions"
                     onAction={(actionKey) => {
                         if (actionKey === "logout") {
@@ -34,33 +34,29 @@ const UserDropdown = () => {
                             navigate("/login");
                         }
                     }}
-                    containerCss={{ border: "none" }}
+                    className="border-0" 
                 >
-                    <Dropdown.Item
+                    <DropdownItem
                         key="profile"
-                        css={{
-                            height: "auto",
-                            paddingTop: "0.5rem",
-                            paddingBottom: "0.5rem",
-                        }}
+                        className="h-auto"
+                        showDivider
                     >
-                        <Text color="inherit">Signed in as</Text>
-                        <Text
-                            b
-                            color="inherit"
+                        <p >Signed in as</p>
+                        <p
+                            className="font-bold"
                             style={{
                                 overflowWrap: "anywhere",
                             }}
                         >
                             {user?.username}
-                        </Text>
-                    </Dropdown.Item>
-                    <Dropdown.Item key="logout" withDivider color="error">
+                        </p>
+                    </DropdownItem>
+                    <DropdownItem key="logout" color="danger">
                         Logout
-                    </Dropdown.Item>
-                </Dropdown.Menu>
+                    </DropdownItem>
+                </DropdownMenu>
             </Dropdown>
-        </Navbar.Item>
+        </NavbarItem>
     );
 }
 

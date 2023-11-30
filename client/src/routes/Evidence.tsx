@@ -15,19 +15,19 @@ import ReactFlow, {
 	Node
 } from "reactflow";
 import "reactflow/dist/style.css";
-import {useState, useEffect, useRef, MutableRefObject} from "react";
+import { useState, useEffect, useRef, MutableRefObject } from "react";
 import {
-	Text,
 	Input,
 	Button,
 	Checkbox,
 	Modal,
-	Row,
-	theme,
+	ModalBody,
+	ModalFooter,
+	ModalHeader,
 } from "@nextui-org/react";
 import dagre from "dagre";
 import Menu from "../components/Menu";
-import {HiPaperAirplane} from "react-icons/hi2";
+import { HiPaperAirplane } from "react-icons/hi2";
 import {
 	createSuccessToast,
 	createErrorToast,
@@ -59,9 +59,9 @@ export function Evidence() {
 	const nodeHeight = 36;
 	dagreGraph.setDefaultEdgeLabel(() => ({}));
 	const getLayoutedElements = (nodes: any[], edges: any[]) => {
-		dagreGraph.setGraph({rankdir: "TB"});
+		dagreGraph.setGraph({ rankdir: "TB" });
 		nodes.forEach((node) => {
-			dagreGraph.setNode(node.id, {width: nodeWidth, height: nodeHeight});
+			dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
 		});
 		edges.forEach((edge) => {
 			dagreGraph.setEdge(edge.source, edge.target);
@@ -88,19 +88,19 @@ export function Evidence() {
 			const tempNodes = resp.evidence.map((e) => {
 				return {
 					id: e.id.toString(),
-					data: {label: e.name},
+					data: { label: e.name },
 					position: {
 						x: e.x,
 						y: e.y,
 					},
 					style: {
 						background: e.isFlag
-							? theme.colors.primaryLight.toString()
-							: theme.colors.accents1.toString(),
+							? (isDarkMode ? "#002e62" : "#cce3fd")
+							: (isDarkMode ? "#27272a" : "#f4f4f5"),
 						borderColor: e.isFlag
-							? theme.colors.primaryBorder.toString()
-							: theme.colors.accents4.toString(),
-						color: theme.colors.text.toString(),
+							? (isDarkMode ? "#005bc4" : "#66aaf9")
+							: (isDarkMode ? "#52525b" : "#d4d4d8"),
+						color: (isDarkMode ? "#ECEDEE" : "#11181C"),
 					},
 				};
 			});
@@ -134,25 +134,25 @@ export function Evidence() {
 	const initialNodes = graph.evidence.map((e) => {
 		return {
 			id: e.id.toString(),
-			data: {label: e.isFlag ? e.name + "🏳️" : e.name},
+			data: { label: e.isFlag ? e.name + "🏳️" : e.name },
 			position: {
 				x: e.x,
 				y: e.y,
 			},
 			style: {
 				background: e.isFlag
-					? theme.colors.primaryLight.toString()
-					: theme.colors.accents1.toString(),
+					? (isDarkMode ? "#002e62" : "#cce3fd")
+					: (isDarkMode ? "#27272a" : "#f4f4f5"),
 				borderColor: e.isFlag
-					? theme.colors.primaryBorder.toString()
-					: theme.colors.accents4.toString(),
-				color: theme.colors.text.toString(),
+					? (isDarkMode ? "#005bc4" : "#66aaf9")
+					: (isDarkMode ? "#52525b" : "#d4d4d8"),
+				color: (isDarkMode ? "#ECEDEE" : "#11181C"),
 			},
 		};
 	});
-	const [nodes, setNodes] = useState(initialNodes);
+	const [nodes, setNodes] = useState<Node[]>(initialNodes);
 	const onNodesChange = useCallback(
-		(changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		(changes: NodeChange[]) => setNodes((nds: Node[]) => applyNodeChanges(changes, nds)),
 		[]
 	);
 
@@ -217,7 +217,7 @@ export function Evidence() {
 			stroke: "#4C5155",
 		},
 	}));
-	const [edges, setEdges] = useState(initialEdges);
+	const [edges, setEdges] = useState<Edge[]>(initialEdges);
 	const onEdgesChange = useCallback(
 		(changes: EdgeChange[]) =>
 			setEdges((eds) => {
@@ -297,69 +297,67 @@ export function Evidence() {
 					</ReactFlow>
 				</div>
 				<Modal
-					open={visible}
+					isOpen={visible}
 					onClose={closeHandler}
 					title="Add Evidence"
 					aria-labelledby="modal-title"
 				>
-					<Modal.Header>
+					<ModalHeader>
 						<h3 id="modal-title">Add Evidence</h3>
-					</Modal.Header>
-					<Modal.Body>
+					</ModalHeader>
+					<ModalBody>
 						<Input
 							type="text"
-							clearable
-							bordered
+							isClearable
+							variant="bordered"
 							fullWidth
 							placeholder="Evidence"
 							color="primary"
 							onChange={(e) => (evidence = e.target.value)}
 							size="lg"
 						/>
-						<Row justify="space-between">
+						<div className="flex flex-row justify-between">
 							<Checkbox
 								isSelected={submittingFlag}
-								onChange={setSubmittingFlag}
+								onValueChange={setSubmittingFlag}
 							>
-								<Text size={14}>Flag?</Text>
+								<p className="text-lg">Flag?</p>
 							</Checkbox>
-						</Row>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button auto flat color="error" onPress={closeHandler}>
+						</div>
+					</ModalBody>
+					<ModalFooter>
+						<Button variant="flat" color="danger" onPress={closeHandler}>
 							Close
 						</Button>
 						<Button
-							auto
 							onPress={() => {
 								closeHandler();
 								submitEvidence(false);
 							}}
-							iconRight={<HiPaperAirplane fill="currentColor" />}
+							endContent={<HiPaperAirplane fill="currentColor" />}
 						>
 							Submit
 						</Button>
-					</Modal.Footer>
+					</ModalFooter>
 				</Modal>
 				<Modal
-					open={visible2}
+					isOpen={visible2}
 					onClose={closeHandler2}
 					title="Are you sure?"
 					aria-labelledby="modal-title"
-					blur
+					backdrop="blur"
 				>
-					<Modal.Header>
+					<ModalHeader>
 						<h3 id="modal-title">
 							Are you sure you want to delete this evidence?
 						</h3>
-					</Modal.Header>
-					<Modal.Body>
-						<Text className="text-center"> This action cannot be undone.</Text>
-					</Modal.Body>
-					<Modal.Footer>
+					</ModalHeader>
+					<ModalBody>
+						<p className="text-center"> This action cannot be undone.</p>
+					</ModalBody>
+					<ModalFooter>
 						<Button
-							auto
-							color="error"
+							color="danger"
 							onPress={() => {
 								closeHandler2();
 								window.location.reload();
@@ -368,7 +366,6 @@ export function Evidence() {
 							No
 						</Button>
 						<Button
-							auto
 							onPress={() => {
 								closeHandler2();
 								const id = Number(deleteNode?.id);
@@ -384,7 +381,7 @@ export function Evidence() {
 						>
 							Yes
 						</Button>
-					</Modal.Footer>
+					</ModalFooter>
 				</Modal>
 			</div>
 		</>

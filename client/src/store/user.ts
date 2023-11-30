@@ -4,17 +4,17 @@ import { atomWithStorage } from "jotai/utils";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
 
-export const createSuccessToast = (success: string, isDark?: boolean) => {
+export const createSuccessToast = (success: string, isDark: boolean) => {
 	const theme = isDark ? "dark" : "light";
 	toast.success(success, { theme: theme, autoClose: 2000 });
 };
 
-export const createErrorToast = (error: string, isDark?: boolean) => {
+export const createErrorToast = (error: string, isDark: boolean) => {
 	const theme = isDark ? "dark" : "light";
 	toast.error(error, { theme: theme, autoClose: 2000 });
 };
 
-export const createCelebrateToast = (celebrate: string, isDark: boolean | undefined) => {
+export const createCelebrateToast = (celebrate: string, isDark: boolean) => {
 	const theme = isDark ? "dark" : "light";
 	toast(celebrate, { theme: theme, autoClose: 2000 });
 };
@@ -46,14 +46,14 @@ export const useAuthStatus = () => {
 };
 
 export const useLogin = (): [
-	(email: string, password: string) => void,
+	(email: string, password: string, isDark: boolean) => void,
 	string | Dispatch<SetStateAction<string | null>> | null,
 	string | Dispatch<SetStateAction<string | null>> | null
 ] => {
 	const [user, setUser] = useUser();
 	const [success, setSuccess, error, setError] = useAuthStatus();
 
-	const login = async (email: string, password: string) => {
+	const login = async (email: string, password: string, isDark: boolean) => {
 		try {
 			const resp = await xctf.login({
 				email,
@@ -64,16 +64,16 @@ export const useLogin = (): [
 				type: resp.userRole,
 			});
 			console.log(resp.userRole)
-			createSuccessToast("Login success!");
+			createSuccessToast("Login success!", isDark);
 		} catch (e: any) {
-			createErrorToast(e.toString());
+			createErrorToast(e.toString(), isDark);
 		}
 	};
 	return [login, success, error];
 };
 
 export const useRegister = (): [
-	(username: string, email: string, password: string) => Promise<boolean>,
+	(username: string, email: string, password: string, isDark: boolean) => Promise<boolean>,
 	string | Dispatch<SetStateAction<string | null>> | null,
 	string | Dispatch<SetStateAction<string | null>> | null
 ] => {
@@ -83,6 +83,7 @@ export const useRegister = (): [
 		username: string,
 		email: string,
 		password: string,
+		isDark: boolean
 	) => {
 		try {
 			const resp = await xctf.register({
@@ -90,10 +91,10 @@ export const useRegister = (): [
 				email,
 				password,
 			});
-			createSuccessToast("Registration success!");
+			createSuccessToast("Registration success!", isDark);
 			return true
 		} catch (e: any) {
-			createErrorToast(e.toString());
+			createErrorToast(e.toString(), isDark);
 			return false
 		}
 	};

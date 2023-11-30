@@ -3,12 +3,16 @@ import { useEffect, useState } from "react";
 import { xctfAdmin } from "../service";
 import {
 	Progress,
-	Text,
 	Table,
-	useTheme,
 	Link,
 	Badge,
+	TableHeader,
+	TableColumn,
+	TableBody,
+	TableRow,
+	TableCell
 } from "@nextui-org/react";
+import { useDarkMode } from "usehooks-ts";
 
 interface Props {}
 
@@ -46,7 +50,7 @@ export const Grading: React.FC<Props> = () => {
 		}
 		fetchCurrentProgress();
 	}, []);
-	const { type, isDark } = useTheme();
+	const { isDarkMode } = useDarkMode();
 	return (
 		<>
 			<div className="mx-[3vw] lg:mx-[6vw] mt-8">
@@ -55,83 +59,66 @@ export const Grading: React.FC<Props> = () => {
 						height: "auto",
 						minWidth: "100%",
 					}}
-					bordered
-					borderWeight={isDark ? "none" : "normal"}
+					radius={isDarkMode ? "none" : "md"}
 					aria-label="Grading Table"
-					color="error"
+					color="danger"
 				>
-					<Table.Header>
-						<Table.Column>NAME</Table.Column>
-						<Table.Column>WRITEUP</Table.Column>
-						<Table.Column>GRADE</Table.Column>
-						<Table.Column>PROGRESS</Table.Column>
-					</Table.Header>
-					<Table.Body>
+					<TableHeader>
+						<TableColumn>NAME</TableColumn>
+						<TableColumn>WRITEUP</TableColumn>
+						<TableColumn>GRADE</TableColumn>
+						<TableColumn>PROGRESS</TableColumn>
+					</TableHeader>
+					<TableBody>
 						{teams.map((team) => (
-							<Table.Row key={team.name}>
-								<Table.Cell
-									css={{
-										minWidth: "$24",
-										width: "20%",
-									}}
+							<TableRow key={team.name}>
+								<TableCell
+									className="w-[20%] min-w-unit-24"
 								>
 									{team.name}
-								</Table.Cell>
-								<Table.Cell
-									css={{
-										minWidth: "$24",
-									}}
+								</TableCell>
+								<TableCell
+									className="min-w-unit-24"
 								>
 									{team.hasWriteup ? (
-										<Link color="error" href={"/view/" + team.name}>
+										<Link color="danger" href={"/view/" + team.name}>
 											View
 										</Link>
 									) : (
-										<Text>No Writeup</Text>
+										<p>No Writeup</p>
 									)}
-								</Table.Cell>
-								<Table.Cell
-									css={{
-										width: "40%",
-									}}
+								</TableCell>
+								<TableCell
+									className="w-[40%]"
 								>
 									{team.grade === 0 ? (
-										<Text>No Grade</Text>
+										<p>No Grade</p>
 									) : (
 										<>
 											<div className="hidden sm:block">
-												<Progress value={team.grade} max={100} color="error" />
+												<Progress value={team.grade} maxValue={100} color="danger" />
 											</div>
 											<div className="sm:hidden">{team.grade}%</div>
 										</>
 									)}
-								</Table.Cell>
-								<Table.Cell
-									css={{
-										width: "50%",
-									}}
+								</TableCell>
+								<TableCell
+									className="w-1/2"
 								>
 									<div className="hidden sm:block">
 										<Progress
 											value={team.progress}
-											max={numChallenges}
-											color="error"
+											maxValue={numChallenges}
+											color="danger"
 										/>
 									</div>
 									<div className="sm:hidden">
 										{team.progress}/{numChallenges}
 									</div>
-								</Table.Cell>
-							</Table.Row>
+								</TableCell>
+							</TableRow>
 						))}
-					</Table.Body>
-					<Table.Pagination
-						shadow
-						noMargin
-						align="center"
-						rowsPerPage={13}
-						color="error"
-					/>
+					</TableBody>
 				</Table>
 			</div>
 		</>
