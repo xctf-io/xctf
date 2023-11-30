@@ -184,11 +184,14 @@ const Edit: React.FC = () => {
         if (!n.meta?.id) {
             return null;
         }
+        const url = (
+            <a href={`/play/${selectedCompetition?.id}/${n.meta?.id}`}>View</a>
+        )
         switch (n.challenge.case) {
         case 'twitter':
-            return (
-                <a href={`http://localhost:8000/play/${selectedCompetition?.id}/${n.meta?.id}`}>View</a>
-            )
+            return url;
+        case 'pcap':
+            return url;
         }
         return null;
     }
@@ -292,7 +295,7 @@ const Edit: React.FC = () => {
                 </Row>
                 {preview && (
                     <Row>
-                        <iframe ref={iframeRef} style={{width: '100%', height: 200}} src={`http://localhost:8000/play/${selectedCompetition?.id}/${currentChallenge?.meta?.id}`} />
+                        <iframe ref={iframeRef} style={{width: '100%', height: 200}} src={`/play/${selectedCompetition?.id}/${currentChallenge?.meta?.id}`} />
                     </Row>
                 )}
                 <Row>

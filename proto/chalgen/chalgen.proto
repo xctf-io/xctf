@@ -31,7 +31,7 @@ message Node {
     Base64 base64 = 6;
     Twitter twitter = 7;
     CaesarCipher caesar = 8;
-    PCAP pacp = 9;
+    PCAP pcap = 9;
   }
 }
 

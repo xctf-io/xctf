@@ -228,10 +228,10 @@ export class Node extends Message<Node> {
     case: "caesar";
   } | {
     /**
-     * @generated from field: chalgen.PCAP pacp = 9;
+     * @generated from field: chalgen.PCAP pcap = 9;
      */
     value: PCAP;
-    case: "pacp";
+    case: "pcap";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Node>) {
@@ -246,7 +246,7 @@ export class Node extends Message<Node> {
     { no: 6, name: "base64", kind: "message", T: Base64, oneof: "challenge" },
     { no: 7, name: "twitter", kind: "message", T: Twitter, oneof: "challenge" },
     { no: 8, name: "caesar", kind: "message", T: CaesarCipher, oneof: "challenge" },
-    { no: 9, name: "pacp", kind: "message", T: PCAP, oneof: "challenge" },
+    { no: 9, name: "pcap", kind: "message", T: PCAP, oneof: "challenge" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Node {

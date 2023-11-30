@@ -79,16 +79,6 @@ func (b *Backend) UpdateCompetition(ctx context.Context, c *connect.Request[chal
 		existingIds[node.Meta.Id] = node
 
 		c.Msg.Name = slug.Make(c.Msg.Name)
-
-		switch t := node.Challenge.(type) {
-		case *chalgen.Node_Pacp:
-			if t.Pacp == nil {
-				return nil, errors.New("pacp node cannot be nil")
-			}
-			if err := b.h.NewPCAP(c.Msg.Name, t.Pacp); err != nil {
-				return nil, err
-			}
-		}
 	}
 	m := &protojson.MarshalOptions{}
 	bm, err := m.Marshal(c.Msg.Graph)
@@ -109,6 +99,25 @@ func (b *Backend) UpdateCompetition(ctx context.Context, c *connect.Request[chal
 		cm.Name = c.Msg.Name
 		b.s.DB.Save(&cm)
 	}
+	// TODO breadchris hacked for the demo, think through this more
+	for _, node := range c.Msg.Graph.Nodes {
+		chal := &models.Challenge{
+			Name:          node.Meta.Name,
+			Flag:          node.Meta.Flag,
+			CompetitionID: cm.ID,
+		}
+		err = b.s.DB.Where(models.Challenge{
+			Name:          node.Meta.Name,
+			CompetitionID: cm.ID,
+		}).Assign(models.Challenge{
+			Flag:          node.Meta.Flag,
+			CompetitionID: cm.ID,
+		}).FirstOrCreate(&chal).Error
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return connect.NewResponse(&chalgen.Competition{
 		Id:    fmt.Sprintf("%d", cm.ID),
 		Name:  c.Msg.Name,

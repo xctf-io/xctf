@@ -7,18 +7,22 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: #000000;
+            color: #ffffff;
         }
         .navbar {
-            background-color: #00acee;
+            background-color: #000000;
         }
         .navbar-brand {
             color: #fff;
         }
+        .navbar-text{
+            color: #fff;
+        }
         .card {
             border: none;
-            border-bottom: 1px solid #ddd;
+            /* border-bottom: 1px solid #ddd; */
+            background-color: #222222;
         }
         .card-body {
             padding: 0.5rem 1rem;
@@ -39,8 +43,13 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-light">
-    <span class="navbar-brand mb-0 h1">Twitter Feed</span>
+<nav class="navbar border-bottom border-secondary navbar-expand">
+    <img src="https://cdn.discordapp.com/attachments/1171657918014312468/1179695233504645130/xsquared.png?ex=657ab7cd&is=656842cd&hm=66f39076675bdbfe2af413d33c220eaa7efd3844e821d3ed4eecc436b0f78cd2&" alt="Profile Image" class="profile-img mr-3">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+            <p class="navbar-brand mb-0" href="#">X^2</a>
+        </li>
+    </ul>
 </nav>
 
 <div class="container mt-3">
@@ -50,7 +59,7 @@
             <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Profile Image" class="profile-img mr-3">
             <div>
                 <h6 class="card-title mb-0">{{.Username}}</h6>
-                <p class="card-text mt-2">{{ .Content }}</p>
+                <p class="card-text mt-2">{{ .Content | raw }}</p>
             </div>
         </div>
     </div>
