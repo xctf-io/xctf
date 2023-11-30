@@ -3,8 +3,9 @@ import {Button, Spinner, Dropdown, Input, Card} from "@nextui-org/react";
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import {useForm} from "react-hook-form";
 import { xctf } from '@/service';
-import {Competition, CompetitionList, Graph, Node} from "@/rpc/chalgen/chalgen_pb";
+import {Competition, CompetitionList, Graph, Meta, Node} from "@/rpc/chalgen/chalgen_pb";
 import {toast} from "react-toastify";
+import {removeUndefinedFields} from "@/util/object";
 
 export const Competitions: React.FC = () => {
     return (
@@ -57,9 +58,9 @@ const Edit: React.FC = () => {
         resetField,
     } = useForm({
         values: {
-            data: {
-                meta: {},
-            },
+            data: new Node({
+                meta: new Meta().toJson() as any,
+            }).toJson() as any,
         },
     });
 
@@ -109,6 +110,7 @@ const Edit: React.FC = () => {
 
     const onSubmit = async (data: any) => {
         // TODO breadchris these fields are being set to an empty array by default, not sure how this is happening, has to be in react-hook-form
+        removeUndefinedFields(data.data)
         let d = data.data;
         console.log('data', d);
         if (Array.isArray(d.id)) {
@@ -182,17 +184,24 @@ const Edit: React.FC = () => {
         if (!n.meta?.id) {
             return null;
         }
+        const url = (
+            <a href={`/play/${selectedCompetition?.id}/${n.meta?.id}`}>View</a>
+        )
         switch (n.challenge.case) {
         case 'twitter':
-            return (
-                <a href={`http://localhost:8000/play/${selectedCompetition?.id}/${n.meta?.id}`}>View</a>
-            )
+            return url;
+        case 'pcap':
+            return url;
         }
         return null;
     }
 
     const togglePreview = () => {
         setPreview(!preview);
+    }
+
+    const newChallenge = () => {
+        selectChallenge(new Node({}));
     }
 
     return (
@@ -251,7 +260,7 @@ const Edit: React.FC = () => {
                                                 <td>
                                                     <Card className={"cursor-pointer"}>
                                                         <Card.Header onClick={() => selectChallenge(n)}>
-                                                            {n.name}{currentChallenge?.meta?.id === n.meta?.id ? ' (editing)' : ''}
+                                                            {n.meta?.name}{currentChallenge?.meta?.id === n.meta?.id ? ' (editing)' : ''}
                                                             {nodeView(n)}
                                                         </Card.Header>
                                                         <Card.Footer>
@@ -261,6 +270,7 @@ const Edit: React.FC = () => {
                                                 </td>
                                             </tr>
                                         ))}
+                                        <Button onClick={newChallenge}>New</Button>
                                     </>
                                 ) : (
                                     <tr>
@@ -285,7 +295,7 @@ const Edit: React.FC = () => {
                 </Row>
                 {preview && (
                     <Row>
-                        <iframe ref={iframeRef} style={{width: '100%', height: 200}} src={`http://localhost:8000/play/${selectedCompetition?.id}/${currentChallenge?.meta?.id}`} />
+                        <iframe ref={iframeRef} style={{width: '100%', height: 200}} src={`/play/${selectedCompetition?.id}/${currentChallenge?.meta?.id}`} />
                     </Row>
                 )}
                 <Row>

@@ -4,8 +4,10 @@ import "gorm.io/gorm"
 
 type Challenge struct {
 	gorm.Model
-	Name        string `gorm:"uniqueIndex"`
-	Description string
-	Value       int
-	Flag        string
+	Name          string
+	Description   string
+	Value         int
+	Flag          string
+	CompetitionID uint
+	Competition   Competition `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

@@ -8,7 +8,9 @@ import (
 	lsgcs "github.com/benbjohnson/litestream/gcs"
 	lss3 "github.com/benbjohnson/litestream/s3"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/xctf-io/xctf/gen/chalgen"
 	"github.com/xctf-io/xctf/pkg/models"
+	"google.golang.org/protobuf/encoding/protojson"
 	"gorm.io/gorm"
 	"log/slog"
 	"os"
@@ -86,6 +88,20 @@ func New(c Config) (*Service, error) {
 	slog.Debug("database migrated")
 	s.InitializeAdmin()
 	return s, nil
+}
+
+func (s *Service) GetCurrentCompetition() (*chalgen.Graph, error) {
+	var comp models.Competition
+	res := s.DB.Where(&models.Competition{Active: true}).First(&comp)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	unm := protojson.UnmarshalOptions{DiscardUnknown: true}
+	var graph chalgen.Graph
+	if err := unm.Unmarshal([]byte(comp.Graph), &graph); err != nil {
+		return nil, res.Error
+	}
+	return &graph, nil
 }
 
 func (s *Service) Migrate() error {

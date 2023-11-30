@@ -12,6 +12,7 @@ import (
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
 	"github.com/xctf-io/xctf/pkg/admin"
 	"github.com/xctf-io/xctf/pkg/backend"
+	"github.com/xctf-io/xctf/pkg/bucket"
 	"github.com/xctf-io/xctf/pkg/chals"
 	"github.com/xctf-io/xctf/pkg/db"
 	xhttp "github.com/xctf-io/xctf/pkg/http"
@@ -31,6 +32,7 @@ var ProviderSet = wire.NewSet(
 	xhttp.New,
 	backend.NewBackend,
 	admin.NewAdmin,
+	bucket.ProviderSet,
 	chals.NewHandler,
 	New,
 )

@@ -21,22 +21,35 @@ message Meta {
   string id = 1;
   int32 x = 2;
   int32 y = 3;
+  string name = 4;
+  string flag = 5;
 }
 
 message Node {
   Meta meta = 1;
-  string name = 4;
-  string flag = 5;
   oneof challenge {
     Base64 base64 = 6;
     Twitter twitter = 7;
     CaesarCipher caesar = 8;
+    PCAP pcap = 9;
   }
 }
 
 message Edge {
   string from = 1;
   string to = 2;
+}
+
+message PCAP {
+  repeated Packet packets = 1;
+}
+
+message Packet {
+  int64 timestamp = 1;
+  string source = 2;
+  string destination = 3;
+  string protocol = 4;
+  string data = 5;
 }
 
 message CaesarCipher {
