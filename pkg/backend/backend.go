@@ -5,12 +5,14 @@ import (
 	"fmt"
 	connect "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
+	"github.com/gosimple/slug"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/pkg/grpc"
 	"github.com/rs/zerolog/log"
 	"github.com/xctf-io/xctf/gen/chalgen"
 	"github.com/xctf-io/xctf/gen/xctf"
 	"github.com/xctf-io/xctf/gen/xctf/xctfconnect"
+	"github.com/xctf-io/xctf/pkg/chals"
 	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/models"
@@ -21,6 +23,7 @@ import (
 type Backend struct {
 	s       *db.Service
 	manager *http.Store
+	h       *chals.Handler
 }
 
 var _ xctfconnect.BackendHandler = (*Backend)(nil)
@@ -64,13 +67,28 @@ func (b *Backend) GetCompetitions(ctx context.Context, c *connect.Request[xctf.E
 func (b *Backend) UpdateCompetition(ctx context.Context, c *connect.Request[chalgen.Competition]) (*connect.Response[chalgen.Competition], error) {
 	existingIds := map[string]*chalgen.Node{}
 	for _, node := range c.Msg.Graph.Nodes {
+		if node.Meta == nil {
+			node.Meta = &chalgen.Meta{}
+		}
 		if en, ok := existingIds[node.Meta.Id]; ok {
-			return nil, errors.New(fmt.Sprintf("duplicate node id: %s and %s", node.Name, en.Name))
+			return nil, errors.New(fmt.Sprintf("duplicate node id: %s and %s", node.Meta.Name, en.Meta.Name))
 		}
 		if node.Meta.Id == "" {
 			node.Meta.Id = uuid.NewString()
 		}
 		existingIds[node.Meta.Id] = node
+
+		c.Msg.Name = slug.Make(c.Msg.Name)
+
+		switch t := node.Challenge.(type) {
+		case *chalgen.Node_Pacp:
+			if t.Pacp == nil {
+				return nil, errors.New("pacp node cannot be nil")
+			}
+			if err := b.h.NewPCAP(c.Msg.Name, t.Pacp); err != nil {
+				return nil, err
+			}
+		}
 	}
 	m := &protojson.MarshalOptions{}
 	bm, err := m.Marshal(c.Msg.Graph)
@@ -132,7 +150,9 @@ func (b *Backend) SubmitEvidence(ctx context.Context, request *connect.Request[x
 	}
 
 	var chal models.Challenge
-	res := b.s.DB.Where(models.Challenge{Flag: request.Msg.Evidence}).First(&chal)
+	res := b.s.DB.Where(models.Challenge{
+		Flag: request.Msg.Evidence,
+	}).First(&chal)
 	if res.Error != nil && request.Msg.IsFlag {
 		return nil, errors.New("invalid flag")
 	}
@@ -453,9 +473,10 @@ func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xc
 	return connect.NewResponse(&xctf.Empty{}), nil
 }
 
-func NewBackend(s *db.Service, manager *http.Store) *Backend {
+func NewBackend(s *db.Service, manager *http.Store, h *chals.Handler) *Backend {
 	return &Backend{
 		s:       s,
 		manager: manager,
+		h:       h,
 	}
 }

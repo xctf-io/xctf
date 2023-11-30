@@ -28,6 +28,14 @@
             height: 50px;
             border-radius: 50%;
         }
+        .comment {
+            padding-left: 3rem;
+            font-size: 0.9rem;
+        }
+        .comment-form {
+            padding-left: 3rem;
+            padding-top: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -42,8 +50,7 @@
             <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Profile Image" class="profile-img mr-3">
             <div>
                 <h6 class="card-title mb-0">{{.Username}}</h6>
-<!--                <small class="text-muted"></small>-->
-                <p class="card-text mt-2">{{.Content}}</p>
+                <p class="card-text mt-2">{{ .Content }}</p>
             </div>
         </div>
     </div>

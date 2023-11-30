@@ -80,6 +80,12 @@ export const MessageField: FC<GRPCInputFormContentsProps> = (props) => {
                 ...acc,
                 [fd.name || '']: fd,
             }), {} as Record<string, FieldDescriptorProto>);
+            const resetFields = (except: string|undefined) => {
+                field.fields.forEach((f) => {
+                    console.log(`${props.parentFieldName}.${f.name}`)
+                    resetField(`${props.parentFieldName}.${f.name}`);
+                })
+            }
             return (
                 <div className="oneof">
                     <table>
@@ -95,9 +101,7 @@ export const MessageField: FC<GRPCInputFormContentsProps> = (props) => {
                                         value={f.name}
                                         checked={currentField === f.name}
                                         onChange={() => {
-                                            if (baseFieldName) {
-                                                resetField(baseFieldName);
-                                            }
+                                            resetFields(f.name);
                                             setCurrentField(f.name)
                                         }}
                                     />

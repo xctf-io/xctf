@@ -154,6 +154,16 @@ export class Meta extends Message<Meta> {
    */
   y = 0;
 
+  /**
+   * @generated from field: string name = 4;
+   */
+  name = "";
+
+  /**
+   * @generated from field: string flag = 5;
+   */
+  flag = "";
+
   constructor(data?: PartialMessage<Meta>) {
     super();
     proto3.util.initPartial(data, this);
@@ -165,6 +175,8 @@ export class Meta extends Message<Meta> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "x", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 3, name: "y", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 4, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "flag", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Meta {
@@ -194,16 +206,6 @@ export class Node extends Message<Node> {
   meta?: Meta;
 
   /**
-   * @generated from field: string name = 4;
-   */
-  name = "";
-
-  /**
-   * @generated from field: string flag = 5;
-   */
-  flag = "";
-
-  /**
    * @generated from oneof chalgen.Node.challenge
    */
   challenge: {
@@ -224,6 +226,12 @@ export class Node extends Message<Node> {
      */
     value: CaesarCipher;
     case: "caesar";
+  } | {
+    /**
+     * @generated from field: chalgen.PCAP pacp = 9;
+     */
+    value: PCAP;
+    case: "pacp";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Node>) {
@@ -235,11 +243,10 @@ export class Node extends Message<Node> {
   static readonly typeName = "chalgen.Node";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "meta", kind: "message", T: Meta },
-    { no: 4, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "flag", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "base64", kind: "message", T: Base64, oneof: "challenge" },
     { no: 7, name: "twitter", kind: "message", T: Twitter, oneof: "challenge" },
     { no: 8, name: "caesar", kind: "message", T: CaesarCipher, oneof: "challenge" },
+    { no: 9, name: "pacp", kind: "message", T: PCAP, oneof: "challenge" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Node {
@@ -299,6 +306,104 @@ export class Edge extends Message<Edge> {
 
   static equals(a: Edge | PlainMessage<Edge> | undefined, b: Edge | PlainMessage<Edge> | undefined): boolean {
     return proto3.util.equals(Edge, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.PCAP
+ */
+export class PCAP extends Message<PCAP> {
+  /**
+   * @generated from field: repeated chalgen.Packet packets = 1;
+   */
+  packets: Packet[] = [];
+
+  constructor(data?: PartialMessage<PCAP>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.PCAP";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "packets", kind: "message", T: Packet, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PCAP {
+    return new PCAP().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PCAP {
+    return new PCAP().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PCAP {
+    return new PCAP().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: PCAP | PlainMessage<PCAP> | undefined, b: PCAP | PlainMessage<PCAP> | undefined): boolean {
+    return proto3.util.equals(PCAP, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Packet
+ */
+export class Packet extends Message<Packet> {
+  /**
+   * @generated from field: int64 timestamp = 1;
+   */
+  timestamp = protoInt64.zero;
+
+  /**
+   * @generated from field: string source = 2;
+   */
+  source = "";
+
+  /**
+   * @generated from field: string destination = 3;
+   */
+  destination = "";
+
+  /**
+   * @generated from field: string protocol = 4;
+   */
+  protocol = "";
+
+  /**
+   * @generated from field: string data = 5;
+   */
+  data = "";
+
+  constructor(data?: PartialMessage<Packet>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Packet";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "timestamp", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 2, name: "source", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "destination", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "protocol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Packet {
+    return new Packet().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Packet {
+    return new Packet().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Packet {
+    return new Packet().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Packet | PlainMessage<Packet> | undefined, b: Packet | PlainMessage<Packet> | undefined): boolean {
+    return proto3.util.equals(Packet, a, b);
   }
 }
 

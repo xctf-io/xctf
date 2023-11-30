@@ -3,8 +3,9 @@ import {Button, Col, Row, Spinner, Dropdown, Table, Input, Card} from "@nextui-o
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import {useForm} from "react-hook-form";
 import { xctf } from '@/service';
-import {Competition, CompetitionList, Graph, Node} from "@/rpc/chalgen/chalgen_pb";
+import {Competition, CompetitionList, Graph, Meta, Node} from "@/rpc/chalgen/chalgen_pb";
 import {toast} from "react-toastify";
+import {removeUndefinedFields} from "@/util/object";
 
 export const Competitions: React.FC = () => {
     return (
@@ -57,9 +58,9 @@ const Edit: React.FC = () => {
         resetField,
     } = useForm({
         values: {
-            data: {
-                meta: {},
-            },
+            data: new Node({
+                meta: new Meta().toJson() as any,
+            }).toJson() as any,
         },
     });
 
@@ -109,6 +110,7 @@ const Edit: React.FC = () => {
 
     const onSubmit = async (data: any) => {
         // TODO breadchris these fields are being set to an empty array by default, not sure how this is happening, has to be in react-hook-form
+        removeUndefinedFields(data.data)
         let d = data.data;
         console.log('data', d);
         if (Array.isArray(d.id)) {
@@ -195,6 +197,10 @@ const Edit: React.FC = () => {
         setPreview(!preview);
     }
 
+    const newChallenge = () => {
+        selectChallenge(new Node({}));
+    }
+
     return (
         <>
             <div className="mx-[3vw] lg:mx-[6vw] mt-8">
@@ -251,7 +257,7 @@ const Edit: React.FC = () => {
                                                 <td>
                                                     <Card className={"cursor-pointer"}>
                                                         <Card.Header onClick={() => selectChallenge(n)}>
-                                                            {n.name}{currentChallenge?.meta?.id === n.meta?.id ? ' (editing)' : ''}
+                                                            {n.meta?.name}{currentChallenge?.meta?.id === n.meta?.id ? ' (editing)' : ''}
                                                             {nodeView(n)}
                                                         </Card.Header>
                                                         <Card.Footer>
@@ -261,6 +267,7 @@ const Edit: React.FC = () => {
                                                 </td>
                                             </tr>
                                         ))}
+                                        <Button onClick={newChallenge}>New</Button>
                                     </>
                                 ) : (
                                     <tr>

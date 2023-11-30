@@ -65,7 +65,7 @@ export const ProtobufMessageForm: FC<GRPCInputFormProps> = (props) => {
                     {/*</tr>*/}
                     {formattedFields.map((f) => {
                         // TODO breadchris hidden fields should be controlled by props
-                        if (f.name === 'meta') {
+                        if (f.name === 'id' || f.name === 'x' || f.name === 'y') {
                             return null;
                         }
                         return (
