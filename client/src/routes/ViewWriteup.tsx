@@ -544,9 +544,6 @@ const ViewWriteup = () => {
 				</div>
 				<ButtonGroup
 					color="danger"
-					style={{
-						margin: "0 auto",
-					}}
 				>
 					<Button
 						variant={isDarkMode ? "solid" : "flat"}
@@ -554,14 +551,22 @@ const ViewWriteup = () => {
 						onPress={() => {
 							navigate(`/view/${teams[index - 1].name}`);
 						}}
+						isIconOnly
 					>
-						<TbArrowBigLeftFilled />
+						<TbArrowBigLeftFilled className="w-1/2 h-1/2"/>
 					</Button>
 					<Select
 						placeholder="Team"
 						selectedKeys={[name] as Iterable<Key>}
-						onChange={(e) => navigate(`/view/${e.value}`)}
+						onChange={(e) => {
+							if(e.target.value != "") {
+								navigate(`/view/${e.target.value}`)
+							}
+						}}
+						selectionMode="single"
+						size="sm"
 						className="w-64 mx-1"
+						radius="none"
 					>
 						{teams.map((team) => (
 							<SelectItem key={team.name} value={team.name}>
@@ -575,8 +580,9 @@ const ViewWriteup = () => {
 						onPress={() =>
 							window.location.replace(`/view/${teams[index + 1].name}`)
 						}
+						isIconOnly
 					>
-						<TbArrowBigRightFilled />
+						<TbArrowBigRightFilled className="w-1/2 h-1/2" />
 					</Button>
 				</ButtonGroup>
 				<div
