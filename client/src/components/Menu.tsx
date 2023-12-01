@@ -17,7 +17,7 @@ interface Props {
 
 const Menu: React.FC<Props> = ({ openModal }) => {
 	const onClick = () => {
-		toPng(document.querySelector(".react-flow"), {
+		toPng(document.querySelector(".react-flow") as HTMLElement, {
 			filter: (node) => {
 				if (
 					node?.classList?.contains("react-flow__minimap") ||
@@ -34,17 +34,15 @@ const Menu: React.FC<Props> = ({ openModal }) => {
 	return (
 		<ButtonGroup
 			size="lg"
-			className="absolute left-[35px] top-[85px] z-10 flex-col"
+			className="absolute left-[41px] top-[79px] z-10 flex-col items-end"
 			variant="bordered"
 		>
 			<Button
 				radius="none"
 				onPress={openModal}
 				endContent={<HiOutlinePlus />}
+				className="text-black bg-white w-full h-[54px]"
 				style={{
-					color: "black",
-					backgroundColor: "white",
-					height: "54px",
 					borderColor: "#EEEEEE"
 				}}
 			>
@@ -54,10 +52,8 @@ const Menu: React.FC<Props> = ({ openModal }) => {
 				radius="none"
 				onPress={onClick}
 				endContent={<HiDownload />}
+				className="text-black bg-white h-[54px] w-full border-t-0"
 				style={{
-					color: "black",
-					backgroundColor: "white",
-					height: "54px",
 					borderColor: "#EEEEEE"
 				}}
 			>

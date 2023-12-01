@@ -55,11 +55,9 @@ export const Grading: React.FC<Props> = () => {
 		<>
 			<div className="mx-[3vw] lg:mx-[6vw] mt-8">
 				<Table
-					style={{
-						height: "auto",
-						minWidth: "100%",
-					}}
-					radius={isDarkMode ? "none" : "md"}
+					removeWrapper={isDarkMode}
+					className={`h-auto min-w-full ${isDarkMode ? "bg-transparent" : ""}`}
+					radius="md"
 					aria-label="Grading Table"
 					color="danger"
 				>

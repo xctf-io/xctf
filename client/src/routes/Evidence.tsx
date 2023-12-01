@@ -24,6 +24,9 @@ import {
 	ModalBody,
 	ModalFooter,
 	ModalHeader,
+	useDisclosure,
+	ModalContent,
+	semanticColors
 } from "@nextui-org/react";
 import dagre from "dagre";
 import Menu from "../components/Menu";
@@ -35,10 +38,11 @@ import {
 } from "../store/user";
 import { useDarkMode } from 'usehooks-ts'
 
-let evidence: string = "";
-let report: string = "";
+let report = "";
 
 export function Evidence() {
+	const [evidence, setEvidence] = useState("");
+
 	const { isDarkMode } = useDarkMode(false)
 	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>(new GetDiscoveredEvidenceResponse({
 		report: "",
@@ -134,7 +138,7 @@ export function Evidence() {
 	const initialNodes = graph.evidence.map((e) => {
 		return {
 			id: e.id.toString(),
-			data: { label: e.isFlag ? e.name + "🏳️" : e.name },
+			data: { label: e.name },
 			position: {
 				x: e.x,
 				y: e.y,
@@ -156,10 +160,10 @@ export function Evidence() {
 		[]
 	);
 
-	function submitEvidence(remove: boolean) {
+	function submitEvidence(remove: boolean, newEvidence: string) {
 		xctf
 			.submitEvidence({
-				evidence: evidence,
+				evidence: newEvidence,
 				x: 100,
 				y: 100,
 				isFlag: submittingFlag && !remove,
@@ -245,17 +249,15 @@ export function Evidence() {
 	const [deleteNode, setDeleteNode] = useState<Node>();
 	const onNodesDelete = useCallback(
 		(deleted: Node[]) => {
-			setVisible2(true);
+			deleteModal.onOpen()
 			setDeleteNode(deleted[0]);
 		},
 		[nodes, edges]
 	);
 
-	const [visible, setVisible] = useState(false);
-	const closeHandler = () => setVisible(false);
-	const openHandler = () => setVisible(true);
-	const [visible2, setVisible2] = useState(false);
-	const closeHandler2 = () => setVisible2(false);
+	const evidenceModal = useDisclosure();
+	const deleteModal = useDisclosure();
+
 
 	return (
 		<>
@@ -276,7 +278,7 @@ export function Evidence() {
 					height: "calc(100vh - 80px)",
 				}}
 			>
-				<Menu openModal={openHandler} />
+				<Menu openModal={evidenceModal.onOpen} />
 				<div className="h-full w-full relative">
 					<ReactFlow
 						nodes={nodes}
@@ -297,91 +299,98 @@ export function Evidence() {
 					</ReactFlow>
 				</div>
 				<Modal
-					isOpen={visible}
-					onClose={closeHandler}
+					isOpen={evidenceModal.isOpen}
+					onOpenChange={evidenceModal.onOpenChange}
 					title="Add Evidence"
 					aria-labelledby="modal-title"
+					placement="auto"
 				>
-					<ModalHeader>
-						<h3 id="modal-title">Add Evidence</h3>
-					</ModalHeader>
-					<ModalBody>
-						<Input
-							type="text"
-							isClearable
-							variant="bordered"
-							fullWidth
-							placeholder="Evidence"
-							color="primary"
-							onChange={(e) => (evidence = e.target.value)}
-							size="lg"
-						/>
-						<div className="flex flex-row justify-between">
-							<Checkbox
-								isSelected={submittingFlag}
-								onValueChange={setSubmittingFlag}
-							>
-								<p className="text-lg">Flag?</p>
-							</Checkbox>
-						</div>
-					</ModalBody>
-					<ModalFooter>
-						<Button variant="flat" color="danger" onPress={closeHandler}>
-							Close
-						</Button>
-						<Button
-							onPress={() => {
-								closeHandler();
-								submitEvidence(false);
-							}}
-							endContent={<HiPaperAirplane fill="currentColor" />}
-						>
-							Submit
-						</Button>
-					</ModalFooter>
+					<ModalContent>
+						{(onClose) => <>
+							<ModalHeader>
+								<h3 id="modal-title">Add Evidence</h3>
+							</ModalHeader>
+							<ModalBody>
+								<Input
+									label="Evidence"
+									isClearable
+									variant="bordered"
+									fullWidth
+									value={evidence}
+									onValueChange={setEvidence}
+									size="lg"
+								/>
+								<Checkbox
+									isSelected={submittingFlag}
+									onValueChange={setSubmittingFlag}
+								>
+									<p className="text-lg">Flag?</p>
+								</Checkbox>
+							</ModalBody>
+							<ModalFooter>
+								<Button variant="flat" color="danger" onPress={onClose}>
+									Close
+								</Button>
+								<Button
+									color="primary"
+									onPress={() => {
+										onClose();
+										submitEvidence(false, evidence);
+									}}
+									endContent={<HiPaperAirplane fill="currentColor" />}
+								>
+									Submit
+								</Button>
+							</ModalFooter>
+						</>}
+					</ModalContent>
 				</Modal>
 				<Modal
-					isOpen={visible2}
-					onClose={closeHandler2}
+					isOpen={deleteModal.isOpen}
+					onOpenChange={deleteModal.onOpenChange}
 					title="Are you sure?"
 					aria-labelledby="modal-title"
+					placement="auto"
 					backdrop="blur"
 				>
-					<ModalHeader>
-						<h3 id="modal-title">
-							Are you sure you want to delete this evidence?
-						</h3>
-					</ModalHeader>
-					<ModalBody>
-						<p className="text-center"> This action cannot be undone.</p>
-					</ModalBody>
-					<ModalFooter>
-						<Button
-							color="danger"
-							onPress={() => {
-								closeHandler2();
-								window.location.reload();
-							}}
-						>
-							No
-						</Button>
-						<Button
-							onPress={() => {
-								closeHandler2();
-								const id = Number(deleteNode?.id);
-								for (let i = 0; i < graph.evidence.length; i++) {
-									if (graph.evidence[i]["id"] === id) {
-										evidence = graph.evidence[i]["name"];
-										submitEvidence(true);
-										break;
-									}
-								}
-							}}
-							color="success"
-						>
-							Yes
-						</Button>
-					</ModalFooter>
+					<ModalContent>
+						{(onClose) => <>
+							<ModalHeader>
+								<h3 id="modal-title">
+									Are you sure you want to delete this evidence?
+								</h3>
+							</ModalHeader>
+							<ModalBody>
+								<p className="text-center"> This action cannot be undone.</p>
+							</ModalBody>
+							<ModalFooter>
+								<Button
+									color="danger"
+									onPress={() => {
+										onClose();
+										window.location.reload();
+									}}
+								>
+									No
+								</Button>
+								<Button
+									onPress={() => {
+										onClose();
+										const id = Number(deleteNode?.id);
+										for (let i = 0; i < graph.evidence.length; i++) {
+											if (graph.evidence[i]["id"] === id) {
+												submitEvidence(true, graph.evidence[i]["name"]);
+												break;
+											}
+										}
+									}}
+									color="success"
+								>
+									Yes
+								</Button>
+							</ModalFooter>
+						</>}
+					</ModalContent>
 				</Modal>
 			</div>
 		</>

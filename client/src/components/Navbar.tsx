@@ -83,7 +83,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 					}
 				})}
 			</NavbarContent>
-			<NavbarContent justify="end" className="flex gap-5">
+			<NavbarContent justify="end" as="div" className="flex gap-5">
 				<NavbarItem
 					onClick={toggle}
 					key="toggle"
