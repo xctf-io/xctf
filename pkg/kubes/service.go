@@ -9,7 +9,7 @@ import (
 	"github.com/xctf-io/xctf/gen/kubes/kubesconnect"
 	corev1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
-	"k8s.io/apimachinery/pkg/util/json"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -122,20 +122,19 @@ func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.Ne
 	}
 
 	configMapName := "gcs-config"
-	gcsAccount := map[string]string{}
 	b, err := os.ReadFile(s.c.GcsAccount)
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(b, &gcsAccount)
-	if err != nil {
-		return nil, err
+	gcsAccount := map[string]string{
+		"gcs_account.json": string(b),
 	}
 	err = createConfigMap(s.clientSet, namespace, configMapName, gcsAccount)
 	if err != nil {
 		return nil, err
 	}
 
+	slog.Debug("creating deployment", "name", name, "namespace", namespace, "image", s.c.Container)
 	_, err = s.newDeployment(ctx, namespace, NewXCtfDeployment(s.c.Container, name, configMapName, port))
 	if err != nil {
 		return nil, err

@@ -9,7 +9,10 @@ import (
 )
 
 func NewXCtfDeployment(container, name, configMapName string, port int32) *appsv1.Deployment {
-	mountPath := "/config/gcs_account.json"
+	mountDir := "/config"          // Directory where the file will be mounted
+	fileName := "gcs_account.json" // Name of the file in the ConfigMap
+	mountPath := fmt.Sprintf("%s/%s", mountDir, fileName)
+
 	volumes := []corev1.Volume{
 		{
 			Name: configMapName,
@@ -18,14 +21,22 @@ func NewXCtfDeployment(container, name, configMapName string, port int32) *appsv
 					LocalObjectReference: corev1.LocalObjectReference{
 						Name: configMapName,
 					},
+					Items: []corev1.KeyToPath{
+						{
+							Key:  fileName,
+							Path: fileName,
+						},
+					},
 				},
 			},
 		},
 	}
+
 	volumeMounts := []corev1.VolumeMount{
 		{
 			Name:      configMapName,
 			MountPath: mountPath,
+			SubPath:   fileName,
 		},
 	}
 	return &appsv1.Deployment{
@@ -72,6 +83,14 @@ func NewXCtfDeployment(container, name, configMapName string, port int32) *appsv
 								{
 									Name:  "BACKUPS",
 									Value: "true",
+								},
+								{
+									Name:  "BACKUP_NAME",
+									Value: name,
+								},
+								{
+									Name:  "BUCKET",
+									Value: "xctf-backup",
 								},
 								{
 									Name:  "GOOGLE_APPLICATION_CREDENTIALS",

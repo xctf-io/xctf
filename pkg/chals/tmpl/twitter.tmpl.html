@@ -53,7 +53,16 @@
 </nav>
 
 <div class="container mt-3">
-    {{range .Posts}}
+    <div class="card my-3">
+        <div class="card-body d-flex">
+            <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Profile Image" class="profile-img mr-3">
+            <div>
+                <h6 class="card-title mb-0">x^2</h6>
+                <p class="card-text mt-2">I hope you love x^2 as much as we do! {{ .Flag }}</p>
+            </div>
+        </div>
+    </div>
+    {{range .Twitter.Posts}}
     <div class="card my-3">
         <div class="card-body d-flex">
             <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Profile Image" class="profile-img mr-3">

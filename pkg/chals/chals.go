@@ -207,7 +207,13 @@ func (h *Handler) Handle() (string, http.Handler) {
 						}
 						p.Content = buf.String()
 					}
-					err := tmpl.Execute(w, t.Twitter)
+					err := tmpl.Execute(w, struct {
+						Twitter *chalgen.Twitter
+						Flag    string
+					}{
+						Twitter: t.Twitter,
+						Flag:    n.Meta.Flag,
+					})
 					if err != nil {
 						http.Error(w, err.Error(), http.StatusInternalServerError)
 					}
