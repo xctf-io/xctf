@@ -1,9 +1,9 @@
 import React from "react";
 import { toPng } from "html-to-image";
-import { Button } from "@nextui-org/react";
+import { Button, ButtonGroup } from "@nextui-org/react";
 import { HiDownload, HiOutlinePlus } from "react-icons/hi";
 
-function downloadImage(dataUrl) {
+function downloadImage(dataUrl: string) {
 	const a = document.createElement("a");
 
 	a.setAttribute("download", "evidence_graph.png");
@@ -17,7 +17,7 @@ interface Props {
 
 const Menu: React.FC<Props> = ({ openModal }) => {
 	const onClick = () => {
-		toPng(document.querySelector(".react-flow"), {
+		toPng(document.querySelector(".react-flow") as HTMLElement, {
 			filter: (node) => {
 				if (
 					node?.classList?.contains("react-flow__minimap") ||
@@ -32,41 +32,34 @@ const Menu: React.FC<Props> = ({ openModal }) => {
 	};
 
 	return (
-		<Button.Group
+		<ButtonGroup
 			size="lg"
-			className="absolute left-[35px] top-[85px] z-10"
-			vertical
-			bordered
+			className="absolute left-[41px] top-[79px] z-10 flex-col items-end"
+			variant="bordered"
 		>
 			<Button
+				radius="none"
 				onPress={openModal}
-				iconRight={<HiOutlinePlus />}
+				endContent={<HiOutlinePlus />}
+				className="text-black bg-white w-full h-[54px]"
 				style={{
-					color: "black",
-					backgroundColor: "white",
-					borderTopRightRadius: 0,
-					borderTopLeftRadius: 0,
-					height: "54px",
 					borderColor: "#EEEEEE"
 				}}
 			>
 				Add evidence
 			</Button>
 			<Button
+				radius="none"
 				onPress={onClick}
-				iconRight={<HiDownload />}
+				endContent={<HiDownload />}
+				className="text-black bg-white h-[54px] w-full border-t-0"
 				style={{
-					color: "black",
-					backgroundColor: "white",
-					borderBottomRightRadius: 0,
-					borderBottomLeftRadius: 0,
-					height: "54px",
 					borderColor: "#EEEEEE"
 				}}
 			>
 				Download
 			</Button>
-		</Button.Group>
+		</ButtonGroup>
 	);
 };
 

@@ -1,4 +1,4 @@
-import { Avatar, Dropdown, Navbar, Text } from "@nextui-org/react";
+import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 import { useUser } from "../store/user";
 import { useNavigate } from "react-router-dom";
 
@@ -7,60 +7,55 @@ const UserDropdown = () => {
     const navigate = useNavigate();
     const isAdmin = user?.type === "admin";
     const themeHexColor = isAdmin ? "DF3562" : "3070ED";
-	const themeColor = isAdmin ? "error" : "primary";
+    const themeColor = isAdmin ? "danger" : "primary";
     return (
-        <Navbar.Item>
-            <Dropdown placement="bottom-right">
-                <Dropdown.Trigger>
-                    <Avatar
-                        bordered
-                        as="button"
-                        color={themeColor}
-                        size="md"
-                        src={
-                            "https://api.dicebear.com/6.x/bottts/svg?baseColor=" +
-                            themeHexColor +
-                            "&seed=" +
-                            user?.username
-                        }
-                    />
-                </Dropdown.Trigger>
-                <Dropdown.Menu
-                    aria-label="User menu actions"
-                    onAction={(actionKey) => {
-                        if (actionKey === "logout") {
-                            logout();
-                            document.location.href = "/login";
-                            navigate("/login");
-                        }
-                    }}
-                    containerCss={{ border: "none" }}
+        <Dropdown placement="bottom-end">
+            <DropdownTrigger>
+                <Avatar
+                    isBordered
+                    as="button"
+                    className="transition-transform bg-transparent"
+                    color={themeColor}
+                    size="md"
+                    src={
+                        "https://api.dicebear.com/6.x/bottts/svg?baseColor=" +
+                        themeHexColor +
+                        "&seed=" +
+                        user?.username
+                    }
+                />
+            </DropdownTrigger>
+            <DropdownMenu
+                aria-label="User menu actions"
+                onAction={(actionKey) => {
+                    if (actionKey === "logout") {
+                        logout();
+                        document.location.href = "/login"
+                        navigate("/login");
+                    }
+                }}
+                className="border-0 text-foreground bg-background"
+            >
+                <DropdownItem
+                    key="profile"
+                    className="h-auto"
+                    showDivider
                 >
-                    <Dropdown.Item
-                        key="profile"
-                        css={{
-                            height: "auto",
-                            paddingTop: "0.5rem",
-                            paddingBottom: "0.5rem",
+                    <p >Signed in as</p>
+                    <p
+                        className="font-bold"
+                        style={{
+                            overflowWrap: "anywhere",
                         }}
                     >
-                        <Text color="inherit">Signed in as</Text>
-                        <Text
-                            b
-                            color="inherit"
-                            style={{
-                                overflowWrap: "anywhere",
-                            }}
-                        >
-                            {user?.username}
-                        </Text>
-                    </Dropdown.Item>
-                    <Dropdown.Item key="logout" withDivider color="error">
-                        Logout
-                    </Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown>
-        </Navbar.Item>
+                        {user?.username}
+                    </p>
+                </DropdownItem>
+                <DropdownItem key="logout" color="danger">
+                    Logout
+                </DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
     );
 }
 

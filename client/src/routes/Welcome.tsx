@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Button, Link, Textarea, Tooltip, useTheme } from "@nextui-org/react";
 interface Props {}
 
 const WelcomePage: React.FC<Props> = () => {

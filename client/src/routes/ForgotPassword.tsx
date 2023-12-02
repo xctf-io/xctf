@@ -1,13 +1,14 @@
 import React from "react";
 import { useEffect, useState } from "react";
 
-import { Input, Button, Text, useTheme } from "@nextui-org/react";
+import { Input, Button } from "@nextui-org/react";
 import { HiMail } from "react-icons/hi";
+import { useDarkMode } from "usehooks-ts";
 
 const ForgotPassword = () => {
 	const [email, setEmail] = useState("");
 
-	const { type, isDark } = useTheme();
+	const { isDarkMode } = useDarkMode();
 
 	useEffect(() => {
 		document.querySelector("input")?.focus();
@@ -22,7 +23,7 @@ const ForgotPassword = () => {
 			<div className="flex flex-col gap-6 ml-48 mr-32 justify-center">
 				<div>
 					<h1 className="text-5xl font-bold mb-0">Reset Password</h1>
-					<Text weight="light">Enter your email to get a reset code</Text>
+					<p className="font-light">Enter your email to get a reset code</p>
 				</div>
 				<Input
 					id="email"
@@ -30,21 +31,20 @@ const ForgotPassword = () => {
 					type="email"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
-					contentRight={<HiMail />}
+					endContent={<HiMail />}
 					width="100%"
-					size="xl"
+					size="lg"
 				/>
 
 				<Button
 					className="mt-6"
-					size="xl"
-                    auto
+					size="lg"
                     onPress={() => errorToast("This feature hasn't been implemented.")}
 				>
 					<span>Send Code</span>
 				</Button>
 			</div>
-			{isDark ? (
+			{isDarkMode ? (
 				<div
 					className="inset-0 bg-cover"
 					style={{

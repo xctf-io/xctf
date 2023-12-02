@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Button, Link, Textarea, Tooltip, useTheme } from "@nextui-org/react";
+import { Button, Link, Textarea, Tooltip } from "@nextui-org/react";
 import { useUser } from "../store/user";
 import { xctf, xctfAdmin } from "../service";
 import Markdown from "markdown-to-jsx";
 import { HiPencilSquare } from "react-icons/hi2";
 import {Entrypoint} from "@/rpc/xctf/xctf_pb";
+import { useDarkMode } from "usehooks-ts";
 
-interface Props {}
+interface Props { }
 
 const CTFComponent: React.FC<Props> = () => {
-	const { type, isDark } = useTheme();
+	const { isDarkMode } = useDarkMode();
 	const [user, setUser, logout] = useUser();
-	const themeColor = user?.type == "admin" ? "error" : "primary";
+	const themeColor = user?.type == "admin" ? "danger" : "primary";
 	const [homePage, setHomePage] = useState<string>("");
 	const [entrypoints, setEntrypoints] = useState<Entrypoint[]>([]);
 	const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -28,10 +29,10 @@ const CTFComponent: React.FC<Props> = () => {
 		setIsEditing(false);
 	};
 	const isAdmin = user?.type === "admin";
-	const textOpacity = isAdmin ? "opacity-50" : "";
+	const textOpacity = isAdmin ? "opacity-50 prose dark:prose-invert" : "prose dark:prose-invert";
 	const loggedIn = !!user;
 	return (
-		<div className="text-center font-medium mx-[15vw] lg:mx-[25vw] mt-8 flex flex-col gap-4 relative">
+		<div className="text-center font-medium items-center py-8 flex flex-col gap-4 relative">
 			{!loggedIn && (
 				<div>
 					<span className="mb-0 text-5xl font-extrabold">Welcome to xctf!</span>
@@ -64,78 +65,67 @@ const CTFComponent: React.FC<Props> = () => {
 											<span {...props}>{children}</span>
 										),
 										props: {
-											className: "font-extrabold",
+											className: "font-extrabold underline",
 										},
 									},
 								},
 							}}
 						>
-							{homePage}
+						   {homePage}
 						</Markdown>
-						<h3>Start Here!</h3>
-						{entrypoints.map((e) => (
-							<Link
-								key={e.route}
-								color={themeColor}
-								href={e.route}
-								target="_blank">
-								{e.name}
-							</Link>
+					    <h3>Start Here!</h3>
+					    {entrypoints.map((e) => (
+						<Link key={e.route} href={e.route} target="_blank">
+							  {e.name}
+						</Link>
 						))}
 					</>
 				)}
 				{loggedIn && !isEditing && isAdmin && (
 					<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-						<Tooltip content={"Edit the homepage"} color="error">
+						<Tooltip content={"Edit the homepage"} color="danger">
 							<Button
-								color="error"
-								auto
-								size="xl"
-								flat
-								rounded
-								icon={<HiPencilSquare className="h-8 w-8" />}
+								color="danger"
+								as={Link}
+								size="lg"
 								onPress={() => {
 									setIsEditing(true);
 								}}
-							/>
+							>
+								<HiPencilSquare className="h-8 w-8" />
+							</Button>
 						</Tooltip>
 					</div>
 				)}
 			</div>
 			{isEditing && (
-				<>
+				<div className="w-1/2">
 					<Textarea
+						className="mb-4"
 						minRows={1}
-						maxRows={20}
-						initialValue={homePage}
+						maxRows={30}
+						defaultValue={homePage}
 						autoFocus
 						onFocus={(e) => {
-							const val = e.target.value;
-							e.target.value = "";
-							e.target.value = val;
+							const textarea = e.target as HTMLTextAreaElement;
+							const val = textarea.value;
+							textarea.value = "";
+							textarea.value = val;
 						}}
 						onChange={(e) => {
 							setHomePage(e.target.value);
 						}}
 					></Textarea>
-					<Button color="error" onPress={() => updateHomePage()}>
+					<Button as={Link} color="danger" size="lg"  onPress={() => updateHomePage()}>
 						<span className="text-lg">Save</span>
 					</Button>
-				</>
+				</div>
 			)}
 			{loggedIn && !isAdmin && (
-				<>
-					<p className="text-lg">
-						For help related to the competition, go to the wiki.
-					</p>
-					<Button
-						size="lg"
-						color={themeColor}
-						onPress={() => (document.location = "https://wiki.xctf.io")}
-					>
-						wiki
-					</Button>
-				</>
+				<p className="text-lg inline">
+					For help related to the competition, go to the 
+					{" "}<Link href="https://wiki.xctf.io" color={themeColor}>wiki</Link>
+				</p>
 			)}
 		</div>
 	);

@@ -4,11 +4,12 @@ import React, {
 	MutableRefObject,
 	useRef,
 	useCallback,
+	Key,
 } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { xctfAdmin } from "../service";
 import { createErrorToast, createSuccessToast } from "../store/user";
-import {Button, theme, Input, Switch, useTheme, Textarea} from "@nextui-org/react";
+import {Button, Input, Switch, Textarea, Select, SelectItem, ButtonGroup} from "@nextui-org/react";
 import {
 	TbArrowBigLeftFilled,
 	TbArrowBigRightFilled,
@@ -16,7 +17,6 @@ import {
 	TbGraphOff,
 	TbGraph,
 } from "react-icons/tb";
-import Select from "react-select";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Legend } from "chart.js";
 import { HiPencilSquare } from "react-icons/hi2";
@@ -53,6 +53,7 @@ import ReactFlow, {
 	applyNodeChanges,
 } from "reactflow";
 import { BsWindowSidebar } from "react-icons/bs";
+import { useDarkMode } from "usehooks-ts";
 
 interface Team {
 	name: string;
@@ -93,11 +94,11 @@ const ViewWriteup = () => {
 				position={Position.TopCenter}
 				target={
 					<Button
-						auto
-						color="error"
-						icon={<MessageIcon />}
+						color="danger"
 						onPress={props.toggle}
-					/>
+					>
+						<MessageIcon />
+					</Button>
 				}
 				content={() => <div style={{ width: "100px" }}>Add a note</div>}
 				offset={{ left: 0, top: -8 }}
@@ -155,11 +156,11 @@ const ViewWriteup = () => {
 					}}
 				>
 					<div style={{ marginRight: "8px" }}>
-						<Button color="error" auto flat onPress={addNote}>
+						<Button color="danger"  onPress={addNote}>
 							Add
 						</Button>
 					</div>
-					<Button auto disabled onPress={props.cancel}>
+					<Button color="default" onPress={props.cancel}>
 						Cancel
 					</Button>
 				</div>
@@ -256,7 +257,7 @@ const ViewWriteup = () => {
 	const { name } = useParams();
 	const [teams, setTeams] = useState<Team[]>([]);
 	const [writeup, setWriteup] = useState("");
-	const { type, isDark } = useTheme();
+	const { isDarkMode } = useDarkMode();
 	const [numChallenges, setNumChallenges] = useState(0);
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const toggleEditing = () => setIsEditing(!isEditing);
@@ -290,7 +291,7 @@ const ViewWriteup = () => {
 			const wp = await xctfAdmin.getWriteup({ username: name });
 			setWriteup(wp.content);
 		} catch (error) {
-			createErrorToast("User does not have a writeup", isDark);
+			createErrorToast("User does not have a writeup", isDarkMode);
 		}
 	}
 	async function getTeams() {
@@ -315,7 +316,7 @@ const ViewWriteup = () => {
 			});
 			setTeams(teams);
 		} catch (error) {
-			createErrorToast("Failed to get teams", isDark);
+			createErrorToast("Failed to get teams", isDarkMode);
 		}
 	}
 	const [graph, setGraph] = useState<GetUserGraphResponse>(new GetUserGraphResponse({
@@ -370,12 +371,12 @@ const ViewWriteup = () => {
 					},
 					style: {
 						background: e.isFlag
-							? theme.colors.errorLight.toString()
-							: theme.colors.accents1.toString(),
+							? (isDarkMode ? "#310413" : "#fee7ef")
+							: (isDarkMode ? "#27272a" : "#f4f4f5"),
 						borderColor: e.isFlag
-							? theme.colors.errorBorder.toString()
-							: theme.colors.accents4.toString(),
-						color: theme.colors.text.toString(),
+							? (isDarkMode ? "#610726" : "#faa0bf")
+							: (isDarkMode ? "#52525b" : "#d4d4d8"),
+						color: (isDarkMode ? "#ECEDEE" : "#11181C"),
 					},
 				};
 			});
@@ -397,7 +398,7 @@ const ViewWriteup = () => {
 			setNodes(nodes);
 			setEdges(edges);
 		} catch (e: any) {
-			createErrorToast(e, isDark);
+			createErrorToast(e, isDarkMode);
 		}
 	}
 
@@ -441,10 +442,10 @@ const ViewWriteup = () => {
 				label: "Score",
 				data: [teams[index]?.score, numChallenges - teams[index]?.score],
 				backgroundColor: [
-					isDark ? "#2B0613" : "#F1C6D6",
-					isDark ? "rgba(38, 41, 43, 0.5)" : "#F1F3F5",
+					isDarkMode ? "#2B0613" : "#F1C6D6",
+					isDarkMode ? "rgba(38, 41, 43, 0.5)" : "#F1F3F5",
 				],
-				borderColor: ["#F31260", isDark ? "#313538" : "#D7DBDF"],
+				borderColor: ["#F31260", isDarkMode ? "#313538" : "#D7DBDF"],
 			},
 		],
 		borderWidth: 1,
@@ -455,10 +456,10 @@ const ViewWriteup = () => {
 				label: "Grade",
 				data: [teams[index]?.grade, 100 - teams[index]?.grade],
 				backgroundColor: [
-					isDark ? "#2B0613" : "#F1C6D6",
-					isDark ? "rgba(38, 41, 43, 0.5)" : "#F1F3F5",
+					isDarkMode ? "#2B0613" : "#F1C6D6",
+					isDarkMode ? "rgba(38, 41, 43, 0.5)" : "#F1F3F5",
 				],
-				borderColor: ["#F31260", isDark ? "#313538" : "#D7DBDF"],
+				borderColor: ["#F31260", isDarkMode ? "#313538" : "#D7DBDF"],
 			},
 		],
 		borderWidth: 1,
@@ -466,17 +467,17 @@ const ViewWriteup = () => {
 	const submitGrade = () => {
 		try {
 			if (grade < 0 || grade > 100) {
-				createErrorToast("Grade must be between 1 and 100", isDark);
+				createErrorToast("Grade must be between 1 and 100", isDarkMode);
 				return;
 			}
 			xctfAdmin.submitGrade({
 				username: name,
 				score: grade,
 			});
-			createSuccessToast("Successfully submitted grade", isDark);
+			createSuccessToast("Successfully submitted grade", isDarkMode);
 			window.location.reload();
 		} catch (error) {
-			createErrorToast("Failed to submit grade", isDark);
+			createErrorToast("Failed to submit grade", isDarkMode);
 		}
 	};
 
@@ -530,66 +531,61 @@ const ViewWriteup = () => {
 			<div className="flex flex-col items-center w-full relative xl:col-span-2">
 				<div className="absolute right-8 top-[2px]">
 					<Switch
-						color="error"
-						size="xl"
-						iconOn={<TbGraph />}
-						iconOff={<TbGraphOff />}
+						color="danger"
+						size="lg"
+						thumbIcon={({ isSelected, className }) =>
+							isSelected ? (
+								<TbGraphOff className={className} />
+							) : (
+								<TbGraph className={className} />
+							)
+						}
 						onChange={(e) => setShowChart(e.target.checked)}
 					/>
 				</div>
-				<Button.Group
-					color="error"
-					style={{
-						margin: "0 auto",
-					}}
+				<ButtonGroup
+					color="danger"
 				>
 					<Button
-						auto
-						flat={!isDark}
+						variant={isDarkMode ? "solid" : "flat"}
 						disabled={index === 0}
-						icon={<TbArrowBigLeftFilled />}
 						onPress={() => {
 							navigate(`/view/${teams[index - 1].name}`);
 						}}
-					/>
+						isIconOnly
+					>
+						<TbArrowBigLeftFilled className="w-1/2 h-1/2"/>
+					</Button>
 					<Select
-						defaultValue={{ value: name, label: name }}
-						onChange={(e) => navigate(`/view/${e?.value}`)}
-						options={teams.map((t) => ({ value: t.name, label: t.name }))}
-						className="w-64 mx-1"
-						styles={{
-							control: (provided, state) => ({
-								...provided,
-								minHeight: "40px",
-							}),
+						placeholder="Team"
+						selectedKeys={[name] as Iterable<Key>}
+						onChange={(e) => {
+							if(e.target.value != "") {
+								navigate(`/view/${e.target.value}`)
+							}
 						}}
-						theme={(t) => ({
-							...t,
-							borderRadius: 0,
-							colors: {
-								...t.colors,
-								primary: theme.colors.error.toString(),
-								primary25: theme.colors.errorLight.toString(),
-								primary50: theme.colors.errorLightHover.toString(),
-								primary75: theme.colors.errorSolidHover.toString(),
-								neutral0: theme.colors.backgroundContrast.toString(),
-								neutral20: theme.colors.neutralBorder.toString(),
-								neutral30: theme.colors.neutralBorderHover.toString(),
-								neutral80: theme.colors.text.toString(),
-								neutral90: theme.colors.text.toString(),
-							},
-						})}
-					/>
+						selectionMode="single"
+						size="sm"
+						className="w-64 mx-1"
+						radius="none"
+					>
+						{teams.map((team) => (
+							<SelectItem key={team.name} value={team.name}>
+								{team.name}
+							</SelectItem>
+						))}
+					</Select>
 					<Button
-						auto
-						flat={!isDark}
+						variant={isDarkMode ? "solid" : "flat"}
 						disabled={index === teams.length - 1}
-						icon={<TbArrowBigRightFilled />}
 						onPress={() =>
 							window.location.replace(`/view/${teams[index + 1].name}`)
 						}
-					/>
-				</Button.Group>
+						isIconOnly
+					>
+						<TbArrowBigRightFilled className="w-1/2 h-1/2" />
+					</Button>
+				</ButtonGroup>
 				<div
 					className="flex flex-col items-center h-full"
 					style={{
@@ -616,10 +612,10 @@ const ViewWriteup = () => {
 												<>
 													<Input
 														placeholder="Grade"
-														bordered
+														variant="bordered"
 														size="sm"
 														autoFocus
-														animated={false}
+														disableAnimation
 														onChange={(e) => setGrade(Number(e.target.value))}
 														onBlur={(e) => {
 															if (grade === -1) {
@@ -642,10 +638,9 @@ const ViewWriteup = () => {
 												</p>
 											)}
 											<Button
-												color="error"
-												ghost
-												auto
-												size="xs"
+												color="danger"
+												variant="ghost"
+												size="sm"
 												onPress={toggleEditing}
 											>
 												<HiPencilSquare />
@@ -659,17 +654,16 @@ const ViewWriteup = () => {
 										</p>
 										<Input
 											placeholder="Grade"
-											bordered
-											color="error"
+											variant="bordered"
+											color="danger"
 											size="lg"
 											onChange={(e) => setGrade(Number(e.target.value))}
 										/>
 										<Button
-											color="error"
+											color="danger"
 											className="mt-4"
-											auto
 											size="lg"
-											iconRight={<TbSend />}
+											endContent={<TbSend />}
 											onPress={submitGrade}
 										>
 											Submit
@@ -680,7 +674,7 @@ const ViewWriteup = () => {
 							<div>
 								<p className="text-3xl font-bold text-center mb-1">Flags</p>
 								<div className="h-56 mb-2">
-									<Pie data={chartData} updateMode="none"/>
+									<Pie data={chartData} updateMode="none" />
 								</div>
 								<p className="text-lg font-thin text-center">
 									{teams[index].score}/{numChallenges}

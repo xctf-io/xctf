@@ -3,15 +3,20 @@ import { useState } from "react";
 import { useUser } from "../store/user";
 import type { NavLink } from "../types/nav";
 import {
+	Button,
 	Link,
 	Navbar,
-	Text,
-	useTheme
+	NavbarBrand,
+	NavbarContent,
+	NavbarItem,
+	NavbarMenu,
+	NavbarMenuItem,
+	NavbarMenuToggle,
 } from "@nextui-org/react";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { GiFlyingFlag } from "react-icons/gi";
 import { useDarkMode } from "usehooks-ts";
-import {Link as RouterLink, useLocation, useNavigate} from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import UserDropdown from "./UserDropdown";
 
 interface NavbarProps {
@@ -19,34 +24,44 @@ interface NavbarProps {
 }
 
 const NavbarComponent = ({ links }: NavbarProps) => {
-	const navigate = useNavigate();
 	const location = useLocation();
 	const [user, setUser, logout] = useUser();
 
 	const userLoggedIn = !!user;
 	const isAdmin = user?.type === "admin";
-	const themeColor = isAdmin ? "error" : "primary";
-	const {toggle} = useDarkMode(false);
-	const { type, isDark } = useTheme();
-	const translate = userLoggedIn
-		? "-translate-x-[15px]"
-		: "-translate-x-[49px]";
+	const themeColor = isAdmin ? "danger" : "primary";
+	const { isDarkMode, toggle } = useDarkMode(false);
+	const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
 	return (
-		<Navbar className="w-screen" variant="sticky" maxWidth="fluid">
-			<Navbar.Brand>
-				<GiFlyingFlag className="ml-2 mr-2 w-10 h-10" />
-				<Text b color="inherit" className="text-2xl">
-					xctf
-				</Text>
-			</Navbar.Brand>
-			<Navbar.Content
-				hideIn="xs"
-				enableCursorHighlight
-				variant="underline"
-				className={"absolute " + translate}
-				activeColor={themeColor}
-			>
+		<Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} classNames={{
+			item: [
+				"flex",
+				"relative",
+				"h-full",
+				"items-center",
+				"data-[active=true]:after:content-['']",
+				"data-[active=true]:after:absolute",
+				"data-[active=true]:after:bottom-0",
+				"data-[active=true]:after:left-0",
+				"data-[active=true]:after:right-0",
+				"data-[active=true]:after:h-[2px]",
+				"data-[active=true]:after:rounded-[2px]",
+				(isAdmin ? "data-[active=true]:after:bg-danger" : "data-[active=true]:after:bg-primary"),
+			],
+		}}>
+			<NavbarContent>
+				<NavbarMenuToggle
+					aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+					className="sm:hidden"
+				/>
+				<NavbarBrand>
+					<GiFlyingFlag className="h-8 w-8 mr-2" />
+					<p className="text-xl font-bold text-inherit">xctf</p>
+				</NavbarBrand>
+			</NavbarContent>
+
+			<NavbarContent className="hidden sm:flex gap-2" justify="center">
 				{links.map((l) => {
 					if (
 						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
@@ -54,29 +69,30 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<Navbar.Item key={l.label} isActive={l.to === location.pathname}>
+							<NavbarItem isActive={l.to === location.pathname}>
 								<Link
-									color="inherit"
-									onClick={() => navigate(l.to)}
+									isBlock
+									className="px-2"
+									color={l.to === location.pathname ? themeColor : "foreground"}
+									href={l.to}
 								>
 									{l.label}
 								</Link>
-							</Navbar.Item>
-						);
+							</NavbarItem>
+						)
 					}
 				})}
-			</Navbar.Content>
-			<Navbar.Content enableCursorHighlight hideIn="xs">
-				<Navbar.Link
-					className="justify-self-right"
+			</NavbarContent>
+			<NavbarContent justify="end" as="div" className="flex gap-5">
+				<NavbarItem
 					onClick={toggle}
 					key="toggle"
 				>
-					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
-				</Navbar.Link>
+					{isDarkMode ? <BsSunFill /> : <BsMoonStarsFill />}
+				</NavbarItem>
 				{user ? <UserDropdown /> : null}
-			</Navbar.Content>
-			<Navbar.Collapse>
+			</NavbarContent>
+			<NavbarMenu>
 				{links.map((l) => {
 					if (
 						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
@@ -84,29 +100,19 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						(userLoggedIn && isAdmin && l.showWhenAdmin)
 					) {
 						return (
-							<Navbar.CollapseItem key={l.label} isActive={l.to === location.pathname}>
+							<NavbarMenuItem isActive={l.to === location.pathname}>
 								<Link
-									color="inherit"
-									onClick={() => navigate(l.to)}
+									isBlock
+									color={l.to === location.pathname ? themeColor : "foreground"}
+									href={l.to}
 								>
 									{l.label}
 								</Link>
-							</Navbar.CollapseItem>
-						);
+							</NavbarMenuItem>
+						)
 					}
 				})}
-			</Navbar.Collapse>
-			<Navbar.Content showIn="xs">
-				<Navbar.Link
-					className="justify-self-right"
-					onClick={toggle}
-					key="toggle"
-				>
-					{isDark ? <BsSunFill /> : <BsMoonStarsFill />}
-				</Navbar.Link>
-				{user ? <UserDropdown /> : null}
-				<Navbar.Toggle />
-			</Navbar.Content>
+			</NavbarMenu>
 		</Navbar>
 	);
 };
