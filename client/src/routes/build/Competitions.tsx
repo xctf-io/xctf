@@ -1,5 +1,15 @@
 import React, {useEffect, useRef} from 'react'
-import {Button, Spinner, Dropdown, Input, Card} from "@nextui-org/react";
+import {
+    Button,
+    Spinner,
+    Dropdown,
+    Input,
+    Card,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+    CardHeader, CardFooter
+} from "@nextui-org/react";
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import {useForm} from "react-hook-form";
 import { xctf } from '@/service';
@@ -224,17 +234,17 @@ const Edit: React.FC = () => {
     return (
         <>
             <div className="mx-[3vw] lg:mx-[6vw] mt-8">
-                <Row className={"space-x-4"}>
+                <div className={"flex flex-row space-x-4"}>
                     {competitionList ? (
                         <>
                             {competitionList.competitions.length === 0 ? (
                                 <p>No competitions yet</p>
                             ) : (
                                 <Dropdown>
-                                    <Dropdown.Trigger>
+                                    <DropdownTrigger>
                                         <Button>Select Competition</Button>
-                                    </Dropdown.Trigger>
-                                    <Dropdown.Menu onAction={(id ) => {
+                                    </DropdownTrigger>
+                                    <DropdownMenu onAction={(id ) => {
                                         const c = competitionList.competitions.find((c) => c.id === id);
                                         if (!c) {
                                             return;
@@ -244,12 +254,12 @@ const Edit: React.FC = () => {
                                     }}>
                                         {competitionList.competitions.map((c) => {
                                             return (
-                                                <Dropdown.Item key={c.id}>
+                                                <DropdownItem key={c.id}>
                                                     {c.name}
-                                                </Dropdown.Item>
+                                                </DropdownItem>
                                             )
                                         })}
-                                    </Dropdown.Menu>
+                                    </DropdownMenu>
                                 </Dropdown>
                             )}
                         </>
@@ -259,9 +269,9 @@ const Edit: React.FC = () => {
                     <Button onClick={newCompetition}>
                         New Competition
                     </Button>
-                </Row>
-                <Row>
-                    <Col span={3}>
+                </div>
+                <div className={"flex flex-row"}>
+                    <div className={"flex-4"}>
                         <Input label={"name"} value={competitionName} onChange={(e) => setCompetitionName(e.target.value)} />
                         <label>
                             <input aria-label={"active"} type={"checkbox"} checked={active} onChange={(e) => setActive(e.target.checked)} />
@@ -280,13 +290,12 @@ const Edit: React.FC = () => {
                                             <tr key={n.meta?.id}>
                                                 <td>
                                                     <Card className={"cursor-pointer"}>
-                                                        <Card.Header onClick={() => selectChallenge(n)}>
+                                                        <CardHeader onClick={() => selectChallenge(n)}>
                                                             {n.meta?.name}{currentChallenge?.meta?.id === n.meta?.id ? ' (editing)' : ''}
-                                                            {nodeView(n)}
-                                                        </Card.Header>
-                                                        <Card.Footer>
-                                                            <Button size={"sm"} color={"error"} onClick={() => removeNode(n.meta?.id || '')}>Remove</Button>
-                                                        </Card.Footer>
+                                                        </CardHeader>
+                                                        <CardFooter>
+                                                            <Button size={"sm"} color={"danger"} onClick={() => removeNode(n.meta?.id || '')}>Remove</Button>
+                                                        </CardFooter>
                                                     </Card>
                                                 </td>
                                             </tr>
@@ -300,31 +309,31 @@ const Edit: React.FC = () => {
                                 )}
                             </tbody>
                         </table>
-                    </Col>
-                    <Col span={9}>
+                    </div>
+                    <div className={"flex-8"}>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="flex flex-col gap-2 p-3">
                                 {form()}
                             </div>
-                            <Row className={"space-x-4"}>
+                            <div className={"flex flex-row space-x-4"}>
                                 <Button color={'secondary'} onClick={togglePreview}>
                                     Preview
                                 </Button>
                                 <Button type="submit">
                                     Save
                                 </Button>
-                            </Row>
+                            </div>
                         </form>
-                    </Col>
-                </Row>
+                    </div>
+                </div>
                 {preview && (
-                    <Row>
+                    <div className={"flex flex-row"}>
                         <iframe ref={iframeRef} style={{width: '100%', height: 200}} src={`/play/${selectedCompetition?.id}/${currentChallenge?.meta?.id}`} />
-                    </Row>
+                    </div>
                 )}
-                <Row>
-                    <Button color={"error"} onClick={onCompDelete}>Delete Competition</Button>
-                </Row>
+                <div className={"flex flex-row"}>
+                    <Button color={"danger"} onClick={onCompDelete}>Delete Competition</Button>
+                </div>
             </div>
         </>
     )
