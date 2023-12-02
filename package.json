@@ -29,6 +29,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@esbuild/darwin-arm64": "^0.19.8",
     "@nextui-org/react": "^2.2.9",
     "@react-pdf-viewer/core": "3.12.0",
     "@react-pdf-viewer/default-layout": "^3.12.0",
