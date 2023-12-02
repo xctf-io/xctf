@@ -90,13 +90,15 @@ func (b *Backend) UpdateCompetition(ctx context.Context, c *connect.Request[chal
 	result := b.s.DB.Where("id = ?", c.Msg.Id).First(&cm)
 	if result.Error != nil {
 		cm = models.Competition{
-			Name:  c.Msg.Name,
-			Graph: string(bm),
+			Name:   c.Msg.Name,
+			Graph:  string(bm),
+			Active: c.Msg.Active,
 		}
 		b.s.DB.Create(&cm)
 	} else {
 		cm.Graph = string(bm)
 		cm.Name = c.Msg.Name
+		cm.Active = c.Msg.Active
 		b.s.DB.Save(&cm)
 	}
 	// TODO breadchris hacked for the demo, think through this more
@@ -424,13 +426,28 @@ func (b *Backend) GetHomePage(
 	ctx context.Context,
 	request *connect.Request[xctf.GetHomePageRequest],
 ) (*connect.Response[xctf.GetHomePageResponse], error) {
+	id, graph, err := b.s.GetCurrentCompetition()
+	if err != nil {
+		return nil, err
+	}
+
+	var entrypoints []*xctf.Entrypoint
+	for _, node := range graph.Nodes {
+		if node.Meta.Entrypoint {
+			entrypoints = append(entrypoints, &xctf.Entrypoint{
+				Name:  node.Meta.Name,
+				Route: chals.ChalURL(id, node.Meta.Id, ""),
+			})
+		}
+	}
 	var homePage models.HomePage
 	resp := b.s.DB.First(&homePage)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
 	return connect.NewResponse(&xctf.GetHomePageResponse{
-		Content: homePage.Content,
+		Content:     homePage.Content,
+		Entrypoints: entrypoints,
 	}), nil
 }
 
@@ -442,6 +459,22 @@ func (b *Backend) ForgotPassword(ctx context.Context, request *connect.Request[x
 		return nil, resp.Error
 	}
 	return nil, errors.New("not implemented")
+}
+
+func (b *Backend) GetUserWriteup(ctx context.Context, c *connect.Request[xctf.Empty]) (*connect.Response[xctf.GetUserWriteupResponse], error) {
+	userId, _, err := b.manager.GetUserFromSession(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var writeup models.Writeup
+	resp := b.s.DB.Where(models.Writeup{UserID: userId}).First(&writeup)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	return connect.NewResponse(&xctf.GetUserWriteupResponse{
+		Content: writeup.Content,
+	}), nil
 }
 
 func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xctf.SubmitWriteupRequest]) (*connect.Response[xctf.Empty], error) {
@@ -462,11 +495,12 @@ func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xc
 	}
 
 	var writeup models.Writeup
-	resp = b.s.DB.Where(models.Writeup{Username: user.Username}).First(&writeup)
+	resp = b.s.DB.Where(models.Writeup{UserID: userId}).First(&writeup)
 	if resp.Error != nil {
 		writeup := models.Writeup{
-			Username: user.Username,
-			Content:  request.Msg.Content,
+			UserID:  userId,
+			Content: request.Msg.Content,
+			Type:    request.Msg.Type,
 		}
 		resp = b.s.DB.Create(&writeup)
 		if resp.Error != nil {
@@ -474,6 +508,7 @@ func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xc
 		}
 	} else {
 		writeup.Content = request.Msg.Content
+		writeup.Type = request.Msg.Type
 		resp = b.s.DB.Save(&writeup)
 		if resp.Error != nil {
 			return nil, resp.Error

@@ -7,6 +7,7 @@ import {toast} from "react-toastify";
 export const Deploy: React.FC = () => {
     const [deployments, setDeployments] = React.useState<Deployment[]>([]);
     const [name, setName] = React.useState<string>('');
+    const [domain, setDomain] = React.useState<string>('');
     useEffect(() => {
         (async () => {
             const res = await kubes.listDeployments({});
@@ -17,6 +18,7 @@ export const Deploy: React.FC = () => {
         try {
             const res = await kubes.newDeployment({
                 name,
+                domainName: domain,
             });
         } catch (e: any) {
             console.error(e);
@@ -27,6 +29,7 @@ export const Deploy: React.FC = () => {
         try {
             const res = await kubes.deleteDeployment({
                 name: deploymentName,
+                domainName: domain,
             });
         } catch (e: any) {
             console.error(e);
@@ -37,6 +40,7 @@ export const Deploy: React.FC = () => {
         <div className="mx-[3vw] lg:mx-[6vw] mt-8">
             <h3>New</h3>
             <Input aria-label={"name"} placeholder="Name" onChange={(e) => setName(e.target.value)} />
+            <Input aria-label={"domain-name"} placeholder="Domain" onChange={(e) => setDomain(e.target.value)} />
             <Button aria-label={"create"} onClick={newDeployment}>Create</Button>
             <hr />
             <ul>

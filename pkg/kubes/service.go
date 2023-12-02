@@ -9,6 +9,8 @@ import (
 	"github.com/xctf-io/xctf/gen/kubes/kubesconnect"
 	corev1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
+	"k8s.io/apimachinery/pkg/util/json"
+	"os"
 	"path/filepath"
 	"regexp"
 
@@ -109,22 +111,42 @@ func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.Ne
 	name := deploymentName(c.Msg.Name)
 	service := serviceName(name)
 	domain := hostName(name)
+	namespace := s.c.DefaultNamespace
+
+	if c.Msg.DomainName != "" {
+		domain = c.Msg.DomainName
+	}
 
 	if !isValidK8sServiceName(name) {
 		return nil, fmt.Errorf("invalid service name: %s", name)
 	}
 
-	_, err := s.newDeployment(ctx, s.c.DefaultNamespace, NewXCtfDeployment(s.c.Container, name, port))
+	configMapName := "gcs-config"
+	gcsAccount := map[string]string{}
+	b, err := os.ReadFile(s.c.GcsAccount)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(b, &gcsAccount)
+	if err != nil {
+		return nil, err
+	}
+	err = createConfigMap(s.clientSet, namespace, configMapName, gcsAccount)
 	if err != nil {
 		return nil, err
 	}
 
-	err = createService(s.clientSet, service, name, s.c.DefaultNamespace)
+	_, err = s.newDeployment(ctx, namespace, NewXCtfDeployment(s.c.Container, name, configMapName, port))
 	if err != nil {
 		return nil, err
 	}
 
-	err = s.updateIngress(ctx, s.c.DefaultNamespace, s.c.DefaultIngress, NewIngressRule(domain, service, port))
+	err = createService(s.clientSet, service, name, namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.updateIngress(ctx, namespace, s.c.DefaultIngress, NewIngressRule(domain, service, port))
 	if err != nil {
 		return nil, err
 	}
@@ -134,18 +156,24 @@ func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.Ne
 func (s *Service) DeleteDeployment(ctx context.Context, c *connect.Request[kubes.DeleteDeploymentRequest]) (*connect.Response[kubes.DeleteDeploymentResponse], error) {
 	name := c.Msg.Name
 	domain := hostName(name)
+	namespace := s.c.DefaultNamespace
 
-	err := s.deleteDeployment(s.clientSet, s.c.DefaultNamespace, name)
+	// TODO breadchris domain name should be set on label of deployment
+	if c.Msg.DomainName != "" {
+		domain = c.Msg.DomainName
+	}
+
+	err := s.deleteDeployment(s.clientSet, namespace, name)
 	if err != nil {
 		return nil, err
 	}
 
-	err = s.deleteService(ctx, serviceName(name), s.c.DefaultNamespace)
+	err = s.deleteService(ctx, serviceName(name), namespace)
 	if err != nil {
 		return nil, err
 	}
 
-	err = s.removeIngressRule(ctx, s.c.DefaultNamespace, s.c.DefaultIngress, domain)
+	err = s.removeIngressRule(ctx, namespace, s.c.DefaultIngress, domain)
 	if err != nil {
 		return nil, err
 	}

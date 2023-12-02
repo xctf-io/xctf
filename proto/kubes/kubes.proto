@@ -10,6 +10,7 @@ service KubesService {
 
 message DeleteDeploymentRequest {
   string name = 1;
+  string domain_name = 2;
 }
 
 message DeleteDeploymentResponse {
@@ -25,6 +26,7 @@ message ListDeploymentsResponse {
 
 message NewDeploymentRequest {
   string name = 1;
+  string domain_name = 2;
 }
 
 message NewDeploymentResponse {

@@ -62,6 +62,11 @@ export class Competition extends Message<Competition> {
    */
   graph?: Graph;
 
+  /**
+   * @generated from field: bool active = 4;
+   */
+  active = false;
+
   constructor(data?: PartialMessage<Competition>) {
     super();
     proto3.util.initPartial(data, this);
@@ -73,6 +78,7 @@ export class Competition extends Message<Competition> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "graph", kind: "message", T: Graph },
+    { no: 4, name: "active", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Competition {
@@ -136,6 +142,43 @@ export class Graph extends Message<Graph> {
 }
 
 /**
+ * @generated from message chalgen.FormUI
+ */
+export class FormUI extends Message<FormUI> {
+  /**
+   * @generated from field: bool visible = 1;
+   */
+  visible = false;
+
+  constructor(data?: PartialMessage<FormUI>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.FormUI";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "visible", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FormUI {
+    return new FormUI().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FormUI {
+    return new FormUI().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FormUI {
+    return new FormUI().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: FormUI | PlainMessage<FormUI> | undefined, b: FormUI | PlainMessage<FormUI> | undefined): boolean {
+    return proto3.util.equals(FormUI, a, b);
+  }
+}
+
+/**
  * @generated from message chalgen.Meta
  */
 export class Meta extends Message<Meta> {
@@ -164,6 +207,11 @@ export class Meta extends Message<Meta> {
    */
   flag = "";
 
+  /**
+   * @generated from field: bool entrypoint = 6;
+   */
+  entrypoint = false;
+
   constructor(data?: PartialMessage<Meta>) {
     super();
     proto3.util.initPartial(data, this);
@@ -177,6 +225,7 @@ export class Meta extends Message<Meta> {
     { no: 3, name: "y", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 4, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "flag", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "entrypoint", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Meta {

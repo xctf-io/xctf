@@ -106,13 +106,23 @@ func (s *Admin) SetHomePage(ctx context.Context, request *connect.Request[xctf.S
 }
 
 func (s *Admin) GetWriteup(ctx context.Context, request *connect.Request[xctf.GetWriteupRequest]) (*connect.Response[xctf.GetWriteupResponse], error) {
+	// TODO breadchris we should not use usernames here
+	// there seems to be some conflation between username and team in the code
+	// get userid from username
+	var user models.User
+	res := s.s.DB.Where(&models.User{Username: request.Msg.Username}).First(&user)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
 	var writeup models.Writeup
-	resp := s.s.DB.Where(&models.Writeup{Username: request.Msg.Username}).First(&writeup)
+	resp := s.s.DB.Where(&models.Writeup{UserID: user.ID}).First(&writeup)
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
 	return connect.NewResponse(&xctf.GetWriteupResponse{
 		Content: writeup.Content,
+		Type:    writeup.Type,
 	}), nil
 }
 

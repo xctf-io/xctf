@@ -4,6 +4,8 @@ import "gorm.io/gorm"
 
 type Writeup struct {
 	gorm.Model
-	Username string `gorm:"uniqueIndex"`
-	Content  string
+	UserID  uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	User    User
+	Content string
+	Type    string
 }

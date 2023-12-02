@@ -4,9 +4,9 @@ import (
 	"context"
 	"embed"
 	"errors"
+	"fmt"
 	"github.com/benbjohnson/litestream"
 	lsgcs "github.com/benbjohnson/litestream/gcs"
-	lss3 "github.com/benbjohnson/litestream/s3"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/xctf-io/xctf/gen/chalgen"
 	"github.com/xctf-io/xctf/pkg/models"
@@ -90,18 +90,18 @@ func New(c Config) (*Service, error) {
 	return s, nil
 }
 
-func (s *Service) GetCurrentCompetition() (*chalgen.Graph, error) {
+func (s *Service) GetCurrentCompetition() (string, *chalgen.Graph, error) {
 	var comp models.Competition
 	res := s.DB.Where(&models.Competition{Active: true}).First(&comp)
 	if res.Error != nil {
-		return nil, res.Error
+		return "", nil, res.Error
 	}
 	unm := protojson.UnmarshalOptions{DiscardUnknown: true}
 	var graph chalgen.Graph
 	if err := unm.Unmarshal([]byte(comp.Graph), &graph); err != nil {
-		return nil, res.Error
+		return "", nil, res.Error
 	}
-	return &graph, nil
+	return fmt.Sprintf("%d", comp.ID), &graph, nil
 }
 
 func (s *Service) Migrate() error {
@@ -182,18 +182,20 @@ func (s *Service) registerDBCallbacks(ctx context.Context, lsdb *litestream.DB) 
 
 func (s *Service) newReplica(lsdb *litestream.DB) *litestream.Replica {
 	// TODO breadchris support gcs https://litestream.io/guides/gcs/
-	_ = lsgcs.NewReplicaClient()
+	c := lsgcs.NewReplicaClient()
+	c.Bucket = s.c.Bucket
+	c.Path = s.c.BackupName
 
-	client := lss3.NewReplicaClient()
-	client.Bucket = s.c.Bucket
-	client.Endpoint = s.c.Endpoint
-	client.SkipVerify = true
-	client.ForcePathStyle = true
-	client.AccessKeyID = s.c.AwsAccessKeyID
-	client.SecretAccessKey = s.c.AwsSecretAccessKey
+	//client := lss3.NewReplicaClient()
+	//client.Bucket = s.c.Bucket
+	//client.Endpoint = s.c.Endpoint
+	//client.SkipVerify = true
+	//client.ForcePathStyle = true
+	//client.AccessKeyID = s.c.AwsAccessKeyID
+	//client.SecretAccessKey = s.c.AwsSecretAccessKey
 
-	replica := litestream.NewReplica(lsdb, "s3")
-	replica.Client = client
+	replica := litestream.NewReplica(lsdb, "gcs")
+	replica.Client = c
 	return replica
 }
 

@@ -8,7 +8,26 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func NewXCtfDeployment(container, name string, port int32) *appsv1.Deployment {
+func NewXCtfDeployment(container, name, configMapName string, port int32) *appsv1.Deployment {
+	mountPath := "/config/gcs_account.json"
+	volumes := []corev1.Volume{
+		{
+			Name: configMapName,
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: configMapName,
+					},
+				},
+			},
+		},
+	}
+	volumeMounts := []corev1.VolumeMount{
+		{
+			Name:      configMapName,
+			MountPath: mountPath,
+		},
+	}
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
@@ -50,9 +69,19 @@ func NewXCtfDeployment(container, name string, port int32) *appsv1.Deployment {
 									Name:  "PROXY_URL",
 									Value: "",
 								},
+								{
+									Name:  "BACKUPS",
+									Value: "true",
+								},
+								{
+									Name:  "GOOGLE_APPLICATION_CREDENTIALS",
+									Value: mountPath,
+								},
 							},
+							VolumeMounts: volumeMounts,
 						},
 					},
+					Volumes: volumes,
 					ImagePullSecrets: []corev1.LocalObjectReference{
 						{
 							Name: "ghcr-pull-secret",

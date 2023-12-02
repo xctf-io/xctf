@@ -3,13 +3,15 @@ package db
 import "go.uber.org/config"
 
 type Config struct {
-	DSN                string `yaml:"dsn"`
-	Bucket             string `yaml:"bucket"`
-	Endpoint           string `yaml:"endpoint"`
-	AwsAccessKeyID     string `yaml:"aws_access_key_id"`
-	AwsSecretAccessKey string `yaml:"aws_secret_access_key"`
-	AdminEmail         string `yaml:"admin_email"`
-	AdminPassword      string `yaml:"admin_password"`
+	DSN                          string `yaml:"dsn"`
+	Bucket                       string `yaml:"bucket"`
+	BackupName                   string `yaml:"backup_name"`
+	Endpoint                     string `yaml:"endpoint"`
+	AwsAccessKeyID               string `yaml:"aws_access_key_id"`
+	AwsSecretAccessKey           string `yaml:"aws_secret_access_key"`
+	AdminEmail                   string `yaml:"admin_email"`
+	AdminPassword                string `yaml:"admin_password"`
+	GoogleApplicationCredentials string `yaml:"google_application_credentials"`
 
 	BackupsEnabled bool
 	BackupsConfig  string `yaml:"backups"`
@@ -17,13 +19,15 @@ type Config struct {
 
 func NewDefaultConfig() Config {
 	return Config{
-		DSN:                "${DSN:\"data/xctf.db\"}",
-		Bucket:             "${BUCKET:\"xctf\"}",
-		Endpoint:           "${ENDPOINT:\"http://localhost:9000\"}",
-		AwsAccessKeyID:     "${XCTF_AWS_ACCESS_KEY_ID:\"minio\"}",
-		AwsSecretAccessKey: "${XCTF_AWS_SECRET_ACCESS_KEY:\"minio123\"}",
-		AdminEmail:         "${XCTF_ADMIN_EMAIL:\"admin@admin.com\"}",
-		AdminPassword:      "${XCTF_ADMIN_PASSWORD:\"password\"}",
+		DSN:                          "${DSN:\"data/xctf.db\"}",
+		Bucket:                       "${BUCKET:\"xctf\"}",
+		BackupName:                   "${BACKUP_NAME:\"xctf\"}",
+		Endpoint:                     "${ENDPOINT:\"http://localhost:9000\"}",
+		AwsAccessKeyID:               "${XCTF_AWS_ACCESS_KEY_ID:\"minio\"}",
+		AwsSecretAccessKey:           "${XCTF_AWS_SECRET_ACCESS_KEY:\"minio123\"}",
+		AdminEmail:                   "${XCTF_ADMIN_EMAIL:\"admin@admin.com\"}",
+		AdminPassword:                "${XCTF_ADMIN_PASSWORD:\"password\"}",
+		GoogleApplicationCredentials: "${GOOGLE_APPLICATION_CREDENTIALS:\"\"}",
 
 		BackupsEnabled: false,
 		BackupsConfig:  "${BACKUPS:\"false\"}",

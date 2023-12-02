@@ -19,6 +19,7 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
+	"net/url"
 	"strings"
 	ttemplate "text/template"
 	"time"
@@ -30,6 +31,20 @@ var Chals embed.FS
 type Handler struct {
 	db *db.Service
 	b  *bucket.Builder
+}
+
+func ChalURL(compId, chalID, host string) string {
+	path := fmt.Sprintf("/play/%s/%s", compId, chalID)
+	if host == "" {
+		return path
+	}
+	u := url.URL{
+		// TODO breadchris check if the original request was https
+		Scheme: "http",
+		Host:   host,
+		Path:   path,
+	}
+	return u.String()
 }
 
 func NewHandler(db *db.Service, b *bucket.Builder) *Handler {
@@ -137,10 +152,6 @@ func (h *Handler) Handle() (string, http.Handler) {
 			return
 		}
 
-		chalURL := func(chalID string) string {
-			return fmt.Sprintf("/play/%s/%s", compId, chalID)
-		}
-
 		// TODO breadchris find dependencies of referenced challenge and build those
 		challenges := map[string]string{}
 		for _, n := range graph.Nodes {
@@ -159,7 +170,7 @@ func (h *Handler) Handle() (string, http.Handler) {
 				}
 				view = caesarCipher(c, int(t.Caesar.Shift))
 			case *chalgen.Node_Pcap:
-				view = chalURL(n.Meta.Id)
+				view = ChalURL(compId, n.Meta.Id, r.Host)
 			}
 			if view != "" {
 				challenges[n.Meta.Name] = view

@@ -22,6 +22,7 @@ service Backend {
   rpc GetHomePage(GetHomePageRequest) returns (GetHomePageResponse);
   rpc ForgotPassword(ForgotPasswordRequest) returns (Empty);
   rpc SubmitWriteup(SubmitWriteupRequest) returns (Empty);
+  rpc GetUserWriteup(Empty) returns (GetUserWriteupResponse);
 
   rpc GetCompetitions(Empty) returns (chalgen.CompetitionList);
   rpc UpdateCompetition(chalgen.Competition) returns (chalgen.Competition);
@@ -41,6 +42,10 @@ service Admin {
   rpc SubmitComment(SubmitCommentRequest) returns (Empty);
   rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
   rpc GetUserGraph(GetUserGraphRequest) returns (GetUserGraphResponse);
+}
+
+message GetUserWriteupResponse {
+  string content = 1;
 }
 
 message GRPCTypeInfo {
@@ -186,6 +191,12 @@ message SetHomePageRequest {
 message GetHomePageRequest {}
 message GetHomePageResponse {
   string content = 1;
+  repeated Entrypoint entrypoints = 2;
+}
+
+message Entrypoint {
+  string name = 1;
+  string route = 2;
 }
 
 message ForgotPasswordRequest {
@@ -194,13 +205,16 @@ message ForgotPasswordRequest {
 
 message SubmitWriteupRequest {
   string content = 1;
+  string type = 2;
 }
 
 message GetWriteupRequest {
   string username = 1;
 }
+
 message GetWriteupResponse {
   string content = 1;
+  string type = 2;
 }
 
 message SubmitGradeRequest {

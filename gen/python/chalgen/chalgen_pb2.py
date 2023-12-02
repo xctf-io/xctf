@@ -12,9 +12,10 @@ from google.protobuf.internal import builder as _builder
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import descriptor_pb2 as google_dot_protobuf_dot_descriptor__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x63halgen/chalgen.proto\x12\x07\x63halgen\"K\n\x0f\x43ompetitionList\x12\x38\n\x0c\x63ompetitions\x18\x01 \x03(\x0b\x32\x14.chalgen.CompetitionR\x0c\x63ompetitions\"W\n\x0b\x43ompetition\x12\x0e\n\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n\x04name\x18\x02 \x01(\tR\x04name\x12$\n\x05graph\x18\x03 \x01(\x0b\x32\x0e.chalgen.GraphR\x05graph\"Q\n\x05Graph\x12#\n\x05nodes\x18\x03 \x03(\x0b\x32\r.chalgen.NodeR\x05nodes\x12#\n\x05\x65\x64ges\x18\x04 \x03(\x0b\x32\r.chalgen.EdgeR\x05\x65\x64ges\"Z\n\x04Meta\x12\x0e\n\x02id\x18\x01 \x01(\tR\x02id\x12\x0c\n\x01x\x18\x02 \x01(\x05R\x01x\x12\x0c\n\x01y\x18\x03 \x01(\x05R\x01y\x12\x12\n\x04name\x18\x04 \x01(\tR\x04name\x12\x12\n\x04\x66lag\x18\x05 \x01(\tR\x04\x66lag\"\xe5\x01\n\x04Node\x12!\n\x04meta\x18\x01 \x01(\x0b\x32\r.chalgen.MetaR\x04meta\x12)\n\x06\x62\x61se64\x18\x06 \x01(\x0b\x32\x0f.chalgen.Base64H\x00R\x06\x62\x61se64\x12,\n\x07twitter\x18\x07 \x01(\x0b\x32\x10.chalgen.TwitterH\x00R\x07twitter\x12/\n\x06\x63\x61\x65sar\x18\x08 \x01(\x0b\x32\x15.chalgen.CaesarCipherH\x00R\x06\x63\x61\x65sar\x12#\n\x04pcap\x18\t \x01(\x0b\x32\r.chalgen.PCAPH\x00R\x04pcapB\x0b\n\tchallenge\"*\n\x04\x45\x64ge\x12\x12\n\x04\x66rom\x18\x01 \x01(\tR\x04\x66rom\x12\x0e\n\x02to\x18\x02 \x01(\tR\x02to\"1\n\x04PCAP\x12)\n\x07packets\x18\x01 \x03(\x0b\x32\x0f.chalgen.PacketR\x07packets\"\x90\x01\n\x06Packet\x12\x1c\n\ttimestamp\x18\x01 \x01(\x03R\ttimestamp\x12\x16\n\x06source\x18\x02 \x01(\tR\x06source\x12 \n\x0b\x64\x65stination\x18\x03 \x01(\tR\x0b\x64\x65stination\x12\x1a\n\x08protocol\x18\x04 \x01(\tR\x08protocol\x12\x12\n\x04\x64\x61ta\x18\x05 \x01(\tR\x04\x64\x61ta\"B\n\x0c\x43\x61\x65sarCipher\x12\x1c\n\tplaintext\x18\x01 \x01(\tR\tplaintext\x12\x14\n\x05shift\x18\x02 \x01(\x05R\x05shift\"\x1c\n\x06\x42\x61se64\x12\x12\n\x04\x64\x61ta\x18\x01 \x01(\tR\x04\x64\x61ta\"\x81\x01\n\x07Twitter\x12#\n\x05users\x18\x01 \x03(\x0b\x32\r.chalgen.UserR\x05users\x12#\n\x05posts\x18\x02 \x03(\x0b\x32\r.chalgen.PostR\x05posts\x12,\n\x08\x63omments\x18\x03 \x03(\x0b\x32\x10.chalgen.CommentR\x08\x63omments\"4\n\x04User\x12\x1a\n\x08username\x18\x01 \x01(\tR\x08username\x12\x10\n\x03\x62io\x18\x02 \x01(\tR\x03\x62io\"<\n\x04Post\x12\x1a\n\x08username\x18\x01 \x01(\tR\x08username\x12\x18\n\x07\x63ontent\x18\x02 \x01(\tR\x07\x63ontent\"`\n\x07\x43omment\x12\x1f\n\x0bpost_number\x18\x01 \x01(\x03R\npostNumber\x12\x1a\n\x08username\x18\x02 \x01(\x03R\x08username\x12\x18\n\x07\x63ontent\x18\x03 \x01(\tR\x07\x63ontent2\x10\n\x0e\x43halgenServiceB|\n\x0b\x63om.chalgenB\x0c\x43halgenProtoP\x01Z#github.com/xctf-io/xctf/gen/chalgen\xa2\x02\x03\x43XX\xaa\x02\x07\x43halgen\xca\x02\x07\x43halgen\xe2\x02\x13\x43halgen\\GPBMetadata\xea\x02\x07\x43halgenb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x63halgen/chalgen.proto\x12\x07\x63halgen\x1a google/protobuf/descriptor.proto\"K\n\x0f\x43ompetitionList\x12\x38\n\x0c\x63ompetitions\x18\x01 \x03(\x0b\x32\x14.chalgen.CompetitionR\x0c\x63ompetitions\"o\n\x0b\x43ompetition\x12\x0e\n\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n\x04name\x18\x02 \x01(\tR\x04name\x12$\n\x05graph\x18\x03 \x01(\x0b\x32\x0e.chalgen.GraphR\x05graph\x12\x16\n\x06\x61\x63tive\x18\x04 \x01(\x08R\x06\x61\x63tive\"Q\n\x05Graph\x12#\n\x05nodes\x18\x03 \x03(\x0b\x32\r.chalgen.NodeR\x05nodes\x12#\n\x05\x65\x64ges\x18\x04 \x03(\x0b\x32\r.chalgen.EdgeR\x05\x65\x64ges\"\"\n\x06\x46ormUI\x12\x18\n\x07visible\x18\x01 \x01(\x08R\x07visible\"\x80\x01\n\x04Meta\x12\x14\n\x02id\x18\x01 \x01(\tB\x04\x82\xb5\x18\x00R\x02id\x12\x0c\n\x01x\x18\x02 \x01(\x05R\x01x\x12\x0c\n\x01y\x18\x03 \x01(\x05R\x01y\x12\x12\n\x04name\x18\x04 \x01(\tR\x04name\x12\x12\n\x04\x66lag\x18\x05 \x01(\tR\x04\x66lag\x12\x1e\n\nentrypoint\x18\x06 \x01(\x08R\nentrypoint\"\xe5\x01\n\x04Node\x12!\n\x04meta\x18\x01 \x01(\x0b\x32\r.chalgen.MetaR\x04meta\x12)\n\x06\x62\x61se64\x18\x06 \x01(\x0b\x32\x0f.chalgen.Base64H\x00R\x06\x62\x61se64\x12,\n\x07twitter\x18\x07 \x01(\x0b\x32\x10.chalgen.TwitterH\x00R\x07twitter\x12/\n\x06\x63\x61\x65sar\x18\x08 \x01(\x0b\x32\x15.chalgen.CaesarCipherH\x00R\x06\x63\x61\x65sar\x12#\n\x04pcap\x18\t \x01(\x0b\x32\r.chalgen.PCAPH\x00R\x04pcapB\x0b\n\tchallenge\"*\n\x04\x45\x64ge\x12\x12\n\x04\x66rom\x18\x01 \x01(\tR\x04\x66rom\x12\x0e\n\x02to\x18\x02 \x01(\tR\x02to\"1\n\x04PCAP\x12)\n\x07packets\x18\x01 \x03(\x0b\x32\x0f.chalgen.PacketR\x07packets\"\x90\x01\n\x06Packet\x12\x1c\n\ttimestamp\x18\x01 \x01(\x03R\ttimestamp\x12\x16\n\x06source\x18\x02 \x01(\tR\x06source\x12 \n\x0b\x64\x65stination\x18\x03 \x01(\tR\x0b\x64\x65stination\x12\x1a\n\x08protocol\x18\x04 \x01(\tR\x08protocol\x12\x12\n\x04\x64\x61ta\x18\x05 \x01(\tR\x04\x64\x61ta\"B\n\x0c\x43\x61\x65sarCipher\x12\x1c\n\tplaintext\x18\x01 \x01(\tR\tplaintext\x12\x14\n\x05shift\x18\x02 \x01(\x05R\x05shift\"\x1c\n\x06\x42\x61se64\x12\x12\n\x04\x64\x61ta\x18\x01 \x01(\tR\x04\x64\x61ta\"\x81\x01\n\x07Twitter\x12#\n\x05users\x18\x01 \x03(\x0b\x32\r.chalgen.UserR\x05users\x12#\n\x05posts\x18\x02 \x03(\x0b\x32\r.chalgen.PostR\x05posts\x12,\n\x08\x63omments\x18\x03 \x03(\x0b\x32\x10.chalgen.CommentR\x08\x63omments\"4\n\x04User\x12\x1a\n\x08username\x18\x01 \x01(\tR\x08username\x12\x10\n\x03\x62io\x18\x02 \x01(\tR\x03\x62io\"<\n\x04Post\x12\x1a\n\x08username\x18\x01 \x01(\tR\x08username\x12\x18\n\x07\x63ontent\x18\x02 \x01(\tR\x07\x63ontent\"`\n\x07\x43omment\x12\x1f\n\x0bpost_number\x18\x01 \x01(\x03R\npostNumber\x12\x1a\n\x08username\x18\x02 \x01(\x03R\x08username\x12\x18\n\x07\x63ontent\x18\x03 \x01(\tR\x07\x63ontent2\x10\n\x0e\x43halgenService:I\n\x07\x66orm_ui\x12\x1d.google.protobuf.FieldOptions\x18\xd0\x86\x03 \x01(\x0b\x32\x0f.chalgen.FormUIR\x06\x66ormUiB|\n\x0b\x63om.chalgenB\x0c\x43halgenProtoP\x01Z#github.com/xctf-io/xctf/gen/chalgen\xa2\x02\x03\x43XX\xaa\x02\x07\x43halgen\xca\x02\x07\x43halgen\xe2\x02\x13\x43halgen\\GPBMetadata\xea\x02\x07\x43halgenb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,34 +23,38 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'chalgen.chalgen_pb2', _glob
 if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['DESCRIPTOR']._options = None
   _globals['DESCRIPTOR']._serialized_options = b'\n\013com.chalgenB\014ChalgenProtoP\001Z#github.com/xctf-io/xctf/gen/chalgen\242\002\003CXX\252\002\007Chalgen\312\002\007Chalgen\342\002\023Chalgen\\GPBMetadata\352\002\007Chalgen'
-  _globals['_COMPETITIONLIST']._serialized_start=34
-  _globals['_COMPETITIONLIST']._serialized_end=109
-  _globals['_COMPETITION']._serialized_start=111
-  _globals['_COMPETITION']._serialized_end=198
-  _globals['_GRAPH']._serialized_start=200
-  _globals['_GRAPH']._serialized_end=281
-  _globals['_META']._serialized_start=283
-  _globals['_META']._serialized_end=373
-  _globals['_NODE']._serialized_start=376
-  _globals['_NODE']._serialized_end=605
-  _globals['_EDGE']._serialized_start=607
-  _globals['_EDGE']._serialized_end=649
-  _globals['_PCAP']._serialized_start=651
-  _globals['_PCAP']._serialized_end=700
-  _globals['_PACKET']._serialized_start=703
-  _globals['_PACKET']._serialized_end=847
-  _globals['_CAESARCIPHER']._serialized_start=849
-  _globals['_CAESARCIPHER']._serialized_end=915
-  _globals['_BASE64']._serialized_start=917
-  _globals['_BASE64']._serialized_end=945
-  _globals['_TWITTER']._serialized_start=948
-  _globals['_TWITTER']._serialized_end=1077
-  _globals['_USER']._serialized_start=1079
-  _globals['_USER']._serialized_end=1131
-  _globals['_POST']._serialized_start=1133
-  _globals['_POST']._serialized_end=1193
-  _globals['_COMMENT']._serialized_start=1195
-  _globals['_COMMENT']._serialized_end=1291
-  _globals['_CHALGENSERVICE']._serialized_start=1293
-  _globals['_CHALGENSERVICE']._serialized_end=1309
+  _globals['_META'].fields_by_name['id']._options = None
+  _globals['_META'].fields_by_name['id']._serialized_options = b'\202\265\030\000'
+  _globals['_COMPETITIONLIST']._serialized_start=68
+  _globals['_COMPETITIONLIST']._serialized_end=143
+  _globals['_COMPETITION']._serialized_start=145
+  _globals['_COMPETITION']._serialized_end=256
+  _globals['_GRAPH']._serialized_start=258
+  _globals['_GRAPH']._serialized_end=339
+  _globals['_FORMUI']._serialized_start=341
+  _globals['_FORMUI']._serialized_end=375
+  _globals['_META']._serialized_start=378
+  _globals['_META']._serialized_end=506
+  _globals['_NODE']._serialized_start=509
+  _globals['_NODE']._serialized_end=738
+  _globals['_EDGE']._serialized_start=740
+  _globals['_EDGE']._serialized_end=782
+  _globals['_PCAP']._serialized_start=784
+  _globals['_PCAP']._serialized_end=833
+  _globals['_PACKET']._serialized_start=836
+  _globals['_PACKET']._serialized_end=980
+  _globals['_CAESARCIPHER']._serialized_start=982
+  _globals['_CAESARCIPHER']._serialized_end=1048
+  _globals['_BASE64']._serialized_start=1050
+  _globals['_BASE64']._serialized_end=1078
+  _globals['_TWITTER']._serialized_start=1081
+  _globals['_TWITTER']._serialized_end=1210
+  _globals['_USER']._serialized_start=1212
+  _globals['_USER']._serialized_end=1264
+  _globals['_POST']._serialized_start=1266
+  _globals['_POST']._serialized_end=1326
+  _globals['_COMMENT']._serialized_start=1328
+  _globals['_COMMENT']._serialized_end=1424
+  _globals['_CHALGENSERVICE']._serialized_start=1426
+  _globals['_CHALGENSERVICE']._serialized_end=1442
 # @@protoc_insertion_point(module_scope)

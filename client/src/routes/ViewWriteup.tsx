@@ -8,7 +8,7 @@ import React, {
 import { useNavigate, useParams } from "react-router-dom";
 import { xctfAdmin } from "../service";
 import { createErrorToast, createSuccessToast } from "../store/user";
-import { Button, theme, Input, Switch, useTheme } from "@nextui-org/react";
+import {Button, theme, Input, Switch, useTheme, Textarea} from "@nextui-org/react";
 import {
 	TbArrowBigLeftFilled,
 	TbArrowBigRightFilled,
@@ -420,7 +420,7 @@ const ViewWriteup = () => {
 
 	useEffect(() => {
 		getNotes();
-	}, [notes]);
+	}, []);
 
 	const [nodes, setNodes] = useState<Node[]>();
 	const onNodesChange = useCallback(
@@ -491,20 +491,21 @@ const ViewWriteup = () => {
 						height: "calc(100vh - 100px)",
 					}}
 				>
-					<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-						{isDark ? (
-							<Viewer
-								theme="dark"
-								fileUrl={writeup}
-								plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}
-							/>
-						) : (
-							<Viewer
-								fileUrl={writeup}
-								plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}
-							/>
-						)}
-					</Worker>
+					<Textarea fullWidth value={writeup} />
+					{/*<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">*/}
+					{/*	{isDark ? (*/}
+					{/*		<Viewer*/}
+					{/*			theme="dark"*/}
+					{/*			fileUrl={writeup}*/}
+					{/*			plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}*/}
+					{/*		/>*/}
+					{/*	) : (*/}
+					{/*		<Viewer*/}
+					{/*			fileUrl={writeup}*/}
+					{/*			plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}*/}
+					{/*		/>*/}
+					{/*	)}*/}
+					{/*</Worker>*/}
 				</div>
 			)}
 			{!writeup && !showChart && <div></div>}

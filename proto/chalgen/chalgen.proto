@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package chalgen;
 
+import "google/protobuf/descriptor.proto";
+
 message CompetitionList {
   repeated Competition competitions = 1;
 }
@@ -10,6 +12,7 @@ message Competition {
   string id = 1;
   string name = 2;
   Graph graph = 3;
+  bool active = 4;
 }
 
 message Graph {
@@ -17,12 +20,21 @@ message Graph {
   repeated Edge edges = 4;
 }
 
+extend google.protobuf.FieldOptions {
+  FormUI form_ui = 50000;
+}
+
+message FormUI {
+  bool visible = 1;
+}
+
 message Meta {
-  string id = 1;
+  string id = 1 [ (form_ui).visible = false ];
   int32 x = 2;
   int32 y = 3;
   string name = 4;
   string flag = 5;
+  bool entrypoint = 6;
 }
 
 message Node {

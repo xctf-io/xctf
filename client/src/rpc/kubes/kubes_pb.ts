@@ -15,6 +15,11 @@ export class DeleteDeploymentRequest extends Message<DeleteDeploymentRequest> {
    */
   name = "";
 
+  /**
+   * @generated from field: string domain_name = 2;
+   */
+  domainName = "";
+
   constructor(data?: PartialMessage<DeleteDeploymentRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -24,6 +29,7 @@ export class DeleteDeploymentRequest extends Message<DeleteDeploymentRequest> {
   static readonly typeName = "kubes.DeleteDeploymentRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "domain_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteDeploymentRequest {
@@ -157,6 +163,11 @@ export class NewDeploymentRequest extends Message<NewDeploymentRequest> {
    */
   name = "";
 
+  /**
+   * @generated from field: string domain_name = 2;
+   */
+  domainName = "";
+
   constructor(data?: PartialMessage<NewDeploymentRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -166,6 +177,7 @@ export class NewDeploymentRequest extends Message<NewDeploymentRequest> {
   static readonly typeName = "kubes.NewDeploymentRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "domain_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): NewDeploymentRequest {

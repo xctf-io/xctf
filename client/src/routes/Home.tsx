@@ -4,6 +4,7 @@ import { useUser } from "../store/user";
 import { xctf, xctfAdmin } from "../service";
 import Markdown from "markdown-to-jsx";
 import { HiPencilSquare } from "react-icons/hi2";
+import {Entrypoint} from "@/rpc/xctf/xctf_pb";
 
 interface Props {}
 
@@ -12,11 +13,13 @@ const CTFComponent: React.FC<Props> = () => {
 	const [user, setUser, logout] = useUser();
 	const themeColor = user?.type == "admin" ? "error" : "primary";
 	const [homePage, setHomePage] = useState<string>("");
+	const [entrypoints, setEntrypoints] = useState<Entrypoint[]>([]);
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	useEffect(() => {
 		async function getHomePage() {
 			const res = await xctf.getHomePage({});
 			setHomePage(res.content);
+			setEntrypoints(res.entrypoints);
 		}
 		getHomePage();
 	}, []);
@@ -37,37 +40,49 @@ const CTFComponent: React.FC<Props> = () => {
 			)}
 			<div className="relative">
 				{loggedIn && !isEditing && (
-					<Markdown
-						className={textOpacity}
-						options={{
-							overrides: {
-								a: {
-									component: Link,
-									props: {
-										color: themeColor,
+					<>
+						<Markdown
+							className={textOpacity}
+							options={{
+								overrides: {
+									a: {
+										component: Link,
+										props: {
+											color: themeColor,
+										},
+									},
+									p: {
+										component: ({ children, ...props }) => (
+											<p {...props}>{children}</p>
+										),
+										props: {
+											className: "text-lg",
+										},
+									},
+									strong: {
+										component: ({ children, ...props }) => (
+											<span {...props}>{children}</span>
+										),
+										props: {
+											className: "font-extrabold",
+										},
 									},
 								},
-								p: {
-									component: ({ children, ...props }) => (
-										<p {...props}>{children}</p>
-									),
-									props: {
-										className: "text-lg",
-									},
-								},
-								strong: {
-									component: ({ children, ...props }) => (
-										<span {...props}>{children}</span>
-									),
-									props: {
-										className: "font-extrabold",
-									},
-								},
-							},
-						}}
-					>
-						{homePage}
-					</Markdown>
+							}}
+						>
+							{homePage}
+						</Markdown>
+						<h3>Start Here!</h3>
+						{entrypoints.map((e) => (
+							<Link
+								key={e.route}
+								color={themeColor}
+								href={e.route}
+								target="_blank">
+								{e.name}
+							</Link>
+						))}
+					</>
 				)}
 				{loggedIn && !isEditing && isAdmin && (
 					<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">

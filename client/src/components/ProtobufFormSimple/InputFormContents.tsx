@@ -64,9 +64,7 @@ export const InputFormContents: FC<InputFormContentsProps> = (props) => {
             )
         }
     }
-    // TODO breadchris this should be checking for an actual type, not a string, field.type is a string, not a number
-    // @ts-ignore
-    if (field.type === "TYPE_ENUM" || field.type === FieldDescriptorProto_Type.ENUM) {
+    if (field.type === FieldDescriptorProto_Type.ENUM) {
         if (!field.typeName) {
             throw new Error("Enum field has no type name");
         }
@@ -86,6 +84,20 @@ export const InputFormContents: FC<InputFormContentsProps> = (props) => {
                     ))}
                 </select>
             </>
+        )
+    }
+    if (field.type === FieldDescriptorProto_Type.STRING) {
+        return (
+            <div key={field.number}>
+                <Input aria-label={"field-input"} value={fieldValue} {...register(fieldFormName)} />
+            </div>
+        )
+    }
+    if (field.type === FieldDescriptorProto_Type.BOOL) {
+        return (
+            <div key={field.number}>
+                <input aria-label={"field-input"} type={"checkbox"} checked={fieldValue} {...register(fieldFormName)} />
+            </div>
         )
     }
     return (

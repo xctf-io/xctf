@@ -35,6 +35,7 @@ type BackendClient interface {
 	GetHomePage(ctx context.Context, in *GetHomePageRequest, opts ...grpc.CallOption) (*GetHomePageResponse, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*Empty, error)
 	SubmitWriteup(ctx context.Context, in *SubmitWriteupRequest, opts ...grpc.CallOption) (*Empty, error)
+	GetUserWriteup(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetUserWriteupResponse, error)
 	GetCompetitions(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*chalgen.CompetitionList, error)
 	UpdateCompetition(ctx context.Context, in *chalgen.Competition, opts ...grpc.CallOption) (*chalgen.Competition, error)
 	DeleteCompetition(ctx context.Context, in *chalgen.Competition, opts ...grpc.CallOption) (*Empty, error)
@@ -157,6 +158,15 @@ func (c *backendClient) SubmitWriteup(ctx context.Context, in *SubmitWriteupRequ
 	return out, nil
 }
 
+func (c *backendClient) GetUserWriteup(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetUserWriteupResponse, error) {
+	out := new(GetUserWriteupResponse)
+	err := c.cc.Invoke(ctx, "/xctf.Backend/GetUserWriteup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *backendClient) GetCompetitions(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*chalgen.CompetitionList, error) {
 	out := new(chalgen.CompetitionList)
 	err := c.cc.Invoke(ctx, "/xctf.Backend/GetCompetitions", in, out, opts...)
@@ -209,6 +219,7 @@ type BackendServer interface {
 	GetHomePage(context.Context, *GetHomePageRequest) (*GetHomePageResponse, error)
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*Empty, error)
 	SubmitWriteup(context.Context, *SubmitWriteupRequest) (*Empty, error)
+	GetUserWriteup(context.Context, *Empty) (*GetUserWriteupResponse, error)
 	GetCompetitions(context.Context, *Empty) (*chalgen.CompetitionList, error)
 	UpdateCompetition(context.Context, *chalgen.Competition) (*chalgen.Competition, error)
 	DeleteCompetition(context.Context, *chalgen.Competition) (*Empty, error)
@@ -254,6 +265,9 @@ func (UnimplementedBackendServer) ForgotPassword(context.Context, *ForgotPasswor
 }
 func (UnimplementedBackendServer) SubmitWriteup(context.Context, *SubmitWriteupRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitWriteup not implemented")
+}
+func (UnimplementedBackendServer) GetUserWriteup(context.Context, *Empty) (*GetUserWriteupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserWriteup not implemented")
 }
 func (UnimplementedBackendServer) GetCompetitions(context.Context, *Empty) (*chalgen.CompetitionList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCompetitions not implemented")
@@ -495,6 +509,24 @@ func _Backend_SubmitWriteup_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Backend_GetUserWriteup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BackendServer).GetUserWriteup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Backend/GetUserWriteup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BackendServer).GetUserWriteup(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Backend_GetCompetitions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
@@ -621,6 +653,10 @@ var Backend_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SubmitWriteup",
 			Handler:    _Backend_SubmitWriteup_Handler,
+		},
+		{
+			MethodName: "GetUserWriteup",
+			Handler:    _Backend_GetUserWriteup_Handler,
 		},
 		{
 			MethodName: "GetCompetitions",

@@ -7,6 +7,43 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { DescriptorProto, EnumDescriptorProto, Message, proto3 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from message xctf.GetUserWriteupResponse
+ */
+export class GetUserWriteupResponse extends Message<GetUserWriteupResponse> {
+  /**
+   * @generated from field: string content = 1;
+   */
+  content = "";
+
+  constructor(data?: PartialMessage<GetUserWriteupResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.GetUserWriteupResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetUserWriteupResponse {
+    return new GetUserWriteupResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetUserWriteupResponse {
+    return new GetUserWriteupResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetUserWriteupResponse {
+    return new GetUserWriteupResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetUserWriteupResponse | PlainMessage<GetUserWriteupResponse> | undefined, b: GetUserWriteupResponse | PlainMessage<GetUserWriteupResponse> | undefined): boolean {
+    return proto3.util.equals(GetUserWriteupResponse, a, b);
+  }
+}
+
+/**
  * @generated from message xctf.GRPCTypeInfo
  */
 export class GRPCTypeInfo extends Message<GRPCTypeInfo> {
@@ -1345,6 +1382,11 @@ export class GetHomePageResponse extends Message<GetHomePageResponse> {
    */
   content = "";
 
+  /**
+   * @generated from field: repeated xctf.Entrypoint entrypoints = 2;
+   */
+  entrypoints: Entrypoint[] = [];
+
   constructor(data?: PartialMessage<GetHomePageResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -1354,6 +1396,7 @@ export class GetHomePageResponse extends Message<GetHomePageResponse> {
   static readonly typeName = "xctf.GetHomePageResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "entrypoints", kind: "message", T: Entrypoint, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetHomePageResponse {
@@ -1370,6 +1413,49 @@ export class GetHomePageResponse extends Message<GetHomePageResponse> {
 
   static equals(a: GetHomePageResponse | PlainMessage<GetHomePageResponse> | undefined, b: GetHomePageResponse | PlainMessage<GetHomePageResponse> | undefined): boolean {
     return proto3.util.equals(GetHomePageResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.Entrypoint
+ */
+export class Entrypoint extends Message<Entrypoint> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  /**
+   * @generated from field: string route = 2;
+   */
+  route = "";
+
+  constructor(data?: PartialMessage<Entrypoint>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.Entrypoint";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "route", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Entrypoint {
+    return new Entrypoint().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Entrypoint {
+    return new Entrypoint().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Entrypoint {
+    return new Entrypoint().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Entrypoint | PlainMessage<Entrypoint> | undefined, b: Entrypoint | PlainMessage<Entrypoint> | undefined): boolean {
+    return proto3.util.equals(Entrypoint, a, b);
   }
 }
 
@@ -1419,6 +1505,11 @@ export class SubmitWriteupRequest extends Message<SubmitWriteupRequest> {
    */
   content = "";
 
+  /**
+   * @generated from field: string type = 2;
+   */
+  type = "";
+
   constructor(data?: PartialMessage<SubmitWriteupRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -1428,6 +1519,7 @@ export class SubmitWriteupRequest extends Message<SubmitWriteupRequest> {
   static readonly typeName = "xctf.SubmitWriteupRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SubmitWriteupRequest {
@@ -1493,6 +1585,11 @@ export class GetWriteupResponse extends Message<GetWriteupResponse> {
    */
   content = "";
 
+  /**
+   * @generated from field: string type = 2;
+   */
+  type = "";
+
   constructor(data?: PartialMessage<GetWriteupResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -1502,6 +1599,7 @@ export class GetWriteupResponse extends Message<GetWriteupResponse> {
   static readonly typeName = "xctf.GetWriteupResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetWriteupResponse {

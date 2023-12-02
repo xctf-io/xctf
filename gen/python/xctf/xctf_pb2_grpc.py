@@ -75,6 +75,11 @@ class BackendStub(object):
                 request_serializer=xctf_dot_xctf__pb2.SubmitWriteupRequest.SerializeToString,
                 response_deserializer=xctf_dot_xctf__pb2.Empty.FromString,
                 )
+        self.GetUserWriteup = channel.unary_unary(
+                '/xctf.Backend/GetUserWriteup',
+                request_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
+                response_deserializer=xctf_dot_xctf__pb2.GetUserWriteupResponse.FromString,
+                )
         self.GetCompetitions = channel.unary_unary(
                 '/xctf.Backend/GetCompetitions',
                 request_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
@@ -172,6 +177,12 @@ class BackendServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetUserWriteup(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetCompetitions(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -258,6 +269,11 @@ def add_BackendServicer_to_server(servicer, server):
                     servicer.SubmitWriteup,
                     request_deserializer=xctf_dot_xctf__pb2.SubmitWriteupRequest.FromString,
                     response_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
+            ),
+            'GetUserWriteup': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetUserWriteup,
+                    request_deserializer=xctf_dot_xctf__pb2.Empty.FromString,
+                    response_serializer=xctf_dot_xctf__pb2.GetUserWriteupResponse.SerializeToString,
             ),
             'GetCompetitions': grpc.unary_unary_rpc_method_handler(
                     servicer.GetCompetitions,
@@ -490,6 +506,23 @@ class Backend(object):
         return grpc.experimental.unary_unary(request, target, '/xctf.Backend/SubmitWriteup',
             xctf_dot_xctf__pb2.SubmitWriteupRequest.SerializeToString,
             xctf_dot_xctf__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetUserWriteup(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Backend/GetUserWriteup',
+            xctf_dot_xctf__pb2.Empty.SerializeToString,
+            xctf_dot_xctf__pb2.GetUserWriteupResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

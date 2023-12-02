@@ -1,6 +1,6 @@
 import {DescriptorProto, FieldDescriptorProto, FieldDescriptorProto_Label, FieldDescriptorProto_Type} from "@bufbuild/protobuf";
-import React, {FC, useState} from "react";
-import {useFieldArray} from "react-hook-form";
+import React, {FC, useEffect, useState} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
 import {InputFormContents, InputFormContentsProps} from "@/components/ProtobufFormSimple/InputFormContents";
 import {GRPCInputFormProps} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import {Button} from "@nextui-org/react";
@@ -28,99 +28,174 @@ interface GRPCInputFormContentsProps extends GRPCInputFormProps {
 }
 
 export const MessageField: FC<GRPCInputFormContentsProps> = (props) => {
-    const [currentField, setCurrentField] = useState<string|undefined>('');
-    const { resetField, control, baseFieldName, field, fieldPath, desc } = props;
+    const { field} = props;
+
+    return (
+        <div className="input_container two-of-2 three-of-3 two-of-4 one-of-5">
+            <div className="field-content">
+                {field.type === 'field' ? (
+                    <FormattedMessageField grpcProps={props} baseFieldName={props.baseFieldName} field={field.field} />
+                ) : (
+                    <OneOfField grpcProps={props} field={field} />
+                )}
+            </div>
+        </div>
+    );
+}
+
+interface FormattedMessageFieldProps {
+    grpcProps: GRPCInputFormProps
+    baseFieldName: string|undefined
+    field: FieldDescriptorProto
+}
+
+const FormattedMessageField: FC<FormattedMessageFieldProps> = (props) => {
+    const { field, baseFieldName, grpcProps } = props;
+    const { control, fieldPath } = grpcProps;
 
     const { fields: formFields, append, remove } = useFieldArray({
         control, name: baseFieldName || 'input',
     });
 
-    const formatField = (baseFieldName: string|undefined, field: FieldDescriptorProto) => {
-        const inputProps: InputFormContentsProps = {
-            inputFormProps: {
-                ...props,
-                fieldPath: `${fieldPath}.${field.name}`,
-                baseFieldName,
-            },
-            field,
-        };
+    const inputProps: InputFormContentsProps = {
+        inputFormProps: {
+            ...grpcProps,
+            fieldPath: `${fieldPath}.${field.name}`,
+            baseFieldName,
+        },
+        field,
+    };
 
-        if (field.label === FieldDescriptorProto_Label.REPEATED) {
-            return (
-                <table>
-                    <tbody>
-                        {formFields.map((f, index) => (
-                            <tr className={"array_element"} key={f.id}>
-                                <td>
-                                    <InputFormContents {...inputProps} index={index} />
-                                    <Button color={"error"} onClick={() => remove(index)}>Remove</Button>
-                                </td>
-                            </tr>
-                        ))}
-                        <tr>
-                            <td>
-                                <Button onClick={() => append({})}>New</Button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            );
-        }
-        return (<InputFormContents {...inputProps} />);
+    if (field.label === FieldDescriptorProto_Label.REPEATED) {
+        return (
+            <table>
+                <tbody>
+                {formFields.map((f, index) => (
+                    <tr className={"array_element"} key={f.id}>
+                        <td>
+                            <InputFormContents {...inputProps} index={index} />
+                            <Button color={"error"} onClick={() => remove(index)}>Remove</Button>
+                        </td>
+                    </tr>
+                ))}
+                <tr>
+                    <td>
+                        <Button onClick={() => append({})}>New</Button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        );
     }
+    return (<InputFormContents {...inputProps} />);
+}
 
-    const panelContents = () => {
-        if (field.type === 'field') {
-            return formatField(props.baseFieldName, field.field);
-        } else {
-            if (!field.fields) {
-                return null;
-            }
-            const fieldLookup = field.fields.reduce((acc, fd) => ({
-                ...acc,
-                [fd.name || '']: fd,
-            }), {} as Record<string, FieldDescriptorProto>);
-            const resetFields = (except: string|undefined) => {
-                field.fields.forEach((f) => {
-                    console.log(`${props.parentFieldName}.${f.name}`)
-                    resetField(`${props.parentFieldName}.${f.name}`);
-                })
-            }
-            return (
-                <div className="oneof">
-                    <table>
-                        <tbody>
-                        {field.fields.map((f) => (
-                            <tr key={f.name}>
-                                <td className={"name"}>
-                                    <strong>{f.name}</strong><br/>{f.type && typeLookup[f.type]}
-                                </td>
-                                <td>
-                                    <input
-                                        type="radio"
-                                        value={f.name}
-                                        checked={currentField === f.name}
-                                        onChange={() => {
-                                            resetFields(f.name);
-                                            setCurrentField(f.name)
-                                        }}
-                                    />
-                                </td>
-                                <td>
-                                    {(currentField && currentField == f.name) ? formatField(`${props.parentFieldName}.${f.name}`, fieldLookup[currentField]) : "unset"}
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </div>
-            );
+interface OneOfFieldProps {
+    grpcProps: GRPCInputFormProps
+    field: GrpcFormOneof
+}
+
+interface FormattedOneOfFieldProps {
+    grpcProps: GRPCInputFormProps
+    f: FieldDescriptorProto
+    currentField: string|undefined
+    fieldLookup: Record<string, FieldDescriptorProto>
+    onChecked: () => void
+    setCurrentField: (field: string|undefined) => void
+}
+
+const getFieldPath = (grpcProps: GRPCInputFormProps, f: FieldDescriptorProto) => {
+    return `${grpcProps.parentFieldName}.${f.name}`;
+}
+
+const FormattedOneOfField: FC<FormattedOneOfFieldProps> = (props) => {
+    const {
+        f,
+        onChecked,
+        fieldLookup,
+        grpcProps ,
+        currentField,
+        setCurrentField,
+    } = props;
+    const { control } = grpcProps;
+
+    const fieldPath = getFieldPath(grpcProps, f);
+    const fieldValue = useWatch({
+        control,
+        name: fieldPath,
+    });
+
+    useEffect(() => {
+        if (fieldValue !== undefined) {
+            setCurrentField(f.name);
         }
-    }
+    }, [fieldValue]);
+
+    console.log(fieldPath, fieldValue);
 
     return (
-        <div className="input_container two-of-2 three-of-3 two-of-4 one-of-5">
-            <div className="field-content">{panelContents()}</div>
+        <tr key={f.name}>
+            <td className={"name"}>
+                <strong>{f.name}</strong><br/>{f.type && typeLookup[f.type]}
+            </td>
+            <td>
+                <input
+                    type="radio"
+                    value={f.name}
+                    checked={currentField === f.name || fieldValue !== undefined}
+                    onChange={onChecked}
+                />
+            </td>
+            <td>
+                {(currentField && currentField == f.name) ? (
+                    <FormattedMessageField
+                        grpcProps={grpcProps}
+                        baseFieldName={`${grpcProps.parentFieldName}.${f.name}`}
+                        field={fieldLookup[currentField]}
+                    />
+                ) : "unset"}
+            </td>
+        </tr>
+    )
+}
+
+const OneOfField: FC<OneOfFieldProps> = (props) => {
+    const [currentField, setCurrentField] = useState<string|undefined>('');
+    const { field, grpcProps } = props;
+    const { resetField, control } = grpcProps;
+
+    if (!field.fields) {
+        return null;
+    }
+    const fieldLookup = field.fields.reduce((acc, fd) => ({
+        ...acc,
+        [fd.name || '']: fd,
+    }), {} as Record<string, FieldDescriptorProto>);
+    const resetFields = (except: string|undefined) => {
+        field.fields.forEach((f) => {
+            resetField(getFieldPath(grpcProps, f));
+        })
+    }
+    return (
+        <div className="oneof">
+            <table>
+                <tbody>
+                {field.fields.map((f) => (
+                    <FormattedOneOfField
+                        key={getFieldPath(grpcProps, f)}
+                        onChecked={() => {
+                            resetFields(f.name);
+                            setCurrentField(f.name)
+                        }}
+                        grpcProps={grpcProps}
+                        f={f}
+                        currentField={currentField}
+                        setCurrentField={setCurrentField}
+                        fieldLookup={fieldLookup}
+                    />
+                ))}
+                </tbody>
+            </table>
         </div>
     );
 }

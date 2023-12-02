@@ -6,6 +6,7 @@ import { xctf } from '@/service';
 import {Competition, CompetitionList, Graph, Meta, Node} from "@/rpc/chalgen/chalgen_pb";
 import {toast} from "react-toastify";
 import {removeUndefinedFields} from "@/util/object";
+import {act} from "react-dom/test-utils";
 
 export const Competitions: React.FC = () => {
     return (
@@ -18,6 +19,7 @@ const Edit: React.FC = () => {
     const [selectedCompetition, setSelectedCompetition] = React.useState<Competition|undefined>(undefined);
     const [competitionList, setCompetitionList] = React.useState<CompetitionList|null>(null);
     const [competitionName, setCompetitionName] = React.useState<string>('');
+    const [active, setActive] = React.useState<boolean>(false);
     const [currentChallenge, setCurrentChallenge] = React.useState<Node|undefined>(undefined);
     const [preview, setPreview] = React.useState<boolean>(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -35,6 +37,7 @@ const Edit: React.FC = () => {
             if (res.competitions.length > 0) {
                 setSelectedCompetition(res.competitions[0]);
                 setCompetitionName(res.competitions[0].name);
+                setActive(res.competitions[0].active)
             }
         } catch (e: any) {
             console.error(e);
@@ -96,12 +99,14 @@ const Edit: React.FC = () => {
             id: selectedCompetition?.id || '',
             name: competitionName || '',
             graph: g,
+            active: active,
         });
         console.log('updating competition', c);
         setSelectedCompetition(c);
         try {
             const res = await xctf.updateCompetition(c);
             console.log(res);
+            toast.success('Saved!');
         } catch (e: any) {
             console.error(e);
             toast.error(e.message);
@@ -119,14 +124,20 @@ const Edit: React.FC = () => {
         if (Array.isArray(d.name)) {
             delete d.name;
         }
-        if (Array.isArray(d.flag)) {
-            delete d.flag;
+        if (Array.isArray(d.meta.flag)) {
+            toast.error('Please enter a flag');
+            return;
         }
         if (Array.isArray(d.challenge)) {
             delete d.challenge;
         }
         console.log('updated node', d)
-        void saveNode(Node.fromJson(d));
+        try {
+            await saveNode(Node.fromJson(d));
+        } catch (e: any) {
+            console.error(e);
+            toast.error(e.message);
+        }
     };
 
     const onCompDelete = async () => {
@@ -200,6 +211,12 @@ const Edit: React.FC = () => {
         setPreview(!preview);
     }
 
+    const newCompetition = () => {
+        setSelectedCompetition(undefined);
+        setActive(false);
+        setCompetitionName('');
+    }
+
     const newChallenge = () => {
         selectChallenge(new Node({}));
     }
@@ -207,7 +224,7 @@ const Edit: React.FC = () => {
     return (
         <>
             <div className="mx-[3vw] lg:mx-[6vw] mt-8">
-                <Row>
+                <Row className={"space-x-4"}>
                     {competitionList ? (
                         <>
                             {competitionList.competitions.length === 0 ? (
@@ -239,13 +256,17 @@ const Edit: React.FC = () => {
                     ) : (
                         <Spinner />
                     )}
-                    <Button onClick={togglePreview}>
-                        Preview
+                    <Button onClick={newCompetition}>
+                        New Competition
                     </Button>
                 </Row>
                 <Row>
                     <Col span={3}>
                         <Input label={"name"} value={competitionName} onChange={(e) => setCompetitionName(e.target.value)} />
+                        <label>
+                            <input aria-label={"active"} type={"checkbox"} checked={active} onChange={(e) => setActive(e.target.checked)} />
+                            active
+                        </label>
                         <table>
                             <thead>
                                 <tr>
@@ -285,7 +306,10 @@ const Edit: React.FC = () => {
                             <div className="flex flex-col gap-2 p-3">
                                 {form()}
                             </div>
-                            <Row>
+                            <Row className={"space-x-4"}>
+                                <Button color={'secondary'} onClick={togglePreview}>
+                                    Preview
+                                </Button>
                                 <Button type="submit">
                                     Save
                                 </Button>
