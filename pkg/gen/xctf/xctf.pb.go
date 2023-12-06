@@ -7,7 +7,7 @@
 package xctf
 
 import (
-	chalgen "github.com/xctf-io/xctf/gen/chalgen"
+	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	descriptorpb "google.golang.org/protobuf/types/descriptorpb"

@@ -1,6 +1,6 @@
 version: '3.6'
 services:
-  ctfg:
+  xctf:
     build:
       context: .
       dockerfile: Dockerfile

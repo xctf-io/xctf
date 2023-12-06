@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/bufbuild/connect-go"
-	"github.com/xctf-io/xctf/gen/xctf"
 	"github.com/xctf-io/xctf/pkg/db"
+	"github.com/xctf-io/xctf/pkg/gen/xctf"
 
 	"github.com/xctf-io/xctf/pkg/models"
 	"gorm.io/gorm/clause"

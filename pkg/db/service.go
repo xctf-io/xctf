@@ -8,7 +8,7 @@ import (
 	"github.com/benbjohnson/litestream"
 	lsgcs "github.com/benbjohnson/litestream/gcs"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/xctf-io/xctf/gen/chalgen"
+	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 	"github.com/xctf-io/xctf/pkg/models"
 	"google.golang.org/protobuf/encoding/protojson"
 	"gorm.io/gorm"
