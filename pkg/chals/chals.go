@@ -181,6 +181,14 @@ func (h *Handler) Handle() (string, http.Handler) {
 			if n.Meta.Id == chalId {
 				s := slug.Make(n.Meta.Name)
 				switch t := n.Challenge.(type) {
+				case *chalgen.Node_Exif:
+					// Returns an image file with the exif data embedded
+					w.Header().Set("Content-Type", "image/jpeg")
+					w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.jpg", s))
+					if err != nil {
+						http.Error(w, err.Error(), http.StatusInternalServerError)
+						return
+					}
 				case *chalgen.Node_Pcap:
 					w.Header().Set("Content-Type", "application/vnd.tcpdump.pcap")
 					w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.pcap", s))

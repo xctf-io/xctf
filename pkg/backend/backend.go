@@ -86,19 +86,22 @@ func (b *Backend) UpdateCompetition(ctx context.Context, c *connect.Request[chal
 		return nil, err
 	}
 
+	// TODO breadchris ignoring c.Msg.Active for now
+	isActive := true
+
 	var cm models.Competition
 	result := b.s.DB.Where("id = ?", c.Msg.Id).First(&cm)
 	if result.Error != nil {
 		cm = models.Competition{
 			Name:   c.Msg.Name,
 			Graph:  string(bm),
-			Active: c.Msg.Active,
+			Active: isActive,
 		}
 		b.s.DB.Create(&cm)
 	} else {
 		cm.Graph = string(bm)
 		cm.Name = c.Msg.Name
-		cm.Active = c.Msg.Active
+		cm.Active = isActive
 		b.s.DB.Save(&cm)
 	}
 	// TODO breadchris hacked for the demo, think through this more

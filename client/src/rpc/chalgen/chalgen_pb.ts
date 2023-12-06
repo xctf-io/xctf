@@ -281,6 +281,12 @@ export class Node extends Message<Node> {
      */
     value: PCAP;
     case: "pcap";
+  } | {
+    /**
+     * @generated from field: chalgen.Exif exif = 10;
+     */
+    value: Exif;
+    case: "exif";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Node>) {
@@ -296,6 +302,7 @@ export class Node extends Message<Node> {
     { no: 7, name: "twitter", kind: "message", T: Twitter, oneof: "challenge" },
     { no: 8, name: "caesar", kind: "message", T: CaesarCipher, oneof: "challenge" },
     { no: 9, name: "pcap", kind: "message", T: PCAP, oneof: "challenge" },
+    { no: 10, name: "exif", kind: "message", T: Exif, oneof: "challenge" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Node {
@@ -312,6 +319,49 @@ export class Node extends Message<Node> {
 
   static equals(a: Node | PlainMessage<Node> | undefined, b: Node | PlainMessage<Node> | undefined): boolean {
     return proto3.util.equals(Node, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Exif
+ */
+export class Exif extends Message<Exif> {
+  /**
+   * @generated from field: string key = 1;
+   */
+  key = "";
+
+  /**
+   * @generated from field: string value = 2;
+   */
+  value = "";
+
+  constructor(data?: PartialMessage<Exif>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Exif";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Exif {
+    return new Exif().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Exif {
+    return new Exif().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Exif {
+    return new Exif().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Exif | PlainMessage<Exif> | undefined, b: Exif | PlainMessage<Exif> | undefined): boolean {
+    return proto3.util.equals(Exif, a, b);
   }
 }
 

@@ -158,6 +158,7 @@ func liveReload() error {
 		Targets:  []string{"pkg", "gen"},
 		Patterns: []string{"**/*.go", "**/*.tmpl.html"},
 	}
+
 	slog.Debug("starting live reload", "config", fmt.Sprintf("%+v", c))
 	// TODO breadchris this code needs to be refactored to use observability
 	return reload.Reload(c)
