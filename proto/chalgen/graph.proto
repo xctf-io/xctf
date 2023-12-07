@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package chalgen;
+
+import "chals/config.proto";
+import "chalgen/base.proto";
+import "plugin/python.proto";
+
+message CompetitionList {
+  repeated Competition competitions = 1;
+}
+
+message Competition {
+  string id = 1;
+  string name = 2;
+  Graph graph = 3;
+  bool active = 4;
+}
+
+message Graph {
+  repeated Node nodes = 3;
+  repeated Edge edges = 4;
+}
+
+message Node {
+  chals.Meta meta = 1;
+  oneof challenge {
+    chalgen.Challenge base = 10;
+    plugin.PythonChallenge python = 11;
+  }
+}
+
+message Edge {
+  string from = 1;
+  string to = 2;
+}

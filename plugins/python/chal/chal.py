@@ -1,0 +1,3 @@
+
+class GeneratedChallenge:
+    pass

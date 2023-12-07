@@ -8,7 +8,7 @@ package xctf
 
 import (
 	context "context"
-	"github.com/xctf-io/xctf/pkg/gen/chalgen"
+	chalgen "github.com/xctf-io/xctf/pkg/gen/chalgen"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"

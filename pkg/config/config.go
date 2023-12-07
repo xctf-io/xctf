@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/xctf-io/xctf/pkg/bucket"
+	"github.com/xctf-io/xctf/pkg/chals"
 	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/kubes"
 	"github.com/xctf-io/xctf/pkg/log"
@@ -17,6 +18,7 @@ type BaseConfig struct {
 	Log    log.Config    `yaml:"log"`
 	Kubes  kubes.Config  `yaml:"kubes"`
 	Bucket bucket.Config `yaml:"bucket"`
+	Chals  chals.Config  `yaml:"chals"`
 }
 
 func NewDefaultConfig() BaseConfig {
@@ -26,6 +28,7 @@ func NewDefaultConfig() BaseConfig {
 		Log:    log.NewDefaultConfig(),
 		Kubes:  kubes.NewDefaultConfig(),
 		Bucket: bucket.NewDefaultConfig(),
+		Chals:  chals.NewDefaultConfig(),
 	}
 }
 

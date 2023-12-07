@@ -33,7 +33,7 @@ var ProviderSet = wire.NewSet(
 	backend.NewBackend,
 	admin.NewAdmin,
 	bucket.ProviderSet,
-	chals.NewHandler,
+	chals.ProviderSet,
 	New,
 )
 

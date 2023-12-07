@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package chals;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+  FormUI form_ui = 50000;
+}
+
+message FormUI {
+  bool visible = 1;
+}
+
+message Meta {
+  string id = 1 [ (form_ui).visible = false ];
+  int32 x = 2;
+  int32 y = 3;
+  string name = 4;
+  string flag = 5;
+  bool entrypoint = 6;
+}
+
+message Resources {
+  string build_dir = 1;
+}

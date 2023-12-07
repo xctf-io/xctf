@@ -12,6 +12,7 @@ import (
 	"github.com/xctf-io/xctf/pkg/chals"
 	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/gen/chalgen"
+	pchals "github.com/xctf-io/xctf/pkg/gen/chals"
 	"github.com/xctf-io/xctf/pkg/gen/xctf"
 	"github.com/xctf-io/xctf/pkg/gen/xctf/xctfconnect"
 	"github.com/xctf-io/xctf/pkg/http"
@@ -68,7 +69,7 @@ func (b *Backend) UpdateCompetition(ctx context.Context, c *connect.Request[chal
 	existingIds := map[string]*chalgen.Node{}
 	for _, node := range c.Msg.Graph.Nodes {
 		if node.Meta == nil {
-			node.Meta = &chalgen.Meta{}
+			node.Meta = &pchals.Meta{}
 		}
 		if en, ok := existingIds[node.Meta.Id]; ok {
 			return nil, errors.New(fmt.Sprintf("duplicate node id: %s and %s", node.Meta.Name, en.Meta.Name))

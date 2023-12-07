@@ -8,8 +8,8 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
-	"github.com/xctf-io/xctf/pkg/gen/chalgen"
-	"github.com/xctf-io/xctf/pkg/gen/xctf"
+	chalgen "github.com/xctf-io/xctf/pkg/gen/chalgen"
+	xctf "github.com/xctf-io/xctf/pkg/gen/xctf"
 	http "net/http"
 	strings "strings"
 )

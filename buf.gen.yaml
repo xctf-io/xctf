@@ -2,19 +2,19 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: github.com/xctf-io/xctf/gen
+    default: github.com/xctf-io/xctf/pkg/gen
 plugins:
   - plugin: buf.build/protocolbuffers/go
-    out: ./gen
+    out: ./pkg/gen
     opt:
       - paths=source_relative
   - plugin: buf.build/bufbuild/connect-go
-    out: ./gen
+    out: ./pkg/gen
     opt:
       - paths=source_relative
       - reflect-protocol=grpc-v1
   - plugin: buf.build/grpc/go:v1.2.0
-    out: ./gen
+    out: ./pkg/gen
     opt:
       - paths=source_relative
       - require_unimplemented_servers=false
@@ -25,6 +25,7 @@ plugins:
     opt: target=ts
     out: ./client/src/rpc
   - plugin: buf.build/protocolbuffers/python
-    out: gen/python
+    out: ./plugins/python/gen
+    opt: ["pyi_out=./plugins/python/gen"]
   - plugin: buf.build/grpc/python
-    out: gen/python
+    out: ./plugins/python/gen

@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package chalgen;
+
+message Challenge {
+  oneof type {
+    Base64 base64 = 6;
+    Twitter twitter = 7;
+    CaesarCipher caesar = 8;
+    PCAP pcap = 9;
+    Exif exif = 10;
+  }
+}
+
+message Exif {
+  string key = 1;
+  string value = 2;
+}
+
+message PCAP {
+  repeated Packet packets = 1;
+}
+
+message Packet {
+  int64 timestamp = 1;
+  string source = 2;
+  string destination = 3;
+  string protocol = 4;
+  string data = 5;
+}
+
+message CaesarCipher {
+  string plaintext = 1;
+  int32 shift = 2;
+}
+
+message Base64 {
+  string data = 1;
+}
+
+message Twitter {
+  repeated User users = 1;
+  repeated Post posts = 2;
+  repeated Comment comments = 3;
+}
+
+message User {
+  string username = 1;
+  string bio = 2;
+}
+
+// Post represents a user's post.
+message Post {
+  string username = 1;
+  string content = 2;
+}
+
+// Comment represents a comment on a post.
+message Comment {
+  int64 post_number = 1;
+  int64 username = 2;
+  string content = 3;
+}

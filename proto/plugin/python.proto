@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package plugin;
+
+import "chals/config.proto";
+import "google/protobuf/descriptor.proto";
+
+message PythonChallenge {
+  oneof type {
+    Exif exif = 1;
+  }
+}
+
+message Exif {
+  string key = 1;
+  string value = 2;
+}
+
+service PythonService {
+  rpc Generate(GenerateRequest) returns (GenerateResponse);
+}
+
+message GenerateRequest {
+  chals.Meta meta = 1;
+  PythonChallenge challenge = 2;
+  chals.Resources resources = 3;
+}
+
+message GenerateResponse {
+  string display = 1;
+  string file = 2;
+}

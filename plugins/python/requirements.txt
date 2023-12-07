@@ -1,0 +1,29 @@
+py==1.8.1
+pytest==5.3.5
+ruamel.yaml
+piexif
+pexpect; sys_platform != "win32"
+wexpect; sys_platform == "win32"
+pillow
+rich
+pycipher
+pycryptodome
+crypto
+rsa
+python-jade
+pdfrw
+stegano
+qrcode
+passlib
+python-slugify
+jinja2
+gtts
+pydub
+pyzipper
+scapy
+dirhash
+openai
+openpyxl
+grpcio-reflection
+fix-protobuf-imports
+rich_click

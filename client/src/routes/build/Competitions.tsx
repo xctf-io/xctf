@@ -13,10 +13,10 @@ import {
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import {useForm} from "react-hook-form";
 import { xctf } from '@/service';
-import {Competition, CompetitionList, Graph, Meta, Node} from "@/rpc/chalgen/chalgen_pb";
+import {Competition, CompetitionList, Graph, Node} from "@/rpc/chalgen/graph_pb";
 import {toast} from "react-toastify";
 import {removeUndefinedFields} from "@/util/object";
-import {act} from "react-dom/test-utils";
+import { Meta } from '@/rpc/chals/config_pb';
 
 export const Competitions: React.FC = () => {
     return (
@@ -209,9 +209,16 @@ const Edit: React.FC = () => {
             <a href={`/play/${selectedCompetition?.id}/${n.meta?.id}`}>View</a>
         )
         switch (n.challenge.case) {
-        case 'twitter':
-            return url;
-        case 'pcap':
+        case 'base':
+            const t = n.challenge.value;
+            switch (t.type.case) {
+            case 'twitter':
+                return url;
+            case 'pcap':
+                return url;
+            }
+            return null;
+        case 'python':
             return url;
         }
         return null;

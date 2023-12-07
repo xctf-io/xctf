@@ -5,7 +5,7 @@
 
 import { ChallengeTypeResponse, CurrentUserRequest, CurrentUserResponse, DeleteChallengeRequest, Empty, ForgotPasswordRequest, GetAllChallengesRequest, GetAllChallengesResponse, GetCommentsRequest, GetCommentsResponse, GetDiscoveredEvidenceRequest, GetDiscoveredEvidenceResponse, GetHomePageRequest, GetHomePageResponse, GetTeamsProgressRequest, GetTeamsProgressResponse, GetUserGraphRequest, GetUserGraphResponse, GetUserWriteupResponse, GetWriteupRequest, GetWriteupResponse, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, SetHomePageRequest, SubmitCommentRequest, SubmitEvidenceConnectionRequest, SubmitEvidenceConnectionResponse, SubmitEvidenceReportRequest, SubmitEvidenceRequest, SubmitEvidenceResponse, SubmitFlagRequest, SubmitFlagResponse, SubmitGradeRequest, SubmitWriteupRequest, UpsertChallengeRequest } from "./xctf_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
-import { Competition, CompetitionList } from "../chalgen/chalgen_pb.js";
+import { Competition, CompetitionList } from "../chalgen/graph_pb.js";
 
 /**
  * @generated from service xctf.Backend

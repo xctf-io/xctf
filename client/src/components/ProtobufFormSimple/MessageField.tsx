@@ -49,13 +49,44 @@ interface FormattedMessageFieldProps {
     field: FieldDescriptorProto
 }
 
-const FormattedMessageField: FC<FormattedMessageFieldProps> = (props) => {
-    const { field, baseFieldName, grpcProps } = props;
+interface RepeatedFieldProps {
+    fieldProps: FormattedMessageFieldProps
+    inputFormProps: InputFormContentsProps
+}
+
+const RepeatedField: FC<RepeatedFieldProps> = (props) => {
+    const { inputFormProps, fieldProps } = props;
+    const { field, baseFieldName, grpcProps } = fieldProps;
     const { control, fieldPath } = grpcProps;
 
     const { fields: formFields, append, remove } = useFieldArray({
         control, name: baseFieldName || 'input',
     });
+
+    return (
+        <table>
+            <tbody>
+            {formFields.map((f, index) => (
+                <tr className={"array_element"} key={f.id}>
+                    <td>
+                        <InputFormContents {...inputFormProps} index={index} />
+                        <Button color={"danger"} onClick={() => remove(index)}>Remove</Button>
+                    </td>
+                </tr>
+            ))}
+            <tr>
+                <td>
+                    <Button onClick={() => append({})}>New</Button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    );
+}
+
+const FormattedMessageField: FC<FormattedMessageFieldProps> = (props) => {
+    const { field, baseFieldName, grpcProps } = props;
+    const { fieldPath } = grpcProps;
 
     const inputProps: InputFormContentsProps = {
         inputFormProps: {
@@ -67,25 +98,7 @@ const FormattedMessageField: FC<FormattedMessageFieldProps> = (props) => {
     };
 
     if (field.label === FieldDescriptorProto_Label.REPEATED) {
-        return (
-            <table>
-                <tbody>
-                {formFields.map((f, index) => (
-                    <tr className={"array_element"} key={f.id}>
-                        <td>
-                            <InputFormContents {...inputProps} index={index} />
-                            <Button color={"error"} onClick={() => remove(index)}>Remove</Button>
-                        </td>
-                    </tr>
-                ))}
-                <tr>
-                    <td>
-                        <Button onClick={() => append({})}>New</Button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        );
+        return <RepeatedField fieldProps={props} inputFormProps={inputProps} />;
     }
     return (<InputFormContents {...inputProps} />);
 }

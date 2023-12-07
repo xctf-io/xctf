@@ -56,6 +56,10 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	chalsConfig, err := chals.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
 	bucketConfig, err := bucket.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -64,7 +68,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	handler := chals.NewHandler(service, builder)
+	pythonServiceClient, err := chals.NewPythonPlugin(chalsConfig)
+	if err != nil {
+		return nil, err
+	}
+	handler := chals.NewHandler(chalsConfig, service, builder, pythonServiceClient)
 	backendBackend := backend.NewBackend(service, store, handler)
 	adminAdmin := admin.NewAdmin(service)
 	httpHandler, err := server.New(serverConfig, store, kubesService, backendBackend, adminAdmin, service, handler)

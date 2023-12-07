@@ -8,7 +8,7 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
-	"github.com/xctf-io/xctf/pkg/gen/kubes"
+	kubes "github.com/xctf-io/xctf/pkg/gen/kubes"
 	http "net/http"
 	strings "strings"
 )
