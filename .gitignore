@@ -4,3 +4,5 @@ data/
 **/node_modules
 .idea/
 config.yaml
+
+.DS_Store
