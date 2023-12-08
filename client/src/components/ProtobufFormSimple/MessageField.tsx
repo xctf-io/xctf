@@ -3,7 +3,6 @@ import React, {FC, useEffect, useState} from "react";
 import {useFieldArray, useWatch} from "react-hook-form";
 import {InputFormContents, InputFormContentsProps} from "@/components/ProtobufFormSimple/InputFormContents";
 import {GRPCInputFormProps} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
-import {Button} from "@nextui-org/react";
 import { typeLookup } from "@/util/proto";
 
 type GrpcFormField = {
@@ -70,13 +69,13 @@ const RepeatedField: FC<RepeatedFieldProps> = (props) => {
                 <tr className={"array_element"} key={f.id}>
                     <td>
                         <InputFormContents {...inputFormProps} index={index} />
-                        <Button color={"danger"} onClick={() => remove(index)}>Remove</Button>
+                        <button className="btn btn-error" onClick={() => remove(index)}>Remove</button>
                     </td>
                 </tr>
             ))}
             <tr>
                 <td>
-                    <Button onClick={() => append({})}>New</Button>
+                    <button onClick={() => append({})}>New</button>
                 </td>
             </tr>
             </tbody>

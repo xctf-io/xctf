@@ -2,21 +2,16 @@ import React from "react";
 import { useState } from "react";
 import { useUser } from "../store/user";
 import type { NavLink } from "../types/nav";
-import {
-	Button,
-	Link,
-	Navbar,
-	NavbarBrand,
-	NavbarContent,
-	NavbarItem,
-	NavbarMenu,
-	NavbarMenuItem,
-	NavbarMenuToggle,
-} from "@nextui-org/react";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { GiFlyingFlag } from "react-icons/gi";
+import { BiMenuAltLeft, BiMenuAltRight } from "react-icons/bi";
 import { useDarkMode } from "usehooks-ts";
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import {
+	Link,
+	Link as RouterLink,
+	useLocation,
+	useNavigate,
+} from "react-router-dom";
 import UserDropdown from "./UserDropdown";
 
 interface NavbarProps {
@@ -29,91 +24,74 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 
 	const userLoggedIn = !!user;
 	const isAdmin = user?.type === "admin";
-	const themeColor = isAdmin ? "danger" : "primary";
+	const themeColor = isAdmin ? "error" : "primary";
 	const { isDarkMode, toggle } = useDarkMode(false);
-	const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
 	return (
-		<Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} classNames={{
-			item: [
-				"flex",
-				"relative",
-				"h-full",
-				"items-center",
-				"data-[active=true]:after:content-['']",
-				"data-[active=true]:after:absolute",
-				"data-[active=true]:after:bottom-0",
-				"data-[active=true]:after:left-0",
-				"data-[active=true]:after:right-0",
-				"data-[active=true]:after:h-[2px]",
-				"data-[active=true]:after:rounded-[2px]",
-				(isAdmin ? "data-[active=true]:after:bg-danger" : "data-[active=true]:after:bg-primary"),
-			],
-		}}>
-			<NavbarContent>
-				<NavbarMenuToggle
-					aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-					className="sm:hidden"
-				/>
-				<NavbarBrand>
-					<GiFlyingFlag className="h-8 w-8 mr-2" />
-					<p className="text-xl font-bold text-inherit">xctf</p>
-				</NavbarBrand>
-			</NavbarContent>
+		<div className="navbar bg-base-100 p-4 sm:p-2">
+			<div className="navbar-start ml-6">
+				<GiFlyingFlag className="h-8 w-8 mr-2" />
+				<p className="text-xl font-bold text-inherit">xctf</p>
+			</div>
 
-			<NavbarContent className="hidden sm:flex gap-2" justify="center">
-				{links.map((l) => {
-					if (
-						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
-						(!userLoggedIn && !l.hideWhenUnauthed) ||
-						(userLoggedIn && isAdmin && l.showWhenAdmin)
-					) {
-						return (
-							<NavbarItem isActive={l.to === location.pathname}>
-								<Link
-									isBlock
-									className="px-2"
-									color={l.to === location.pathname ? themeColor : "foreground"}
-									href={l.to}
+			<div className="navbar-center hidden sm:flex gap-2">
+				<ul className="menu menu-horizontal menu-lg">
+					{links.map((l) => {
+						if (
+							(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
+							(!userLoggedIn && !l.hideWhenUnauthed) ||
+							(userLoggedIn && isAdmin && l.showWhenAdmin)
+						) {
+							return (
+								<li
+									className={
+										l.to === location.pathname
+											? "border-b-2 border-" + themeColor
+											: ""
+									}
 								>
-									{l.label}
-								</Link>
-							</NavbarItem>
-						)
-					}
-				})}
-			</NavbarContent>
-			<NavbarContent justify="end" as="div" className="flex gap-5">
-				<NavbarItem
-					onClick={toggle}
-					key="toggle"
-				>
-					{isDarkMode ? <BsSunFill /> : <BsMoonStarsFill />}
-				</NavbarItem>
+									<Link className="link px-2 no-underline" color="foreground" to={l.to}>
+										{l.label}
+									</Link>
+								</li>
+							);
+						}
+					})}
+				</ul>
+			</div>
+			<div className="navbar-end mr-4">
+				<div className={`swap swap-rotate ${user ? "mr-5" : ""}`} onClick={toggle} >
+					<BsSunFill className={isDarkMode ? "swap-off" : "swap-on"} />
+					<BsMoonStarsFill className={isDarkMode ? "swap-on" : "swap-off"} />
+				</div>
 				{user ? <UserDropdown /> : null}
-			</NavbarContent>
-			<NavbarMenu>
-				{links.map((l) => {
-					if (
-						(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
-						(!userLoggedIn && !l.hideWhenUnauthed) ||
-						(userLoggedIn && isAdmin && l.showWhenAdmin)
-					) {
-						return (
-							<NavbarMenuItem isActive={l.to === location.pathname}>
-								<Link
-									isBlock
-									color={l.to === location.pathname ? themeColor : "foreground"}
-									href={l.to}
-								>
-									{l.label}
-								</Link>
-							</NavbarMenuItem>
-						)
-					}
-				})}
-			</NavbarMenu>
-		</Navbar>
+				<div className="dropdown dropdown-end">
+					<div tabIndex={0} role="button" className="btn btn-ghost sm:hidden">
+						<BiMenuAltRight className="h-6 w-6" />
+					</div>
+					<ul
+						tabIndex={0}
+						className="menu dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box w-52"
+					>
+						{links.map((l) => {
+							if (
+								(userLoggedIn && !isAdmin && l.showWhenAuthed) ||
+								(!userLoggedIn && !l.hideWhenUnauthed) ||
+								(userLoggedIn && isAdmin && l.showWhenAdmin)
+							) {
+								return (
+									<li>
+										<Link className="link px-2 no-underline" color="foreground" to={l.to}>
+											{l.label}
+										</Link>
+									</li>
+								);
+							}
+						})}
+					</ul>
+				</div>
+			</div>
+		</div>
 	);
 };
 

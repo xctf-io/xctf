@@ -3,7 +3,6 @@ import { useState } from "react";
 import { createErrorToast, createSuccessToast, useUser } from "../store/user";
 import { xctf } from "../service";
 
-import {Button, Link, Textarea} from "@nextui-org/react";
 import { useDarkMode } from "usehooks-ts";
 
 const SubmitWriteup = () => {
@@ -71,9 +70,6 @@ const SubmitWriteup = () => {
 				height: "calc(100vh - 80px)",
 			}}
 		>
-			 <Textarea value={writeup} onChange={(e) => {
-				 setWriteup(e.target.value);
-			 }} label={"Writeup"} fullWidth placeholder={"Writeup"} />
 			<input
 				ref={inputRef}
 				className="hidden"
@@ -86,12 +82,12 @@ const SubmitWriteup = () => {
 				}}
 			/>
 			<div
-				className="mx-8 py-24 px-36 border-2 rounded-lg border-dashed"
+				className="mx-8 py-28 px-36 border-2 rounded-lg border-dashed"
 				style={{
 					backgroundColor: dragActive
 						? 'white'
-						: (isDarkMode ? "#18181b":  "#f4f4f5"),
-					borderColor: (isDarkMode ? "#27272a" : "#d4d4d8")
+						: (isDarkMode ? "#1A1E23":  "#f4f4f5"),
+					borderColor: (isDarkMode ? "#16191E" : "#d4d4d8")
 				}}
 				onDragEnter={(e) => {
 					e.preventDefault();
@@ -112,22 +108,22 @@ const SubmitWriteup = () => {
 					setFile(e.dataTransfer.files[0]);
 				}}
 			>
-				<p className="text-3xl">Drag and drop a file here or</p>
-				<Link
-					className="mt-4 text-2xl"
-					onPress={(e) => {
+				<p className="text-3xl mb-2">Drag and drop a file here or</p>
+				<a
+					className="link link-primary mt-4 text-2xl"
+					onClick={(e) => {
 						if (inputRef.current) {
 							inputRef.current.click();
 						}
 					}} 
 				>
 					Upload a file
-				</Link>
+				</a>
 			</div>
             {file && <p className="text-2xl">Uploaded: <span className="font-thin">{file.name}</span></p>}
-			<Button as={Link} color="primary" className="w-64 h-16 text-lg" onPress={() => uploadWriteup()}>
+			<button className="btn btn-primary w-64 h-16 text-lg" onClick={() => uploadWriteup()}>
 				Submit Writeup
-			</Button>
+			</button>
 		</div>
 	);
 };

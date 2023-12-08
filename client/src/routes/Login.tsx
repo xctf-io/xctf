@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import { useLogin } from "../store/user";
-import { Input, Button, Link } from "@nextui-org/react";
 import { useDarkMode } from "usehooks-ts";
+import { Link } from "react-router-dom";
 
 const Login = () => {
 	const [email, setEmail] = useState("");
@@ -18,38 +18,45 @@ const Login = () => {
 					<h1 className="text-5xl font-bold mb-0">Welcome back!</h1>
 					<p className="font-light">Login to continue</p>
 				</div>
-				<Input
-					id="email"
-					label="Email"
-					type="email"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-					width="100%"
-					size="lg"
-				/>
+				<label className="form-control w-full">
+					<div className="label">
+						<span className="label-text">Email</span>
+					</div>
+					<input
+						id="email"
+						className="w-full input input-bordered"
+						type="email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+					/>
+				</label>
 
-				<Input
-					id="password"
-					label="Password"
-					value={password}
-					type="password"
-					onChange={(e) => setPassword(e.target.value)}
-					width="100%"
-					size="lg"
-				/>
+				<label className="form-control w-full">
+					<div className="label">
+						<span className="label-text">Password</span>
+					</div>
+					<input
+						id="password"
+						className="w-full input input-bordered"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+					/>
+				</label>
 
-				<Button
-					className="mt-0 h-16 text-lg"
-					size="lg"
+				<button
+					className="btn btn-primary mt-0 h-16 text-lg"
 					color="primary"
-					as={Link}
-					onPress={() => doLogin(email, password, isDarkMode)}
+					onClick={() => doLogin(email, password, isDarkMode)}
 				>
 					Log In
-				</Button>
+				</button>
 
 				<p className="text-center font-extralight">
-					Forgot your password? Reset it <Link color="primary" href="/forgot-password">here</Link>.
+					Forgot your password? Reset it{" "}
+					<Link className="link link-primary" to="/forgot-password">
+						here
+					</Link>
+					.
 				</p>
 			</div>
 			{isDarkMode ? (

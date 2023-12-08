@@ -3,7 +3,6 @@ import React, {FC, useState} from "react";
 import {useWatch} from "react-hook-form";
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import { GRPCTypeInfo } from "@/rpc/xctf/xctf_pb";
-import {Input, Text} from "@nextui-org/react";
 
 const getFieldName = (baseFieldName: string | undefined, field: FieldDescriptorProto, idx?: number): string => {
     if (!baseFieldName) {
@@ -89,7 +88,7 @@ export const InputFormContents: FC<InputFormContentsProps> = (props) => {
     if (field.type === FieldDescriptorProto_Type.STRING) {
         return (
             <div key={field.number}>
-                <Input aria-label={"field-input"} value={fieldValue} {...register(fieldFormName)} />
+                <input aria-label={"field-input"} value={fieldValue} {...register(fieldFormName)} />
             </div>
         )
     }
@@ -102,7 +101,7 @@ export const InputFormContents: FC<InputFormContentsProps> = (props) => {
     }
     return (
         <div key={field.number}>
-            <Input aria-label={"field-input"} value={fieldValue} {...register(fieldFormName)} />
+            <input aria-label={"field-input"} value={fieldValue} {...register(fieldFormName)} />
         </div>
     )
 }

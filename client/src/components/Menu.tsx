@@ -1,6 +1,5 @@
 import React from "react";
 import { toPng } from "html-to-image";
-import { Button, ButtonGroup } from "@nextui-org/react";
 import { HiDownload, HiOutlinePlus } from "react-icons/hi";
 
 function downloadImage(dataUrl: string) {
@@ -16,7 +15,7 @@ interface Props {
 }
 
 const Menu: React.FC<Props> = ({ openModal }) => {
-	const onClick = () => {
+	const downloadGraph = () => {
 		toPng(document.querySelector(".react-flow") as HTMLElement, {
 			filter: (node) => {
 				if (
@@ -32,34 +31,24 @@ const Menu: React.FC<Props> = ({ openModal }) => {
 	};
 
 	return (
-		<ButtonGroup
-			size="lg"
-			className="absolute left-[41px] top-[79px] z-10 flex-col items-end"
-			variant="bordered"
+		<div
+			className="join join-vertical rounded-none absolute left-[41px] top-[101px] z-10"
 		>
-			<Button
-				radius="none"
-				onPress={openModal}
-				endContent={<HiOutlinePlus />}
-				className="text-black bg-white w-full h-[54px]"
-				style={{
-					borderColor: "#EEEEEE"
-				}}
+			<button
+				onClick={openModal}
+				className="btn text-black bg-white border-2 border-[#EEEEEE] w-full h-[55px] rounded-none"
 			>
 				Add evidence
-			</Button>
-			<Button
-				radius="none"
-				onPress={onClick}
-				endContent={<HiDownload />}
-				className="text-black bg-white h-[54px] w-full border-t-0"
-				style={{
-					borderColor: "#EEEEEE"
-				}}
+				<HiOutlinePlus />
+			</button>
+			<button
+				onClick={downloadGraph}
+				className="btn text-black bg-white border-2 border-[#EEEEEE] border-t-0 w-full h-[54px] rounded-none"
 			>
 				Download
-			</Button>
-		</ButtonGroup>
+				<HiDownload />
+			</button>
+		</div>
 	);
 };
 

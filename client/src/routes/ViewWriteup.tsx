@@ -6,10 +6,10 @@ import React, {
 	useCallback,
 	Key,
 } from "react";
+import Select from "react-select";
 import { useNavigate, useParams } from "react-router-dom";
 import { xctfAdmin } from "../service";
 import { createErrorToast, createSuccessToast } from "../store/user";
-import {Button, Input, Switch, Textarea, Select, SelectItem, ButtonGroup} from "@nextui-org/react";
 import {
 	TbArrowBigLeftFilled,
 	TbArrowBigRightFilled,
@@ -93,12 +93,9 @@ const ViewWriteup = () => {
 			<Tooltip
 				position={Position.TopCenter}
 				target={
-					<Button
-						color="danger"
-						onPress={props.toggle}
-					>
+					<button className="btn btn-error" onClick={props.toggle}>
 						<MessageIcon />
-					</Button>
+					</button>
 				}
 				content={() => <div style={{ width: "100px" }}>Add a note</div>}
 				offset={{ left: 0, top: -8 }}
@@ -156,13 +153,13 @@ const ViewWriteup = () => {
 					}}
 				>
 					<div style={{ marginRight: "8px" }}>
-						<Button color="danger"  onPress={addNote}>
+						<button className="btn btn-error" onClick={addNote}>
 							Add
-						</Button>
+						</button>
 					</div>
-					<Button color="default" onPress={props.cancel}>
+					<button className="btn" onClick={props.cancel}>
 						Cancel
-					</Button>
+					</button>
 				</div>
 			</div>
 		);
@@ -212,12 +209,8 @@ const ViewWriteup = () => {
 
 	const { jumpToHighlightArea } = highlightPluginInstance;
 
-
 	const sidebarNotes = (
-		<div
-			ref={notesContainerRef}
-			className="w-full overflow-auto absolute"
-		>
+		<div ref={notesContainerRef} className="w-full overflow-auto absolute">
 			{notes.length === 0 && (
 				<div style={{ textAlign: "center" }}>There is no note</div>
 			)}
@@ -319,15 +312,19 @@ const ViewWriteup = () => {
 			createErrorToast("Failed to get teams", isDarkMode);
 		}
 	}
-	const [graph, setGraph] = useState<GetUserGraphResponse>(new GetUserGraphResponse({
-		connections: [],
-		evidence: [],
-	}));
-	const graphRef: MutableRefObject<GetUserGraphResponse> =
-		useRef<GetUserGraphResponse>(new GetUserGraphResponse({
+	const [graph, setGraph] = useState<GetUserGraphResponse>(
+		new GetUserGraphResponse({
 			connections: [],
 			evidence: [],
-		}));
+		})
+	);
+	const graphRef: MutableRefObject<GetUserGraphResponse> =
+		useRef<GetUserGraphResponse>(
+			new GetUserGraphResponse({
+				connections: [],
+				evidence: [],
+			})
+		);
 
 	const dagreGraph = new dagre.graphlib.Graph();
 	const nodeWidth = 172;
@@ -371,12 +368,20 @@ const ViewWriteup = () => {
 					},
 					style: {
 						background: e.isFlag
-							? (isDarkMode ? "#310413" : "#fee7ef")
-							: (isDarkMode ? "#27272a" : "#f4f4f5"),
+							? isDarkMode
+								? "#310413"
+								: "#fee7ef"
+							: isDarkMode
+							? "#27272a"
+							: "#f4f4f5",
 						borderColor: e.isFlag
-							? (isDarkMode ? "#610726" : "#faa0bf")
-							: (isDarkMode ? "#52525b" : "#d4d4d8"),
-						color: (isDarkMode ? "#ECEDEE" : "#11181C"),
+							? isDarkMode
+								? "#610726"
+								: "#faa0bf"
+							: isDarkMode
+							? "#52525b"
+							: "#d4d4d8",
+						color: isDarkMode ? "#ECEDEE" : "#11181C",
 					},
 				};
 			});
@@ -425,11 +430,12 @@ const ViewWriteup = () => {
 
 	const [nodes, setNodes] = useState<Node[]>();
 	const onNodesChange = useCallback(
-		(changes: NodeChange[]) => setNodes((nds) => {
-			if (nds != undefined) {
-				return applyNodeChanges(changes, nds)
-			}
-		}),
+		(changes: NodeChange[]) =>
+			setNodes((nds) => {
+				if (nds != undefined) {
+					return applyNodeChanges(changes, nds);
+				}
+			}),
 		[]
 	);
 	const [edges, setEdges] = useState<Edge[]>();
@@ -492,21 +498,20 @@ const ViewWriteup = () => {
 						height: "calc(100vh - 100px)",
 					}}
 				>
-					<Textarea fullWidth value={writeup} />
-					{/*<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">*/}
-					{/*	{isDark ? (*/}
-					{/*		<Viewer*/}
-					{/*			theme="dark"*/}
-					{/*			fileUrl={writeup}*/}
-					{/*			plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}*/}
-					{/*		/>*/}
-					{/*	) : (*/}
-					{/*		<Viewer*/}
-					{/*			fileUrl={writeup}*/}
-					{/*			plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}*/}
-					{/*		/>*/}
-					{/*	)}*/}
-					{/*</Worker>*/}
+					<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+						{isDarkMode ? (
+							<Viewer
+								theme="dark"
+								fileUrl={writeup}
+								plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}
+							/>
+						) : (
+							<Viewer
+								fileUrl={writeup}
+								plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}
+							/>
+						)}
+					</Worker>
 				</div>
 			)}
 			{!writeup && !showChart && <div></div>}
@@ -530,62 +535,51 @@ const ViewWriteup = () => {
 			)}
 			<div className="flex flex-col items-center w-full relative xl:col-span-2">
 				<div className="absolute right-8 top-[2px]">
-					<Switch
-						color="danger"
-						size="lg"
-						thumbIcon={({ isSelected, className }) =>
-							isSelected ? (
-								<TbGraphOff className={className} />
-							) : (
-								<TbGraph className={className} />
-							)
-						}
-						onChange={(e) => setShowChart(e.target.checked)}
-					/>
+					<label className="swap swap-rotate">
+						<input type="checkbox" onClick={(e) => setShowChart(!showChart)} />
+						<TbGraphOff className="swap-off fill-current w-10 h-10" />
+						<TbGraph className="swap-on fill-current w-10 h-10" />
+					</label>
 				</div>
-				<ButtonGroup
-					color="danger"
-				>
-					<Button
-						variant={isDarkMode ? "solid" : "flat"}
+				<div className="join">
+					<button
+						className="join-item btn"
 						disabled={index === 0}
-						onPress={() => {
+						onClick={() => {
 							navigate(`/view/${teams[index - 1].name}`);
 						}}
-						isIconOnly
 					>
-						<TbArrowBigLeftFilled className="w-1/2 h-1/2"/>
-					</Button>
+						<TbArrowBigLeftFilled className="w-1/2 h-1/2" />
+					</button>
 					<Select
-						placeholder="Team"
-						selectedKeys={[name] as Iterable<Key>}
-						onChange={(e) => {
-							if(e.target.value != "") {
-								navigate(`/view/${e.target.value}`)
-							}
+						defaultValue={{ value: name, label: name }}
+						onChange={(e) => navigate(`/view/${e?.value}`)}
+						options={teams.map((t) => ({ value: t.name, label: t.name }))}
+						className="w-80 mx-1"
+						styles={{
+							control: (provided, state) => ({
+								...provided,
+								minHeight: "40px",
+							}),
 						}}
-						selectionMode="single"
-						size="sm"
-						className="w-64 mx-1"
-						radius="none"
-					>
-						{teams.map((team) => (
-							<SelectItem key={team.name} value={team.name}>
-								{team.name}
-							</SelectItem>
-						))}
-					</Select>
-					<Button
-						variant={isDarkMode ? "solid" : "flat"}
+						theme={(t) => ({
+							...t,
+							borderRadius: 0,
+							colors: {
+								...t.colors,
+							},
+						})}
+					/>
+					<button
+						className="join-item btn"
 						disabled={index === teams.length - 1}
-						onPress={() =>
-							window.location.replace(`/view/${teams[index + 1].name}`)
-						}
-						isIconOnly
+						onClick={() => {
+							navigate(`/view/${teams[index - 1].name}`);
+						}}
 					>
 						<TbArrowBigRightFilled className="w-1/2 h-1/2" />
-					</Button>
-				</ButtonGroup>
+					</button>
+				</div>
 				<div
 					className="flex flex-col items-center h-full"
 					style={{
@@ -610,12 +604,9 @@ const ViewWriteup = () => {
 										<div className="flex flex-row justify-center items-center gap-2">
 											{isEditing ? (
 												<>
-													<Input
+													<input
 														placeholder="Grade"
-														variant="bordered"
-														size="sm"
-														autoFocus
-														disableAnimation
+														className="input input-bordered"
 														onChange={(e) => setGrade(Number(e.target.value))}
 														onBlur={(e) => {
 															if (grade === -1) {
@@ -637,14 +628,12 @@ const ViewWriteup = () => {
 													{teams[index].grade}/100
 												</p>
 											)}
-											<Button
-												color="danger"
-												variant="ghost"
-												size="sm"
-												onPress={toggleEditing}
+											<button
+												className="btn btn-ghost btn-error"
+												onClick={toggleEditing}
 											>
 												<HiPencilSquare />
-											</Button>
+											</button>
 										</div>
 									</>
 								) : (
@@ -652,22 +641,19 @@ const ViewWriteup = () => {
 										<p className="text-3xl font-bold text-center mb-4">
 											Submit Grade
 										</p>
-										<Input
+										<input
 											placeholder="Grade"
-											variant="bordered"
-											color="danger"
-											size="lg"
+											className="input input-bordered"
+											type="number"
 											onChange={(e) => setGrade(Number(e.target.value))}
 										/>
-										<Button
-											color="danger"
-											className="mt-4"
-											size="lg"
-											endContent={<TbSend />}
-											onPress={submitGrade}
+										<button
+											className="mt-4 btn btn-ghost btn-error"
+											onClick={submitGrade}
 										>
 											Submit
-										</Button>
+											<TbSend />
+										</button>
 									</div>
 								)}
 							</div>

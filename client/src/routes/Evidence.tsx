@@ -12,22 +12,10 @@ import ReactFlow, {
 	addEdge,
 	applyEdgeChanges,
 	applyNodeChanges,
-	Node
+	Node,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useState, useEffect, useRef, MutableRefObject } from "react";
-import {
-	Input,
-	Button,
-	Checkbox,
-	Modal,
-	ModalBody,
-	ModalFooter,
-	ModalHeader,
-	useDisclosure,
-	ModalContent,
-	semanticColors
-} from "@nextui-org/react";
 import dagre from "dagre";
 import Menu from "../components/Menu";
 import { HiPaperAirplane } from "react-icons/hi2";
@@ -36,27 +24,31 @@ import {
 	createErrorToast,
 	createCelebrateToast,
 } from "../store/user";
-import { useDarkMode } from 'usehooks-ts'
+import { useDarkMode } from "usehooks-ts";
 
 let report = "";
 
 export function Evidence() {
 	const [evidence, setEvidence] = useState("");
 
-	const { isDarkMode } = useDarkMode(false)
-	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>(new GetDiscoveredEvidenceResponse({
-		report: "",
-		connections: [],
-		evidence: [],
-	}));
-	const [submittingFlag, setSubmittingFlag] = useState<boolean>(true);
-
-	const graphRef: MutableRefObject<GetDiscoveredEvidenceResponse> =
-		useRef<GetDiscoveredEvidenceResponse>(new GetDiscoveredEvidenceResponse({
+	const { isDarkMode } = useDarkMode(false);
+	const [graph, setGraph] = useState<GetDiscoveredEvidenceResponse>(
+		new GetDiscoveredEvidenceResponse({
 			report: "",
 			connections: [],
 			evidence: [],
-		}));
+		})
+	);
+	const [submittingFlag, setSubmittingFlag] = useState<boolean>(true);
+
+	const graphRef: MutableRefObject<GetDiscoveredEvidenceResponse> =
+		useRef<GetDiscoveredEvidenceResponse>(
+			new GetDiscoveredEvidenceResponse({
+				report: "",
+				connections: [],
+				evidence: [],
+			})
+		);
 
 	const dagreGraph = new dagre.graphlib.Graph();
 	const nodeWidth = 172;
@@ -99,12 +91,20 @@ export function Evidence() {
 					},
 					style: {
 						background: e.isFlag
-							? (isDarkMode ? "#002e62" : "#cce3fd")
-							: (isDarkMode ? "#27272a" : "#f4f4f5"),
+							? isDarkMode
+								? "#002e62"
+								: "#cce3fd"
+							: isDarkMode
+							? "#27272a"
+							: "#f4f4f5",
 						borderColor: e.isFlag
-							? (isDarkMode ? "#005bc4" : "#66aaf9")
-							: (isDarkMode ? "#52525b" : "#d4d4d8"),
-						color: (isDarkMode ? "#ECEDEE" : "#11181C"),
+							? isDarkMode
+								? "#005bc4"
+								: "#66aaf9"
+							: isDarkMode
+							? "#52525b"
+							: "#d4d4d8",
+						color: isDarkMode ? "#ECEDEE" : "#11181C",
 					},
 				};
 			});
@@ -145,18 +145,27 @@ export function Evidence() {
 			},
 			style: {
 				background: e.isFlag
-					? (isDarkMode ? "#002e62" : "#cce3fd")
-					: (isDarkMode ? "#27272a" : "#f4f4f5"),
+					? isDarkMode
+						? "#002e62"
+						: "#cce3fd"
+					: isDarkMode
+					? "#27272a"
+					: "#f4f4f5",
 				borderColor: e.isFlag
-					? (isDarkMode ? "#005bc4" : "#66aaf9")
-					: (isDarkMode ? "#52525b" : "#d4d4d8"),
-				color: (isDarkMode ? "#ECEDEE" : "#11181C"),
+					? isDarkMode
+						? "#005bc4"
+						: "#66aaf9"
+					: isDarkMode
+					? "#52525b"
+					: "#d4d4d8",
+				color: isDarkMode ? "#ECEDEE" : "#11181C",
 			},
 		};
 	});
 	const [nodes, setNodes] = useState<Node[]>(initialNodes);
 	const onNodesChange = useCallback(
-		(changes: NodeChange[]) => setNodes((nds: Node[]) => applyNodeChanges(changes, nds)),
+		(changes: NodeChange[]) =>
+			setNodes((nds: Node[]) => applyNodeChanges(changes, nds)),
 		[]
 	);
 
@@ -246,18 +255,30 @@ export function Evidence() {
 			}),
 		[]
 	);
+
+	const openEvidenceModal = () => {
+		(
+			document.getElementById("evidence-modal") as HTMLDialogElement
+		).showModal();
+	};
+	const closeEvidenceModal = () => {
+		(document.getElementById("evidence-modal") as HTMLDialogElement).close();
+	};
+	const openDeleteModal = () => {
+		(document.getElementById("delete-modal") as HTMLDialogElement).showModal();
+	};
+	const closeDeleteModal = () => {
+		(document.getElementById("delete-modal") as HTMLDialogElement).close();
+	};
+
 	const [deleteNode, setDeleteNode] = useState<Node>();
 	const onNodesDelete = useCallback(
 		(deleted: Node[]) => {
-			deleteModal.onOpen()
+			openDeleteModal();
 			setDeleteNode(deleted[0]);
 		},
 		[nodes, edges]
 	);
-
-	const evidenceModal = useDisclosure();
-	const deleteModal = useDisclosure();
-
 
 	return (
 		<>
@@ -278,7 +299,7 @@ export function Evidence() {
 					height: "calc(100vh - 80px)",
 				}}
 			>
-				<Menu openModal={evidenceModal.onOpen} />
+				<Menu openModal={openEvidenceModal} />
 				<div className="h-full w-full relative">
 					<ReactFlow
 						nodes={nodes}
@@ -298,100 +319,97 @@ export function Evidence() {
 						></Controls>
 					</ReactFlow>
 				</div>
-				<Modal
-					isOpen={evidenceModal.isOpen}
-					onOpenChange={evidenceModal.onOpenChange}
-					title="Add Evidence"
+				<dialog
+					id="evidence-modal"
+					className="modal modal-bottom sm:modal-middle"
+					role="dialog"
 					aria-labelledby="modal-title"
-					placement="auto"
 				>
-					<ModalContent>
-						{(onClose) => <>
-							<ModalHeader>
-								<h3 id="modal-title">Add Evidence</h3>
-							</ModalHeader>
-							<ModalBody>
-								<Input
-									label="Evidence"
-									isClearable
-									variant="bordered"
-									fullWidth
-									value={evidence}
-									onValueChange={setEvidence}
-									size="lg"
-								/>
-								<Checkbox
-									isSelected={submittingFlag}
-									onValueChange={setSubmittingFlag}
-								>
-									<p className="text-lg">Flag?</p>
-								</Checkbox>
-							</ModalBody>
-							<ModalFooter>
-								<Button variant="flat" color="danger" onPress={onClose}>
-									Close
-								</Button>
-								<Button
-									color="primary"
-									onPress={() => {
-										onClose();
-										submitEvidence(false, evidence);
-									}}
-									endContent={<HiPaperAirplane fill="currentColor" />}
-								>
-									Submit
-								</Button>
-							</ModalFooter>
-						</>}
-					</ModalContent>
-				</Modal>
-				<Modal
-					isOpen={deleteModal.isOpen}
-					onOpenChange={deleteModal.onOpenChange}
-					title="Are you sure?"
+					<h3 id="modal-title" className="font-bold font-lg">
+						Add Evidence
+					</h3>
+					<label className="form-control w-full">
+						<div className="label">
+							<span className="label-text">Evidence</span>
+						</div>
+						<input
+							id="email"
+							className="w-full input input-bordered"
+							type="email"
+							value={evidence}
+							onChange={(e) => setEvidence(e.target.value)}
+						/>
+					</label>
+					<div className="form-control">
+						<label className="label cursor-pointer">
+							<span className="label-text">Flag?</span>
+							<input
+								type="checkbox"
+								checked={submittingFlag}
+								className="checkbox checkbox-primary"
+								onClick={() => setSubmittingFlag(!submittingFlag)}
+							/>
+						</label>
+					</div>
+					<form method="dialog" className="modal-backdrop">
+						<button>close</button>
+					</form>
+					<div className="modal-action">
+						<button
+							className="btn btn-primary"
+							onClick={() => {
+								closeEvidenceModal();
+								submitEvidence(false, evidence);
+							}}
+						>
+							Submit
+							<HiPaperAirplane fill="currentColor" />
+						</button>
+						<form method="dialog">
+							<button className="btn">Close</button>
+						</form>
+					</div>
+				</dialog>
+				<dialog
+					id="delete-modal"
 					aria-labelledby="modal-title"
-					placement="auto"
-					backdrop="blur"
+					className="modal modal-bottom sm:modal-middle"
 				>
-					<ModalContent>
-						{(onClose) => <>
-							<ModalHeader>
-								<h3 id="modal-title">
-									Are you sure you want to delete this evidence?
-								</h3>
-							</ModalHeader>
-							<ModalBody>
-								<p className="text-center"> This action cannot be undone.</p>
-							</ModalBody>
-							<ModalFooter>
-								<Button
-									color="danger"
-									onPress={() => {
-										onClose();
-										window.location.reload();
-									}}
-								>
-									No
-								</Button>
-								<Button
-									onPress={() => {
-										onClose();
-										const id = Number(deleteNode?.id);
-										for (let i = 0; i < graph.evidence.length; i++) {
-											if (graph.evidence[i]["id"] === id) {
-												submitEvidence(true, graph.evidence[i]["name"]);
-												break;
-											}
-										}
-									}}
-									color="success"
-								>
-									Yes
-								</Button>
-							</ModalFooter>
-						</>}
-					</ModalContent>
-				</Modal>
+					<h3 id="modal-title" className="font-bold font-lg">
+						Are you sure you want to delete this evidence?
+					</h3>
+
+					<p> This action cannot be undone.</p>
+					<form method="dialog" className="modal-backdrop">
+						<button>close</button>
+					</form>
+					<div className="modal-action">
+						<button
+							onClick={() => {
+								closeEvidenceModal();
+								const id = Number(deleteNode?.id);
+								for (let i = 0; i < graph.evidence.length; i++) {
+									if (graph.evidence[i]["id"] === id) {
+										submitEvidence(true, graph.evidence[i]["name"]);
+										break;
+									}
+								}
+							}}
+							color="success"
+						>
+							Yes
+						</button>
+						<button
+							color="danger"
+							onClick={() => {
+								closeDeleteModal();
+								window.location.reload();
+							}}
+						>
+							No
+						</button>
+					</div>
+				</dialog>
 			</div>
 		</>
 	);

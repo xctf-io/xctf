@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
 
-import { Input, Button } from "@nextui-org/react";
 import { HiMail } from "react-icons/hi";
 import { useDarkMode } from "usehooks-ts";
 
@@ -25,24 +24,25 @@ const ForgotPassword = () => {
 					<h1 className="text-5xl font-bold mb-0">Reset Password</h1>
 					<p className="font-light">Enter your email to get a reset code</p>
 				</div>
-				<Input
-					id="email"
-					label="Email"
-					type="email"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-					endContent={<HiMail />}
-					width="100%"
-					size="lg"
-				/>
+				<label className="form-control w-full">
+					<div className="label">
+						<span className="label-text">Password</span>
+					</div>
+					<input
+						id="email"
+						className="w-full input input-bordered"
+						type="email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+					/>
+				</label>
 
-				<Button
-					className="mt-6"
-					size="lg"
-                    onPress={() => errorToast("This feature hasn't been implemented.")}
+				<button
+					className="button mt-6"
+                    onClick={() => errorToast("This feature hasn't been implemented.")}
 				>
 					<span>Send Code</span>
-				</Button>
+				</button>
 			</div>
 			{isDarkMode ? (
 				<div

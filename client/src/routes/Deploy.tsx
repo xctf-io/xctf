@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import {kubes} from "@/service";
 import {Deployment} from "@/rpc/kubes/kubes_pb";
-import {Button, Input} from "@nextui-org/react";
 import {toast} from "react-toastify";
 
 export const Deploy: React.FC = () => {
@@ -39,14 +38,14 @@ export const Deploy: React.FC = () => {
     return (
         <div className="mx-[3vw] lg:mx-[6vw] mt-8">
             <h3>New</h3>
-            <Input aria-label={"name"} placeholder="Name" onChange={(e) => setName(e.target.value)} />
-            <Input aria-label={"domain-name"} placeholder="Domain" onChange={(e) => setDomain(e.target.value)} />
-            <Button aria-label={"create"} onClick={newDeployment}>Create</Button>
+            <input className="input input-bordered" aria-label={"name"} placeholder="Name" onChange={(e) => setName(e.target.value)} />
+            <input className="input input-bordered" aria-label={"domain-name"} placeholder="Domain" onChange={(e) => setDomain(e.target.value)} />
+            <button className="btn" aria-label={"create"} onClick={newDeployment}>Create</button>
             <hr />
             <ul>
                 {deployments.map((d) => {
                     return (
-                        <li key={d.id}>{d.name} <Button onClick={() => deleteDeployment(d.name)}>Delete</Button></li>
+                        <li key={d.id}>{d.name} <button className="btn" onClick={() => deleteDeployment(d.name)}>Delete</button></li>
                     )
                 })}
             </ul>

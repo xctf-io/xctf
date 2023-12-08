@@ -17,7 +17,6 @@ import { xctf } from "./service";
 import { useUser } from "./store/user";
 import { usePages } from "./store/pages";
 import { useDarkMode } from 'usehooks-ts'
-import { NextUIProvider } from "@nextui-org/react";
 import "react-toastify/dist/ReactToastify.min.css";
 import { ToastContainer } from "react-toastify";
 import Redirect from "./components/Redirect";
@@ -138,17 +137,10 @@ function App() {
 	const { isDarkMode } = useDarkMode(false)
 	const loggedIn = !!user;
 	const isAdmin = user?.type === "admin";
-	let selectColor = "";
-	selectColor = isDarkMode ? "#0D3868" : "#CEE4FE";
-
-	if (isAdmin) {
-		selectColor = isDarkMode? "#5C0523" : "#FF7377";
-	} 
-	const highlightStyle = { "--nextui-colors-selection": selectColor } as React.CSSProperties;
 
 	return (
-		<NextUIProvider>
-			<main style={highlightStyle} className={`min-h-screen text-foreground bg-background ${isDarkMode ? "dark" : ""}`}>
+		<>
+			<main data-theme={isDarkMode ? "dark": "light" } className="min-h-screen text-foreground bg-background">
 				<Router>
 					<Navbar links={links} />
 					<Routes>
@@ -181,7 +173,7 @@ function App() {
 				<Toaster/>
 			</main>
 			<ToastContainer />
-		</NextUIProvider>
+		</>
 	);
 }
 

@@ -1,18 +1,8 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { xctfAdmin } from "../service";
-import {
-	Progress,
-	Table,
-	Link,
-	Badge,
-	TableHeader,
-	TableColumn,
-	TableBody,
-	TableRow,
-	TableCell
-} from "@nextui-org/react";
 import { useDarkMode } from "usehooks-ts";
+import { Link } from "react-router-dom";
 
 interface Props {}
 
@@ -54,39 +44,37 @@ export const Grading: React.FC<Props> = () => {
 	return (
 		<>
 			<div className="mx-[3vw] lg:mx-[6vw] mt-8">
-				<Table
-					removeWrapper={isDarkMode}
-					className={`h-auto min-w-full ${isDarkMode ? "bg-transparent" : ""}`}
-					radius="md"
+				<table
+					className="table h-auto min-w-full"
 					aria-label="Grading Table"
 					color="danger"
 				>
-					<TableHeader>
-						<TableColumn>NAME</TableColumn>
-						<TableColumn>WRITEUP</TableColumn>
-						<TableColumn>GRADE</TableColumn>
-						<TableColumn>PROGRESS</TableColumn>
-					</TableHeader>
-					<TableBody>
+					<thead>
+						<th>NAME</th>
+						<th>WRITEUP</th>
+						<th>GRADE</th>
+						<th>PROGRESS</th>
+					</thead>
+					<tbody>
 						{teams.map((team) => (
-							<TableRow key={team.name}>
-								<TableCell
+							<tr key={team.name}>
+								<td
 									className="w-[20%] min-w-unit-24"
 								>
 									{team.name}
-								</TableCell>
-								<TableCell
+								</td>
+								<td
 									className="min-w-unit-24"
 								>
 									{team.hasWriteup ? (
-										<Link color="danger" href={"/view/" + team.name}>
+										<Link className="link link-error" to={"/view/" + team.name}>
 											View
 										</Link>
 									) : (
 										<p>No Writeup</p>
 									)}
-								</TableCell>
-								<TableCell
+								</td>
+								<td
 									className="w-[40%]"
 								>
 									{team.grade === 0 ? (
@@ -94,30 +82,30 @@ export const Grading: React.FC<Props> = () => {
 									) : (
 										<>
 											<div className="hidden sm:block">
-												<Progress value={team.grade} maxValue={100} color="danger" />
+												<progress value={team.grade} max={100} className="progress progress-error" />
 											</div>
 											<div className="sm:hidden">{team.grade}%</div>
 										</>
 									)}
-								</TableCell>
-								<TableCell
+								</td>
+								<td
 									className="w-1/2"
 								>
 									<div className="hidden sm:block">
-										<Progress
+										<progress
 											value={team.progress}
-											maxValue={numChallenges}
-											color="danger"
+											max={numChallenges}
+											className="progress progress-error"
 										/>
 									</div>
 									<div className="sm:hidden">
 										{team.progress}/{numChallenges}
 									</div>
-								</TableCell>
-							</TableRow>
+								</td>
+							</tr>
 						))}
-					</TableBody>
-				</Table>
+					</tbody>
+				</table>
 			</div>
 		</>
 	);

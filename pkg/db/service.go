@@ -135,6 +135,7 @@ func (s *Service) Migrate() error {
 		Content: string(content),
 	}
 	s.DB.Save(&homePage)
+	slog.Debug("creating home page")
 	return nil
 }
 

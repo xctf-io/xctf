@@ -1,15 +1,4 @@
 import React, {useEffect, useRef} from 'react'
-import {
-    Button,
-    Spinner,
-    Dropdown,
-    Input,
-    Card,
-    DropdownTrigger,
-    DropdownMenu,
-    DropdownItem,
-    CardHeader, CardFooter
-} from "@nextui-org/react";
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import {useForm} from "react-hook-form";
 import { xctf } from '@/service';

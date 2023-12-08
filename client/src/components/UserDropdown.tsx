@@ -1,62 +1,55 @@
-import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 import { useUser } from "../store/user";
 import { useNavigate } from "react-router-dom";
 
 const UserDropdown = () => {
-    const [user, setUser, logout] = useUser();
-    const navigate = useNavigate();
-    const isAdmin = user?.type === "admin";
-    const themeHexColor = isAdmin ? "DF3562" : "3070ED";
-    const themeColor = isAdmin ? "danger" : "primary";
-    return (
-        <Dropdown placement="bottom-end">
-            <DropdownTrigger>
-                <Avatar
-                    isBordered
-                    as="button"
-                    className="transition-transform bg-transparent"
-                    color={themeColor}
-                    size="md"
-                    src={
-                        "https://api.dicebear.com/6.x/bottts/svg?baseColor=" +
-                        themeHexColor +
-                        "&seed=" +
-                        user?.username
-                    }
-                />
-            </DropdownTrigger>
-            <DropdownMenu
-                aria-label="User menu actions"
-                onAction={(actionKey) => {
-                    if (actionKey === "logout") {
-                        logout();
-                        document.location.href = "/login"
-                        navigate("/login");
-                    }
-                }}
-                className="border-0 text-foreground bg-background"
-            >
-                <DropdownItem
-                    key="profile"
-                    className="h-auto"
-                    showDivider
-                >
-                    <p >Signed in as</p>
-                    <p
-                        className="font-bold"
-                        style={{
-                            overflowWrap: "anywhere",
-                        }}
-                    >
-                        {user?.username}
-                    </p>
-                </DropdownItem>
-                <DropdownItem key="logout" color="danger">
-                    Logout
-                </DropdownItem>
-            </DropdownMenu>
-        </Dropdown>
-    );
-}
+	const [user, setUser, logout] = useUser();
+	const navigate = useNavigate();
+	const isAdmin = user?.type === "admin";
+	const themeHexColor = isAdmin ? "FE6667" : "767FFE";
+	const themeColor = isAdmin ? "error" : "primary";
+	return (
+		<div className="dropdown dropdown-end">
+			<div
+				tabIndex={0}
+				role="button"
+				className={
+					"btn btn-ghost btn-circle avatar border border-" + themeColor
+				}
+			>
+				<div className="w-10 rounded-full">
+					<img
+						src={
+							"https://api.dicebear.com/6.x/bottts/svg?baseColor=" +
+							themeHexColor +
+							"&seed=" +
+							user?.username
+						}
+					/>
+				</div>
+			</div>
+			<ul
+				tabIndex={0}
+				className="mt-3 z-[1] px-3 py-5 shadow menu dropdown-content bg-base-200 rounded-box w-64 text-lg"
+				aria-label="User menu actions"
+			>
+				<li>
+					<p>Signed in as <span className="font-bold -ml-1">{user?.username}</span></p>
+				</li>
+				<li>
+					<a
+						className="link link-error"
+						onClick={(actionKey) => {
+							logout();
+							document.location.href = "/login";
+							navigate("/login");
+						}}
+					>
+						Logout
+					</a>
+				</li>
+			</ul>
+		</div>
+	);
+};
 
 export default UserDropdown;
