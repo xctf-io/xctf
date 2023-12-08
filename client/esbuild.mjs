@@ -6,7 +6,12 @@ const runTailwindBuild = (watch) => {
 	console.log("Building Tailwind CSS...");
 	try {
 		const command = 'npx';
-		const args = ['tailwindcss', 'build', '-o', 'public/build/tailwind.css'];
+		const args = [
+			'tailwindcss',
+			'build',
+			'-i', 'src/styles/tailwind.css',
+			'-o', 'public/build/tailwind.css'
+		];
 
 		if (watch) {
 			args.push('--watch')
