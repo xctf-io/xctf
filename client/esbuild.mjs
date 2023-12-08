@@ -1,14 +1,26 @@
 import esbuild from "esbuild";
 import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
-import { execSync } from "child_process";
+import { spawn, spawnSync } from "child_process";
 
-const runTailwindBuild = () => {
+const runTailwindBuild = (watch) => {
 	console.log("Building Tailwind CSS...");
 	try {
-	  execSync("npx tailwindcss build -o public/build/tailwind.css");
-	  console.log("Tailwind CSS build successful!");
+		const command = 'npx';
+		const args = ['tailwindcss', 'build', '-o', 'public/build/tailwind.css'];
+
+		if (watch) {
+			args.push('--watch')
+			spawn(command, args, {
+				stdio: 'inherit'
+			})
+		} else {
+			spawnSync(command, args, {
+				stdio: 'inherit'
+			});
+		}
+		console.log("Tailwind CSS build successful!");
 	} catch (error) {
-	  console.error("Error building Tailwind CSS:", error.message);
+		console.error("Error building Tailwind CSS:", error.message);
 	}
   };
 
@@ -45,9 +57,11 @@ const options = {
 
 
 if (!devBuild) {
-	runTailwindBuild();
+	runTailwindBuild(false);
 	await esbuild.build(options);
 } else {
+	runTailwindBuild(true);
+
 	const context = await esbuild.context(options);
 
 	const result = await context.rebuild();

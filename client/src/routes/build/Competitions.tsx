@@ -6,6 +6,7 @@ import {Competition, CompetitionList, Graph, Node} from "@/rpc/chalgen/graph_pb"
 import {toast} from "react-toastify";
 import {removeUndefinedFields} from "@/util/object";
 import { Meta } from '@/rpc/chals/config_pb';
+import {Spinner} from "@/components/Spinner";
 
 export const Competitions: React.FC = () => {
     return (
@@ -236,39 +237,35 @@ const Edit: React.FC = () => {
                             {competitionList.competitions.length === 0 ? (
                                 <p>No competitions yet</p>
                             ) : (
-                                <Dropdown>
-                                    <DropdownTrigger>
-                                        <Button>Select Competition</Button>
-                                    </DropdownTrigger>
-                                    <DropdownMenu onAction={(id ) => {
-                                        const c = competitionList.competitions.find((c) => c.id === id);
-                                        if (!c) {
-                                            return;
-                                        }
-                                        setSelectedCompetition(c)
-                                        setCompetitionName(c.name)
-                                    }}>
+                                <details className={"dropdown"}>
+                                    <summary className={"m-1 btn"}>
+                                        Select Competition
+                                    </summary>
+                                    <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
                                         {competitionList.competitions.map((c) => {
                                             return (
-                                                <DropdownItem key={c.id}>
+                                                <li key={c.id} onClick={() => {
+                                                    setSelectedCompetition(c)
+                                                    setCompetitionName(c.name)
+                                                }}>
                                                     {c.name}
-                                                </DropdownItem>
+                                                </li>
                                             )
                                         })}
-                                    </DropdownMenu>
-                                </Dropdown>
+                                    </ul>
+                                </details>
                             )}
                         </>
                     ) : (
                         <Spinner />
                     )}
-                    <Button onClick={newCompetition}>
+                    <button className="btn" onClick={newCompetition}>
                         New Competition
-                    </Button>
+                    </button>
                 </div>
                 <div className={"flex flex-row"}>
                     <div className={"flex-4"}>
-                        <Input label={"name"} value={competitionName} onChange={(e) => setCompetitionName(e.target.value)} />
+                        <input type={"text"} className={"input"} value={competitionName} onChange={(e) => setCompetitionName(e.target.value)} />
                         <label>
                             <input aria-label={"active"} type={"checkbox"} checked={active} onChange={(e) => setActive(e.target.checked)} />
                             active
@@ -285,18 +282,18 @@ const Edit: React.FC = () => {
                                         {selectedCompetition.graph.nodes.map((n) => (
                                             <tr key={n.meta?.id}>
                                                 <td>
-                                                    <Card className={"cursor-pointer"}>
-                                                        <CardHeader onClick={() => selectChallenge(n)}>
+                                                    <div className="card w-96 bg-base-100 shadow-xl">
+                                                        <h2 className={"card-title"} onClick={() => selectChallenge(n)}>
                                                             {n.meta?.name}{currentChallenge?.meta?.id === n.meta?.id ? ' (editing)' : ''}
-                                                        </CardHeader>
-                                                        <CardFooter>
-                                                            <Button size={"sm"} color={"danger"} onClick={() => removeNode(n.meta?.id || '')}>Remove</Button>
-                                                        </CardFooter>
-                                                    </Card>
+                                                        </h2>
+                                                        <div className={"card-actions justify-end"}>
+                                                            <button className={"btn btn-error"} onClick={() => removeNode(n.meta?.id || '')}>Remove</button>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
-                                        <Button onClick={newChallenge}>New</Button>
+                                        <button className={"btn btn-primary"} onClick={newChallenge}>New</button>
                                     </>
                                 ) : (
                                     <tr>
@@ -312,12 +309,12 @@ const Edit: React.FC = () => {
                                 {form()}
                             </div>
                             <div className={"flex flex-row space-x-4"}>
-                                <Button color={'secondary'} onClick={togglePreview}>
+                                <button className={"btn btn-info"} onClick={togglePreview}>
                                     Preview
-                                </Button>
-                                <Button type="submit">
+                                </button>
+                                <button className={"btn btn-primary"} type="submit">
                                     Save
-                                </Button>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -328,7 +325,7 @@ const Edit: React.FC = () => {
                     </div>
                 )}
                 <div className={"flex flex-row"}>
-                    <Button color={"danger"} onClick={onCompDelete}>Delete Competition</Button>
+                    <button className={"btn btn-error"} onClick={onCompDelete}>Delete Competition</button>
                 </div>
             </div>
         </>

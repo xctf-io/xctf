@@ -4,9 +4,7 @@
   "version": "0.0.1",
   "module": "true",
   "scripts": {
-    "watch-js": "cd client && DEV=true node esbuild.mjs",
-    "watch-css": "cd client && npx tailwindcss build -o public/build/tailwind.css --watch",
-    "dev": "concurrently --kill-others \"npm run watch-css\" \"npm run watch-js\"",
+    "dev": "cd client && DEV=true node esbuild.mjs",
     "build": "cd client && DEV=false node esbuild.mjs"
   },
   "devDependencies": {

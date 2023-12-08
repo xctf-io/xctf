@@ -152,10 +152,9 @@ func New(
 func liveReload() error {
 	// TODO breadchris makes this a config that can be set
 	c := reload.Config{
-		// TODO breadchris do not hardcode proxy url
 		Cmd: []string{"go", "run", "main.go"},
 		// ideally we use tilt here
-		Targets:  []string{"pkg", "gen"},
+		Targets:  []string{"pkg"},
 		Patterns: []string{"**/*.go", "**/*.tmpl.html"},
 	}
 

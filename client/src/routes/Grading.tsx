@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { xctfAdmin } from "../service";
+import { xctfAdmin } from "@/service";
 import { useDarkMode } from "usehooks-ts";
 import { Link } from "react-router-dom";
 
