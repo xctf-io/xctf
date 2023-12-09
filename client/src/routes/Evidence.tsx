@@ -89,23 +89,7 @@ export function Evidence() {
 						x: e.x,
 						y: e.y,
 					},
-					style: {
-						background: e.isFlag
-							? isDarkMode
-								? "#002e62"
-								: "#cce3fd"
-							: isDarkMode
-							? "#27272a"
-							: "#f4f4f5",
-						borderColor: e.isFlag
-							? isDarkMode
-								? "#005bc4"
-								: "#66aaf9"
-							: isDarkMode
-							? "#52525b"
-							: "#d4d4d8",
-						color: isDarkMode ? "#ECEDEE" : "#11181C",
-					},
+					className: e.isFlag ? "flag" : "",
 				};
 			});
 			const tempEdges = resp.connections.map((c) => ({
@@ -116,10 +100,6 @@ export function Evidence() {
 					type: MarkerType.ArrowClosed,
 					width: 20,
 					height: 20,
-					color: "#4C5155",
-				},
-				style: {
-					stroke: "#4C5155",
 				},
 			}));
 			const [nodes, edges] = getLayoutedElements(tempNodes, tempEdges);
@@ -143,23 +123,7 @@ export function Evidence() {
 				x: e.x,
 				y: e.y,
 			},
-			style: {
-				background: e.isFlag
-					? isDarkMode
-						? "#002e62"
-						: "#cce3fd"
-					: isDarkMode
-					? "#27272a"
-					: "#f4f4f5",
-				borderColor: e.isFlag
-					? isDarkMode
-						? "#005bc4"
-						: "#66aaf9"
-					: isDarkMode
-					? "#52525b"
-					: "#d4d4d8",
-				color: isDarkMode ? "#ECEDEE" : "#11181C",
-			},
+			className: e.isFlag ? "flag" : "",
 		};
 	});
 	const [nodes, setNodes] = useState<Node[]>(initialNodes);
@@ -224,10 +188,6 @@ export function Evidence() {
 			type: MarkerType.ArrowClosed,
 			width: 20,
 			height: 20,
-			color: "#4C5155",
-		},
-		style: {
-			stroke: "#4C5155",
 		},
 	}));
 	const [edges, setEdges] = useState<Edge[]>(initialEdges);
@@ -386,7 +346,7 @@ export function Evidence() {
 						<div className="modal-action">
 							<button
 								onClick={() => {
-									closeEvidenceModal();
+									closeDeleteModal();
 									const id = Number(deleteNode?.id);
 									for (let i = 0; i < graph.evidence.length; i++) {
 										if (graph.evidence[i]["id"] === id) {

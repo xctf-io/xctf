@@ -82,13 +82,7 @@ const SubmitWriteup = () => {
 				}}
 			/>
 			<div
-				className="mx-8 py-28 px-36 border-2 rounded-lg border-dashed"
-				style={{
-					backgroundColor: dragActive
-						? 'white'
-						: (isDarkMode ? "#1A1E23":  "#f4f4f5"),
-					borderColor: (isDarkMode ? "#16191E" : "#d4d4d8")
-				}}
+				className={`mx-8 py-28 px-36 border-4 rounded-lg border-dashed bg-base-200 border-base-300`}
 				onDragEnter={(e) => {
 					e.preventDefault();
 					setDragActive(true);

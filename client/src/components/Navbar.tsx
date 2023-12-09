@@ -46,7 +46,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								<li
 									className={
 										l.to === location.pathname
-											? "border-b-2 border-" + themeColor
+											? "border-b-2 border-base-content"
 											: ""
 									}
 								>

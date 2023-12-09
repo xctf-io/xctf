@@ -90,7 +90,7 @@ const Register: React.FC<RegisterProps> = ({ }) => {
 					className="inset-0 bg-cover lg:block hidden"
 					style={{
 						backgroundImage:
-							'url("https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d")',
+							'url("https://images.unsplash.com/photo-1532456745301-b2c645d8b80d")',
 						height: "calc(100vh - 86px)",
 					}}
 				/>

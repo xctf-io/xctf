@@ -13,7 +13,7 @@ const Login = () => {
 
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-2 w-full">
-			<div className="flex flex-col gap-6 lg:ml-48 lg:mr-32 mt-24 lg:mt-auto m-auto justify-center">
+			<div className="flex flex-col gap-4 lg:ml-48 lg:mr-32 mt-24 lg:mt-auto m-auto justify-center">
 				<div>
 					<h1 className="text-5xl font-bold mb-0">Welcome back!</h1>
 					<p className="font-light">Login to continue</p>
@@ -44,7 +44,7 @@ const Login = () => {
 				</label>
 
 				<button
-					className="btn btn-primary mt-0 h-16 text-lg"
+					className="btn btn-primary mt-2 h-16 text-lg"
 					color="primary"
 					onClick={() => doLogin(email, password, isDarkMode)}
 				>
@@ -73,7 +73,7 @@ const Login = () => {
 					className="inset-0 bg-cover lg:block hidden"
 					style={{
 						backgroundImage:
-							'url("https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d")',
+							'url("https://images.unsplash.com/photo-1532456745301-b2c645d8b80d")',
 						height: "calc(100vh - 86px)",
 					}}
 				/>

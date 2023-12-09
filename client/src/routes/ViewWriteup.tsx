@@ -361,28 +361,29 @@ const ViewWriteup = () => {
 			const tempNodes = resp.evidence.map((e) => {
 				return {
 					id: e.id.toString(),
-					data: { label: e.isFlag ? e.name + "🏳️" : e.name },
+					data: { label: e.name },
 					position: {
 						x: e.x,
 						y: e.y,
 					},
-					style: {
-						background: e.isFlag
-							? isDarkMode
-								? "#310413"
-								: "#fee7ef"
-							: isDarkMode
-							? "#27272a"
-							: "#f4f4f5",
-						borderColor: e.isFlag
-							? isDarkMode
-								? "#610726"
-								: "#faa0bf"
-							: isDarkMode
-							? "#52525b"
-							: "#d4d4d8",
-						color: isDarkMode ? "#ECEDEE" : "#11181C",
-					},
+					className: e.isFlag ? "flag-admin" : "",
+					// style: {
+					// 	background: e.isFlag
+					// 		? isDarkMode
+					// 			? "#310413"
+					// 			: "#fee7ef"
+					// 		: isDarkMode
+					// 		? "#27272a"
+					// 		: "#f4f4f5",
+					// 	borderColor: e.isFlag
+					// 		? isDarkMode
+					// 			? "#610726"
+					// 			: "#faa0bf"
+					// 		: isDarkMode
+					// 		? "#52525b"
+					// 		: "#d4d4d8",
+					// 	color: isDarkMode ? "#ECEDEE" : "#11181C",
+					// },
 				};
 			});
 			const tempEdges = resp.connections.map((c) => ({
@@ -393,10 +394,6 @@ const ViewWriteup = () => {
 					type: MarkerType.ArrowClosed,
 					width: 20,
 					height: 20,
-					color: "#4C5155",
-				},
-				style: {
-					stroke: "#4C5155",
 				},
 			}));
 			const [nodes, edges] = getLayoutedElements(tempNodes, tempEdges);
@@ -535,10 +532,10 @@ const ViewWriteup = () => {
 			)}
 			<div className="flex flex-col items-center w-full relative xl:col-span-2">
 				<div className="absolute right-8 top-[2px]">
-					<label className="swap swap-rotate">
+					<label className="swap swap-flip">
 						<input type="checkbox" onClick={(e) => setShowChart(!showChart)} />
-						<TbGraphOff className="swap-off fill-current w-10 h-10" />
-						<TbGraph className="swap-on fill-current w-10 h-10" />
+						<TbGraphOff className="swap-off w-10 h-10" />
+						<TbGraph className="swap-on w-10 h-10" />
 					</label>
 				</div>
 				<div className="join">

@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+[data-theme="light"] {
+    .react-flow__node {
+        background-color: #f4f4f5;
+        border-color: #d4d4d8;
+        color: #11181C;
+    }
+    .flag {
+        background-color: #cce3fd;
+        border-color: #66aaf9;
+    }
+    .flag-admin {
+        background-color: #fee7ef;
+        border-color: #faa0bf;
+    }
+}
+
+[data-theme="black"] {
+    .react-flow__node {
+        background-color: #27272a;
+        border-color: #52525b;
+        color: #ECEDEE;
+    }
+    .flag {
+        background-color: #002e62;
+        border-color: #005bc4;
+    }
+    .flag-admin {
+        background-color: #310413;
+        border-color: #610726;
+    }
+}

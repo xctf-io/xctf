@@ -36,14 +36,14 @@ const Menu: React.FC<Props> = ({ openModal }) => {
 		>
 			<button
 				onClick={openModal}
-				className="btn text-black bg-white border-2 border-[#EEEEEE] w-full h-[55px] rounded-none"
+				className="btn text-black bg-white hover:bg-[#F4F4F4] border border-[#EEEEEE] hover:border-[#EEEEEE] w-full h-[54px] rounded-none"
 			>
 				Add evidence
 				<HiOutlinePlus />
 			</button>
 			<button
 				onClick={downloadGraph}
-				className="btn text-black bg-white border-2 border-[#EEEEEE] border-t-0 w-full h-[54px] rounded-none"
+				className="btn text-black bg-white hover:bg-[#F4F4F4] border border-[#EEEEEE] hover:border-[#EEEEEE] w-full h-[55px] rounded-none"
 			>
 				Download
 				<HiDownload />

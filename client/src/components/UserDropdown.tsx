@@ -13,7 +13,7 @@ const UserDropdown = () => {
 				tabIndex={0}
 				role="button"
 				className={
-					"btn btn-ghost btn-circle avatar border border-error" + themeColor
+					`avatar btn btn-outline btn-circle hover:bg-transparent border-${themeColor} hover:border-${themeColor}`
 				}
 			>
 				<div className="w-10 rounded-full">
