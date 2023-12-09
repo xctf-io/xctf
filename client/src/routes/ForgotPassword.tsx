@@ -50,7 +50,7 @@ const ForgotPassword = () => {
 					style={{
 						backgroundImage:
 							'url("https://images.unsplash.com/photo-1590069261209-f8e9b8642343?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1376&q=80")',
-						height: "calc(100vh - 80px)",
+						height: "calc(100vh - 86px)",
 					}}
 				/>
 			) : (
@@ -59,7 +59,7 @@ const ForgotPassword = () => {
 					style={{
 						backgroundImage:
 							'url("https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3087&q=80")',
-						height: "calc(100vh - 80px)",
+						height: "calc(100vh - 86px)",
 					}}
 				/>
 			)}

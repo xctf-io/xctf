@@ -140,7 +140,7 @@ function App() {
 
 	return (
 		<>
-			<main data-theme={isDarkMode ? "dark": "light" } className="min-h-screen text-foreground bg-background">
+			<main data-theme={isDarkMode ? "black": "light" } className="min-h-screen text-foreground bg-background">
 				<Router>
 					<Navbar links={links} />
 					<Routes>

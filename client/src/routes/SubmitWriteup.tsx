@@ -67,7 +67,7 @@ const SubmitWriteup = () => {
 		<div
 			className="flex flex-col justify-center items-center text-center gap-6"
 			style={{
-				height: "calc(100vh - 80px)",
+				height: "calc(100vh - 86px)",
 			}}
 		>
 			<input

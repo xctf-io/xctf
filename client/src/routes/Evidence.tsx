@@ -296,7 +296,7 @@ export function Evidence() {
 			<div
 				className="w-screen flex flex-col"
 				style={{
-					height: "calc(100vh - 80px)",
+					height: "calc(100vh - 86px)",
 				}}
 			>
 				<Menu openModal={openEvidenceModal} />
@@ -325,49 +325,51 @@ export function Evidence() {
 					role="dialog"
 					aria-labelledby="modal-title"
 				>
-					<h3 id="modal-title" className="font-bold font-lg">
-						Add Evidence
-					</h3>
-					<label className="form-control w-full">
-						<div className="label">
-							<span className="label-text">Evidence</span>
-						</div>
-						<input
-							id="email"
-							className="w-full input input-bordered"
-							type="email"
-							value={evidence}
-							onChange={(e) => setEvidence(e.target.value)}
-						/>
-					</label>
-					<div className="form-control">
-						<label className="label cursor-pointer">
-							<span className="label-text">Flag?</span>
+					<div className="modal-box">
+						<h3 id="modal-title" className="font-bold text-2xl">
+							Add Evidence
+						</h3>
+						<label className="form-control w-full">
+							<div className="label">
+								<span className="label-text">Evidence</span>
+							</div>
 							<input
-								type="checkbox"
-								checked={submittingFlag}
-								className="checkbox checkbox-primary"
-								onClick={() => setSubmittingFlag(!submittingFlag)}
+								id="email"
+								className="w-full input input-bordered"
+								type="email"
+								value={evidence}
+								onChange={(e) => setEvidence(e.target.value)}
 							/>
 						</label>
-					</div>
-					<form method="dialog" className="modal-backdrop">
-						<button>close</button>
-					</form>
-					<div className="modal-action">
-						<button
-							className="btn btn-primary"
-							onClick={() => {
-								closeEvidenceModal();
-								submitEvidence(false, evidence);
-							}}
-						>
-							Submit
-							<HiPaperAirplane fill="currentColor" />
-						</button>
-						<form method="dialog">
-							<button className="btn">Close</button>
+						<div className="form-control mt-4">
+							<label className="label cursor-pointer">
+								<span className="label-text">Flag?</span>
+								<input
+									type="checkbox"
+									checked={submittingFlag}
+									className="checkbox checkbox-primary"
+									onClick={() => setSubmittingFlag(!submittingFlag)}
+								/>
+							</label>
+						</div>
+						<form method="dialog" className="modal-backdrop">
+							<button>close</button>
 						</form>
+						<div className="modal-action mt-0">
+							<button
+								className="btn btn-primary"
+								onClick={() => {
+									closeEvidenceModal();
+									submitEvidence(false, evidence);
+								}}
+							>
+								Submit
+								<HiPaperAirplane fill="currentColor" />
+							</button>
+							<form method="dialog">
+								<button className="btn">Close</button>
+							</form>
+						</div>
 					</div>
 				</dialog>
 				<dialog
@@ -375,39 +377,41 @@ export function Evidence() {
 					aria-labelledby="modal-title"
 					className="modal modal-bottom sm:modal-middle"
 				>
-					<h3 id="modal-title" className="font-bold font-lg">
-						Are you sure you want to delete this evidence?
-					</h3>
+					<div className="modal-box">
+						<h3 id="modal-title" className="font-bold text-xl">
+							Are you sure you want to delete this evidence?
+						</h3>
 
-					<p> This action cannot be undone.</p>
-					<form method="dialog" className="modal-backdrop">
-						<button>close</button>
-					</form>
-					<div className="modal-action">
-						<button
-							onClick={() => {
-								closeEvidenceModal();
-								const id = Number(deleteNode?.id);
-								for (let i = 0; i < graph.evidence.length; i++) {
-									if (graph.evidence[i]["id"] === id) {
-										submitEvidence(true, graph.evidence[i]["name"]);
-										break;
+						<p>This action cannot be undone.</p>
+						<div className="modal-action">
+							<button
+								onClick={() => {
+									closeEvidenceModal();
+									const id = Number(deleteNode?.id);
+									for (let i = 0; i < graph.evidence.length; i++) {
+										if (graph.evidence[i]["id"] === id) {
+											submitEvidence(true, graph.evidence[i]["name"]);
+											break;
+										}
 									}
-								}
-							}}
-							color="success"
-						>
-							Yes
-						</button>
-						<button
-							color="danger"
-							onClick={() => {
-								closeDeleteModal();
-								window.location.reload();
-							}}
-						>
-							No
-						</button>
+								}}
+								className="btn btn-primary"
+							>
+								Yes
+							</button>
+							<button
+								className="btn btn-error"
+								onClick={() => {
+									closeDeleteModal();
+									window.location.reload();
+								}}
+							>
+								No
+							</button>
+						</div>
+						<form method="dialog" className="modal-backdrop">
+							<button>close</button>
+						</form>
 					</div>
 				</dialog>
 			</div>

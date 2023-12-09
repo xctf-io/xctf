@@ -65,7 +65,7 @@ const Login = () => {
 					style={{
 						backgroundImage:
 							'url("https://images.unsplash.com/photo-1590069261209-f8e9b8642343")',
-						height: "calc(100vh - 64px)",
+						height: "calc(100vh - 86px)",
 					}}
 				/>
 			) : (
@@ -74,7 +74,7 @@ const Login = () => {
 					style={{
 						backgroundImage:
 							'url("https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d")',
-						height: "calc(100vh - 64px)",
+						height: "calc(100vh - 86px)",
 					}}
 				/>
 			)}
