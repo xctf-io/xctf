@@ -17,6 +17,7 @@ import (
 	"github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/kubes"
 	"github.com/xctf-io/xctf/pkg/log"
+	"github.com/xctf-io/xctf/pkg/openai"
 	"github.com/xctf-io/xctf/pkg/server"
 )
 
@@ -72,8 +73,16 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	handler := chals.NewHandler(chalsConfig, service, builder, pythonServiceClient)
-	backendBackend := backend.NewBackend(service, store, handler)
+	handler := chals.NewHandler(chalsConfig, service, builder, pythonServiceClient, store)
+	openaiConfig, err := openai.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	agent, err := openai.NewAgent(openaiConfig)
+	if err != nil {
+		return nil, err
+	}
+	backendBackend := backend.NewBackend(service, store, handler, agent)
 	adminAdmin := admin.NewAdmin(service)
 	httpHandler, err := server.New(serverConfig, store, kubesService, backendBackend, adminAdmin, service, handler)
 	if err != nil {

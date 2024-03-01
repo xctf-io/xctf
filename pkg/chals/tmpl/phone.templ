@@ -1,0 +1,28 @@
+package tmpl
+
+import (
+	"github.com/xctf-io/xctf/pkg/gen/chalgen"
+)
+
+type PhoneState struct {
+    BaseURL string
+}
+
+templ Phone(state PhoneState, phone *chalgen.Phone) {
+    <div class="flex h-screen">
+        <div class="mockup-phone">
+          <div class="camera"></div>
+          <div class="display">
+            <div class="artboard artboard-demo phone-1">
+                <div class="grid grid-cols-3 gap-4">
+                  for _, a := range phone.Apps {
+                      <a href={templ.URL(a.Url)} class="btn w-20 h-20 bg-blue-500 flex justify-center items-center text-white">
+                        {a.Name}
+                      </a>
+                  }
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+}

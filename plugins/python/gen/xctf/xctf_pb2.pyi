@@ -7,6 +7,38 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class RemoveRequest(_message.Message):
+    __slots__ = ("path",)
+    PATH_FIELD_NUMBER: _ClassVar[int]
+    path: str
+    def __init__(self, path: _Optional[str] = ...) -> None: ...
+
+class RemoveResponse(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
+class ReaddirRequest(_message.Message):
+    __slots__ = ("path",)
+    PATH_FIELD_NUMBER: _ClassVar[int]
+    path: str
+    def __init__(self, path: _Optional[str] = ...) -> None: ...
+
+class ReaddirResponse(_message.Message):
+    __slots__ = ("files",)
+    FILES_FIELD_NUMBER: _ClassVar[int]
+    files: _containers.RepeatedCompositeFieldContainer[FileInfo]
+    def __init__(self, files: _Optional[_Iterable[_Union[FileInfo, _Mapping]]] = ...) -> None: ...
+
+class FileInfo(_message.Message):
+    __slots__ = ("name", "size", "is_dir")
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    SIZE_FIELD_NUMBER: _ClassVar[int]
+    IS_DIR_FIELD_NUMBER: _ClassVar[int]
+    name: str
+    size: int
+    is_dir: bool
+    def __init__(self, name: _Optional[str] = ..., size: _Optional[int] = ..., is_dir: bool = ...) -> None: ...
+
 class GetUserWriteupResponse(_message.Message):
     __slots__ = ("content",)
     CONTENT_FIELD_NUMBER: _ClassVar[int]

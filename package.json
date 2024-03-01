@@ -18,7 +18,6 @@
     "@tailwindcss/typography": "^0.5.10",
     "@types/node": "^20.1.0",
     "autoprefixer": "^10.2.3",
-    "concurrently": "^8.2.2",
     "daisyui": "^4.4.19",
     "esbuild-plugins-node-modules-polyfill": "^1.0.9",
     "fastify-plugin": "^4.5.0",

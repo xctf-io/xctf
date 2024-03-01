@@ -654,6 +654,16 @@ class AdminStub(object):
                 request_serializer=xctf_dot_xctf__pb2.GetUserGraphRequest.SerializeToString,
                 response_deserializer=xctf_dot_xctf__pb2.GetUserGraphResponse.FromString,
                 )
+        self.Readdir = channel.unary_unary(
+                '/xctf.Admin/Readdir',
+                request_serializer=xctf_dot_xctf__pb2.ReaddirRequest.SerializeToString,
+                response_deserializer=xctf_dot_xctf__pb2.ReaddirResponse.FromString,
+                )
+        self.Remove = channel.unary_unary(
+                '/xctf.Admin/Remove',
+                request_serializer=xctf_dot_xctf__pb2.RemoveRequest.SerializeToString,
+                response_deserializer=xctf_dot_xctf__pb2.RemoveResponse.FromString,
+                )
 
 
 class AdminServicer(object):
@@ -719,6 +729,18 @@ class AdminServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Readdir(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Remove(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_AdminServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -771,6 +793,16 @@ def add_AdminServicer_to_server(servicer, server):
                     servicer.GetUserGraph,
                     request_deserializer=xctf_dot_xctf__pb2.GetUserGraphRequest.FromString,
                     response_serializer=xctf_dot_xctf__pb2.GetUserGraphResponse.SerializeToString,
+            ),
+            'Readdir': grpc.unary_unary_rpc_method_handler(
+                    servicer.Readdir,
+                    request_deserializer=xctf_dot_xctf__pb2.ReaddirRequest.FromString,
+                    response_serializer=xctf_dot_xctf__pb2.ReaddirResponse.SerializeToString,
+            ),
+            'Remove': grpc.unary_unary_rpc_method_handler(
+                    servicer.Remove,
+                    request_deserializer=xctf_dot_xctf__pb2.RemoveRequest.FromString,
+                    response_serializer=xctf_dot_xctf__pb2.RemoveResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -949,5 +981,39 @@ class Admin(object):
         return grpc.experimental.unary_unary(request, target, '/xctf.Admin/GetUserGraph',
             xctf_dot_xctf__pb2.GetUserGraphRequest.SerializeToString,
             xctf_dot_xctf__pb2.GetUserGraphResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Readdir(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Admin/Readdir',
+            xctf_dot_xctf__pb2.ReaddirRequest.SerializeToString,
+            xctf_dot_xctf__pb2.ReaddirResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Remove(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Admin/Remove',
+            xctf_dot_xctf__pb2.RemoveRequest.SerializeToString,
+            xctf_dot_xctf__pb2.RemoveResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

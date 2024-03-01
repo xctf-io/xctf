@@ -693,6 +693,8 @@ type AdminClient interface {
 	SubmitComment(ctx context.Context, in *SubmitCommentRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
 	GetUserGraph(ctx context.Context, in *GetUserGraphRequest, opts ...grpc.CallOption) (*GetUserGraphResponse, error)
+	Readdir(ctx context.Context, in *ReaddirRequest, opts ...grpc.CallOption) (*ReaddirResponse, error)
+	Remove(ctx context.Context, in *RemoveRequest, opts ...grpc.CallOption) (*RemoveResponse, error)
 }
 
 type adminClient struct {
@@ -793,6 +795,24 @@ func (c *adminClient) GetUserGraph(ctx context.Context, in *GetUserGraphRequest,
 	return out, nil
 }
 
+func (c *adminClient) Readdir(ctx context.Context, in *ReaddirRequest, opts ...grpc.CallOption) (*ReaddirResponse, error) {
+	out := new(ReaddirResponse)
+	err := c.cc.Invoke(ctx, "/xctf.Admin/Readdir", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) Remove(ctx context.Context, in *RemoveRequest, opts ...grpc.CallOption) (*RemoveResponse, error) {
+	out := new(RemoveResponse)
+	err := c.cc.Invoke(ctx, "/xctf.Admin/Remove", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServer is the server API for Admin service.
 // All implementations should embed UnimplementedAdminServer
 // for forward compatibility
@@ -807,6 +827,8 @@ type AdminServer interface {
 	SubmitComment(context.Context, *SubmitCommentRequest) (*Empty, error)
 	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
 	GetUserGraph(context.Context, *GetUserGraphRequest) (*GetUserGraphResponse, error)
+	Readdir(context.Context, *ReaddirRequest) (*ReaddirResponse, error)
+	Remove(context.Context, *RemoveRequest) (*RemoveResponse, error)
 }
 
 // UnimplementedAdminServer should be embedded to have forward compatible implementations.
@@ -842,6 +864,12 @@ func (UnimplementedAdminServer) GetComments(context.Context, *GetCommentsRequest
 }
 func (UnimplementedAdminServer) GetUserGraph(context.Context, *GetUserGraphRequest) (*GetUserGraphResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserGraph not implemented")
+}
+func (UnimplementedAdminServer) Readdir(context.Context, *ReaddirRequest) (*ReaddirResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Readdir not implemented")
+}
+func (UnimplementedAdminServer) Remove(context.Context, *RemoveRequest) (*RemoveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Remove not implemented")
 }
 
 // UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
@@ -1035,6 +1063,42 @@ func _Admin_GetUserGraph_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_Readdir_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReaddirRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).Readdir(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Admin/Readdir",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).Readdir(ctx, req.(*ReaddirRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_Remove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).Remove(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Admin/Remove",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).Remove(ctx, req.(*RemoveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1081,6 +1145,14 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserGraph",
 			Handler:    _Admin_GetUserGraph_Handler,
+		},
+		{
+			MethodName: "Readdir",
+			Handler:    _Admin_Readdir_Handler,
+		},
+		{
+			MethodName: "Remove",
+			Handler:    _Admin_Remove_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

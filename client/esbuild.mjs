@@ -1,6 +1,9 @@
 import esbuild from "esbuild";
-import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
 import { spawn, spawnSync } from "child_process";
+
+const devBuild = process.env.DEV === "true";
+const minify = !devBuild;
+const nodeEnv = devBuild ? '"development"' : '"production"';
 
 const runTailwindBuild = (watch) => {
 	console.log("Building Tailwind CSS...");
@@ -29,12 +32,6 @@ const runTailwindBuild = (watch) => {
 	}
   };
 
-const devBuild = process.env.DEV === "true";
-
-const minify = !devBuild;
-
-const nodeEnv = devBuild ? '"development"' : '"production"';
-
 const options = {
 	entryPoints: [
 		"./src/index.tsx",
@@ -48,7 +45,7 @@ const options = {
 		".woff2": "file",
 		".woff": "file"
 	},
-	plugins: [nodeModulesPolyfillPlugin()],
+	plugins: [],
 	minify: minify,
 	sourcemap: "linked",
 	define: {
@@ -72,7 +69,8 @@ if (!devBuild) {
 	const result = await context.rebuild();
 	console.log('serving', `public`)
 	context.serve({
-		port: 8001,
+		// TODO breadchris make configurable
+		port: 8421,
 		servedir: `public`,
 		fallback: `public/index.html`,
 		onRequest: args => {

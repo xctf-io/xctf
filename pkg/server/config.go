@@ -10,7 +10,7 @@ type Config struct {
 func NewDefaultConfig() Config {
 	return Config{
 		// TODO breadchris defaults should default to prod
-		ProxyURL: "${PROXY_URL:\"http://localhost:8001\"}",
+		ProxyURL: "${PROXY_URL:\"http://localhost:8421\"}",
 		Port:     "${PORT:\"8000\"}",
 	}
 }

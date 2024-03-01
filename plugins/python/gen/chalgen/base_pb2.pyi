@@ -6,18 +6,64 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class Challenge(_message.Message):
-    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif")
+    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone")
     BASE64_FIELD_NUMBER: _ClassVar[int]
     TWITTER_FIELD_NUMBER: _ClassVar[int]
     CAESAR_FIELD_NUMBER: _ClassVar[int]
     PCAP_FIELD_NUMBER: _ClassVar[int]
     EXIF_FIELD_NUMBER: _ClassVar[int]
+    SLACK_FIELD_NUMBER: _ClassVar[int]
+    PHONE_FIELD_NUMBER: _ClassVar[int]
     base64: Base64
     twitter: Twitter
     caesar: CaesarCipher
     pcap: PCAP
     exif: Exif
-    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ...) -> None: ...
+    slack: Slack
+    phone: Phone
+    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ...) -> None: ...
+
+class Phone(_message.Message):
+    __slots__ = ("apps",)
+    APPS_FIELD_NUMBER: _ClassVar[int]
+    apps: _containers.RepeatedCompositeFieldContainer[App]
+    def __init__(self, apps: _Optional[_Iterable[_Union[App, _Mapping]]] = ...) -> None: ...
+
+class App(_message.Message):
+    __slots__ = ("name", "url")
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    URL_FIELD_NUMBER: _ClassVar[int]
+    name: str
+    url: str
+    def __init__(self, name: _Optional[str] = ..., url: _Optional[str] = ...) -> None: ...
+
+class Slack(_message.Message):
+    __slots__ = ("users", "channels")
+    USERS_FIELD_NUMBER: _ClassVar[int]
+    CHANNELS_FIELD_NUMBER: _ClassVar[int]
+    users: _containers.RepeatedCompositeFieldContainer[User]
+    channels: _containers.RepeatedCompositeFieldContainer[Channel]
+    def __init__(self, users: _Optional[_Iterable[_Union[User, _Mapping]]] = ..., channels: _Optional[_Iterable[_Union[Channel, _Mapping]]] = ...) -> None: ...
+
+class Channel(_message.Message):
+    __slots__ = ("name", "usernames", "messages")
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    USERNAMES_FIELD_NUMBER: _ClassVar[int]
+    MESSAGES_FIELD_NUMBER: _ClassVar[int]
+    name: str
+    usernames: _containers.RepeatedScalarFieldContainer[str]
+    messages: _containers.RepeatedCompositeFieldContainer[Message]
+    def __init__(self, name: _Optional[str] = ..., usernames: _Optional[_Iterable[str]] = ..., messages: _Optional[_Iterable[_Union[Message, _Mapping]]] = ...) -> None: ...
+
+class Message(_message.Message):
+    __slots__ = ("username", "content", "timestamp")
+    USERNAME_FIELD_NUMBER: _ClassVar[int]
+    CONTENT_FIELD_NUMBER: _ClassVar[int]
+    TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
+    username: str
+    content: str
+    timestamp: int
+    def __init__(self, username: _Optional[str] = ..., content: _Optional[str] = ..., timestamp: _Optional[int] = ...) -> None: ...
 
 class Exif(_message.Message):
     __slots__ = ("key", "value")
@@ -72,12 +118,14 @@ class Twitter(_message.Message):
     def __init__(self, users: _Optional[_Iterable[_Union[User, _Mapping]]] = ..., posts: _Optional[_Iterable[_Union[Post, _Mapping]]] = ..., comments: _Optional[_Iterable[_Union[Comment, _Mapping]]] = ...) -> None: ...
 
 class User(_message.Message):
-    __slots__ = ("username", "bio")
+    __slots__ = ("username", "bio", "password")
     USERNAME_FIELD_NUMBER: _ClassVar[int]
     BIO_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
     username: str
     bio: str
-    def __init__(self, username: _Optional[str] = ..., bio: _Optional[str] = ...) -> None: ...
+    password: str
+    def __init__(self, username: _Optional[str] = ..., bio: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
 
 class Post(_message.Message):
     __slots__ = ("username", "content")

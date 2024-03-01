@@ -42,6 +42,29 @@ service Admin {
   rpc SubmitComment(SubmitCommentRequest) returns (Empty);
   rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
   rpc GetUserGraph(GetUserGraphRequest) returns (GetUserGraphResponse);
+
+  rpc Readdir(ReaddirRequest) returns (ReaddirResponse);
+  rpc Remove(RemoveRequest) returns (RemoveResponse);
+}
+
+message RemoveRequest {
+  string path = 1;
+}
+
+message RemoveResponse {}
+
+message ReaddirRequest {
+  string path = 1;
+}
+
+message ReaddirResponse {
+  repeated FileInfo files = 1;
+}
+
+message FileInfo {
+  string name = 1;
+  int64 size = 2;
+  bool is_dir = 3;
 }
 
 message GetUserWriteupResponse {

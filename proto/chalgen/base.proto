@@ -9,7 +9,35 @@ message Challenge {
     CaesarCipher caesar = 8;
     PCAP pcap = 9;
     Exif exif = 10;
+    Slack slack = 11;
+    Phone phone = 12;
   }
+}
+
+message Phone {
+  repeated App apps = 1;
+}
+
+message App {
+  string name = 1;
+  string url = 2;
+}
+
+message Slack {
+  repeated User users = 1;
+  repeated Channel channels = 2;
+}
+
+message Channel {
+  string name = 1;
+  repeated string usernames = 2;
+  repeated Message messages = 3;
+}
+
+message Message {
+  string username = 1;
+  string content = 2;
+  int64 timestamp = 3;
 }
 
 message Exif {
@@ -47,6 +75,7 @@ message Twitter {
 message User {
   string username = 1;
   string bio = 2;
+  string password = 3;
 }
 
 // Post represents a user's post.

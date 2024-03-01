@@ -17,6 +17,7 @@ import (
 	"github.com/xctf-io/xctf/pkg/gen/xctf/xctfconnect"
 	xhttp "github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/kubes"
+	"github.com/xctf-io/xctf/pkg/openai"
 	"log/slog"
 	"net/http"
 	"net/http/httputil"
@@ -34,6 +35,7 @@ var ProviderSet = wire.NewSet(
 	admin.NewAdmin,
 	bucket.ProviderSet,
 	chals.ProviderSet,
+	openai.ProviderSet,
 	New,
 )
 
@@ -90,11 +92,24 @@ func New(
 	hfs := http.FS(assets)
 	httpFileServer := http.FileServer(hfs)
 
+	muxRoot.Handle("/upload", http.HandlerFunc(fileUploadHandler(s)))
+
 	// TODO breadchris there has to be a better way to handle routes than this
 	muxRoot.Handle("/", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		filePath := r.URL.Path
 		if strings.Index(r.URL.Path, "/") == 0 {
 			filePath = r.URL.Path[1:]
+		}
+
+		if strings.Index(r.URL.Path, "/download") == 0 {
+			r.URL.Path = r.URL.Path[9:]
+			r.URL.Path = r.URL.Path[1:]
+			_, err := s.ReadFile(r.URL.Path, rw)
+			if err != nil {
+				rw.WriteHeader(http.StatusNotFound)
+				slog.Debug("file not found", "err", err)
+			}
+			return
 		}
 
 		if strings.Index(r.URL.Path, "/api") == 0 {
@@ -134,6 +149,41 @@ func New(
 		return
 	}))
 	return store.LoadAndSave(muxRoot), nil
+}
+
+func fileUploadHandler(s *db.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		writeError := func(sc int, err error, msg string, args ...any) {
+			slog.Error(msg, "error", err, "args", args)
+			http.Error(w, msg, sc)
+		}
+		if r.Method != http.MethodPost {
+			writeError(http.StatusMethodNotAllowed, nil, "Invalid request method", "method", r.Method)
+			return
+		}
+
+		err := r.ParseMultipartForm(10 << 20)
+		if err != nil {
+			writeError(http.StatusInternalServerError, err, "Error parsing multipart form")
+			return
+		}
+
+		file, handler, err := r.FormFile("file")
+		if err != nil {
+			writeError(http.StatusInternalServerError, err, "Error retrieving the file from form data")
+			return
+		}
+		defer file.Close()
+
+		slog.Debug("Uploaded File", "filename", handler.Filename, "size", handler.Size, "mime", handler.Header)
+
+		_, err = s.WriteFile(handler.Filename, file)
+		if err != nil {
+			writeError(http.StatusInternalServerError, err, "Error copying the uploaded file")
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	}
 }
 
 func NewLogInterceptor() connect.UnaryInterceptorFunc {

@@ -4,15 +4,20 @@ import (
 	"bytes"
 	"embed"
 	"encoding/base64"
+	"encoding/gob"
 	"fmt"
+	"github.com/a-h/templ"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcapgo"
 	"github.com/google/wire"
+	"github.com/samber/lo"
 	"github.com/xctf-io/xctf/pkg/bucket"
+	"github.com/xctf-io/xctf/pkg/chals/tmpl"
 	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 	"github.com/xctf-io/xctf/pkg/gen/plugin"
+	shttp "github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/models"
 	"google.golang.org/protobuf/encoding/protojson"
 	"html/template"
@@ -21,6 +26,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	ttemplate "text/template"
 	"time"
@@ -36,10 +42,15 @@ var ProviderSet = wire.NewSet(
 )
 
 type Handler struct {
-	c  Config
-	db *db.Service
-	b  *bucket.Builder
-	pc plugin.PythonServiceClient
+	c       Config
+	db      *db.Service
+	b       *bucket.Builder
+	manager *shttp.Store
+	pc      plugin.PythonServiceClient
+}
+
+func init() {
+	gob.Register(tmpl.SessionState{})
 }
 
 func ChalURL(compId, chalID, host string) string {
@@ -61,17 +72,19 @@ func NewHandler(
 	db *db.Service,
 	b *bucket.Builder,
 	pc plugin.PythonServiceClient,
+	manager *shttp.Store,
 ) *Handler {
 	return &Handler{
-		c:  c,
-		db: db,
-		b:  b,
-		pc: pc,
+		c:       c,
+		db:      db,
+		b:       b,
+		pc:      pc,
+		manager: manager,
 	}
 }
 
 func (s *Handler) Handle() (string, http.Handler) {
-	tmpl, err := template.ParseFS(Chals, "tmpl/twitter.tmpl.html")
+	twitterTmpl, err := template.ParseFS(Chals, "tmpl/twitter.tmpl.html")
 	if err != nil {
 		slog.Error("Error parsing template:", err)
 		return "", nil
@@ -79,13 +92,20 @@ func (s *Handler) Handle() (string, http.Handler) {
 	return "/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// match a url like /<competition id>/<challenge id>
 		parts := strings.Split(r.URL.Path, "/")
-		if len(parts) != 3 {
+		if len(parts) < 3 {
 			http.NotFound(w, r)
 			return
 		}
 
 		compId := parts[1]
 		chalId := parts[2]
+
+		baseURL := fmt.Sprintf("/play/%s/%s", compId, chalId)
+
+		var p string
+		if len(parts) > 3 {
+			p = strings.Join(parts[3:], "/")
+		}
 
 		var comp models.Competition
 		res := s.db.DB.Where("id = ?", compId).First(&comp)
@@ -123,6 +143,8 @@ func (s *Handler) Handle() (string, http.Handler) {
 					view = caesarCipher(c, int(t.Caesar.Shift))
 				case *chalgen.Challenge_Pcap:
 					view = ChalURL(compId, n.Meta.Id, r.Host)
+				case *chalgen.Challenge_Slack:
+					view = ChalURL(compId, n.Meta.Id, r.Host)
 				}
 			}
 			if view != "" {
@@ -150,6 +172,96 @@ func (s *Handler) Handle() (string, http.Handler) {
 						if err != nil {
 							http.Error(w, err.Error(), http.StatusInternalServerError)
 						}
+					case *chalgen.Challenge_Phone:
+						for _, p := range t.Phone.Apps {
+							nt, err := ttemplate.New("app").Parse(p.Url)
+							if err != nil {
+								http.Error(w, err.Error(), http.StatusInternalServerError)
+								return
+							}
+							var buf bytes.Buffer
+							err = nt.Execute(&buf, struct {
+								Challenges map[string]string
+							}{
+								Challenges: challenges,
+							})
+							if err != nil {
+								http.Error(w, err.Error(), http.StatusInternalServerError)
+								return
+							}
+							p.Url = buf.String()
+						}
+						templ.Handler(tmpl.Page(tmpl.Phone(tmpl.PhoneState{
+							BaseURL: baseURL,
+						}, t.Phone))).ServeHTTP(w, r)
+						return
+					case *chalgen.Challenge_Slack:
+						var sess tmpl.SessionState
+						chatState := s.manager.GetChalState(r.Context(), chalId)
+						if chatState != nil {
+							ss, ok := chatState.(tmpl.SessionState)
+							if !ok {
+								http.Error(w, "Failed to parse session", http.StatusInternalServerError)
+								return
+							}
+							sess = ss
+						}
+						if err := r.ParseForm(); err != nil {
+							http.Error(w, "Failed to parse the form", http.StatusBadRequest)
+							return
+						}
+						if p == "logout" {
+							s.manager.RemoveChalState(r.Context(), chalId)
+							w.Header().Set("Location", baseURL)
+							w.WriteHeader(http.StatusFound)
+							return
+						}
+						if p == "login" {
+							username := r.FormValue("username")
+							password := r.FormValue("password")
+							for _, u := range t.Slack.Users {
+								if u.Username == username && u.Password == password {
+									sess.User = u
+									s.manager.SetChalState(r.Context(), chalId, sess)
+								}
+							}
+							w.Header().Set("Location", baseURL)
+							w.WriteHeader(http.StatusFound)
+							return
+						}
+						cID := 0
+						if cv := r.FormValue("channel_id"); cv != "" {
+							cID, err = strconv.Atoi(cv)
+							if err != nil {
+								http.Error(w, "failed to parse channel id", http.StatusBadRequest)
+								return
+							}
+						}
+
+						if sess.User != nil {
+							t.Slack.Channels = lo.Filter(
+								t.Slack.Channels,
+								func(c *chalgen.Channel, idx int) bool {
+									return lo.Some(c.Usernames, []string{sess.User.Username})
+								})
+						} else {
+							t.Slack.Channels = []*chalgen.Channel{}
+						}
+
+						var c chalgen.Channel
+						if len(t.Slack.Channels)-1 >= cID {
+							c = *t.Slack.Channels[cID]
+						}
+
+						templ.Handler(tmpl.Page(tmpl.Chat(tmpl.ChatState{
+							Session: sess,
+							URL: tmpl.ChatURL{
+								Login:  templ.URL(baseURL + "/login"),
+								Logout: templ.URL(baseURL + "/logout"),
+							},
+							Channel: c,
+						}, t.Slack))).ServeHTTP(w, r)
+						return
 					case *chalgen.Challenge_Twitter:
 						for _, p := range t.Twitter.Posts {
 							nt, err := ttemplate.New("twitter").Parse(p.Content)
@@ -169,7 +281,7 @@ func (s *Handler) Handle() (string, http.Handler) {
 							}
 							p.Content = buf.String()
 						}
-						err := tmpl.Execute(w, struct {
+						err := twitterTmpl.Execute(w, struct {
 							Twitter *chalgen.Twitter
 							Flag    string
 						}{

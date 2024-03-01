@@ -43,6 +43,18 @@ func (s *Store) RemoveUserFromSession(ctx context.Context) {
 	s.manager.Remove(ctx, "userType")
 }
 
+func (s *Store) SetChalState(ctx context.Context, chalID string, state any) {
+	s.manager.Put(ctx, chalID, state)
+}
+
+func (s *Store) RemoveChalState(ctx context.Context, chalID string) {
+	s.manager.Remove(ctx, chalID)
+}
+
+func (s *Store) GetChalState(ctx context.Context, chalID string) any {
+	return s.manager.Get(ctx, chalID)
+}
+
 // GetUserFromSession will get the user id from the session store located in the context.
 func (s *Store) GetUserFromSession(ctx context.Context) (uint, string, error) {
 	userIDInterface := s.manager.Get(ctx, "userID")

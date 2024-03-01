@@ -7,10 +7,44 @@ import {toast} from "react-toastify";
 import {removeUndefinedFields} from "@/util/object";
 import { Meta } from '@/rpc/chals/config_pb';
 import {Spinner} from "@/components/Spinner";
+import {FileDrop} from "@/routes/build/FileDrop";
+import {FileManager} from "@/routes/build/FileManager";
 
 export const Competitions: React.FC = () => {
+    const [activeTab, setActiveTab] = React.useState<string|undefined>(undefined);
+    const tabs = ['edit', 'upload'];
+
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        if (!activeTab) {
+            const tab = url.searchParams.get('tab');
+            if (tab && tabs.includes(tab)) {
+                setActiveTab(tab);
+            } else {
+                setActiveTab(tabs[0]);
+            }
+        } else {
+            url.searchParams.set('tab', activeTab);
+            window.history.replaceState({}, '', url.toString());
+        }
+    }, [activeTab]);
+
     return (
-        <Edit />
+        <>
+            <div className="w-64 tabs tabs-bordered my-6">
+                {tabs.map((tab, index) => (
+                    <a
+                        className={`tab ${activeTab === tab ? 'tab-active' : ''}`}
+                        key={index}
+                        onClick={() => setActiveTab(tab)}
+                    >
+                        {tab}
+                    </a>
+                ))}
+            </div>
+            {activeTab === 'edit' && <Edit />}
+            {activeTab === 'upload' && <FileManager />}
+        </>
     )
 }
 
@@ -228,6 +262,8 @@ const Edit: React.FC = () => {
         selectChallenge(new Node({}));
     }
 
+    const playLink = `/play/${selectedCompetition?.id}/${currentChallenge?.meta?.id}`;
+
     return (
         <>
             <div className="mx-[3vw] lg:mx-[6vw] mt-8">
@@ -312,6 +348,7 @@ const Edit: React.FC = () => {
                                 <button className={"btn btn-info"} onClick={togglePreview}>
                                     Preview
                                 </button>
+                                <a className={"btn btn-info"} href={playLink}>Open</a>
                                 <button className={"btn btn-primary"} type="submit">
                                     Save
                                 </button>
@@ -321,7 +358,7 @@ const Edit: React.FC = () => {
                 </div>
                 {preview && (
                     <div className={"flex flex-row"}>
-                        <iframe ref={iframeRef} style={{width: '100%', height: 200}} src={`/play/${selectedCompetition?.id}/${currentChallenge?.meta?.id}`} />
+                        <iframe ref={iframeRef} style={{width: '100%', height: 200}} src={playLink} />
                     </div>
                 )}
                 <div className={"flex flex-row"}>

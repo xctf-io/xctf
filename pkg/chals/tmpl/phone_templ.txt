@@ -1,0 +1,5 @@
+<div class=\"flex h-screen\"><div class=\"mockup-phone\"><div class=\"camera\"></div><div class=\"display\"><div class=\"artboard artboard-demo phone-1\"><div class=\"grid grid-cols-3 gap-4\">
+<a href=\"
+\" class=\"btn w-20 h-20 bg-blue-500 flex justify-center items-center text-white\">
+</a>
+</div></div></div></div></div>

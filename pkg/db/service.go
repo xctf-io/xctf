@@ -2,16 +2,20 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"embed"
-	"errors"
 	"fmt"
 	"github.com/benbjohnson/litestream"
 	lsgcs "github.com/benbjohnson/litestream/gcs"
+	"github.com/google/wire"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/pkg/errors"
 	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 	"github.com/xctf-io/xctf/pkg/models"
+	"github.com/xctf-io/xctf/pkg/sqlitefs"
 	"google.golang.org/protobuf/encoding/protojson"
 	"gorm.io/gorm"
+	"io"
 	"log/slog"
 	"os"
 	"path"
@@ -24,9 +28,15 @@ import (
 //go:embed Home.md
 var Home embed.FS
 
+var ProviderSet = wire.NewSet(
+	NewConfig,
+	New,
+)
+
 type Service struct {
 	c  Config
 	DB *gorm.DB
+	db *sql.DB
 }
 
 func NewGorm(c Config) (*gorm.DB, error) {
@@ -46,6 +56,31 @@ func NewGorm(c Config) (*gorm.DB, error) {
 		return nil, err
 	}
 	return db, nil
+}
+
+func OpenDB(c Config) (*sql.DB, error) {
+	if strings.Contains(c.DSN, "postgres") {
+		return sql.Open("postgres", c.DSN)
+	} else {
+		dir, _ := path.Split(c.DSN)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return nil, err
+		}
+		return sql.Open("sqlite", c.DSN)
+	}
+}
+
+// TODO breadchris clean this up
+func OpenGorm(c Config, db *sql.DB) (*gorm.DB, error) {
+	if strings.Contains(c.DSN, "postgres") {
+		return gorm.Open(postgres.New(postgres.Config{
+			Conn: db,
+		}), &gorm.Config{})
+	} else {
+		return gorm.Open(sqlite.Dialector{
+			Conn: db,
+		}, &gorm.Config{})
+	}
 }
 
 func New(c Config) (*Service, error) {
@@ -69,7 +104,13 @@ func New(c Config) (*Service, error) {
 
 	// TODO breadchris gorm must be created after a replication attempt so that an empty database isn't create
 	var err error
-	if s.DB, err = NewGorm(c); err != nil {
+	db, err := OpenDB(c)
+	if err != nil {
+		return nil, err
+	}
+	s.db = db
+
+	if s.DB, err = OpenGorm(c, db); err != nil {
 		return nil, err
 	}
 
@@ -85,9 +126,55 @@ func New(c Config) (*Service, error) {
 	if err = s.Migrate(); err != nil {
 		return nil, err
 	}
+
+	// TODO breadchris migrates sqlitefs
+	_, err = sqlitefs.NewSQLiteFS(db)
+	if err != nil {
+		return nil, err
+	}
 	slog.Debug("database migrated")
-	s.InitializeAdmin()
+
+	// TODO breadchris reenable
+	// s.InitializeAdmin()
+
 	return s, nil
+}
+
+func (s *Service) Readdir(path string) ([]os.FileInfo, error) {
+	f, err := sqlitefs.NewSQLiteFile(s.db, path)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to open sqlitefs")
+	}
+
+	// TODO breadchris implement pagination
+	if path == "/" {
+		return f.GetAllFiles()
+	} else {
+		return f.Readdir(1024)
+	}
+}
+
+func (s *Service) RemoveFile(path string) error {
+	f, err := sqlitefs.NewSQLiteFile(s.db, path)
+	if err != nil {
+		return err
+	}
+	return f.Remove()
+}
+
+func (s *Service) WriteFile(path string, r io.Reader) (int64, error) {
+	w := sqlitefs.NewSQLiteWriter(s.db, path)
+	defer w.Close()
+	return io.Copy(w, r)
+}
+
+func (s *Service) ReadFile(path string, w io.Writer) (int64, error) {
+	f, err := sqlitefs.NewSQLiteFile(s.db, path)
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+	return io.Copy(w, f)
 }
 
 func (s *Service) GetCurrentCompetition() (string, *chalgen.Graph, error) {

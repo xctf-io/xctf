@@ -19,7 +19,7 @@ type Config struct {
 
 func NewDefaultConfig() Config {
 	return Config{
-		DSN:                          "${DSN:\"data/xctf.db\"}",
+		DSN:                          "${DSN:\"data/xctf.db?cache=shared&mode=rwc&journal_mode=WAL\"}",
 		Bucket:                       "${BUCKET:\"xctf\"}",
 		BackupName:                   "${BACKUP_NAME:\"xctf\"}",
 		Endpoint:                     "${ENDPOINT:\"http://localhost:9000\"}",

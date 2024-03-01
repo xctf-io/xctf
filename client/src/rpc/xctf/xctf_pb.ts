@@ -4,7 +4,198 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { DescriptorProto, EnumDescriptorProto, Message, proto3 } from "@bufbuild/protobuf";
+import { DescriptorProto, EnumDescriptorProto, Message, proto3, protoInt64 } from "@bufbuild/protobuf";
+
+/**
+ * @generated from message xctf.RemoveRequest
+ */
+export class RemoveRequest extends Message<RemoveRequest> {
+  /**
+   * @generated from field: string path = 1;
+   */
+  path = "";
+
+  constructor(data?: PartialMessage<RemoveRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.RemoveRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "path", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RemoveRequest {
+    return new RemoveRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RemoveRequest {
+    return new RemoveRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RemoveRequest {
+    return new RemoveRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RemoveRequest | PlainMessage<RemoveRequest> | undefined, b: RemoveRequest | PlainMessage<RemoveRequest> | undefined): boolean {
+    return proto3.util.equals(RemoveRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.RemoveResponse
+ */
+export class RemoveResponse extends Message<RemoveResponse> {
+  constructor(data?: PartialMessage<RemoveResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.RemoveResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RemoveResponse {
+    return new RemoveResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RemoveResponse {
+    return new RemoveResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RemoveResponse {
+    return new RemoveResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RemoveResponse | PlainMessage<RemoveResponse> | undefined, b: RemoveResponse | PlainMessage<RemoveResponse> | undefined): boolean {
+    return proto3.util.equals(RemoveResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.ReaddirRequest
+ */
+export class ReaddirRequest extends Message<ReaddirRequest> {
+  /**
+   * @generated from field: string path = 1;
+   */
+  path = "";
+
+  constructor(data?: PartialMessage<ReaddirRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.ReaddirRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "path", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ReaddirRequest {
+    return new ReaddirRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ReaddirRequest {
+    return new ReaddirRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ReaddirRequest {
+    return new ReaddirRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ReaddirRequest | PlainMessage<ReaddirRequest> | undefined, b: ReaddirRequest | PlainMessage<ReaddirRequest> | undefined): boolean {
+    return proto3.util.equals(ReaddirRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.ReaddirResponse
+ */
+export class ReaddirResponse extends Message<ReaddirResponse> {
+  /**
+   * @generated from field: repeated xctf.FileInfo files = 1;
+   */
+  files: FileInfo[] = [];
+
+  constructor(data?: PartialMessage<ReaddirResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.ReaddirResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "files", kind: "message", T: FileInfo, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ReaddirResponse {
+    return new ReaddirResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ReaddirResponse {
+    return new ReaddirResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ReaddirResponse {
+    return new ReaddirResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ReaddirResponse | PlainMessage<ReaddirResponse> | undefined, b: ReaddirResponse | PlainMessage<ReaddirResponse> | undefined): boolean {
+    return proto3.util.equals(ReaddirResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.FileInfo
+ */
+export class FileInfo extends Message<FileInfo> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  /**
+   * @generated from field: int64 size = 2;
+   */
+  size = protoInt64.zero;
+
+  /**
+   * @generated from field: bool is_dir = 3;
+   */
+  isDir = false;
+
+  constructor(data?: PartialMessage<FileInfo>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.FileInfo";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "size", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 3, name: "is_dir", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FileInfo {
+    return new FileInfo().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FileInfo {
+    return new FileInfo().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FileInfo {
+    return new FileInfo().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: FileInfo | PlainMessage<FileInfo> | undefined, b: FileInfo | PlainMessage<FileInfo> | undefined): boolean {
+    return proto3.util.equals(FileInfo, a, b);
+  }
+}
 
 /**
  * @generated from message xctf.GetUserWriteupResponse

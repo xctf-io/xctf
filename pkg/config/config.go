@@ -6,6 +6,7 @@ import (
 	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/kubes"
 	"github.com/xctf-io/xctf/pkg/log"
+	"github.com/xctf-io/xctf/pkg/openai"
 	"github.com/xctf-io/xctf/pkg/server"
 	"go.uber.org/config"
 	"log/slog"
@@ -19,6 +20,7 @@ type BaseConfig struct {
 	Kubes  kubes.Config  `yaml:"kubes"`
 	Bucket bucket.Config `yaml:"bucket"`
 	Chals  chals.Config  `yaml:"chals"`
+	OpenAI openai.Config `yaml:"open_ai"`
 }
 
 func NewDefaultConfig() BaseConfig {
@@ -29,6 +31,7 @@ func NewDefaultConfig() BaseConfig {
 		Kubes:  kubes.NewDefaultConfig(),
 		Bucket: bucket.NewDefaultConfig(),
 		Chals:  chals.NewDefaultConfig(),
+		OpenAI: openai.NewDefaultConfig(),
 	}
 }
 

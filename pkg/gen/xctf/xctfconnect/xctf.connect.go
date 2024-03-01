@@ -95,6 +95,10 @@ const (
 	AdminGetCommentsProcedure = "/xctf.Admin/GetComments"
 	// AdminGetUserGraphProcedure is the fully-qualified name of the Admin's GetUserGraph RPC.
 	AdminGetUserGraphProcedure = "/xctf.Admin/GetUserGraph"
+	// AdminReaddirProcedure is the fully-qualified name of the Admin's Readdir RPC.
+	AdminReaddirProcedure = "/xctf.Admin/Readdir"
+	// AdminRemoveProcedure is the fully-qualified name of the Admin's Remove RPC.
+	AdminRemoveProcedure = "/xctf.Admin/Remove"
 )
 
 // BackendClient is a client for the xctf.Backend service.
@@ -559,6 +563,8 @@ type AdminClient interface {
 	SubmitComment(context.Context, *connect_go.Request[xctf.SubmitCommentRequest]) (*connect_go.Response[xctf.Empty], error)
 	GetComments(context.Context, *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error)
 	GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error)
+	Readdir(context.Context, *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error)
+	Remove(context.Context, *connect_go.Request[xctf.RemoveRequest]) (*connect_go.Response[xctf.RemoveResponse], error)
 }
 
 // NewAdminClient constructs a client for the xctf.Admin service. By default, it uses the Connect
@@ -621,6 +627,16 @@ func NewAdminClient(httpClient connect_go.HTTPClient, baseURL string, opts ...co
 			baseURL+AdminGetUserGraphProcedure,
 			opts...,
 		),
+		readdir: connect_go.NewClient[xctf.ReaddirRequest, xctf.ReaddirResponse](
+			httpClient,
+			baseURL+AdminReaddirProcedure,
+			opts...,
+		),
+		remove: connect_go.NewClient[xctf.RemoveRequest, xctf.RemoveResponse](
+			httpClient,
+			baseURL+AdminRemoveProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -636,6 +652,8 @@ type adminClient struct {
 	submitComment    *connect_go.Client[xctf.SubmitCommentRequest, xctf.Empty]
 	getComments      *connect_go.Client[xctf.GetCommentsRequest, xctf.GetCommentsResponse]
 	getUserGraph     *connect_go.Client[xctf.GetUserGraphRequest, xctf.GetUserGraphResponse]
+	readdir          *connect_go.Client[xctf.ReaddirRequest, xctf.ReaddirResponse]
+	remove           *connect_go.Client[xctf.RemoveRequest, xctf.RemoveResponse]
 }
 
 // UpsertChallenge calls xctf.Admin.UpsertChallenge.
@@ -688,6 +706,16 @@ func (c *adminClient) GetUserGraph(ctx context.Context, req *connect_go.Request[
 	return c.getUserGraph.CallUnary(ctx, req)
 }
 
+// Readdir calls xctf.Admin.Readdir.
+func (c *adminClient) Readdir(ctx context.Context, req *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error) {
+	return c.readdir.CallUnary(ctx, req)
+}
+
+// Remove calls xctf.Admin.Remove.
+func (c *adminClient) Remove(ctx context.Context, req *connect_go.Request[xctf.RemoveRequest]) (*connect_go.Response[xctf.RemoveResponse], error) {
+	return c.remove.CallUnary(ctx, req)
+}
+
 // AdminHandler is an implementation of the xctf.Admin service.
 type AdminHandler interface {
 	UpsertChallenge(context.Context, *connect_go.Request[xctf.UpsertChallengeRequest]) (*connect_go.Response[xctf.Empty], error)
@@ -700,6 +728,8 @@ type AdminHandler interface {
 	SubmitComment(context.Context, *connect_go.Request[xctf.SubmitCommentRequest]) (*connect_go.Response[xctf.Empty], error)
 	GetComments(context.Context, *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error)
 	GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error)
+	Readdir(context.Context, *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error)
+	Remove(context.Context, *connect_go.Request[xctf.RemoveRequest]) (*connect_go.Response[xctf.RemoveResponse], error)
 }
 
 // NewAdminHandler builds an HTTP handler from the service implementation. It returns the path on
@@ -758,6 +788,16 @@ func NewAdminHandler(svc AdminHandler, opts ...connect_go.HandlerOption) (string
 		svc.GetUserGraph,
 		opts...,
 	)
+	adminReaddirHandler := connect_go.NewUnaryHandler(
+		AdminReaddirProcedure,
+		svc.Readdir,
+		opts...,
+	)
+	adminRemoveHandler := connect_go.NewUnaryHandler(
+		AdminRemoveProcedure,
+		svc.Remove,
+		opts...,
+	)
 	return "/xctf.Admin/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AdminUpsertChallengeProcedure:
@@ -780,6 +820,10 @@ func NewAdminHandler(svc AdminHandler, opts ...connect_go.HandlerOption) (string
 			adminGetCommentsHandler.ServeHTTP(w, r)
 		case AdminGetUserGraphProcedure:
 			adminGetUserGraphHandler.ServeHTTP(w, r)
+		case AdminReaddirProcedure:
+			adminReaddirHandler.ServeHTTP(w, r)
+		case AdminRemoveProcedure:
+			adminRemoveHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -827,4 +871,12 @@ func (UnimplementedAdminHandler) GetComments(context.Context, *connect_go.Reques
 
 func (UnimplementedAdminHandler) GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.GetUserGraph is not implemented"))
+}
+
+func (UnimplementedAdminHandler) Readdir(context.Context, *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.Readdir is not implemented"))
+}
+
+func (UnimplementedAdminHandler) Remove(context.Context, *connect_go.Request[xctf.RemoveRequest]) (*connect_go.Response[xctf.RemoveResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.Remove is not implemented"))
 }

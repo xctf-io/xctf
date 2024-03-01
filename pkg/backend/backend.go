@@ -3,7 +3,7 @@ package backend
 import (
 	"context"
 	"fmt"
-	connect "github.com/bufbuild/connect-go"
+	"github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
 	"github.com/gosimple/slug"
 	"github.com/pkg/errors"
@@ -17,6 +17,7 @@ import (
 	"github.com/xctf-io/xctf/pkg/gen/xctf/xctfconnect"
 	"github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/models"
+	"github.com/xctf-io/xctf/pkg/openai"
 	"google.golang.org/protobuf/encoding/protojson"
 	"gorm.io/gorm"
 )
@@ -25,9 +26,24 @@ type Backend struct {
 	s       *db.Service
 	manager *http.Store
 	h       *chals.Handler
+	openai  *openai.Agent
 }
 
 var _ xctfconnect.BackendHandler = (*Backend)(nil)
+
+func NewBackend(
+	s *db.Service,
+	manager *http.Store,
+	h *chals.Handler,
+	openai *openai.Agent,
+) *Backend {
+	return &Backend{
+		s:       s,
+		manager: manager,
+		h:       h,
+		openai:  openai,
+	}
+}
 
 func (b *Backend) DeleteCompetition(ctx context.Context, c *connect.Request[chalgen.Competition]) (*connect.Response[xctf.Empty], error) {
 	var comp models.Competition
@@ -519,12 +535,4 @@ func (b *Backend) SubmitWriteup(ctx context.Context, request *connect.Request[xc
 		}
 	}
 	return connect.NewResponse(&xctf.Empty{}), nil
-}
-
-func NewBackend(s *db.Service, manager *http.Store, h *chals.Handler) *Backend {
-	return &Backend{
-		s:       s,
-		manager: manager,
-		h:       h,
-	}
 }
