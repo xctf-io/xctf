@@ -46,7 +46,7 @@ const Login = () => {
 				<button
 					className="btn btn-primary mt-2 h-16 text-lg"
 					color="primary"
-					onClick={() => doLogin(email, password, isDarkMode)}
+					onClick={() => doLogin(email, password)}
 				>
 					Log In
 				</button>

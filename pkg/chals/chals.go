@@ -114,6 +114,18 @@ func (s *Handler) Handle() (string, http.Handler) {
 			return
 		}
 
+		_, userType, err := s.manager.GetUserFromSession(r.Context())
+		if err != nil {
+			slog.Debug("user not logged in", "err", err)
+			http.Error(w, "user not logged in", http.StatusUnauthorized)
+			return
+		}
+
+		if !comp.Active && userType != "admin" {
+			http.Error(w, "competition is not active", http.StatusNotFound)
+			return
+		}
+
 		var graph chalgen.Graph
 		unm := protojson.UnmarshalOptions{DiscardUnknown: true}
 		if err := unm.Unmarshal([]byte(comp.Graph), &graph); err != nil {

@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {kubes} from "@/service";
 import {Deployment} from "@/rpc/kubes/kubes_pb";
-import {toast} from "react-toastify";
+import toast from "react-hot-toast";
 
 export const Deploy: React.FC = () => {
     const [deployments, setDeployments] = React.useState<Deployment[]>([]);
@@ -19,6 +19,7 @@ export const Deploy: React.FC = () => {
                 name,
                 domainName: domain,
             });
+            toast.success("deployed image")
         } catch (e: any) {
             console.error(e);
             toast.error(e.message);

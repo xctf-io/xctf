@@ -1,9 +1,10 @@
 import React, {useEffect} from "react";
 import { useState } from "react";
-import { createErrorToast, createSuccessToast, useUser } from "../store/user";
+import { useUser } from "../store/user";
 import { xctf } from "../service";
 
 import { useDarkMode } from "usehooks-ts";
+import toast from "react-hot-toast";
 
 const SubmitWriteup = () => {
 	const [writeup, setWriteup] = useState('');
@@ -15,7 +16,7 @@ const SubmitWriteup = () => {
 		 xctf.getUserWriteup({}).then((res) => {
 			 setWriteup(res.content);
 		 }).catch((err) => {
-			 createErrorToast(err, isDarkMode);
+			 toast.error(err);
 		 });
 	}, []);
 
@@ -25,19 +26,19 @@ const SubmitWriteup = () => {
 				content: writeup,
 				type: "text",
 			});
-			createSuccessToast("Submitted writeup!", isDarkMode);
+			toast.success("Submitted writeup!");
 		} catch (err: any) {
-			createErrorToast(err, isDarkMode);
+			toast.error(err);
 		}
 	}
 
 	async function uploadFileWriteup() {
 		if (!file) {
-			createErrorToast("No file selected!", isDarkMode);
+			toast.error("No file selected!");
 			return;
 		}
         if (file.type !== "application/pdf") {
-            createErrorToast("File must be a PDF!", isDarkMode);
+            toast.error("File must be a PDF!");
             setFile(undefined);
             return;
         }
@@ -51,13 +52,13 @@ const SubmitWriteup = () => {
 					type: "file",
 				});
 				setFile(undefined);
-				createSuccessToast("Submitted writeup!", isDarkMode);
+				toast.success("Submitted writeup!");
 			} catch (err: any) {
-				createErrorToast(err, isDarkMode);
+				toast.error(err);
 			}
 		};
 		reader.onerror = (error) => {
-			createErrorToast(String(error), isDarkMode);
+			toast.error(String(error));
 		};
 	}
 	const inputRef = React.useRef<HTMLInputElement>(null);

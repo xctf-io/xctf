@@ -7,6 +7,7 @@ import (
 	"github.com/google/wire"
 	"github.com/xctf-io/xctf/pkg/gen/kubes"
 	"github.com/xctf-io/xctf/pkg/gen/kubes/kubesconnect"
+	"github.com/xctf-io/xctf/pkg/openai"
 	corev1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
 	"log/slog"
@@ -29,11 +30,12 @@ var ProviderSet = wire.NewSet(
 type Service struct {
 	c         Config
 	clientSet *kubernetes.Clientset
+	oc        openai.Config
 }
 
 var _ kubesconnect.KubesServiceHandler = (*Service)(nil)
 
-func New(c Config) (*Service, error) {
+func New(c Config, oc openai.Config) (*Service, error) {
 	if !c.Enabled {
 		return nil, nil
 	}
@@ -53,6 +55,7 @@ func New(c Config) (*Service, error) {
 	}
 	return &Service{
 		c:         c,
+		oc:        oc,
 		clientSet: clientset,
 	}, nil
 }
@@ -135,7 +138,7 @@ func (s *Service) NewDeployment(ctx context.Context, c *connect.Request[kubes.Ne
 	}
 
 	slog.Debug("creating deployment", "name", name, "namespace", namespace, "image", s.c.Container)
-	_, err = s.newDeployment(ctx, namespace, NewXCtfDeployment(s.c.Container, name, configMapName, port))
+	_, err = s.newDeployment(ctx, namespace, NewXCtfDeployment(s.c.Container, name, configMapName, port, s.oc))
 	if err != nil {
 		return nil, err
 	}

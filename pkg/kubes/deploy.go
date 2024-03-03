@@ -2,6 +2,7 @@ package kubes
 
 import (
 	"fmt"
+	"github.com/xctf-io/xctf/pkg/openai"
 	"github.com/xctf-io/xctf/pkg/util"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -9,7 +10,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func NewXCtfDeployment(container, name, configMapName string, port int32) *appsv1.Deployment {
+func NewXCtfDeployment(container, name, configMapName string, port int32, oc openai.Config) *appsv1.Deployment {
 	mountDir := "/config"          // Directory where the file will be mounted
 	fileName := "gcs_account.json" // Name of the file in the ConfigMap
 	mountPath := fmt.Sprintf("%s/%s", mountDir, fileName)
@@ -106,6 +107,10 @@ func NewXCtfDeployment(container, name, configMapName string, port int32) *appsv
 								{
 									Name:  "GOOGLE_APPLICATION_CREDENTIALS",
 									Value: mountPath,
+								},
+								{
+									Name:  "OPENAI_API_KEY",
+									Value: oc.APIKey,
 								},
 							},
 							VolumeMounts: volumeMounts,

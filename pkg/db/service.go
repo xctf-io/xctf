@@ -134,8 +134,8 @@ func New(c Config) (*Service, error) {
 	}
 	slog.Debug("database migrated")
 
-	// TODO breadchris reenable
-	// s.InitializeAdmin()
+	// TODO breadchris make this configurable
+	s.InitializeAdmin()
 
 	return s, nil
 }

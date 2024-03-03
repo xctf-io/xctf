@@ -44,6 +44,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 						) {
 							return (
 								<li
+									key={l.label}
 									className={
 										l.to === location.pathname
 											? "border-b-2 border-base-content"
@@ -80,7 +81,7 @@ const NavbarComponent = ({ links }: NavbarProps) => {
 								(userLoggedIn && isAdmin && l.showWhenAdmin)
 							) {
 								return (
-									<li>
+									<li key={l.label}>
 										<Link className="link px-2 no-underline" color="foreground" to={l.to}>
 											{l.label}
 										</Link>

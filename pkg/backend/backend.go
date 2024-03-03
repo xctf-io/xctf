@@ -70,9 +70,10 @@ func (b *Backend) GetCompetitions(ctx context.Context, c *connect.Request[xctf.E
 			continue
 		}
 		cl = append(cl, &chalgen.Competition{
-			Id:    fmt.Sprintf("%d", comp.ID),
-			Name:  comp.Name,
-			Graph: &graph,
+			Id:     fmt.Sprintf("%d", comp.ID),
+			Name:   comp.Name,
+			Graph:  &graph,
+			Active: comp.Active,
 		})
 	}
 
@@ -103,8 +104,7 @@ func (b *Backend) UpdateCompetition(ctx context.Context, c *connect.Request[chal
 		return nil, err
 	}
 
-	// TODO breadchris ignoring c.Msg.Active for now
-	isActive := true
+	// TODO breadchris moving between the protobuf and db model feels awkward here
 
 	var cm models.Competition
 	result := b.s.DB.Where("id = ?", c.Msg.Id).First(&cm)
@@ -112,14 +112,17 @@ func (b *Backend) UpdateCompetition(ctx context.Context, c *connect.Request[chal
 		cm = models.Competition{
 			Name:   c.Msg.Name,
 			Graph:  string(bm),
-			Active: isActive,
+			Active: c.Msg.Active,
 		}
-		b.s.DB.Create(&cm)
+		result = b.s.DB.Create(&cm)
 	} else {
 		cm.Graph = string(bm)
 		cm.Name = c.Msg.Name
-		cm.Active = isActive
-		b.s.DB.Save(&cm)
+		cm.Active = c.Msg.Active
+		result = b.s.DB.Save(&cm)
+	}
+	if result.Error != nil {
+		return nil, result.Error
 	}
 	// TODO breadchris hacked for the demo, think through this more
 	for _, node := range c.Msg.Graph.Nodes {

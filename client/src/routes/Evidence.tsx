@@ -19,12 +19,8 @@ import { useState, useEffect, useRef, MutableRefObject } from "react";
 import dagre from "dagre";
 import Menu from "../components/Menu";
 import { HiPaperAirplane } from "react-icons/hi2";
-import {
-	createSuccessToast,
-	createErrorToast,
-	createCelebrateToast,
-} from "../store/user";
 import { useDarkMode } from "usehooks-ts";
+import toast from "react-hot-toast";
 
 let report = "";
 
@@ -107,7 +103,7 @@ export function Evidence() {
 			setEdges(edges);
 			report = resp.report;
 		} catch (e: any) {
-			createErrorToast(e, isDarkMode);
+			toast.error(e);
 		}
 	}
 
@@ -146,16 +142,16 @@ export function Evidence() {
 				console.log(resp);
 				loadDiscoveredEvidence().then(() => {
 					if (remove) {
-						createSuccessToast("Removed evidence!", isDarkMode);
+						toast.success("Removed evidence!");
 					} else if (submittingFlag) {
-						createCelebrateToast("You got a flag!", isDarkMode);
+						toast.success("You got a flag!");
 					} else {
-						createSuccessToast("Submitted evidence!", isDarkMode);
+						toast.success("Submitted evidence!");
 					}
 				});
 			})
 			.catch((e) => {
-				createErrorToast(e.toString(), isDarkMode);
+				toast.error(e.toString());
 			});
 	}
 
@@ -169,14 +165,14 @@ export function Evidence() {
 			.then((resp) => {
 				loadDiscoveredEvidence().then(() => {
 					if (remove) {
-						createSuccessToast("Removed connection!", isDarkMode);
+						toast.success("Removed connection!");
 					} else {
-						createSuccessToast("Created connection!", isDarkMode);
+						toast.success("Created connection!");
 					}
 				});
 			})
 			.catch((e) => {
-				createErrorToast(e.toString(), isDarkMode);
+				toast.error(e.toString());
 			});
 	}
 

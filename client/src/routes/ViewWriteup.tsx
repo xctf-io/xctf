@@ -9,7 +9,6 @@ import React, {
 import Select from "react-select";
 import { useNavigate, useParams } from "react-router-dom";
 import { xctfAdmin } from "../service";
-import { createErrorToast, createSuccessToast } from "../store/user";
 import {
 	TbArrowBigLeftFilled,
 	TbArrowBigRightFilled,
@@ -54,6 +53,7 @@ import ReactFlow, {
 } from "reactflow";
 import { BsWindowSidebar } from "react-icons/bs";
 import { useDarkMode } from "usehooks-ts";
+import toast from "react-hot-toast";
 
 interface Team {
 	name: string;
@@ -284,7 +284,7 @@ const ViewWriteup = () => {
 			const wp = await xctfAdmin.getWriteup({ username: name });
 			setWriteup(wp.content);
 		} catch (error) {
-			createErrorToast("User does not have a writeup", isDarkMode);
+			toast.error("User does not have a writeup");
 		}
 	}
 	async function getTeams() {
@@ -309,7 +309,7 @@ const ViewWriteup = () => {
 			});
 			setTeams(teams);
 		} catch (error) {
-			createErrorToast("Failed to get teams", isDarkMode);
+			toast.error("Failed to get teams");
 		}
 	}
 	const [graph, setGraph] = useState<GetUserGraphResponse>(
@@ -400,7 +400,7 @@ const ViewWriteup = () => {
 			setNodes(nodes);
 			setEdges(edges);
 		} catch (e: any) {
-			createErrorToast(e, isDarkMode);
+			toast.error(e);
 		}
 	}
 
@@ -470,17 +470,17 @@ const ViewWriteup = () => {
 	const submitGrade = () => {
 		try {
 			if (grade < 0 || grade > 100) {
-				createErrorToast("Grade must be between 1 and 100", isDarkMode);
+				toast.error("Grade must be between 1 and 100");
 				return;
 			}
 			xctfAdmin.submitGrade({
 				username: name,
 				score: grade,
 			});
-			createSuccessToast("Successfully submitted grade", isDarkMode);
+			toast.success("Successfully submitted grade");
 			window.location.reload();
 		} catch (error) {
-			createErrorToast("Failed to submit grade", isDarkMode);
+			toast.error("Failed to submit grade");
 		}
 	};
 

@@ -17,8 +17,6 @@ import { xctf } from "./service";
 import { useUser } from "./store/user";
 import { usePages } from "./store/pages";
 import { useDarkMode } from 'usehooks-ts'
-import "react-toastify/dist/ReactToastify.min.css";
-import { ToastContainer } from "react-toastify";
 import Redirect from "./components/Redirect";
 import {Competitions} from "@/routes/build/Competitions";
 import {Toaster} from "react-hot-toast";
@@ -170,9 +168,8 @@ function App() {
 						)}
 					</Routes>
 				</Router>
-				<Toaster/>
+				<Toaster />
 			</main>
-			<ToastContainer />
 		</>
 	);
 }

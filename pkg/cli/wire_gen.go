@@ -53,7 +53,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	kubesService, err := kubes.New(kubesConfig)
+	openaiConfig, err := openai.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	kubesService, err := kubes.New(kubesConfig, openaiConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -74,10 +78,6 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	handler := chals.NewHandler(chalsConfig, service, builder, pythonServiceClient, store)
-	openaiConfig, err := openai.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
 	agent, err := openai.NewAgent(openaiConfig)
 	if err != nil {
 		return nil, err
