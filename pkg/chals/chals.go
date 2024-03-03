@@ -169,6 +169,48 @@ func (s *Handler) Handle() (string, http.Handler) {
 				switch u := n.Challenge.(type) {
 				case *chalgen.Node_Base:
 					switch t := u.Base.Type.(type) {
+					case *chalgen.Challenge_Filemanager:
+						var sess tmpl.SessionState
+						chatState := s.manager.GetChalState(r.Context(), chalId)
+						if chatState != nil {
+							ss, ok := chatState.(tmpl.SessionState)
+							if !ok {
+								http.Error(w, "Failed to parse session", http.StatusInternalServerError)
+								return
+							}
+							sess = ss
+						}
+						if err := r.ParseForm(); err != nil {
+							http.Error(w, "Failed to parse the form", http.StatusBadRequest)
+							return
+						}
+						if p == "logout" {
+							s.manager.RemoveChalState(r.Context(), chalId)
+							w.Header().Set("Location", baseURL)
+							w.WriteHeader(http.StatusFound)
+							return
+						}
+						if p == "login" {
+							password := r.FormValue("password")
+							if t.Filemanager.Password == password {
+								sess.User = &chalgen.User{
+									Username: "user",
+								}
+								s.manager.SetChalState(r.Context(), chalId, sess)
+							}
+							w.Header().Set("Location", baseURL)
+							w.WriteHeader(http.StatusFound)
+							return
+						}
+
+						templ.Handler(tmpl.Page(tmpl.FileManager(tmpl.FileManagerState{
+							Session: sess,
+							URL: tmpl.FileManagerURL{
+								Login: templ.URL(baseURL + "/login"),
+							},
+						}, t.Filemanager))).ServeHTTP(w, r)
+						return
+
 					case *chalgen.Challenge_Exif:
 						// Returns an image file with the exif data embedded
 						w.Header().Set("Content-Type", "image/jpeg")

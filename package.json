@@ -5,7 +5,8 @@
   "module": "true",
   "scripts": {
     "dev": "cd client && DEV=true node esbuild.mjs",
-    "build": "cd client && DEV=false node esbuild.mjs"
+    "build": "cd client && DEV=false node esbuild.mjs",
+    "generate": "buf generate proto"
   },
   "devDependencies": {
     "@bufbuild/buf": "^1.27.0",

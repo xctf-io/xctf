@@ -102,7 +102,7 @@ func deploymentName(name string) string {
 
 func hostName(name string) string {
 	// TODO breadchris make this domain configurable
-	return fmt.Sprintf("%s.nicek12.xctf.io", name)
+	return fmt.Sprintf("%s.xctf.io", name)
 }
 
 func serviceName(name string) string {

@@ -33,6 +33,29 @@ export const Competitions: React.FC = () => {
     }
 
     useEffect(() => {
+        const handler = setTimeout(() => {
+            void updateCompetition()
+        }, 2000);
+        return () => {
+            clearTimeout(handler);
+        }
+    }, [curComp]);
+
+    const updateCompetition = async () => {
+        if (!curComp?.graph) {
+            return;
+        }
+        console.log('updating competition', curComp);
+        try {
+            const res = await xctf.updateCompetition(curComp);
+            toast.success('Saved!');
+        } catch (e: any) {
+            console.error(e);
+            toast.error(e.message);
+        }
+    }
+
+    useEffect(() => {
         void loadCompetitions();
     }, []);
 
@@ -221,29 +244,6 @@ const Edit: React.FC<{
         reloadIframe();
     }
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            void updateCompetition()
-        }, 2000);
-        return () => {
-            clearTimeout(handler);
-        }
-    }, [comp]);
-
-    const updateCompetition = async () => {
-        if (!comp.graph) {
-            return;
-        }
-        console.log('updating competition', comp);
-        try {
-            const res = await xctf.updateCompetition(comp);
-            toast.success('Saved!');
-        } catch (e: any) {
-            console.error(e);
-            toast.error(e.message);
-        }
-    }
-
     const onSubmit = async (data: any) => {
         // TODO breadchris these fields are being set to an empty array by default, not sure how this is happening, has to be in react-hook-form
         removeUndefinedFields(data.data)
@@ -378,7 +378,7 @@ const Edit: React.FC<{
                                     </button>
                                     <a className={"btn btn-info"} href={playLink}>Open</a>
                                     <div className={""}>
-                                        <button className={"btn btn-error"} onClick={() => removeNode(curChal.meta?.id || '')}>Remove</button>
+                                        <a className={"btn btn-error"} onClick={() => removeNode(curChal.meta?.id || '')}>Remove</a>
                                     </div>
                                 </div>
                             </form>

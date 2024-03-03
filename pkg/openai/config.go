@@ -1,7 +1,6 @@
 package openai
 
 import (
-	"github.com/pkg/errors"
 	"github.com/sashabaranov/go-openai"
 	"go.uber.org/config"
 	"time"
@@ -29,9 +28,9 @@ func NewConfig(provider config.Provider) (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
-	if c.APIKey == "" {
-		return Config{}, errors.New("OpenAI client is not configured correctly. Make sure OPENAI_API_KEY is set.")
-	}
+	//if c.APIKey == "" {
+	//	return Config{}, errors.New("OpenAI client is not configured correctly. Make sure OPENAI_API_KEY is set.")
+	//}
 
 	return c, nil
 }

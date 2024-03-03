@@ -16,9 +16,23 @@ templ Phone(state PhoneState, phone *chalgen.Phone) {
             <div class="artboard artboard-demo phone-1">
                 <div class="grid grid-cols-3 gap-4">
                   for _, a := range phone.Apps {
+                    if a.Html != "" {
+                        <button class="btn" onclick="my_modal_1.showModal()">open modal</button>
+                        <dialog id="my_modal_1" class="modal">
+                          <div class="modal-box">
+                            @templ.Raw(a.Html)
+                            <div class="modal-action">
+                              <form method="dialog">
+                                <button class="btn">Close</button>
+                              </form>
+                            </div>
+                          </div>
+                        </dialog>
+                    } else {
                       <a href={templ.URL(a.Url)} class="btn w-20 h-20 bg-blue-500 flex justify-center items-center text-white">
                         {a.Name}
                       </a>
+                    }
                   }
                 </div>
             </div>

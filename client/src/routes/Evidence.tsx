@@ -37,15 +37,6 @@ export function Evidence() {
 	);
 	const [submittingFlag, setSubmittingFlag] = useState<boolean>(true);
 
-	const graphRef: MutableRefObject<GetDiscoveredEvidenceResponse> =
-		useRef<GetDiscoveredEvidenceResponse>(
-			new GetDiscoveredEvidenceResponse({
-				report: "",
-				connections: [],
-				evidence: [],
-			})
-		);
-
 	const dagreGraph = new dagre.graphlib.Graph();
 	const nodeWidth = 172;
 	const nodeHeight = 36;
@@ -75,7 +66,6 @@ export function Evidence() {
 	async function loadDiscoveredEvidence() {
 		try {
 			const resp = await xctf.getDiscoveredEvidence({});
-			graphRef.current = resp;
 			setGraph(resp);
 			const tempNodes = resp.evidence.map((e) => {
 				return {
@@ -103,12 +93,13 @@ export function Evidence() {
 			setEdges(edges);
 			report = resp.report;
 		} catch (e: any) {
-			toast.error(e);
+			console.error(e);
+			toast.error(e.toString());
 		}
 	}
 
 	useEffect(() => {
-		loadDiscoveredEvidence();
+		void loadDiscoveredEvidence();
 	}, []);
 
 	const initialNodes = graph.evidence.map((e) => {
@@ -238,17 +229,6 @@ export function Evidence() {
 
 	return (
 		<>
-			{/* <div className="mb-3">
-				{successMsg && <Text color="success">{successMsg}</Text>}
-				{errorMsg && <Text color="warning">{errorMsg}</Text>}
-			</div> */}
-			{/* <div class="mb-3">
-        <label for="report">Report URL</label>
-        <Button.Group class="w-full">
-            <Input id="report" type="text" bind:value={$report} />
-            <Button color="blue" on:click={saveReport}>Save</Button>
-        </Button.Group>
-    </div> */}
 			<div
 				className="w-screen flex flex-col"
 				style={{

@@ -1,6 +1,6 @@
 package main
 
-//go:generate npx buf generate proto
+//go:generate npm run generate
 
 import (
 	_ "github.com/google/wire"
@@ -19,4 +19,5 @@ func main() {
 		slog.Error("error running app", "error", err)
 		return
 	}
+	println("hello")
 }

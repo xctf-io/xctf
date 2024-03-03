@@ -55,6 +55,12 @@ export class Challenge extends Message$1<Challenge> {
      */
     value: Phone;
     case: "phone";
+  } | {
+    /**
+     * @generated from field: chalgen.FileManager filemanager = 13;
+     */
+    value: FileManager;
+    case: "filemanager";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Challenge>) {
@@ -72,6 +78,7 @@ export class Challenge extends Message$1<Challenge> {
     { no: 10, name: "exif", kind: "message", T: Exif, oneof: "type" },
     { no: 11, name: "slack", kind: "message", T: Slack, oneof: "type" },
     { no: 12, name: "phone", kind: "message", T: Phone, oneof: "type" },
+    { no: 13, name: "filemanager", kind: "message", T: FileManager, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Challenge {
@@ -88,6 +95,49 @@ export class Challenge extends Message$1<Challenge> {
 
   static equals(a: Challenge | PlainMessage<Challenge> | undefined, b: Challenge | PlainMessage<Challenge> | undefined): boolean {
     return proto3.util.equals(Challenge, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.FileManager
+ */
+export class FileManager extends Message$1<FileManager> {
+  /**
+   * @generated from field: repeated string urls = 1;
+   */
+  urls: string[] = [];
+
+  /**
+   * @generated from field: string password = 2;
+   */
+  password = "";
+
+  constructor(data?: PartialMessage<FileManager>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.FileManager";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "urls", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FileManager {
+    return new FileManager().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FileManager {
+    return new FileManager().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FileManager {
+    return new FileManager().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: FileManager | PlainMessage<FileManager> | undefined, b: FileManager | PlainMessage<FileManager> | undefined): boolean {
+    return proto3.util.equals(FileManager, a, b);
   }
 }
 
@@ -142,6 +192,11 @@ export class App extends Message$1<App> {
    */
   url = "";
 
+  /**
+   * @generated from field: string html = 3;
+   */
+  html = "";
+
   constructor(data?: PartialMessage<App>) {
     super();
     proto3.util.initPartial(data, this);
@@ -152,6 +207,7 @@ export class App extends Message$1<App> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "html", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): App {

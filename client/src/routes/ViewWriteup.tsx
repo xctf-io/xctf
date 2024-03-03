@@ -400,7 +400,7 @@ const ViewWriteup = () => {
 			setNodes(nodes);
 			setEdges(edges);
 		} catch (e: any) {
-			toast.error(e);
+			toast.error(e.toString());
 		}
 	}
 

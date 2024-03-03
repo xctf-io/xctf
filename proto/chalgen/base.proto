@@ -11,7 +11,13 @@ message Challenge {
     Exif exif = 10;
     Slack slack = 11;
     Phone phone = 12;
+    FileManager filemanager = 13;
   }
+}
+
+message FileManager {
+  repeated string urls = 1;
+  string password = 2;
 }
 
 message Phone {
@@ -21,6 +27,7 @@ message Phone {
 message App {
   string name = 1;
   string url = 2;
+  string html = 3;
 }
 
 message Slack {

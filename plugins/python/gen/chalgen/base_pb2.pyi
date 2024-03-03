@@ -6,7 +6,7 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class Challenge(_message.Message):
-    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone")
+    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone", "filemanager")
     BASE64_FIELD_NUMBER: _ClassVar[int]
     TWITTER_FIELD_NUMBER: _ClassVar[int]
     CAESAR_FIELD_NUMBER: _ClassVar[int]
@@ -14,6 +14,7 @@ class Challenge(_message.Message):
     EXIF_FIELD_NUMBER: _ClassVar[int]
     SLACK_FIELD_NUMBER: _ClassVar[int]
     PHONE_FIELD_NUMBER: _ClassVar[int]
+    FILEMANAGER_FIELD_NUMBER: _ClassVar[int]
     base64: Base64
     twitter: Twitter
     caesar: CaesarCipher
@@ -21,7 +22,16 @@ class Challenge(_message.Message):
     exif: Exif
     slack: Slack
     phone: Phone
-    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ...) -> None: ...
+    filemanager: FileManager
+    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ...) -> None: ...
+
+class FileManager(_message.Message):
+    __slots__ = ("urls", "password")
+    URLS_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    urls: _containers.RepeatedScalarFieldContainer[str]
+    password: str
+    def __init__(self, urls: _Optional[_Iterable[str]] = ..., password: _Optional[str] = ...) -> None: ...
 
 class Phone(_message.Message):
     __slots__ = ("apps",)
@@ -30,12 +40,14 @@ class Phone(_message.Message):
     def __init__(self, apps: _Optional[_Iterable[_Union[App, _Mapping]]] = ...) -> None: ...
 
 class App(_message.Message):
-    __slots__ = ("name", "url")
+    __slots__ = ("name", "url", "html")
     NAME_FIELD_NUMBER: _ClassVar[int]
     URL_FIELD_NUMBER: _ClassVar[int]
+    HTML_FIELD_NUMBER: _ClassVar[int]
     name: str
     url: str
-    def __init__(self, name: _Optional[str] = ..., url: _Optional[str] = ...) -> None: ...
+    html: str
+    def __init__(self, name: _Optional[str] = ..., url: _Optional[str] = ..., html: _Optional[str] = ...) -> None: ...
 
 class Slack(_message.Message):
     __slots__ = ("users", "channels")

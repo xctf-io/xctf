@@ -16,7 +16,7 @@ const SubmitWriteup = () => {
 		 xctf.getUserWriteup({}).then((res) => {
 			 setWriteup(res.content);
 		 }).catch((err) => {
-			 toast.error(err);
+			 toast.error(err.toString());
 		 });
 	}, []);
 
@@ -28,7 +28,7 @@ const SubmitWriteup = () => {
 			});
 			toast.success("Submitted writeup!");
 		} catch (err: any) {
-			toast.error(err);
+			toast.error(err.toString());
 		}
 	}
 

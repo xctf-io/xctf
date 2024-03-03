@@ -143,8 +143,6 @@ const FormattedOneOfField: FC<FormattedOneOfFieldProps> = (props) => {
         }
     }, [fieldValue]);
 
-    console.log(fieldPath, fieldValue);
-
     return (
         <tr key={f.name}>
             <td className={"name"}>
