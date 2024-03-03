@@ -25,6 +25,8 @@ export const Competitions: React.FC = () => {
             setCompetitionList(res);
             if (res.competitions.length > 0) {
                 setCurComp(res.competitions[0]);
+            } else {
+                newCompetition();
             }
         } catch (e: any) {
             console.error(e);
@@ -62,6 +64,8 @@ export const Competitions: React.FC = () => {
     const newCompetition = () => {
         setCurComp(new Competition({
             id: generateUUID(),
+            name: 'demo',
+            graph: new Graph({}),
         }));
     }
     const onCompDelete = async () => {
@@ -95,6 +99,8 @@ export const Competitions: React.FC = () => {
             window.history.replaceState({}, '', url.toString());
         }
     }, [activeTab]);
+
+    console.log(activeTab, curComp)
 
     return (
         <div className={"mx-8 space-y-6"}>
@@ -163,12 +169,8 @@ export const Competitions: React.FC = () => {
                     </a>
                 ))}
             </div>
-            {activeTab === 'edit' && (
-                curComp ? (
-                    <Edit comp={curComp} onUpdate={setCurComp} />
-                ) : (
-                    <p>Current competition is not set</p>
-                )
+            {activeTab === 'edit' && curComp && (
+                <Edit comp={curComp} onUpdate={setCurComp} />
             )}
             {activeTab === 'upload' && <FileManager />}
         </div>

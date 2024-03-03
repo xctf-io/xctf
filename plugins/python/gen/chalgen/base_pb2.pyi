@@ -40,14 +40,40 @@ class Phone(_message.Message):
     def __init__(self, apps: _Optional[_Iterable[_Union[App, _Mapping]]] = ...) -> None: ...
 
 class App(_message.Message):
-    __slots__ = ("name", "url", "html")
+    __slots__ = ("name", "url", "html", "tracker", "photogallery")
     NAME_FIELD_NUMBER: _ClassVar[int]
     URL_FIELD_NUMBER: _ClassVar[int]
     HTML_FIELD_NUMBER: _ClassVar[int]
+    TRACKER_FIELD_NUMBER: _ClassVar[int]
+    PHOTOGALLERY_FIELD_NUMBER: _ClassVar[int]
     name: str
     url: str
     html: str
-    def __init__(self, name: _Optional[str] = ..., url: _Optional[str] = ..., html: _Optional[str] = ...) -> None: ...
+    tracker: Tracker
+    photogallery: PhotoGallery
+    def __init__(self, name: _Optional[str] = ..., url: _Optional[str] = ..., html: _Optional[str] = ..., tracker: _Optional[_Union[Tracker, _Mapping]] = ..., photogallery: _Optional[_Union[PhotoGallery, _Mapping]] = ...) -> None: ...
+
+class Tracker(_message.Message):
+    __slots__ = ("name", "event")
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    EVENT_FIELD_NUMBER: _ClassVar[int]
+    name: str
+    event: _containers.RepeatedCompositeFieldContainer[Event]
+    def __init__(self, name: _Optional[str] = ..., event: _Optional[_Iterable[_Union[Event, _Mapping]]] = ...) -> None: ...
+
+class Event(_message.Message):
+    __slots__ = ("timestamp", "name")
+    TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    timestamp: int
+    name: str
+    def __init__(self, timestamp: _Optional[int] = ..., name: _Optional[str] = ...) -> None: ...
+
+class PhotoGallery(_message.Message):
+    __slots__ = ("url",)
+    URL_FIELD_NUMBER: _ClassVar[int]
+    url: _containers.RepeatedScalarFieldContainer[str]
+    def __init__(self, url: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class Slack(_message.Message):
     __slots__ = ("users", "channels")

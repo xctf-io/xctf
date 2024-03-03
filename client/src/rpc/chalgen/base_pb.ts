@@ -197,6 +197,23 @@ export class App extends Message$1<App> {
    */
   html = "";
 
+  /**
+   * @generated from oneof chalgen.App.type
+   */
+  type: {
+    /**
+     * @generated from field: chalgen.Tracker tracker = 4;
+     */
+    value: Tracker;
+    case: "tracker";
+  } | {
+    /**
+     * @generated from field: chalgen.PhotoGallery photogallery = 5;
+     */
+    value: PhotoGallery;
+    case: "photogallery";
+  } | { case: undefined; value?: undefined } = { case: undefined };
+
   constructor(data?: PartialMessage<App>) {
     super();
     proto3.util.initPartial(data, this);
@@ -208,6 +225,8 @@ export class App extends Message$1<App> {
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "html", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "tracker", kind: "message", T: Tracker, oneof: "type" },
+    { no: 5, name: "photogallery", kind: "message", T: PhotoGallery, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): App {
@@ -224,6 +243,131 @@ export class App extends Message$1<App> {
 
   static equals(a: App | PlainMessage<App> | undefined, b: App | PlainMessage<App> | undefined): boolean {
     return proto3.util.equals(App, a, b);
+  }
+}
+
+/**
+ * https://daisyui.com/components/steps/
+ *
+ * @generated from message chalgen.Tracker
+ */
+export class Tracker extends Message$1<Tracker> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  /**
+   * @generated from field: repeated chalgen.Event event = 2;
+   */
+  event: Event[] = [];
+
+  constructor(data?: PartialMessage<Tracker>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Tracker";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "event", kind: "message", T: Event, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Tracker {
+    return new Tracker().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Tracker {
+    return new Tracker().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Tracker {
+    return new Tracker().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Tracker | PlainMessage<Tracker> | undefined, b: Tracker | PlainMessage<Tracker> | undefined): boolean {
+    return proto3.util.equals(Tracker, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Event
+ */
+export class Event extends Message$1<Event> {
+  /**
+   * @generated from field: int64 timestamp = 1;
+   */
+  timestamp = protoInt64.zero;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name = "";
+
+  constructor(data?: PartialMessage<Event>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Event";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "timestamp", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Event {
+    return new Event().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Event {
+    return new Event().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Event {
+    return new Event().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Event | PlainMessage<Event> | undefined, b: Event | PlainMessage<Event> | undefined): boolean {
+    return proto3.util.equals(Event, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.PhotoGallery
+ */
+export class PhotoGallery extends Message$1<PhotoGallery> {
+  /**
+   * @generated from field: repeated string url = 1;
+   */
+  url: string[] = [];
+
+  constructor(data?: PartialMessage<PhotoGallery>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.PhotoGallery";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PhotoGallery {
+    return new PhotoGallery().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PhotoGallery {
+    return new PhotoGallery().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PhotoGallery {
+    return new PhotoGallery().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: PhotoGallery | PlainMessage<PhotoGallery> | undefined, b: PhotoGallery | PlainMessage<PhotoGallery> | undefined): boolean {
+    return proto3.util.equals(PhotoGallery, a, b);
   }
 }
 

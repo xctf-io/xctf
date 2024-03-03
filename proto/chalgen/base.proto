@@ -28,6 +28,25 @@ message App {
   string name = 1;
   string url = 2;
   string html = 3;
+  oneof type {
+    Tracker tracker = 4;
+    PhotoGallery photogallery = 5;
+  }
+}
+
+// https://daisyui.com/components/steps/
+message Tracker {
+  string name = 1;
+  repeated Event event = 2;
+}
+
+message Event {
+  int64 timestamp = 1;
+  string name = 2;
+}
+
+message PhotoGallery {
+  repeated string url = 1;
 }
 
 message Slack {
