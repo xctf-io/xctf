@@ -8,7 +8,7 @@ WORKDIR /build
 
 RUN npm i && npm run build
 
-FROM golang:1.21-alpine as server
+FROM --platform=linux/amd64  golang:1.21-alpine as server
 
 RUN apk add --no-cache gcc g++ musl-dev
 
@@ -17,7 +17,7 @@ WORKDIR /build/
 COPY . /build
 COPY --from=client /build/client/public/build /build/client/public/build
 
-RUN CGO_ENABLED=1 go build -o xctf main.go
+RUN CGO_ENABLED=1 CGO_CFLAGS="-D_LARGEFILE64_SOURCE" go build -o xctf main.go
 
 FROM alpine
 
