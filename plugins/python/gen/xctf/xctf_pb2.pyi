@@ -7,6 +7,18 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class SignedURLRequest(_message.Message):
+    __slots__ = ("path",)
+    PATH_FIELD_NUMBER: _ClassVar[int]
+    path: str
+    def __init__(self, path: _Optional[str] = ...) -> None: ...
+
+class SignedURLResponse(_message.Message):
+    __slots__ = ("url",)
+    URL_FIELD_NUMBER: _ClassVar[int]
+    url: str
+    def __init__(self, url: _Optional[str] = ...) -> None: ...
+
 class RemoveRequest(_message.Message):
     __slots__ = ("path",)
     PATH_FIELD_NUMBER: _ClassVar[int]

@@ -40,6 +40,7 @@ type BackendClient interface {
 	UpdateCompetition(ctx context.Context, in *chalgen.Competition, opts ...grpc.CallOption) (*chalgen.Competition, error)
 	DeleteCompetition(ctx context.Context, in *chalgen.Competition, opts ...grpc.CallOption) (*Empty, error)
 	ChallengeType(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ChallengeTypeResponse, error)
+	SignedURL(ctx context.Context, in *SignedURLRequest, opts ...grpc.CallOption) (*SignedURLResponse, error)
 }
 
 type backendClient struct {
@@ -203,6 +204,15 @@ func (c *backendClient) ChallengeType(ctx context.Context, in *Empty, opts ...gr
 	return out, nil
 }
 
+func (c *backendClient) SignedURL(ctx context.Context, in *SignedURLRequest, opts ...grpc.CallOption) (*SignedURLResponse, error) {
+	out := new(SignedURLResponse)
+	err := c.cc.Invoke(ctx, "/xctf.Backend/SignedURL", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BackendServer is the server API for Backend service.
 // All implementations should embed UnimplementedBackendServer
 // for forward compatibility
@@ -224,6 +234,7 @@ type BackendServer interface {
 	UpdateCompetition(context.Context, *chalgen.Competition) (*chalgen.Competition, error)
 	DeleteCompetition(context.Context, *chalgen.Competition) (*Empty, error)
 	ChallengeType(context.Context, *Empty) (*ChallengeTypeResponse, error)
+	SignedURL(context.Context, *SignedURLRequest) (*SignedURLResponse, error)
 }
 
 // UnimplementedBackendServer should be embedded to have forward compatible implementations.
@@ -280,6 +291,9 @@ func (UnimplementedBackendServer) DeleteCompetition(context.Context, *chalgen.Co
 }
 func (UnimplementedBackendServer) ChallengeType(context.Context, *Empty) (*ChallengeTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChallengeType not implemented")
+}
+func (UnimplementedBackendServer) SignedURL(context.Context, *SignedURLRequest) (*SignedURLResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignedURL not implemented")
 }
 
 // UnsafeBackendServer may be embedded to opt out of forward compatibility for this service.
@@ -599,6 +613,24 @@ func _Backend_ChallengeType_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Backend_SignedURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignedURLRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BackendServer).SignedURL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Backend/SignedURL",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BackendServer).SignedURL(ctx, req.(*SignedURLRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Backend_ServiceDesc is the grpc.ServiceDesc for Backend service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -673,6 +705,10 @@ var Backend_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChallengeType",
 			Handler:    _Backend_ChallengeType_Handler,
+		},
+		{
+			MethodName: "SignedURL",
+			Handler:    _Backend_SignedURL_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

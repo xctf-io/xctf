@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
+	"github.com/google/uuid"
 	"github.com/google/wire"
 	"github.com/samber/lo"
 	"github.com/xctf-io/xctf/client/public"
@@ -18,6 +19,7 @@ import (
 	xhttp "github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/kubes"
 	"github.com/xctf-io/xctf/pkg/openai"
+	"io"
 	"log/slog"
 	"net/http"
 	"net/http/httputil"
@@ -45,7 +47,7 @@ func New(
 	k *kubes.Service,
 	b *backend.Backend,
 	a *admin.Admin,
-	s *db.Service,
+	s *bucket.Builder,
 	h *chals.Handler,
 ) (http.Handler, error) {
 	muxRoot := http.NewServeMux()
@@ -102,12 +104,18 @@ func New(
 		}
 
 		if strings.Index(r.URL.Path, "/download") == 0 {
-			r.URL.Path = r.URL.Path[9:]
-			r.URL.Path = r.URL.Path[1:]
-			_, err := s.ReadFile(r.URL.Path, rw)
+			// Remove "/download/"
+			p := r.URL.Path[10:]
+			r, err := s.Bucket.NewReader(r.Context(), p, nil)
 			if err != nil {
 				rw.WriteHeader(http.StatusNotFound)
 				slog.Debug("file not found", "err", err)
+			}
+			defer r.Close()
+			_, err = r.WriteTo(rw)
+			if err != nil {
+				rw.WriteHeader(http.StatusNotFound)
+				slog.Debug("failed to write file", "err", err)
 			}
 			return
 		}
@@ -151,37 +159,37 @@ func New(
 	return store.LoadAndSave(muxRoot), nil
 }
 
-func fileUploadHandler(s *db.Service) func(w http.ResponseWriter, r *http.Request) {
+func fileUploadHandler(s *bucket.Builder) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		writeError := func(sc int, err error, msg string, args ...any) {
 			slog.Error(msg, "error", err, "args", args)
 			http.Error(w, msg, sc)
 		}
-		if r.Method != http.MethodPost {
+		if r.Method != http.MethodPut {
 			writeError(http.StatusMethodNotAllowed, nil, "Invalid request method", "method", r.Method)
 			return
 		}
 
-		err := r.ParseMultipartForm(10 << 20)
-		if err != nil {
-			writeError(http.StatusInternalServerError, err, "Error parsing multipart form")
-			return
+		v := r.URL.Query()
+
+		name := uuid.NewString()
+		if n, ok := v["name"]; ok && len(n) == 1 {
+			name = n[0]
 		}
 
-		file, handler, err := r.FormFile("file")
+		slog.Debug("Uploading file", "name", name)
+
+		b, err := io.ReadAll(r.Body)
 		if err != nil {
-			writeError(http.StatusInternalServerError, err, "Error retrieving the file from form data")
+			writeError(http.StatusInternalServerError, err, "Error reading file from form data")
 			return
 		}
-		defer file.Close()
-
-		slog.Debug("Uploaded File", "filename", handler.Filename, "size", handler.Size, "mime", handler.Header)
-
-		_, err = s.WriteFile(handler.Filename, file)
+		err = s.Bucket.WriteAll(r.Context(), name, b, nil)
 		if err != nil {
 			writeError(http.StatusInternalServerError, err, "Error copying the uploaded file")
 			return
 		}
+		slog.Debug("done uploading file", "name", name)
 		w.WriteHeader(http.StatusOK)
 	}
 }

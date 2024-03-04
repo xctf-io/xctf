@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/bufbuild/connect-go"
+	"github.com/xctf-io/xctf/pkg/bucket"
 	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/gen/xctf"
 	"github.com/xctf-io/xctf/pkg/gen/xctf/xctfconnect"
@@ -14,18 +15,20 @@ import (
 
 type Admin struct {
 	db *db.Service
+	b  *bucket.Builder
 }
 
-func NewAdmin(db *db.Service) *Admin {
+func NewAdmin(db *db.Service, b *bucket.Builder) *Admin {
 	return &Admin{
 		db: db,
+		b:  b,
 	}
 }
 
 var _ xctfconnect.AdminHandler = &Admin{}
 
 func (s *Admin) Remove(ctx context.Context, c *connect.Request[xctf.RemoveRequest]) (*connect.Response[xctf.RemoveResponse], error) {
-	err := s.db.RemoveFile(c.Msg.Path)
+	err := s.b.Bucket.Delete(ctx, c.Msg.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +36,7 @@ func (s *Admin) Remove(ctx context.Context, c *connect.Request[xctf.RemoveReques
 }
 
 func (s *Admin) Readdir(ctx context.Context, c *connect.Request[xctf.ReaddirRequest]) (*connect.Response[xctf.ReaddirResponse], error) {
-	fi, err := s.db.Readdir(c.Msg.Path)
+	fi, err := s.b.ListBucket(ctx)
 	if err != nil {
 		return nil, err
 	}

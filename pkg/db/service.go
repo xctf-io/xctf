@@ -10,12 +10,12 @@ import (
 	"github.com/google/wire"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
+	"github.com/xctf-io/xctf/pkg/bucket"
 	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 	"github.com/xctf-io/xctf/pkg/models"
 	"github.com/xctf-io/xctf/pkg/sqlitefs"
 	"google.golang.org/protobuf/encoding/protojson"
 	"gorm.io/gorm"
-	"io"
 	"log/slog"
 	"os"
 	"path"
@@ -35,27 +35,9 @@ var ProviderSet = wire.NewSet(
 
 type Service struct {
 	c  Config
+	bc bucket.Config
 	DB *gorm.DB
 	db *sql.DB
-}
-
-func NewGorm(c Config) (*gorm.DB, error) {
-	var openedDb gorm.Dialector
-	if strings.Contains(c.DSN, "postgres") {
-		openedDb = postgres.Open(c.DSN)
-	} else {
-		dir, _ := path.Split(c.DSN)
-		if err := os.MkdirAll(dir, 0755); err != nil {
-			return nil, err
-		}
-		openedDb = sqlite.Open(c.DSN)
-	}
-
-	db, err := gorm.Open(openedDb, &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
 }
 
 func OpenDB(c Config) (*sql.DB, error) {
@@ -66,6 +48,7 @@ func OpenDB(c Config) (*sql.DB, error) {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return nil, err
 		}
+		print(c.DSN)
 		return sql.Open("sqlite", c.DSN)
 	}
 }
@@ -83,9 +66,10 @@ func OpenGorm(c Config, db *sql.DB) (*gorm.DB, error) {
 	}
 }
 
-func New(c Config) (*Service, error) {
+func New(c Config, bc bucket.Config) (*Service, error) {
 	s := &Service{
-		c: c,
+		c:  c,
+		bc: bc,
 	}
 
 	var lsdb *litestream.DB
@@ -138,43 +122,6 @@ func New(c Config) (*Service, error) {
 	s.InitializeAdmin()
 
 	return s, nil
-}
-
-func (s *Service) Readdir(path string) ([]os.FileInfo, error) {
-	f, err := sqlitefs.NewSQLiteFile(s.db, path)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to open sqlitefs")
-	}
-
-	// TODO breadchris implement pagination
-	if path == "/" {
-		return f.GetAllFiles()
-	} else {
-		return f.Readdir(1024)
-	}
-}
-
-func (s *Service) RemoveFile(path string) error {
-	f, err := sqlitefs.NewSQLiteFile(s.db, path)
-	if err != nil {
-		return err
-	}
-	return f.Remove()
-}
-
-func (s *Service) WriteFile(path string, r io.Reader) (int64, error) {
-	w := sqlitefs.NewSQLiteWriter(s.db, path)
-	defer w.Close()
-	return io.Copy(w, r)
-}
-
-func (s *Service) ReadFile(path string, w io.Writer) (int64, error) {
-	f, err := sqlitefs.NewSQLiteFile(s.db, path)
-	if err != nil {
-		return 0, err
-	}
-	defer f.Close()
-	return io.Copy(w, f)
 }
 
 func (s *Service) GetCurrentCompetition() (string, *chalgen.Graph, error) {
@@ -271,11 +218,11 @@ func (s *Service) registerDBCallbacks(ctx context.Context, lsdb *litestream.DB) 
 func (s *Service) newReplica(lsdb *litestream.DB) *litestream.Replica {
 	// TODO breadchris support gcs https://litestream.io/guides/gcs/
 	c := lsgcs.NewReplicaClient()
-	c.Bucket = s.c.Bucket
+	c.Bucket = s.bc.Url.Host
 	c.Path = s.c.BackupName
 
 	//client := lss3.NewReplicaClient()
-	//client.Bucket = s.c.Bucket
+	//client.bucket = s.c.bucket
 	//client.Endpoint = s.c.Endpoint
 	//client.SkipVerify = true
 	//client.ForcePathStyle = true

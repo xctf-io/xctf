@@ -37,7 +37,7 @@ export const Competitions: React.FC = () => {
     useEffect(() => {
         const handler = setTimeout(() => {
             void updateCompetition()
-        }, 2000);
+        }, 1000);
         return () => {
             clearTimeout(handler);
         }
@@ -61,12 +61,13 @@ export const Competitions: React.FC = () => {
         void loadCompetitions();
     }, []);
 
-    const newCompetition = () => {
+    const newCompetition = async () => {
         setCurComp(new Competition({
-            id: generateUUID(),
             name: 'demo',
             graph: new Graph({}),
         }));
+        await updateCompetition();
+        await loadCompetitions();
     }
     const onCompDelete = async () => {
         if (!curComp) {
@@ -99,8 +100,6 @@ export const Competitions: React.FC = () => {
             window.history.replaceState({}, '', url.toString());
         }
     }, [activeTab]);
-
-    console.log(activeTab, curComp)
 
     return (
         <div className={"mx-8 space-y-6"}>
@@ -205,6 +204,7 @@ const Edit: React.FC<{
         control,
         setValue,
         resetField,
+        watch,
     } = useForm({
         values: {
             data: new Node({
@@ -213,7 +213,19 @@ const Edit: React.FC<{
         },
     });
 
+    // TODO breadchris loops
+    // const formValues = watch();
+    // useEffect(() => {
+    //     const handler = setTimeout(() => {
+    //         void onSubmit(formValues);
+    //     }, 2000);
+    //     return () => {
+    //         clearTimeout(handler);
+    //     }
+    // }, [formValues]);
+
     const removeNode = async (id: string) => {
+        console.log(id, comp.graph?.nodes)
         onUpdate(new Competition({
             ...comp,
             graph: new Graph({
@@ -335,7 +347,12 @@ const Edit: React.FC<{
     }
 
     const newChallenge = () => {
-        selectChallenge(new Node({}));
+        selectChallenge(new Node({
+            meta: {
+                id: generateUUID(),
+                name: "new challenge"
+            }
+        }));
     }
 
     const playLink = `/play/${comp.id}/${curChal?.meta?.id}`;

@@ -75,6 +75,8 @@ const (
 	BackendDeleteCompetitionProcedure = "/xctf.Backend/DeleteCompetition"
 	// BackendChallengeTypeProcedure is the fully-qualified name of the Backend's ChallengeType RPC.
 	BackendChallengeTypeProcedure = "/xctf.Backend/ChallengeType"
+	// BackendSignedURLProcedure is the fully-qualified name of the Backend's SignedURL RPC.
+	BackendSignedURLProcedure = "/xctf.Backend/SignedURL"
 	// AdminUpsertChallengeProcedure is the fully-qualified name of the Admin's UpsertChallenge RPC.
 	AdminUpsertChallengeProcedure = "/xctf.Admin/UpsertChallenge"
 	// AdminDeleteChallengeProcedure is the fully-qualified name of the Admin's DeleteChallenge RPC.
@@ -120,6 +122,7 @@ type BackendClient interface {
 	UpdateCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[chalgen.Competition], error)
 	DeleteCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[xctf.Empty], error)
 	ChallengeType(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error)
+	SignedURL(context.Context, *connect_go.Request[xctf.SignedURLRequest]) (*connect_go.Response[xctf.SignedURLResponse], error)
 }
 
 // NewBackendClient constructs a client for the xctf.Backend service. By default, it uses the
@@ -217,6 +220,11 @@ func NewBackendClient(httpClient connect_go.HTTPClient, baseURL string, opts ...
 			baseURL+BackendChallengeTypeProcedure,
 			opts...,
 		),
+		signedURL: connect_go.NewClient[xctf.SignedURLRequest, xctf.SignedURLResponse](
+			httpClient,
+			baseURL+BackendSignedURLProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -239,6 +247,7 @@ type backendClient struct {
 	updateCompetition        *connect_go.Client[chalgen.Competition, chalgen.Competition]
 	deleteCompetition        *connect_go.Client[chalgen.Competition, xctf.Empty]
 	challengeType            *connect_go.Client[xctf.Empty, xctf.ChallengeTypeResponse]
+	signedURL                *connect_go.Client[xctf.SignedURLRequest, xctf.SignedURLResponse]
 }
 
 // Register calls xctf.Backend.Register.
@@ -326,6 +335,11 @@ func (c *backendClient) ChallengeType(ctx context.Context, req *connect_go.Reque
 	return c.challengeType.CallUnary(ctx, req)
 }
 
+// SignedURL calls xctf.Backend.SignedURL.
+func (c *backendClient) SignedURL(ctx context.Context, req *connect_go.Request[xctf.SignedURLRequest]) (*connect_go.Response[xctf.SignedURLResponse], error) {
+	return c.signedURL.CallUnary(ctx, req)
+}
+
 // BackendHandler is an implementation of the xctf.Backend service.
 type BackendHandler interface {
 	Register(context.Context, *connect_go.Request[xctf.RegisterRequest]) (*connect_go.Response[xctf.RegisterResponse], error)
@@ -345,6 +359,7 @@ type BackendHandler interface {
 	UpdateCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[chalgen.Competition], error)
 	DeleteCompetition(context.Context, *connect_go.Request[chalgen.Competition]) (*connect_go.Response[xctf.Empty], error)
 	ChallengeType(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error)
+	SignedURL(context.Context, *connect_go.Request[xctf.SignedURLRequest]) (*connect_go.Response[xctf.SignedURLResponse], error)
 }
 
 // NewBackendHandler builds an HTTP handler from the service implementation. It returns the path on
@@ -438,6 +453,11 @@ func NewBackendHandler(svc BackendHandler, opts ...connect_go.HandlerOption) (st
 		svc.ChallengeType,
 		opts...,
 	)
+	backendSignedURLHandler := connect_go.NewUnaryHandler(
+		BackendSignedURLProcedure,
+		svc.SignedURL,
+		opts...,
+	)
 	return "/xctf.Backend/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case BackendRegisterProcedure:
@@ -474,6 +494,8 @@ func NewBackendHandler(svc BackendHandler, opts ...connect_go.HandlerOption) (st
 			backendDeleteCompetitionHandler.ServeHTTP(w, r)
 		case BackendChallengeTypeProcedure:
 			backendChallengeTypeHandler.ServeHTTP(w, r)
+		case BackendSignedURLProcedure:
+			backendSignedURLHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -549,6 +571,10 @@ func (UnimplementedBackendHandler) DeleteCompetition(context.Context, *connect_g
 
 func (UnimplementedBackendHandler) ChallengeType(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.ChallengeTypeResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.ChallengeType is not implemented"))
+}
+
+func (UnimplementedBackendHandler) SignedURL(context.Context, *connect_go.Request[xctf.SignedURLRequest]) (*connect_go.Response[xctf.SignedURLResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.SignedURL is not implemented"))
 }
 
 // AdminClient is a client for the xctf.Admin service.

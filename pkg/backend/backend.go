@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/pkg/grpc"
 	"github.com/rs/zerolog/log"
+	"github.com/xctf-io/xctf/pkg/bucket"
 	"github.com/xctf-io/xctf/pkg/chals"
 	"github.com/xctf-io/xctf/pkg/db"
 	"github.com/xctf-io/xctf/pkg/gen/chalgen"
@@ -20,6 +21,7 @@ import (
 	"github.com/xctf-io/xctf/pkg/openai"
 	"google.golang.org/protobuf/encoding/protojson"
 	"gorm.io/gorm"
+	"time"
 )
 
 type Backend struct {
@@ -27,6 +29,7 @@ type Backend struct {
 	manager *http.Store
 	h       *chals.Handler
 	openai  *openai.Agent
+	b       *bucket.Builder
 }
 
 var _ xctfconnect.BackendHandler = (*Backend)(nil)
@@ -36,13 +39,25 @@ func NewBackend(
 	manager *http.Store,
 	h *chals.Handler,
 	openai *openai.Agent,
+	b *bucket.Builder,
 ) *Backend {
 	return &Backend{
 		s:       s,
 		manager: manager,
 		h:       h,
 		openai:  openai,
+		b:       b,
 	}
+}
+
+func (b *Backend) SignedURL(ctx context.Context, c *connect.Request[xctf.SignedURLRequest]) (*connect.Response[xctf.SignedURLResponse], error) {
+	url, err := b.b.SignedURL(ctx, c.Msg.Path, time.Minute*5)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(&xctf.SignedURLResponse{
+		Url: url,
+	}), nil
 }
 
 func (b *Backend) DeleteCompetition(ctx context.Context, c *connect.Request[chalgen.Competition]) (*connect.Response[xctf.Empty], error) {

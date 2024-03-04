@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["http://localhost:8420", "https://2024.mcpshsf.com"],
+    "responseHeader": ["Content-Type"],
+    "method": ["PUT", "POST", "GET"],
+    "maxAgeSeconds": 3600
+  }
+]

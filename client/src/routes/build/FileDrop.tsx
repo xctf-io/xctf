@@ -1,32 +1,45 @@
 import React, {ChangeEvent, useCallback, useState} from 'react';
 import toast from "react-hot-toast";
+import {xctf} from "@/service";
 
-interface FileDropProps {
-    children?: React.ReactNode;
-}
+async function uploadFormFile(path: string, file: Blob): Promise<string> {
+    try {
+        const res = await xctf.signedURL({
+            path: file.name,
+        })
 
-async function uploadFormFile(path: string, file: Blob): Promise<void> {
-    const formData = new FormData();
+        // TODO breadchris use signed upload for local files, see pkg/bucket
+        if (res.url === '/upload') {
+            res.url += `?name=${file.name}`
+        }
 
-    formData.append('file', file);
-    formData.append('path', path);
-
-    const response = await fetch('/upload', {
-        method: 'POST',
-        body: formData,
-    });
-
-    if (!response.ok) {
-        throw new Error(`Failed to upload file: ${response.status} ${response.statusText}`);
+        const response = await fetch(res.url, {
+            method: 'PUT',
+            body: file,
+            headers: {
+                'Content-Type': 'application/octet-stream'
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to upload file: ${response.status} ${response.statusText}`);
+        }
+        toast.success('uploaded file')
+    } catch (e: any) {
+        toast.error(e.toString());
     }
+    return file.name;
 }
 
-export const FileDrop: React.FC<FileDropProps> = ({children}) => {
+export const FileDrop: React.FC<{
+    children?: React.ReactNode;
+    onUpload: (file: string) => void;
+}> = ({children, onUpload}) => {
     const [isDragging, setIsDragging] = useState(false);
 
     const uploadFile = async (file: globalThis.File) => {
         try {
             const res = await uploadFormFile('/', file);
+            onUpload(res);
         } catch (e) {
             toast.error('Failed to upload file');
             console.error(e);

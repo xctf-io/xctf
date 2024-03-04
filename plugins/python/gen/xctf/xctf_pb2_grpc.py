@@ -100,6 +100,11 @@ class BackendStub(object):
                 request_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
                 response_deserializer=xctf_dot_xctf__pb2.ChallengeTypeResponse.FromString,
                 )
+        self.SignedURL = channel.unary_unary(
+                '/xctf.Backend/SignedURL',
+                request_serializer=xctf_dot_xctf__pb2.SignedURLRequest.SerializeToString,
+                response_deserializer=xctf_dot_xctf__pb2.SignedURLResponse.FromString,
+                )
 
 
 class BackendServicer(object):
@@ -207,6 +212,12 @@ class BackendServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SignedURL(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_BackendServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -294,6 +305,11 @@ def add_BackendServicer_to_server(servicer, server):
                     servicer.ChallengeType,
                     request_deserializer=xctf_dot_xctf__pb2.Empty.FromString,
                     response_serializer=xctf_dot_xctf__pb2.ChallengeTypeResponse.SerializeToString,
+            ),
+            'SignedURL': grpc.unary_unary_rpc_method_handler(
+                    servicer.SignedURL,
+                    request_deserializer=xctf_dot_xctf__pb2.SignedURLRequest.FromString,
+                    response_serializer=xctf_dot_xctf__pb2.SignedURLResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -591,6 +607,23 @@ class Backend(object):
         return grpc.experimental.unary_unary(request, target, '/xctf.Backend/ChallengeType',
             xctf_dot_xctf__pb2.Empty.SerializeToString,
             xctf_dot_xctf__pb2.ChallengeTypeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SignedURL(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Backend/SignedURL',
+            xctf_dot_xctf__pb2.SignedURLRequest.SerializeToString,
+            xctf_dot_xctf__pb2.SignedURLResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

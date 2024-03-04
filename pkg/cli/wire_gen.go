@@ -41,7 +41,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	service, err := db.New(dbConfig)
+	bucketConfig, err := bucket.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	service, err := db.New(dbConfig, bucketConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -65,10 +69,6 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	bucketConfig, err := bucket.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
 	builder, err := bucket.NewBuilder(bucketConfig)
 	if err != nil {
 		return nil, err
@@ -82,9 +82,9 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	backendBackend := backend.NewBackend(service, store, handler, agent)
-	adminAdmin := admin.NewAdmin(service)
-	httpHandler, err := server.New(serverConfig, store, kubesService, backendBackend, adminAdmin, service, handler)
+	backendBackend := backend.NewBackend(service, store, handler, agent, builder)
+	adminAdmin := admin.NewAdmin(service, builder)
+	httpHandler, err := server.New(serverConfig, store, kubesService, backendBackend, adminAdmin, builder, handler)
 	if err != nil {
 		return nil, err
 	}

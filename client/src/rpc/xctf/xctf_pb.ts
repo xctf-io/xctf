@@ -7,6 +7,80 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { DescriptorProto, EnumDescriptorProto, Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from message xctf.SignedURLRequest
+ */
+export class SignedURLRequest extends Message<SignedURLRequest> {
+  /**
+   * @generated from field: string path = 1;
+   */
+  path = "";
+
+  constructor(data?: PartialMessage<SignedURLRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.SignedURLRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "path", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignedURLRequest {
+    return new SignedURLRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SignedURLRequest {
+    return new SignedURLRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SignedURLRequest {
+    return new SignedURLRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SignedURLRequest | PlainMessage<SignedURLRequest> | undefined, b: SignedURLRequest | PlainMessage<SignedURLRequest> | undefined): boolean {
+    return proto3.util.equals(SignedURLRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.SignedURLResponse
+ */
+export class SignedURLResponse extends Message<SignedURLResponse> {
+  /**
+   * @generated from field: string url = 2;
+   */
+  url = "";
+
+  constructor(data?: PartialMessage<SignedURLResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.SignedURLResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 2, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SignedURLResponse {
+    return new SignedURLResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SignedURLResponse {
+    return new SignedURLResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SignedURLResponse {
+    return new SignedURLResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SignedURLResponse | PlainMessage<SignedURLResponse> | undefined, b: SignedURLResponse | PlainMessage<SignedURLResponse> | undefined): boolean {
+    return proto3.util.equals(SignedURLResponse, a, b);
+  }
+}
+
+/**
  * @generated from message xctf.RemoveRequest
  */
 export class RemoveRequest extends Message<RemoveRequest> {

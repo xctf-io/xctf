@@ -1,10 +1,12 @@
 package bucket
 
 import (
+	"context"
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"gocloud.dev/blob"
-	"gocloud.dev/blob/fileblob"
+	_ "gocloud.dev/blob/fileblob"
+	_ "gocloud.dev/blob/gcsblob"
 	"os"
 	"os/user"
 	"path"
@@ -16,7 +18,7 @@ var ProviderSet = wire.NewSet(
 )
 
 type Builder struct {
-	*blob.Bucket
+	Bucket *blob.Bucket
 	config Config
 
 	path string
@@ -24,7 +26,7 @@ type Builder struct {
 
 func (s *Builder) Dir(name string) *Builder {
 	ns := *s
-	ns.path = path.Join(s.config.Path, name)
+	ns.path = path.Join(s.path, name)
 	return &ns
 }
 
@@ -36,43 +38,20 @@ func (s *Builder) File(name string) (string, error) {
 	return path.Join(s.path, name), EnsureDirExists(s.path)
 }
 
-func NewBuilder(config Config) (*Builder, error) {
-	var (
-		err error
-	)
-	if config.Path == "" {
-		config.Path, err = CreateLocalDir(config.LocalName)
-		if err != nil {
-			return nil, err
-		}
-		err = EnsureDirExists(path.Join(config.Path, "bucket"))
-		if err != nil {
-			return nil, err
-		}
-	}
-	bucket, err := fileblob.OpenBucket(config.Path, &fileblob.Options{
-		CreateDir: true,
-	})
+func NewBuilder(c Config) (*Builder, error) {
+	bucket, err := blob.OpenBucket(context.Background(), c.Url.String())
 	if err != nil {
 		return nil, err
 	}
+	// TODO breadchris is this always true
+	if c.Url.Scheme != "file" {
+		bucket = blob.PrefixedBucket(bucket, c.Url.Path)
+	}
 	return &Builder{
 		Bucket: bucket,
-		config: config,
-		path:   config.Path,
+		config: c,
+		path:   c.Url.Path,
 	}, nil
-}
-
-func NewTestBuilder() *Builder {
-	return &Builder{
-		Bucket: nil,
-		config: Config{
-			LocalName: "test",
-			Path:      "",
-			URLBase:   "",
-		},
-		path: "",
-	}
 }
 
 func EnsureDirExists(p string) error {

@@ -29,6 +29,8 @@ service Backend {
   rpc DeleteCompetition(chalgen.Competition) returns (Empty);
 
   rpc ChallengeType(Empty) returns (ChallengeTypeResponse);
+
+  rpc SignedURL(SignedURLRequest) returns (SignedURLResponse);
 }
 
 service Admin {
@@ -45,6 +47,14 @@ service Admin {
 
   rpc Readdir(ReaddirRequest) returns (ReaddirResponse);
   rpc Remove(RemoveRequest) returns (RemoveResponse);
+}
+
+message SignedURLRequest {
+  string path = 1;
+}
+
+message SignedURLResponse {
+  string url = 2;
 }
 
 message RemoveRequest {

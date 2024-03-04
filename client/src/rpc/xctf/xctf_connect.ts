@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChallengeTypeResponse, CurrentUserRequest, CurrentUserResponse, DeleteChallengeRequest, Empty, ForgotPasswordRequest, GetAllChallengesRequest, GetAllChallengesResponse, GetCommentsRequest, GetCommentsResponse, GetDiscoveredEvidenceRequest, GetDiscoveredEvidenceResponse, GetHomePageRequest, GetHomePageResponse, GetTeamsProgressRequest, GetTeamsProgressResponse, GetUserGraphRequest, GetUserGraphResponse, GetUserWriteupResponse, GetWriteupRequest, GetWriteupResponse, LoginRequest, LoginResponse, ReaddirRequest, ReaddirResponse, RegisterRequest, RegisterResponse, RemoveRequest, RemoveResponse, SetHomePageRequest, SubmitCommentRequest, SubmitEvidenceConnectionRequest, SubmitEvidenceConnectionResponse, SubmitEvidenceReportRequest, SubmitEvidenceRequest, SubmitEvidenceResponse, SubmitFlagRequest, SubmitFlagResponse, SubmitGradeRequest, SubmitWriteupRequest, UpsertChallengeRequest } from "./xctf_pb.js";
+import { ChallengeTypeResponse, CurrentUserRequest, CurrentUserResponse, DeleteChallengeRequest, Empty, ForgotPasswordRequest, GetAllChallengesRequest, GetAllChallengesResponse, GetCommentsRequest, GetCommentsResponse, GetDiscoveredEvidenceRequest, GetDiscoveredEvidenceResponse, GetHomePageRequest, GetHomePageResponse, GetTeamsProgressRequest, GetTeamsProgressResponse, GetUserGraphRequest, GetUserGraphResponse, GetUserWriteupResponse, GetWriteupRequest, GetWriteupResponse, LoginRequest, LoginResponse, ReaddirRequest, ReaddirResponse, RegisterRequest, RegisterResponse, RemoveRequest, RemoveResponse, SetHomePageRequest, SignedURLRequest, SignedURLResponse, SubmitCommentRequest, SubmitEvidenceConnectionRequest, SubmitEvidenceConnectionResponse, SubmitEvidenceReportRequest, SubmitEvidenceRequest, SubmitEvidenceResponse, SubmitFlagRequest, SubmitFlagResponse, SubmitGradeRequest, SubmitWriteupRequest, UpsertChallengeRequest } from "./xctf_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 import { Competition, CompetitionList } from "../chalgen/graph_pb.js";
 
@@ -164,6 +164,15 @@ export const Backend = {
       name: "ChallengeType",
       I: Empty,
       O: ChallengeTypeResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc xctf.Backend.SignedURL
+     */
+    signedURL: {
+      name: "SignedURL",
+      I: SignedURLRequest,
+      O: SignedURLResponse,
       kind: MethodKind.Unary,
     },
   }

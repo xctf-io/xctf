@@ -101,8 +101,9 @@ func NewXCtfDeployment(container, name, configMapName string, port int32, oc ope
 									Value: name,
 								},
 								{
+									// TODO breadchris open sub-bucket https://gocloud.dev/howto/blob/#prefix
 									Name:  "BUCKET",
-									Value: "xctf-backup",
+									Value: fmt.Sprintf("gs://xctf-backup/%s-upload", name),
 								},
 								{
 									Name:  "GOOGLE_APPLICATION_CREDENTIALS",
