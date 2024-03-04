@@ -19,5 +19,4 @@ func main() {
 		slog.Error("error running app", "error", err)
 		return
 	}
-	println("hello")
 }

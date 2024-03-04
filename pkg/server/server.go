@@ -110,12 +110,14 @@ func New(
 			if err != nil {
 				rw.WriteHeader(http.StatusNotFound)
 				slog.Debug("file not found", "err", err)
+				return
 			}
 			defer r.Close()
 			_, err = r.WriteTo(rw)
 			if err != nil {
 				rw.WriteHeader(http.StatusNotFound)
 				slog.Debug("failed to write file", "err", err)
+				return
 			}
 			return
 		}

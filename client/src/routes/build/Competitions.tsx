@@ -389,9 +389,12 @@ const Edit: React.FC<{
                                         </button>
                                         <p>{curChal.meta?.name}</p>
                                     </div>
-                                    {form()}
+                                    <div className={"h-96 overflow-y-scroll"}>
+                                        {form()}
+                                    </div>
                                 </div>
                                 <div className={"flex flex-row space-x-4"}>
+                                    <button className={"btn"} onClick={reloadIframe}>reload</button>
                                     <button className={"btn btn-info"} onClick={togglePreview}>
                                         Preview
                                     </button>
@@ -406,7 +409,7 @@ const Edit: React.FC<{
                 </div>
                 {preview && (
                     <div className={"flex flex-row"}>
-                        <iframe ref={iframeRef} style={{width: '100%', height: 200}} src={playLink} />
+                        <iframe ref={iframeRef} className={"h-96 w-full"} src={playLink} />
                     </div>
                 )}
             </div>

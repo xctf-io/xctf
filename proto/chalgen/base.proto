@@ -36,8 +36,7 @@ message App {
 
 // https://daisyui.com/components/steps/
 message Tracker {
-  string name = 1;
-  repeated Event event = 2;
+  repeated Event event = 1;
 }
 
 message Event {

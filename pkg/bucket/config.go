@@ -20,7 +20,7 @@ type Config struct {
 func NewDefaultConfig() Config {
 	return Config{
 		// TODO breadchris give option to use local user dir?
-		Bucket: "${BUCKET:\"file://data/Bucket\"}",
+		Bucket: "${BUCKET:\"file://data/bucket\"}",
 	}
 }
 
