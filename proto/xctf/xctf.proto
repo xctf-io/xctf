@@ -45,8 +45,14 @@ service Admin {
   rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
   rpc GetUserGraph(GetUserGraphRequest) returns (GetUserGraphResponse);
 
+  rpc ExportChallenge(chalgen.Node) returns (ExportChallengeResponse);
+
   rpc Readdir(ReaddirRequest) returns (ReaddirResponse);
   rpc Remove(RemoveRequest) returns (RemoveResponse);
+}
+
+message ExportChallengeResponse {
+  string yaml = 1;
 }
 
 message SignedURLRequest {

@@ -7,6 +7,43 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { DescriptorProto, EnumDescriptorProto, Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from message xctf.ExportChallengeResponse
+ */
+export class ExportChallengeResponse extends Message<ExportChallengeResponse> {
+  /**
+   * @generated from field: string yaml = 1;
+   */
+  yaml = "";
+
+  constructor(data?: PartialMessage<ExportChallengeResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.ExportChallengeResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "yaml", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ExportChallengeResponse {
+    return new ExportChallengeResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ExportChallengeResponse {
+    return new ExportChallengeResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ExportChallengeResponse {
+    return new ExportChallengeResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ExportChallengeResponse | PlainMessage<ExportChallengeResponse> | undefined, b: ExportChallengeResponse | PlainMessage<ExportChallengeResponse> | undefined): boolean {
+    return proto3.util.equals(ExportChallengeResponse, a, b);
+  }
+}
+
+/**
  * @generated from message xctf.SignedURLRequest
  */
 export class SignedURLRequest extends Message<SignedURLRequest> {

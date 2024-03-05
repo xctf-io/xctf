@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react'
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import {useForm} from "react-hook-form";
-import { xctf } from '@/service';
+import {xctf, xctfAdmin} from '@/service';
 import {Competition, CompetitionList, Graph, Node} from "@/rpc/chalgen/graph_pb";
 import {removeUndefinedFields} from "@/util/object";
 import { Meta } from '@/rpc/chals/config_pb';
@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import {generateUUID} from "@/util/uuid";
 import {Bars3Icon, DocumentPlusIcon, PlusIcon, TrashIcon} from "@heroicons/react/24/outline";
 import {Save} from "lucide-react";
+import {copyTextToClipboard} from "@/util/copy";
 
 export const Competitions: React.FC = () => {
     const [activeTab, setActiveTab] = React.useState<string|undefined>(undefined);
@@ -357,6 +358,18 @@ const Edit: React.FC<{
 
     const playLink = `/play/${comp.id}/${curChal?.meta?.id}`;
 
+    const exportChallenge = async () => {
+        if (!curChal) {
+            return;
+        }
+        try {
+            const res = await xctfAdmin.exportChallenge(curChal);
+            copyTextToClipboard(res.yaml)
+        } catch (e: any) {
+            toast.error(e.toString());
+        }
+    }
+
     return (
         <>
             <div className="mx-[3vw] lg:mx-[6vw] mt-8">
@@ -399,6 +412,9 @@ const Edit: React.FC<{
                                         Preview
                                     </button>
                                     <a className={"btn btn-info"} href={playLink}>Open</a>
+                                    <button className={"btn btn-info"} onClick={exportChallenge}>
+                                        Export
+                                    </button>
                                     <div className={""}>
                                         <a className={"btn btn-error"} onClick={() => removeNode(curChal.meta?.id || '')}>Remove</a>
                                     </div>

@@ -314,7 +314,15 @@ func (s *Handler) Handle() (string, http.Handler) {
 								Logout: templ.URL(baseURL + "/logout"),
 							},
 							Channel: c,
-						}, t.Slack))).ServeHTTP(w, r)
+						}, t.Slack)), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
+							slog.Error("failed to template slack", "err", err)
+							return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+								w.WriteHeader(http.StatusBadRequest)
+								if _, err := io.WriteString(w, err.Error()); err != nil {
+									slog.Error("failed to write response", "err", err)
+								}
+							})
+						})).ServeHTTP(w, r)
 						return
 					case *chalgen.Challenge_Twitter:
 						for _, p := range t.Twitter.Posts {

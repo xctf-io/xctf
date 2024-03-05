@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/bufbuild/connect-go"
+	"github.com/bufbuild/protoyaml-go"
 	"github.com/xctf-io/xctf/pkg/bucket"
 	"github.com/xctf-io/xctf/pkg/db"
+	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 	"github.com/xctf-io/xctf/pkg/gen/xctf"
 	"github.com/xctf-io/xctf/pkg/gen/xctf/xctfconnect"
 
@@ -26,6 +28,16 @@ func NewAdmin(db *db.Service, b *bucket.Builder) *Admin {
 }
 
 var _ xctfconnect.AdminHandler = &Admin{}
+
+func (s *Admin) ExportChallenge(ctx context.Context, c *connect.Request[chalgen.Node]) (*connect.Response[xctf.ExportChallengeResponse], error) {
+	yamlBytes, err := protoyaml.Marshal(c.Msg)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(&xctf.ExportChallengeResponse{
+		Yaml: string(yamlBytes),
+	}), nil
+}
 
 func (s *Admin) Remove(ctx context.Context, c *connect.Request[xctf.RemoveRequest]) (*connect.Response[xctf.RemoveResponse], error) {
 	err := s.b.Bucket.Delete(ctx, c.Msg.Path)

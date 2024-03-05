@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import {FileInfo} from "@/rpc/xctf/xctf_pb";
 import {FileDrop} from "@/routes/build/FileDrop";
 import {ArrowDownTrayIcon, EyeIcon, ShareIcon, TrashIcon} from "@heroicons/react/24/outline";
+import {copyTextToClipboard} from "@/util/copy";
 
 export const FileManager: FC = () => {
     const [state, setState] = useState<{
@@ -50,14 +51,6 @@ export const FileManager: FC = () => {
         document.body.appendChild(anchor);
         anchor.click();
         document.body.removeChild(anchor);
-    }
-    async function copyTextToClipboard(text: string): Promise<void> {
-        try {
-            await navigator.clipboard.writeText(text);
-            toast.success('Text copied to clipboard');
-        } catch (err: any) {
-            toast.error(err.toString());
-        }
     }
     return (
         <div className={"flex flex-col"}>

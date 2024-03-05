@@ -54,12 +54,10 @@ class App(_message.Message):
     def __init__(self, name: _Optional[str] = ..., url: _Optional[str] = ..., html: _Optional[str] = ..., tracker: _Optional[_Union[Tracker, _Mapping]] = ..., photogallery: _Optional[_Union[PhotoGallery, _Mapping]] = ...) -> None: ...
 
 class Tracker(_message.Message):
-    __slots__ = ("name", "event")
-    NAME_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("event",)
     EVENT_FIELD_NUMBER: _ClassVar[int]
-    name: str
     event: _containers.RepeatedCompositeFieldContainer[Event]
-    def __init__(self, name: _Optional[str] = ..., event: _Optional[_Iterable[_Union[Event, _Mapping]]] = ...) -> None: ...
+    def __init__(self, event: _Optional[_Iterable[_Union[Event, _Mapping]]] = ...) -> None: ...
 
 class Event(_message.Message):
     __slots__ = ("timestamp", "name")

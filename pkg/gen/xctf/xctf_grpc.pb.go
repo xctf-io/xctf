@@ -729,6 +729,7 @@ type AdminClient interface {
 	SubmitComment(ctx context.Context, in *SubmitCommentRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
 	GetUserGraph(ctx context.Context, in *GetUserGraphRequest, opts ...grpc.CallOption) (*GetUserGraphResponse, error)
+	ExportChallenge(ctx context.Context, in *chalgen.Node, opts ...grpc.CallOption) (*ExportChallengeResponse, error)
 	Readdir(ctx context.Context, in *ReaddirRequest, opts ...grpc.CallOption) (*ReaddirResponse, error)
 	Remove(ctx context.Context, in *RemoveRequest, opts ...grpc.CallOption) (*RemoveResponse, error)
 }
@@ -831,6 +832,15 @@ func (c *adminClient) GetUserGraph(ctx context.Context, in *GetUserGraphRequest,
 	return out, nil
 }
 
+func (c *adminClient) ExportChallenge(ctx context.Context, in *chalgen.Node, opts ...grpc.CallOption) (*ExportChallengeResponse, error) {
+	out := new(ExportChallengeResponse)
+	err := c.cc.Invoke(ctx, "/xctf.Admin/ExportChallenge", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) Readdir(ctx context.Context, in *ReaddirRequest, opts ...grpc.CallOption) (*ReaddirResponse, error) {
 	out := new(ReaddirResponse)
 	err := c.cc.Invoke(ctx, "/xctf.Admin/Readdir", in, out, opts...)
@@ -863,6 +873,7 @@ type AdminServer interface {
 	SubmitComment(context.Context, *SubmitCommentRequest) (*Empty, error)
 	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
 	GetUserGraph(context.Context, *GetUserGraphRequest) (*GetUserGraphResponse, error)
+	ExportChallenge(context.Context, *chalgen.Node) (*ExportChallengeResponse, error)
 	Readdir(context.Context, *ReaddirRequest) (*ReaddirResponse, error)
 	Remove(context.Context, *RemoveRequest) (*RemoveResponse, error)
 }
@@ -900,6 +911,9 @@ func (UnimplementedAdminServer) GetComments(context.Context, *GetCommentsRequest
 }
 func (UnimplementedAdminServer) GetUserGraph(context.Context, *GetUserGraphRequest) (*GetUserGraphResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserGraph not implemented")
+}
+func (UnimplementedAdminServer) ExportChallenge(context.Context, *chalgen.Node) (*ExportChallengeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExportChallenge not implemented")
 }
 func (UnimplementedAdminServer) Readdir(context.Context, *ReaddirRequest) (*ReaddirResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Readdir not implemented")
@@ -1099,6 +1113,24 @@ func _Admin_GetUserGraph_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_ExportChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(chalgen.Node)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ExportChallenge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Admin/ExportChallenge",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ExportChallenge(ctx, req.(*chalgen.Node))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_Readdir_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReaddirRequest)
 	if err := dec(in); err != nil {
@@ -1181,6 +1213,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserGraph",
 			Handler:    _Admin_GetUserGraph_Handler,
+		},
+		{
+			MethodName: "ExportChallenge",
+			Handler:    _Admin_ExportChallenge_Handler,
 		},
 		{
 			MethodName: "Readdir",

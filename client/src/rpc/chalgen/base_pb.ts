@@ -253,12 +253,7 @@ export class App extends Message$1<App> {
  */
 export class Tracker extends Message$1<Tracker> {
   /**
-   * @generated from field: string name = 1;
-   */
-  name = "";
-
-  /**
-   * @generated from field: repeated chalgen.Event event = 2;
+   * @generated from field: repeated chalgen.Event event = 1;
    */
   event: Event[] = [];
 
@@ -270,8 +265,7 @@ export class Tracker extends Message$1<Tracker> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chalgen.Tracker";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "event", kind: "message", T: Event, repeated: true },
+    { no: 1, name: "event", kind: "message", T: Event, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Tracker {

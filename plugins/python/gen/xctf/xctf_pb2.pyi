@@ -7,6 +7,12 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class ExportChallengeResponse(_message.Message):
+    __slots__ = ("yaml",)
+    YAML_FIELD_NUMBER: _ClassVar[int]
+    yaml: str
+    def __init__(self, yaml: _Optional[str] = ...) -> None: ...
+
 class SignedURLRequest(_message.Message):
     __slots__ = ("path",)
     PATH_FIELD_NUMBER: _ClassVar[int]
