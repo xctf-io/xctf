@@ -51,6 +51,7 @@ type Handler struct {
 
 func init() {
 	gob.Register(tmpl.SessionState{})
+	gob.Register(tmpl.PhoneState{})
 }
 
 func ChalURL(compId, chalID, host string) string {
@@ -227,8 +228,33 @@ func (s *Handler) Handle() (string, http.Handler) {
 							http.Error(w, err.Error(), http.StatusInternalServerError)
 						}
 					case *chalgen.Challenge_Phone:
-						for _, p := range t.Phone.Apps {
-							nt, err := ttemplate.New("app").Parse(p.Url)
+						var sess tmpl.PhoneState
+						chatState := s.manager.GetChalState(r.Context(), chalId)
+						if chatState != nil {
+							ss, ok := chatState.(tmpl.PhoneState)
+							if !ok {
+								http.Error(w, "Failed to parse session", http.StatusInternalServerError)
+								return
+							}
+							sess = ss
+						}
+						if p == "tracker/login" {
+							password := r.FormValue("password")
+							for _, app := range t.Phone.Apps {
+								switch t := app.Type.(type) {
+								case *chalgen.App_Tracker:
+									if t.Tracker.Password == password {
+										sess.TrackerAuthed = true
+										s.manager.SetChalState(r.Context(), chalId, sess)
+									}
+								}
+							}
+							w.Header().Set("Location", baseURL)
+							w.WriteHeader(http.StatusFound)
+							return
+						}
+						for _, app := range t.Phone.Apps {
+							nt, err := ttemplate.New("app").Parse(app.Url)
 							if err != nil {
 								http.Error(w, err.Error(), http.StatusInternalServerError)
 								return
@@ -243,10 +269,11 @@ func (s *Handler) Handle() (string, http.Handler) {
 								http.Error(w, err.Error(), http.StatusInternalServerError)
 								return
 							}
-							p.Url = buf.String()
+							app.Url = buf.String()
 						}
 						templ.Handler(tmpl.Page(tmpl.Phone(tmpl.PhoneState{
-							BaseURL: baseURL,
+							TrackerLogin:  templ.URL(baseURL + "/tracker/login"),
+							TrackerAuthed: sess.TrackerAuthed,
 						}, t.Phone))).ServeHTTP(w, r)
 						return
 					case *chalgen.Challenge_Slack:

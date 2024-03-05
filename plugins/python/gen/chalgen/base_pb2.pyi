@@ -54,10 +54,14 @@ class App(_message.Message):
     def __init__(self, name: _Optional[str] = ..., url: _Optional[str] = ..., html: _Optional[str] = ..., tracker: _Optional[_Union[Tracker, _Mapping]] = ..., photogallery: _Optional[_Union[PhotoGallery, _Mapping]] = ...) -> None: ...
 
 class Tracker(_message.Message):
-    __slots__ = ("event",)
+    __slots__ = ("password", "authenticated", "event")
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    AUTHENTICATED_FIELD_NUMBER: _ClassVar[int]
     EVENT_FIELD_NUMBER: _ClassVar[int]
+    password: str
+    authenticated: bool
     event: _containers.RepeatedCompositeFieldContainer[Event]
-    def __init__(self, event: _Optional[_Iterable[_Union[Event, _Mapping]]] = ...) -> None: ...
+    def __init__(self, password: _Optional[str] = ..., authenticated: bool = ..., event: _Optional[_Iterable[_Union[Event, _Mapping]]] = ...) -> None: ...
 
 class Event(_message.Message):
     __slots__ = ("timestamp", "name")

@@ -48,7 +48,6 @@ func OpenDB(c Config) (*sql.DB, error) {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return nil, err
 		}
-		print(c.DSN)
 		return sql.Open("sqlite", c.DSN)
 	}
 }

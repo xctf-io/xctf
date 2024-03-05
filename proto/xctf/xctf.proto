@@ -46,6 +46,7 @@ service Admin {
   rpc GetUserGraph(GetUserGraphRequest) returns (GetUserGraphResponse);
 
   rpc ExportChallenge(chalgen.Node) returns (ExportChallengeResponse);
+  rpc ImportChallenge(ImportChallengeRequest) returns (ImportChallengeResponse);
 
   rpc Readdir(ReaddirRequest) returns (ReaddirResponse);
   rpc Remove(RemoveRequest) returns (RemoveResponse);
@@ -53,6 +54,14 @@ service Admin {
 
 message ExportChallengeResponse {
   string yaml = 1;
+}
+
+message ImportChallengeRequest {
+  string yaml = 1;
+}
+
+message ImportChallengeResponse {
+  chalgen.Node chal = 1;
 }
 
 message SignedURLRequest {

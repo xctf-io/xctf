@@ -99,6 +99,8 @@ const (
 	AdminGetUserGraphProcedure = "/xctf.Admin/GetUserGraph"
 	// AdminExportChallengeProcedure is the fully-qualified name of the Admin's ExportChallenge RPC.
 	AdminExportChallengeProcedure = "/xctf.Admin/ExportChallenge"
+	// AdminImportChallengeProcedure is the fully-qualified name of the Admin's ImportChallenge RPC.
+	AdminImportChallengeProcedure = "/xctf.Admin/ImportChallenge"
 	// AdminReaddirProcedure is the fully-qualified name of the Admin's Readdir RPC.
 	AdminReaddirProcedure = "/xctf.Admin/Readdir"
 	// AdminRemoveProcedure is the fully-qualified name of the Admin's Remove RPC.
@@ -592,6 +594,7 @@ type AdminClient interface {
 	GetComments(context.Context, *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error)
 	GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error)
 	ExportChallenge(context.Context, *connect_go.Request[chalgen.Node]) (*connect_go.Response[xctf.ExportChallengeResponse], error)
+	ImportChallenge(context.Context, *connect_go.Request[xctf.ImportChallengeRequest]) (*connect_go.Response[xctf.ImportChallengeResponse], error)
 	Readdir(context.Context, *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error)
 	Remove(context.Context, *connect_go.Request[xctf.RemoveRequest]) (*connect_go.Response[xctf.RemoveResponse], error)
 }
@@ -661,6 +664,11 @@ func NewAdminClient(httpClient connect_go.HTTPClient, baseURL string, opts ...co
 			baseURL+AdminExportChallengeProcedure,
 			opts...,
 		),
+		importChallenge: connect_go.NewClient[xctf.ImportChallengeRequest, xctf.ImportChallengeResponse](
+			httpClient,
+			baseURL+AdminImportChallengeProcedure,
+			opts...,
+		),
 		readdir: connect_go.NewClient[xctf.ReaddirRequest, xctf.ReaddirResponse](
 			httpClient,
 			baseURL+AdminReaddirProcedure,
@@ -687,6 +695,7 @@ type adminClient struct {
 	getComments      *connect_go.Client[xctf.GetCommentsRequest, xctf.GetCommentsResponse]
 	getUserGraph     *connect_go.Client[xctf.GetUserGraphRequest, xctf.GetUserGraphResponse]
 	exportChallenge  *connect_go.Client[chalgen.Node, xctf.ExportChallengeResponse]
+	importChallenge  *connect_go.Client[xctf.ImportChallengeRequest, xctf.ImportChallengeResponse]
 	readdir          *connect_go.Client[xctf.ReaddirRequest, xctf.ReaddirResponse]
 	remove           *connect_go.Client[xctf.RemoveRequest, xctf.RemoveResponse]
 }
@@ -746,6 +755,11 @@ func (c *adminClient) ExportChallenge(ctx context.Context, req *connect_go.Reque
 	return c.exportChallenge.CallUnary(ctx, req)
 }
 
+// ImportChallenge calls xctf.Admin.ImportChallenge.
+func (c *adminClient) ImportChallenge(ctx context.Context, req *connect_go.Request[xctf.ImportChallengeRequest]) (*connect_go.Response[xctf.ImportChallengeResponse], error) {
+	return c.importChallenge.CallUnary(ctx, req)
+}
+
 // Readdir calls xctf.Admin.Readdir.
 func (c *adminClient) Readdir(ctx context.Context, req *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error) {
 	return c.readdir.CallUnary(ctx, req)
@@ -769,6 +783,7 @@ type AdminHandler interface {
 	GetComments(context.Context, *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error)
 	GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error)
 	ExportChallenge(context.Context, *connect_go.Request[chalgen.Node]) (*connect_go.Response[xctf.ExportChallengeResponse], error)
+	ImportChallenge(context.Context, *connect_go.Request[xctf.ImportChallengeRequest]) (*connect_go.Response[xctf.ImportChallengeResponse], error)
 	Readdir(context.Context, *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error)
 	Remove(context.Context, *connect_go.Request[xctf.RemoveRequest]) (*connect_go.Response[xctf.RemoveResponse], error)
 }
@@ -834,6 +849,11 @@ func NewAdminHandler(svc AdminHandler, opts ...connect_go.HandlerOption) (string
 		svc.ExportChallenge,
 		opts...,
 	)
+	adminImportChallengeHandler := connect_go.NewUnaryHandler(
+		AdminImportChallengeProcedure,
+		svc.ImportChallenge,
+		opts...,
+	)
 	adminReaddirHandler := connect_go.NewUnaryHandler(
 		AdminReaddirProcedure,
 		svc.Readdir,
@@ -868,6 +888,8 @@ func NewAdminHandler(svc AdminHandler, opts ...connect_go.HandlerOption) (string
 			adminGetUserGraphHandler.ServeHTTP(w, r)
 		case AdminExportChallengeProcedure:
 			adminExportChallengeHandler.ServeHTTP(w, r)
+		case AdminImportChallengeProcedure:
+			adminImportChallengeHandler.ServeHTTP(w, r)
 		case AdminReaddirProcedure:
 			adminReaddirHandler.ServeHTTP(w, r)
 		case AdminRemoveProcedure:
@@ -923,6 +945,10 @@ func (UnimplementedAdminHandler) GetUserGraph(context.Context, *connect_go.Reque
 
 func (UnimplementedAdminHandler) ExportChallenge(context.Context, *connect_go.Request[chalgen.Node]) (*connect_go.Response[xctf.ExportChallengeResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.ExportChallenge is not implemented"))
+}
+
+func (UnimplementedAdminHandler) ImportChallenge(context.Context, *connect_go.Request[xctf.ImportChallengeRequest]) (*connect_go.Response[xctf.ImportChallengeResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.ImportChallenge is not implemented"))
 }
 
 func (UnimplementedAdminHandler) Readdir(context.Context, *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error) {

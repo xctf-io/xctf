@@ -13,6 +13,18 @@ class ExportChallengeResponse(_message.Message):
     yaml: str
     def __init__(self, yaml: _Optional[str] = ...) -> None: ...
 
+class ImportChallengeRequest(_message.Message):
+    __slots__ = ("yaml",)
+    YAML_FIELD_NUMBER: _ClassVar[int]
+    yaml: str
+    def __init__(self, yaml: _Optional[str] = ...) -> None: ...
+
+class ImportChallengeResponse(_message.Message):
+    __slots__ = ("chal",)
+    CHAL_FIELD_NUMBER: _ClassVar[int]
+    chal: _graph_pb2.Node
+    def __init__(self, chal: _Optional[_Union[_graph_pb2.Node, _Mapping]] = ...) -> None: ...
+
 class SignedURLRequest(_message.Message):
     __slots__ = ("path",)
     PATH_FIELD_NUMBER: _ClassVar[int]

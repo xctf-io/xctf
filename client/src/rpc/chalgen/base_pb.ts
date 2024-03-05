@@ -247,13 +247,21 @@ export class App extends Message$1<App> {
 }
 
 /**
- * https://daisyui.com/components/steps/
- *
  * @generated from message chalgen.Tracker
  */
 export class Tracker extends Message$1<Tracker> {
   /**
-   * @generated from field: repeated chalgen.Event event = 1;
+   * @generated from field: string password = 1;
+   */
+  password = "";
+
+  /**
+   * @generated from field: bool authenticated = 2;
+   */
+  authenticated = false;
+
+  /**
+   * @generated from field: repeated chalgen.Event event = 3;
    */
   event: Event[] = [];
 
@@ -265,7 +273,9 @@ export class Tracker extends Message$1<Tracker> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chalgen.Tracker";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event", kind: "message", T: Event, repeated: true },
+    { no: 1, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "authenticated", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 3, name: "event", kind: "message", T: Event, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Tracker {

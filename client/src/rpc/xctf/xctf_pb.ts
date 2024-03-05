@@ -5,6 +5,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { DescriptorProto, EnumDescriptorProto, Message, proto3, protoInt64 } from "@bufbuild/protobuf";
+import { Node } from "../chalgen/graph_pb.js";
 
 /**
  * @generated from message xctf.ExportChallengeResponse
@@ -40,6 +41,80 @@ export class ExportChallengeResponse extends Message<ExportChallengeResponse> {
 
   static equals(a: ExportChallengeResponse | PlainMessage<ExportChallengeResponse> | undefined, b: ExportChallengeResponse | PlainMessage<ExportChallengeResponse> | undefined): boolean {
     return proto3.util.equals(ExportChallengeResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.ImportChallengeRequest
+ */
+export class ImportChallengeRequest extends Message<ImportChallengeRequest> {
+  /**
+   * @generated from field: string yaml = 1;
+   */
+  yaml = "";
+
+  constructor(data?: PartialMessage<ImportChallengeRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.ImportChallengeRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "yaml", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ImportChallengeRequest {
+    return new ImportChallengeRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ImportChallengeRequest {
+    return new ImportChallengeRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ImportChallengeRequest {
+    return new ImportChallengeRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ImportChallengeRequest | PlainMessage<ImportChallengeRequest> | undefined, b: ImportChallengeRequest | PlainMessage<ImportChallengeRequest> | undefined): boolean {
+    return proto3.util.equals(ImportChallengeRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.ImportChallengeResponse
+ */
+export class ImportChallengeResponse extends Message<ImportChallengeResponse> {
+  /**
+   * @generated from field: chalgen.Node chal = 1;
+   */
+  chal?: Node;
+
+  constructor(data?: PartialMessage<ImportChallengeResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.ImportChallengeResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "chal", kind: "message", T: Node },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ImportChallengeResponse {
+    return new ImportChallengeResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ImportChallengeResponse {
+    return new ImportChallengeResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ImportChallengeResponse {
+    return new ImportChallengeResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ImportChallengeResponse | PlainMessage<ImportChallengeResponse> | undefined, b: ImportChallengeResponse | PlainMessage<ImportChallengeResponse> | undefined): boolean {
+    return proto3.util.equals(ImportChallengeResponse, a, b);
   }
 }
 

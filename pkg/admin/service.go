@@ -29,6 +29,19 @@ func NewAdmin(db *db.Service, b *bucket.Builder) *Admin {
 
 var _ xctfconnect.AdminHandler = &Admin{}
 
+func (s *Admin) ImportChallenge(ctx context.Context, c *connect.Request[xctf.ImportChallengeRequest]) (*connect.Response[xctf.ImportChallengeResponse], error) {
+	options := protoyaml.UnmarshalOptions{
+		Path: "chal.yaml",
+	}
+	var chal chalgen.Node
+	if err := options.Unmarshal([]byte(c.Msg.Yaml), &chal); err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(&xctf.ImportChallengeResponse{
+		Chal: &chal,
+	}), nil
+}
+
 func (s *Admin) ExportChallenge(ctx context.Context, c *connect.Request[chalgen.Node]) (*connect.Response[xctf.ExportChallengeResponse], error) {
 	yamlBytes, err := protoyaml.Marshal(c.Msg)
 	if err != nil {

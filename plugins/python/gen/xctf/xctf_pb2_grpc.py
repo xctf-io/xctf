@@ -692,6 +692,11 @@ class AdminStub(object):
                 request_serializer=chalgen_dot_graph__pb2.Node.SerializeToString,
                 response_deserializer=xctf_dot_xctf__pb2.ExportChallengeResponse.FromString,
                 )
+        self.ImportChallenge = channel.unary_unary(
+                '/xctf.Admin/ImportChallenge',
+                request_serializer=xctf_dot_xctf__pb2.ImportChallengeRequest.SerializeToString,
+                response_deserializer=xctf_dot_xctf__pb2.ImportChallengeResponse.FromString,
+                )
         self.Readdir = channel.unary_unary(
                 '/xctf.Admin/Readdir',
                 request_serializer=xctf_dot_xctf__pb2.ReaddirRequest.SerializeToString,
@@ -773,6 +778,12 @@ class AdminServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ImportChallenge(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def Readdir(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -842,6 +853,11 @@ def add_AdminServicer_to_server(servicer, server):
                     servicer.ExportChallenge,
                     request_deserializer=chalgen_dot_graph__pb2.Node.FromString,
                     response_serializer=xctf_dot_xctf__pb2.ExportChallengeResponse.SerializeToString,
+            ),
+            'ImportChallenge': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportChallenge,
+                    request_deserializer=xctf_dot_xctf__pb2.ImportChallengeRequest.FromString,
+                    response_serializer=xctf_dot_xctf__pb2.ImportChallengeResponse.SerializeToString,
             ),
             'Readdir': grpc.unary_unary_rpc_method_handler(
                     servicer.Readdir,
@@ -1047,6 +1063,23 @@ class Admin(object):
         return grpc.experimental.unary_unary(request, target, '/xctf.Admin/ExportChallenge',
             chalgen_dot_graph__pb2.Node.SerializeToString,
             xctf_dot_xctf__pb2.ExportChallengeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ImportChallenge(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Admin/ImportChallenge',
+            xctf_dot_xctf__pb2.ImportChallengeRequest.SerializeToString,
+            xctf_dot_xctf__pb2.ImportChallengeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
