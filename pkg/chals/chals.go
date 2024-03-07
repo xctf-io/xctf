@@ -12,6 +12,7 @@ import (
 	"github.com/google/gopacket/pcapgo"
 	"github.com/google/wire"
 	"github.com/samber/lo"
+	"github.com/skip2/go-qrcode"
 	"github.com/xctf-io/xctf/pkg/bucket"
 	"github.com/xctf-io/xctf/pkg/chals/tmpl"
 	"github.com/xctf-io/xctf/pkg/db"
@@ -47,6 +48,7 @@ type Handler struct {
 	b       *bucket.Builder
 	manager *shttp.Store
 	pc      plugin.PythonServiceClient
+	qrMemo  map[string][]byte
 }
 
 func init() {
@@ -81,6 +83,7 @@ func NewHandler(
 		b:       b,
 		pc:      pc,
 		manager: manager,
+		qrMemo:  map[string][]byte{},
 	}
 }
 
@@ -170,6 +173,53 @@ func (s *Handler) Handle() (string, http.Handler) {
 				switch u := n.Challenge.(type) {
 				case *chalgen.Node_Base:
 					switch t := u.Base.Type.(type) {
+					case *chalgen.Challenge_Maze:
+						if err := r.ParseForm(); err != nil {
+							http.Error(w, "Failed to parse the form", http.StatusBadRequest)
+							return
+						}
+						var solvedPaths []string
+						if p == "solve" {
+							for _, path := range t.Maze.Paths {
+								solved := true
+								for _, coord := range path.Coords {
+									b := fmt.Sprintf("%d:%d", coord.Row, coord.Col)
+									if r.Form.Get(b) != "on" {
+										solved = false
+										break
+									}
+								}
+								if solved {
+									solvedPaths = append(solvedPaths, path.Result)
+								}
+							}
+						}
+						if p == "qr" {
+							var (
+								png []byte
+								ok  bool
+							)
+							v := r.FormValue("value")
+							if png, ok = s.qrMemo[v]; !ok {
+								png, err = qrcode.Encode(v, qrcode.Medium, 256)
+								if err != nil {
+									http.Error(w, "failed to create qr code", http.StatusBadRequest)
+									return
+								}
+							}
+							w.Header().Set("Content-Type", "image/png")
+							w.Write(png)
+							return
+						}
+						templ.Handler(tmpl.Page(tmpl.Maze(tmpl.MazeState{
+							QR: func(s string) string {
+								return fmt.Sprintf("%s/qr?value=%s", baseURL, s)
+							},
+							Solve:       templ.URL(baseURL + "/solve"),
+							SolvedPaths: solvedPaths,
+						}, t.Maze))).ServeHTTP(w, r)
+						return
+
 					case *chalgen.Challenge_Filemanager:
 						var sess tmpl.SessionState
 						chatState := s.manager.GetChalState(r.Context(), chalId)
@@ -337,6 +387,9 @@ func (s *Handler) Handle() (string, http.Handler) {
 						templ.Handler(tmpl.Page(tmpl.Chat(tmpl.ChatState{
 							Session: sess,
 							URL: tmpl.ChatURL{
+								Channel: func(id int) templ.SafeURL {
+									return templ.URL(fmt.Sprintf("%s?channel_id=%d", baseURL, id))
+								},
 								Login:  templ.URL(baseURL + "/login"),
 								Logout: templ.URL(baseURL + "/logout"),
 							},

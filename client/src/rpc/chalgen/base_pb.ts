@@ -61,6 +61,12 @@ export class Challenge extends Message$1<Challenge> {
      */
     value: FileManager;
     case: "filemanager";
+  } | {
+    /**
+     * @generated from field: chalgen.Maze maze = 14;
+     */
+    value: Maze;
+    case: "maze";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Challenge>) {
@@ -79,6 +85,7 @@ export class Challenge extends Message$1<Challenge> {
     { no: 11, name: "slack", kind: "message", T: Slack, oneof: "type" },
     { no: 12, name: "phone", kind: "message", T: Phone, oneof: "type" },
     { no: 13, name: "filemanager", kind: "message", T: FileManager, oneof: "type" },
+    { no: 14, name: "maze", kind: "message", T: Maze, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Challenge {
@@ -95,6 +102,141 @@ export class Challenge extends Message$1<Challenge> {
 
   static equals(a: Challenge | PlainMessage<Challenge> | undefined, b: Challenge | PlainMessage<Challenge> | undefined): boolean {
     return proto3.util.equals(Challenge, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Maze
+ */
+export class Maze extends Message$1<Maze> {
+  /**
+   * @generated from field: uint32 rows = 1;
+   */
+  rows = 0;
+
+  /**
+   * @generated from field: uint32 columns = 2;
+   */
+  columns = 0;
+
+  /**
+   * @generated from field: repeated chalgen.Maze.Path paths = 3;
+   */
+  paths: Maze_Path[] = [];
+
+  constructor(data?: PartialMessage<Maze>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Maze";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "rows", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "columns", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 3, name: "paths", kind: "message", T: Maze_Path, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Maze {
+    return new Maze().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Maze {
+    return new Maze().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Maze {
+    return new Maze().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Maze | PlainMessage<Maze> | undefined, b: Maze | PlainMessage<Maze> | undefined): boolean {
+    return proto3.util.equals(Maze, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Maze.Path
+ */
+export class Maze_Path extends Message$1<Maze_Path> {
+  /**
+   * @generated from field: repeated chalgen.Maze.Path.Coordinate coords = 1;
+   */
+  coords: Maze_Path_Coordinate[] = [];
+
+  /**
+   * @generated from field: string result = 2;
+   */
+  result = "";
+
+  constructor(data?: PartialMessage<Maze_Path>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Maze.Path";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "coords", kind: "message", T: Maze_Path_Coordinate, repeated: true },
+    { no: 2, name: "result", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Maze_Path {
+    return new Maze_Path().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Maze_Path {
+    return new Maze_Path().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Maze_Path {
+    return new Maze_Path().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Maze_Path | PlainMessage<Maze_Path> | undefined, b: Maze_Path | PlainMessage<Maze_Path> | undefined): boolean {
+    return proto3.util.equals(Maze_Path, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Maze.Path.Coordinate
+ */
+export class Maze_Path_Coordinate extends Message$1<Maze_Path_Coordinate> {
+  /**
+   * @generated from field: uint32 row = 1;
+   */
+  row = 0;
+
+  /**
+   * @generated from field: uint32 col = 2;
+   */
+  col = 0;
+
+  constructor(data?: PartialMessage<Maze_Path_Coordinate>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Maze.Path.Coordinate";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "row", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "col", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Maze_Path_Coordinate {
+    return new Maze_Path_Coordinate().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Maze_Path_Coordinate {
+    return new Maze_Path_Coordinate().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Maze_Path_Coordinate {
+    return new Maze_Path_Coordinate().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Maze_Path_Coordinate | PlainMessage<Maze_Path_Coordinate> | undefined, b: Maze_Path_Coordinate | PlainMessage<Maze_Path_Coordinate> | undefined): boolean {
+    return proto3.util.equals(Maze_Path_Coordinate, a, b);
   }
 }
 
@@ -256,12 +398,7 @@ export class Tracker extends Message$1<Tracker> {
   password = "";
 
   /**
-   * @generated from field: bool authenticated = 2;
-   */
-  authenticated = false;
-
-  /**
-   * @generated from field: repeated chalgen.Event event = 3;
+   * @generated from field: repeated chalgen.Event event = 2;
    */
   event: Event[] = [];
 
@@ -274,8 +411,7 @@ export class Tracker extends Message$1<Tracker> {
   static readonly typeName = "chalgen.Tracker";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "authenticated", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 3, name: "event", kind: "message", T: Event, repeated: true },
+    { no: 2, name: "event", kind: "message", T: Event, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Tracker {

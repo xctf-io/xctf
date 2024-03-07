@@ -3,10 +3,12 @@ package chals
 import (
 	"bytes"
 	"fmt"
+	"github.com/alexmullins/zip"
 	"github.com/dsoprea/go-exif/v2"
 	jpegstructure "github.com/dsoprea/go-jpeg-image-structure"
 	"io"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -69,4 +71,31 @@ func modifyAndWriteImage(writer io.Writer, imageURL string) error {
 	// Finally, write the updated image to the provided writer
 	_, err = writer.Write(b.Bytes())
 	return err
+}
+
+func createEncryptedZip(zipFilename, password string, files map[string]string) error {
+	buf := new(bytes.Buffer)
+
+	w := zip.NewWriter(buf)
+
+	for filename, content := range files {
+		f, err := w.Encrypt(filename, password)
+		if err != nil {
+			return fmt.Errorf("failed to create entry for %s: %w", filename, err)
+		}
+		_, err = f.Write([]byte(content))
+		if err != nil {
+			return fmt.Errorf("failed to write content for %s: %w", filename, err)
+		}
+	}
+
+	if err := w.Close(); err != nil {
+		return fmt.Errorf("failed to close ZIP writer: %w", err)
+	}
+
+	if err := os.WriteFile(zipFilename, buf.Bytes(), 0644); err != nil {
+		return fmt.Errorf("failed to write ZIP file: %w", err)
+	}
+
+	return nil
 }

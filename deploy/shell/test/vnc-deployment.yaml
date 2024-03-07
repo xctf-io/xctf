@@ -1,0 +1,71 @@
+#### POD config (run one time)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shell-1234
+  namespace: shells
+  labels:
+    application: headless-vnc
+spec:
+  # 1 Pods should exist at all times.
+  replicas: 1
+  selector:
+    matchLabels:
+      application: headless-vnc
+  template:
+    metadata:
+      labels:
+        application: headless-vnc
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: headless-vnc
+        image: justluk/xfce-desktop
+        imagePullPolicy: Always
+        env:
+          - name: VNC_PW
+            value: secret
+        livenessProbe:
+          tcpSocket:
+            port: 5901
+          initialDelaySeconds: 1
+          timeoutSeconds: 1
+        ### checks if http-vnc connection is working
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 6901
+            scheme: HTTP
+          initialDelaySeconds: 1
+          timeoutSeconds: 1
+        resources:
+          requests:
+            memory: "250Mi"
+            cpu: "250m"
+          limits:
+            memory: "750Mi"
+            cpu: "750m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    application: headless-vnc
+  name: shell-1234-svc
+  namespace: shells
+spec:
+  externalName: shell-1234
+  ports:
+  - name: http-port-tcp
+    protocol: TCP
+    port: 80
+    targetPort: 6901
+  # - name: vnc-port-tcp
+  #   protocol: TCP
+  #   port: 5901
+  #   targetPort: 5901
+  selector:
+    application: headless-vnc
+  type: ClusterIP
+# Use type loadbalancer if needed
+#  type: LoadBalancer

@@ -6,7 +6,7 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class Challenge(_message.Message):
-    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone", "filemanager")
+    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone", "filemanager", "maze")
     BASE64_FIELD_NUMBER: _ClassVar[int]
     TWITTER_FIELD_NUMBER: _ClassVar[int]
     CAESAR_FIELD_NUMBER: _ClassVar[int]
@@ -15,6 +15,7 @@ class Challenge(_message.Message):
     SLACK_FIELD_NUMBER: _ClassVar[int]
     PHONE_FIELD_NUMBER: _ClassVar[int]
     FILEMANAGER_FIELD_NUMBER: _ClassVar[int]
+    MAZE_FIELD_NUMBER: _ClassVar[int]
     base64: Base64
     twitter: Twitter
     caesar: CaesarCipher
@@ -23,7 +24,32 @@ class Challenge(_message.Message):
     slack: Slack
     phone: Phone
     filemanager: FileManager
-    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ...) -> None: ...
+    maze: Maze
+    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ..., maze: _Optional[_Union[Maze, _Mapping]] = ...) -> None: ...
+
+class Maze(_message.Message):
+    __slots__ = ("rows", "columns", "paths")
+    class Path(_message.Message):
+        __slots__ = ("coords", "result")
+        class Coordinate(_message.Message):
+            __slots__ = ("row", "col")
+            ROW_FIELD_NUMBER: _ClassVar[int]
+            COL_FIELD_NUMBER: _ClassVar[int]
+            row: int
+            col: int
+            def __init__(self, row: _Optional[int] = ..., col: _Optional[int] = ...) -> None: ...
+        COORDS_FIELD_NUMBER: _ClassVar[int]
+        RESULT_FIELD_NUMBER: _ClassVar[int]
+        coords: _containers.RepeatedCompositeFieldContainer[Maze.Path.Coordinate]
+        result: str
+        def __init__(self, coords: _Optional[_Iterable[_Union[Maze.Path.Coordinate, _Mapping]]] = ..., result: _Optional[str] = ...) -> None: ...
+    ROWS_FIELD_NUMBER: _ClassVar[int]
+    COLUMNS_FIELD_NUMBER: _ClassVar[int]
+    PATHS_FIELD_NUMBER: _ClassVar[int]
+    rows: int
+    columns: int
+    paths: _containers.RepeatedCompositeFieldContainer[Maze.Path]
+    def __init__(self, rows: _Optional[int] = ..., columns: _Optional[int] = ..., paths: _Optional[_Iterable[_Union[Maze.Path, _Mapping]]] = ...) -> None: ...
 
 class FileManager(_message.Message):
     __slots__ = ("urls", "password")
@@ -54,14 +80,12 @@ class App(_message.Message):
     def __init__(self, name: _Optional[str] = ..., url: _Optional[str] = ..., html: _Optional[str] = ..., tracker: _Optional[_Union[Tracker, _Mapping]] = ..., photogallery: _Optional[_Union[PhotoGallery, _Mapping]] = ...) -> None: ...
 
 class Tracker(_message.Message):
-    __slots__ = ("password", "authenticated", "event")
+    __slots__ = ("password", "event")
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
-    AUTHENTICATED_FIELD_NUMBER: _ClassVar[int]
     EVENT_FIELD_NUMBER: _ClassVar[int]
     password: str
-    authenticated: bool
     event: _containers.RepeatedCompositeFieldContainer[Event]
-    def __init__(self, password: _Optional[str] = ..., authenticated: bool = ..., event: _Optional[_Iterable[_Union[Event, _Mapping]]] = ...) -> None: ...
+    def __init__(self, password: _Optional[str] = ..., event: _Optional[_Iterable[_Union[Event, _Mapping]]] = ...) -> None: ...
 
 class Event(_message.Message):
     __slots__ = ("timestamp", "name")

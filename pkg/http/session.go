@@ -8,6 +8,7 @@ import (
 	"github.com/google/wire"
 	"github.com/xctf-io/xctf/pkg/db"
 	"net/http"
+	"time"
 )
 
 type Store struct {
@@ -18,6 +19,8 @@ var ProviderSet = wire.NewSet(New)
 
 func New(s *db.Service) (*Store, error) {
 	manager := scs.New()
+
+	manager.Lifetime = time.Hour * 24 * 7 * 4
 
 	var err error
 	if manager.Store, err = gormstore.New(s.DB); err != nil {

@@ -12,7 +12,22 @@ message Challenge {
     Slack slack = 11;
     Phone phone = 12;
     FileManager filemanager = 13;
+    Maze maze = 14;
   }
+}
+
+message Maze {
+  message Path {
+    message Coordinate {
+      uint32 row = 1;
+      uint32 col = 2;
+    }
+    repeated Coordinate coords = 1;
+    string result = 2;
+  }
+  uint32 rows = 1;
+  uint32 columns = 2;
+  repeated Path paths = 3;
 }
 
 message FileManager {

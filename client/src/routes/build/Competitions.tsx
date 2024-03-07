@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/components/ProtobufFormSimple/ProtobufMessageForm";
 import {useForm} from "react-hook-form";
 import {xctf, xctfAdmin} from '@/service';
@@ -9,9 +9,11 @@ import {Spinner} from "@/components/Spinner";
 import {FileManager} from "@/routes/build/FileManager";
 import toast from "react-hot-toast";
 import {generateUUID} from "@/util/uuid";
-import {Bars3Icon, DocumentPlusIcon, PlusIcon, TrashIcon} from "@heroicons/react/24/outline";
+import {Bars3Icon, DocumentPlusIcon, DocumentTextIcon, PlusIcon, TrashIcon} from "@heroicons/react/24/outline";
 import {Save} from "lucide-react";
 import {copyTextToClipboard} from "@/util/copy";
+import {Simulate} from "react-dom/test-utils";
+import copy = Simulate.copy;
 
 export const Competitions: React.FC = () => {
     const [activeTab, setActiveTab] = React.useState<string|undefined>(undefined);
@@ -75,6 +77,10 @@ export const Competitions: React.FC = () => {
             toast.error('No competition selected');
             return;
         }
+        if (curComp.active) {
+            toast.error('Competition must not be active before deleting.')
+            return;
+        }
         try {
             const res = await xctf.deleteCompetition({
                 id: curComp?.id,
@@ -104,60 +110,6 @@ export const Competitions: React.FC = () => {
 
     return (
         <div className={"mx-8 space-y-6"}>
-            <div className={"flex flex-row space-x-2"}>
-                <p>Competitions</p>
-                <DocumentPlusIcon onClick={newCompetition} className={"h-6 w-6 mouse-pointer"} />
-            </div>
-            <div className={"flex flex-row space-x-4"}>
-                {competitionList ? (
-                    <>
-                        {competitionList.competitions.length === 0 ? (
-                            <p>No competitions yet</p>
-                        ) : (
-                            <details className={"dropdown"}>
-                                <summary className={"m-1 btn"}>
-                                    <Bars3Icon className={"h-6 w-6"} />
-                                </summary>
-                                <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
-                                    {competitionList.competitions.map((c) => {
-                                        return (
-                                            <li key={c.id} onClick={() => {
-                                                setCurComp(c)
-                                            }}>
-                                                {c.name}
-                                            </li>
-                                        )
-                                    })}
-                                </ul>
-                            </details>
-                        )}
-                    </>
-                ) : (
-                    <Spinner />
-                )}
-                <input type={"text"} className={"input"} value={curComp?.name||''} onChange={(e) => {
-                    setCurComp(new Competition({
-                        ...curComp,
-                        name: e.target.value,
-                    }))
-                }} />
-                <button className={"btn btn-error justify-items-end"} onClick={onCompDelete}>
-                    <TrashIcon className={"h-6 w-6"} />
-                </button>
-            </div>
-            <div className={"flex flex-row"}>
-                <div className="form-control">
-                    <label className="label cursor-pointer">
-                        <span className="label-text">active</span>
-                        <input type="checkbox" className="toggle" checked={curComp?.active||false} onChange={(e) => {
-                            setCurComp(new Competition({
-                                ...curComp,
-                                active: e.target.checked,
-                            }))
-                        }} />
-                    </label>
-                </div>
-            </div>
             <div className="w-full tabs tabs-bordered my-6">
                 {tabs.map((tab, index) => (
                     <a
@@ -170,7 +122,63 @@ export const Competitions: React.FC = () => {
                 ))}
             </div>
             {activeTab === 'edit' && curComp && (
-                <Edit comp={curComp} onUpdate={setCurComp} />
+                <>
+                    <div className={"flex flex-row space-x-2"}>
+                        <p>Competitions</p>
+                        <DocumentPlusIcon onClick={newCompetition} className={"h-6 w-6 mouse-pointer"} />
+                    </div>
+                    <div className={"flex flex-row space-x-4"}>
+                        {competitionList ? (
+                            <>
+                                {competitionList.competitions.length === 0 ? (
+                                    <p>No competitions yet</p>
+                                ) : (
+                                    <details className={"dropdown"}>
+                                        <summary className={"m-1 btn"}>
+                                            <Bars3Icon className={"h-6 w-6"} />
+                                        </summary>
+                                        <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
+                                            {competitionList.competitions.map((c) => {
+                                                return (
+                                                    <li key={c.id} onClick={() => {
+                                                        setCurComp(c)
+                                                    }}>
+                                                        {c.name}
+                                                    </li>
+                                                )
+                                            })}
+                                        </ul>
+                                    </details>
+                                )}
+                            </>
+                        ) : (
+                            <Spinner />
+                        )}
+                        <input type={"text"} className={"input"} value={curComp?.name||''} onChange={(e) => {
+                            setCurComp(new Competition({
+                                ...curComp,
+                                name: e.target.value,
+                            }))
+                        }} />
+                        <div className="form-control">
+                            <label className="label cursor-pointer">
+                                <span className="label-text">active</span>
+                                <input type="checkbox" className="toggle" checked={curComp?.active||false} onChange={(e) => {
+                                    setCurComp(new Competition({
+                                        ...curComp,
+                                        active: e.target.checked,
+                                    }))
+                                }} />
+                            </label>
+                        </div>
+                        <button className={"btn btn-error justify-items-end"} onClick={onCompDelete}>
+                            <TrashIcon className={"h-6 w-6"} />
+                        </button>
+                    </div>
+                    <div className={"flex flex-row"}>
+                    </div>
+                    <Edit comp={curComp} onUpdate={setCurComp} />
+                </>
             )}
             {activeTab === 'upload' && <FileManager />}
         </div>
@@ -185,6 +193,33 @@ const Edit: React.FC<{
     const [curChal, setCurChal] = React.useState<Node|undefined>(undefined);
     const [preview, setPreview] = React.useState<boolean>(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const [yaml, setYaml] = useState('');
+    const [yamlErrors, setYamlErrors] = useState<string|undefined>(undefined);
+
+    const [activeTab, setActiveTab] = React.useState<string>('form');
+    const tabs = ['form', 'yaml'];
+
+    useEffect(() => {
+        if (activeTab === 'yaml') {
+            void loadYaml();
+        }
+    }, [activeTab]);
+
+    useEffect(() => {
+        void loadYaml();
+    }, [curChal]);
+
+    const loadYaml = async () => {
+        if (!curChal) {
+            return;
+        }
+        try {
+            const res = await xctfAdmin.exportChallenge(curChal);
+            setYaml(res.yaml);
+        } catch (e: any) {
+            toast.error(e.toString());
+        }
+    }
 
     useEffect(() => {
         (async () => {
@@ -259,6 +294,21 @@ const Edit: React.FC<{
         reloadIframe();
     }
 
+    const saveYaml = async () => {
+        try {
+            const res = await xctfAdmin.importChallenge({
+                yaml: yaml,
+            });
+            if (res.chal) {
+                selectChallenge(res.chal);
+                await saveNode(res.chal);
+            }
+        } catch (e: any) {
+            setYamlErrors(e.toString);
+            toast.error(e.toString());
+        }
+    }
+
     const onSubmit = async (data: any) => {
         // TODO breadchris these fields are being set to an empty array by default, not sure how this is happening, has to be in react-hook-form
         removeUndefinedFields(data.data)
@@ -280,6 +330,7 @@ const Edit: React.FC<{
         console.log('updated node', d)
         try {
             await saveNode(Node.fromJson(d));
+            await loadYaml();
         } catch (e: any) {
             console.error(e);
             toast.error(e.message);
@@ -397,27 +448,50 @@ const Edit: React.FC<{
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <div className="flex flex-col gap-2 p-3">
                                     <div className={"flex flex-row space-x-4"}>
-                                        <button className={"btn btn-primary"} type="submit">
+                                        <p>{curChal.meta?.name}</p>
+                                        <button className={"btn btn-info"} type="submit">
                                             <Save />
                                         </button>
-                                        <p>{curChal.meta?.name}</p>
+                                    </div>
+                                    <label className={"text-sm text-gray-600 cursor-pointer"} onClick={() => copyTextToClipboard(`{{ index .Challenges "${curChal.meta?.name}" }}`)}>
+                                        {`{{ index .Challenges "${curChal.meta?.name}" }}`}
+                                    </label>
+                                    <div className="w-full tabs tabs-bordered my-6">
+                                        {tabs.map((tab, index) => (
+                                            <a
+                                                className={`tab ${activeTab === tab ? 'tab-active' : ''}`}
+                                                key={index}
+                                                onClick={() => setActiveTab(tab)}
+                                            >
+                                                {tab}
+                                            </a>
+                                        ))}
                                     </div>
                                     <div className={"h-96 overflow-y-scroll"}>
-                                        {form()}
+                                        {activeTab === 'form' && form()}
+                                        {activeTab === 'yaml' && (
+                                            <>
+                                                {yamlErrors && <p>{yamlErrors}</p>}
+                                                <textarea className="textarea textarea-bordered w-full h-72" value={yaml} onChange={(e) => {
+                                                    setYaml(e.target.value);
+                                                }} placeholder="yaml"></textarea>
+                                                <button className={"btn"} onClick={saveYaml}>save</button>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                                 <div className={"flex flex-row space-x-4"}>
                                     <button className={"btn"} onClick={reloadIframe}>reload</button>
-                                    <button className={"btn btn-info"} onClick={togglePreview}>
+                                    <button className={"btn"} onClick={togglePreview}>
                                         Preview
                                     </button>
-                                    <a className={"btn btn-info"} href={playLink}>Open</a>
-                                    <button className={"btn btn-info"} onClick={exportChallenge}>
+                                    <a className={"btn"} href={playLink}>Open</a>
+                                    <button className={"btn"} onClick={exportChallenge}>
                                         Export
                                     </button>
-                                    <div className={""}>
-                                        <a className={"btn btn-error"} onClick={() => removeNode(curChal.meta?.id || '')}>Remove</a>
-                                    </div>
+                                    <a className={"btn btn-error"} onClick={() => removeNode(curChal.meta?.id || '')}>
+                                        Remove
+                                    </a>
                                 </div>
                             </form>
                         </div>

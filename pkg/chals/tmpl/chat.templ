@@ -16,6 +16,7 @@ type ChatState struct {
 }
 
 type ChatURL struct {
+  Channel func(int) templ.SafeURL
   Login templ.SafeURL
   Logout templ.SafeURL
 }
@@ -26,8 +27,10 @@ templ Page(contents templ.Component) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>play</title>
-        <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
-        <script src="https://cdn.tailwindcss.com"></script>
+        <!--<link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />-->
+        <!--<script src="https://cdn.tailwindcss.com"></script>-->
+        <link href="/build/daisyui.min.css" rel="stylesheet" type="text/css" />
+        <script src="/build/tailwindcss.js"></script>
       </head>
       <body class="bg-gray-900">
           @contents
@@ -85,9 +88,9 @@ templ Chat(state ChatState, slack *chalgen.Slack) {
         <div class="px-4 py-6">
           <h2 class="text-xl font-semibold">Channels</h2>
           <ul class="mt-6">
-          for _, c := range slack.Channels {
+          for i, c := range slack.Channels {
             <li class="mt-2">
-              <a href="#" class="flex items-center space-x-2 px-4 py-2 bg-gray-900 rounded-md">
+              <a href={state.URL.Channel(i)} class="flex items-center space-x-2 px-4 py-2 bg-gray-900 rounded-md">
                 <span>{ c.Name }</span>
               </a>
             </li>

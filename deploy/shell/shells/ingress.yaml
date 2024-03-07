@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: 'true'
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.global-static-ip-name: 34.125.64.174
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+  name: shell-ingress
+  namespace: shells
+spec:
+  rules:
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-0-svc
+            port:
+              number: 80
+        path: /0(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-1-svc
+            port:
+              number: 80
+        path: /1(/|$)(.*)
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    secretName: shells-cert-secret
