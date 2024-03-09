@@ -371,6 +371,16 @@ func (b *Backend) CurrentUser(ctx context.Context, request *connect.Request[xctf
 	}), nil
 }
 
+func (b *Backend) GetComputer(ctx context.Context, c *connect.Request[xctf.GetComputerRequest]) (*connect.Response[xctf.GetComputerResponse], error) {
+	_, _, err := b.manager.GetUserFromSession(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(&xctf.GetComputerResponse{
+		Url: "https://shells.mcpshsf.com/1/vnc_lite.html?path=/1/websockify&password=MrIhxjrh4Fkftmnl",
+	}), nil
+}
+
 func (b *Backend) SubmitFlag(ctx context.Context, request *connect.Request[xctf.SubmitFlagRequest]) (*connect.Response[xctf.SubmitFlagResponse], error) {
 	return connect.NewResponse(&xctf.SubmitFlagResponse{
 		Correct: false,

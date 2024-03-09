@@ -44,6 +44,8 @@ const (
 	BackendLogoutProcedure = "/xctf.Backend/Logout"
 	// BackendCurrentUserProcedure is the fully-qualified name of the Backend's CurrentUser RPC.
 	BackendCurrentUserProcedure = "/xctf.Backend/CurrentUser"
+	// BackendGetComputerProcedure is the fully-qualified name of the Backend's GetComputer RPC.
+	BackendGetComputerProcedure = "/xctf.Backend/GetComputer"
 	// BackendSubmitFlagProcedure is the fully-qualified name of the Backend's SubmitFlag RPC.
 	BackendSubmitFlagProcedure = "/xctf.Backend/SubmitFlag"
 	// BackendSubmitEvidenceReportProcedure is the fully-qualified name of the Backend's
@@ -113,6 +115,7 @@ type BackendClient interface {
 	Login(context.Context, *connect_go.Request[xctf.LoginRequest]) (*connect_go.Response[xctf.LoginResponse], error)
 	Logout(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.Empty], error)
 	CurrentUser(context.Context, *connect_go.Request[xctf.CurrentUserRequest]) (*connect_go.Response[xctf.CurrentUserResponse], error)
+	GetComputer(context.Context, *connect_go.Request[xctf.GetComputerRequest]) (*connect_go.Response[xctf.GetComputerResponse], error)
 	SubmitFlag(context.Context, *connect_go.Request[xctf.SubmitFlagRequest]) (*connect_go.Response[xctf.SubmitFlagResponse], error)
 	SubmitEvidenceReport(context.Context, *connect_go.Request[xctf.SubmitEvidenceReportRequest]) (*connect_go.Response[xctf.SubmitEvidenceReportRequest], error)
 	GetDiscoveredEvidence(context.Context, *connect_go.Request[xctf.GetDiscoveredEvidenceRequest]) (*connect_go.Response[xctf.GetDiscoveredEvidenceResponse], error)
@@ -157,6 +160,11 @@ func NewBackendClient(httpClient connect_go.HTTPClient, baseURL string, opts ...
 		currentUser: connect_go.NewClient[xctf.CurrentUserRequest, xctf.CurrentUserResponse](
 			httpClient,
 			baseURL+BackendCurrentUserProcedure,
+			opts...,
+		),
+		getComputer: connect_go.NewClient[xctf.GetComputerRequest, xctf.GetComputerResponse](
+			httpClient,
+			baseURL+BackendGetComputerProcedure,
 			opts...,
 		),
 		submitFlag: connect_go.NewClient[xctf.SubmitFlagRequest, xctf.SubmitFlagResponse](
@@ -238,6 +246,7 @@ type backendClient struct {
 	login                    *connect_go.Client[xctf.LoginRequest, xctf.LoginResponse]
 	logout                   *connect_go.Client[xctf.Empty, xctf.Empty]
 	currentUser              *connect_go.Client[xctf.CurrentUserRequest, xctf.CurrentUserResponse]
+	getComputer              *connect_go.Client[xctf.GetComputerRequest, xctf.GetComputerResponse]
 	submitFlag               *connect_go.Client[xctf.SubmitFlagRequest, xctf.SubmitFlagResponse]
 	submitEvidenceReport     *connect_go.Client[xctf.SubmitEvidenceReportRequest, xctf.SubmitEvidenceReportRequest]
 	getDiscoveredEvidence    *connect_go.Client[xctf.GetDiscoveredEvidenceRequest, xctf.GetDiscoveredEvidenceResponse]
@@ -272,6 +281,11 @@ func (c *backendClient) Logout(ctx context.Context, req *connect_go.Request[xctf
 // CurrentUser calls xctf.Backend.CurrentUser.
 func (c *backendClient) CurrentUser(ctx context.Context, req *connect_go.Request[xctf.CurrentUserRequest]) (*connect_go.Response[xctf.CurrentUserResponse], error) {
 	return c.currentUser.CallUnary(ctx, req)
+}
+
+// GetComputer calls xctf.Backend.GetComputer.
+func (c *backendClient) GetComputer(ctx context.Context, req *connect_go.Request[xctf.GetComputerRequest]) (*connect_go.Response[xctf.GetComputerResponse], error) {
+	return c.getComputer.CallUnary(ctx, req)
 }
 
 // SubmitFlag calls xctf.Backend.SubmitFlag.
@@ -350,6 +364,7 @@ type BackendHandler interface {
 	Login(context.Context, *connect_go.Request[xctf.LoginRequest]) (*connect_go.Response[xctf.LoginResponse], error)
 	Logout(context.Context, *connect_go.Request[xctf.Empty]) (*connect_go.Response[xctf.Empty], error)
 	CurrentUser(context.Context, *connect_go.Request[xctf.CurrentUserRequest]) (*connect_go.Response[xctf.CurrentUserResponse], error)
+	GetComputer(context.Context, *connect_go.Request[xctf.GetComputerRequest]) (*connect_go.Response[xctf.GetComputerResponse], error)
 	SubmitFlag(context.Context, *connect_go.Request[xctf.SubmitFlagRequest]) (*connect_go.Response[xctf.SubmitFlagResponse], error)
 	SubmitEvidenceReport(context.Context, *connect_go.Request[xctf.SubmitEvidenceReportRequest]) (*connect_go.Response[xctf.SubmitEvidenceReportRequest], error)
 	GetDiscoveredEvidence(context.Context, *connect_go.Request[xctf.GetDiscoveredEvidenceRequest]) (*connect_go.Response[xctf.GetDiscoveredEvidenceResponse], error)
@@ -390,6 +405,11 @@ func NewBackendHandler(svc BackendHandler, opts ...connect_go.HandlerOption) (st
 	backendCurrentUserHandler := connect_go.NewUnaryHandler(
 		BackendCurrentUserProcedure,
 		svc.CurrentUser,
+		opts...,
+	)
+	backendGetComputerHandler := connect_go.NewUnaryHandler(
+		BackendGetComputerProcedure,
+		svc.GetComputer,
 		opts...,
 	)
 	backendSubmitFlagHandler := connect_go.NewUnaryHandler(
@@ -472,6 +492,8 @@ func NewBackendHandler(svc BackendHandler, opts ...connect_go.HandlerOption) (st
 			backendLogoutHandler.ServeHTTP(w, r)
 		case BackendCurrentUserProcedure:
 			backendCurrentUserHandler.ServeHTTP(w, r)
+		case BackendGetComputerProcedure:
+			backendGetComputerHandler.ServeHTTP(w, r)
 		case BackendSubmitFlagProcedure:
 			backendSubmitFlagHandler.ServeHTTP(w, r)
 		case BackendSubmitEvidenceReportProcedure:
@@ -523,6 +545,10 @@ func (UnimplementedBackendHandler) Logout(context.Context, *connect_go.Request[x
 
 func (UnimplementedBackendHandler) CurrentUser(context.Context, *connect_go.Request[xctf.CurrentUserRequest]) (*connect_go.Response[xctf.CurrentUserResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.CurrentUser is not implemented"))
+}
+
+func (UnimplementedBackendHandler) GetComputer(context.Context, *connect_go.Request[xctf.GetComputerRequest]) (*connect_go.Response[xctf.GetComputerResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Backend.GetComputer is not implemented"))
 }
 
 func (UnimplementedBackendHandler) SubmitFlag(context.Context, *connect_go.Request[xctf.SubmitFlagRequest]) (*connect_go.Response[xctf.SubmitFlagResponse], error) {

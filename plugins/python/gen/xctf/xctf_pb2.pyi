@@ -7,6 +7,16 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class GetComputerRequest(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
+class GetComputerResponse(_message.Message):
+    __slots__ = ("url",)
+    URL_FIELD_NUMBER: _ClassVar[int]
+    url: str
+    def __init__(self, url: _Optional[str] = ...) -> None: ...
+
 class ExportChallengeResponse(_message.Message):
     __slots__ = ("yaml",)
     YAML_FIELD_NUMBER: _ClassVar[int]

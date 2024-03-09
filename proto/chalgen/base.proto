@@ -13,7 +13,35 @@ message Challenge {
     Phone phone = 12;
     FileManager filemanager = 13;
     Maze maze = 14;
+    Xor xor = 15;
+    Zip zip = 16;
+    Pdf pdf = 17;
+    Search search = 18;
   }
+}
+
+message Search {
+  repeated string entry = 1;
+}
+
+message Pdf {
+  // TODO breadchris support attachments https://github.com/go-pdf/fpdf/blob/504c6dd8cc916cd7f2097877efd52cae5f1d8b18/fpdf_example_test.go#L2703
+  string content = 1;
+}
+
+message Xor {
+  string plaintext = 1;
+  string key = 2;
+}
+
+message Zip {
+  repeated File files = 1;
+  string password = 2;
+}
+
+message File {
+  string url = 1;
+  string text = 2;
 }
 
 message Maze {

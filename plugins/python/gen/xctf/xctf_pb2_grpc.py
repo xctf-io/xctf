@@ -35,6 +35,11 @@ class BackendStub(object):
                 request_serializer=xctf_dot_xctf__pb2.CurrentUserRequest.SerializeToString,
                 response_deserializer=xctf_dot_xctf__pb2.CurrentUserResponse.FromString,
                 )
+        self.GetComputer = channel.unary_unary(
+                '/xctf.Backend/GetComputer',
+                request_serializer=xctf_dot_xctf__pb2.GetComputerRequest.SerializeToString,
+                response_deserializer=xctf_dot_xctf__pb2.GetComputerResponse.FromString,
+                )
         self.SubmitFlag = channel.unary_unary(
                 '/xctf.Backend/SubmitFlag',
                 request_serializer=xctf_dot_xctf__pb2.SubmitFlagRequest.SerializeToString,
@@ -129,6 +134,12 @@ class BackendServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def CurrentUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetComputer(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -240,6 +251,11 @@ def add_BackendServicer_to_server(servicer, server):
                     servicer.CurrentUser,
                     request_deserializer=xctf_dot_xctf__pb2.CurrentUserRequest.FromString,
                     response_serializer=xctf_dot_xctf__pb2.CurrentUserResponse.SerializeToString,
+            ),
+            'GetComputer': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetComputer,
+                    request_deserializer=xctf_dot_xctf__pb2.GetComputerRequest.FromString,
+                    response_serializer=xctf_dot_xctf__pb2.GetComputerResponse.SerializeToString,
             ),
             'SubmitFlag': grpc.unary_unary_rpc_method_handler(
                     servicer.SubmitFlag,
@@ -386,6 +402,23 @@ class Backend(object):
         return grpc.experimental.unary_unary(request, target, '/xctf.Backend/CurrentUser',
             xctf_dot_xctf__pb2.CurrentUserRequest.SerializeToString,
             xctf_dot_xctf__pb2.CurrentUserResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetComputer(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Backend/GetComputer',
+            xctf_dot_xctf__pb2.GetComputerRequest.SerializeToString,
+            xctf_dot_xctf__pb2.GetComputerResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

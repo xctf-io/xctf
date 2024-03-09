@@ -12,6 +12,7 @@ service Backend {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Logout(Empty) returns (Empty);
   rpc CurrentUser(CurrentUserRequest) returns (CurrentUserResponse);
+  rpc GetComputer(GetComputerRequest) returns (GetComputerResponse);
 
   rpc SubmitFlag(SubmitFlagRequest) returns (SubmitFlagResponse);
 
@@ -50,6 +51,14 @@ service Admin {
 
   rpc Readdir(ReaddirRequest) returns (ReaddirResponse);
   rpc Remove(RemoveRequest) returns (RemoveResponse);
+}
+
+message GetComputerRequest {
+
+}
+
+message GetComputerResponse {
+  string url = 1;
 }
 
 message ExportChallengeResponse {

@@ -21,6 +21,7 @@ import Redirect from "./components/Redirect";
 import {Competitions} from "@/routes/build/Competitions";
 import {Toaster} from "react-hot-toast";
 import {Deploy} from "@/routes/Deploy";
+import {Computer} from "@/routes/Computer";
 
 interface Props {}
 
@@ -95,6 +96,14 @@ function App() {
 			label: "Writeup",
 			to: "/submit",
 			Component: SubmitWriteup,
+			showWhenAuthed: true,
+			showWhenAdmin: false,
+			hideWhenUnauthed: true,
+		},
+		{
+			label: "Computer",
+			to: "/computer",
+			Component: Computer,
 			showWhenAuthed: true,
 			showWhenAdmin: false,
 			hideWhenUnauthed: true,

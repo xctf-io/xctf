@@ -4,7 +4,7 @@ import React, {
 	MutableRefObject,
 	useRef,
 	useCallback,
-	Key,
+	Key, useMemo,
 } from "react";
 import Select from "react-select";
 import { useNavigate, useParams } from "react-router-dom";
@@ -54,6 +54,8 @@ import ReactFlow, {
 import { BsWindowSidebar } from "react-icons/bs";
 import { useDarkMode } from "usehooks-ts";
 import toast from "react-hot-toast";
+import {BlockNoteEditor, PartialBlock} from "@blocknote/core";
+import {BlockNoteView} from "@blocknote/react";
 
 interface Team {
 	name: string;
@@ -279,14 +281,30 @@ const ViewWriteup = () => {
 
 	const { activateTab } = defaultLayoutPluginInstance;
 	const [showChart, setShowChart] = useState<boolean>(false);
+	const [initialContent, setInitialContent] = useState<
+		PartialBlock[] | undefined | "loading"
+	>("loading");
+
 	async function getWriteup() {
 		try {
 			const wp = await xctfAdmin.getWriteup({ username: name });
 			setWriteup(wp.content);
+			const c = wp.content
+				? (JSON.parse(wp.content) as PartialBlock[])
+				: undefined;
+			setInitialContent(c);
 		} catch (error) {
 			toast.error("User does not have a writeup");
 		}
 	}
+
+	const editor = useMemo(() => {
+		if (initialContent === "loading") {
+			return undefined;
+		}
+		return BlockNoteEditor.create({ initialContent });
+	}, [initialContent]);
+
 	async function getTeams() {
 		try {
 			const resp = await xctfAdmin.getTeamsProgress({});
@@ -488,27 +506,28 @@ const ViewWriteup = () => {
 
 	return (
 		<div className="xl:grid xl:grid-cols-5 xl:my-2 relative">
-			{writeup && !showChart && (
+			{writeup && !showChart && editor && (
 				<div
-					className="xl:ml-[20px] mx-[20px] xl:col-span-3"
-					style={{
-						height: "calc(100vh - 100px)",
-					}}
+					className="xl:ml-[20px] mx-[20px] xl:col-span-3 h-96 overflow-y-scroll my-4"
 				>
-					<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-						{isDarkMode ? (
-							<Viewer
-								theme="dark"
-								fileUrl={writeup}
-								plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}
-							/>
-						) : (
-							<Viewer
-								fileUrl={writeup}
-								plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}
-							/>
-						)}
-					</Worker>
+					<BlockNoteView
+						editor={editor}
+						editable={false}
+					/>
+					{/*<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">*/}
+					{/*	{isDarkMode ? (*/}
+					{/*		<Viewer*/}
+					{/*			theme="dark"*/}
+					{/*			fileUrl={writeup}*/}
+					{/*			plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}*/}
+					{/*		/>*/}
+					{/*	) : (*/}
+					{/*		<Viewer*/}
+					{/*			fileUrl={writeup}*/}
+					{/*			plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}*/}
+					{/*		/>*/}
+					{/*	)}*/}
+					{/*</Worker>*/}
 				</div>
 			)}
 			{!writeup && !showChart && <div></div>}

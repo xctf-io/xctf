@@ -10,9 +10,9 @@ func caesarCipher(input string, shift int) string {
 
 	return string(mapRune([]rune(input), func(r rune) rune {
 		if unicode.IsLetter(r) {
-			offset := rune('A')
+			offset := 'A'
 			if unicode.IsLower(r) {
-				offset = rune('a')
+				offset = 'a'
 			}
 
 			// Shift character and wrap around if necessary
@@ -20,6 +20,17 @@ func caesarCipher(input string, shift int) string {
 		}
 		return r
 	}))
+}
+
+func xorEncryptDecrypt(input, key []byte) []byte {
+	output := make([]byte, len(input))
+	keyLen := len(key)
+
+	for i := range input {
+		output[i] = input[i] ^ key[i%keyLen]
+	}
+
+	return output
 }
 
 // mapRune applies a function to each rune in a slice of runes.

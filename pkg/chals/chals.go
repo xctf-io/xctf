@@ -7,6 +7,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"github.com/a-h/templ"
+	"github.com/go-pdf/fpdf"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcapgo"
@@ -142,6 +143,7 @@ func (s *Handler) Handle() (string, http.Handler) {
 		challenges := map[string]string{}
 		for _, n := range graph.Nodes {
 			view := ""
+			chalURL := ChalURL(compId, n.Meta.Id, r.Host)
 			switch u := n.Challenge.(type) {
 			case *chalgen.Node_Base:
 				switch t := u.Base.Type.(type) {
@@ -158,9 +160,13 @@ func (s *Handler) Handle() (string, http.Handler) {
 					}
 					view = caesarCipher(c, int(t.Caesar.Shift))
 				case *chalgen.Challenge_Pcap:
-					view = ChalURL(compId, n.Meta.Id, r.Host)
+					view = chalURL
 				case *chalgen.Challenge_Slack:
-					view = ChalURL(compId, n.Meta.Id, r.Host)
+					view = chalURL
+				case *chalgen.Challenge_Xor:
+					view = string(xorEncryptDecrypt([]byte(t.Xor.Plaintext), []byte(t.Xor.Key)))
+				case *chalgen.Challenge_Pdf:
+					view = chalURL
 				}
 			}
 			if view != "" {
@@ -173,6 +179,21 @@ func (s *Handler) Handle() (string, http.Handler) {
 				switch u := n.Challenge.(type) {
 				case *chalgen.Node_Base:
 					switch t := u.Base.Type.(type) {
+					case *chalgen.Challenge_Pdf:
+						pdf := fpdf.New("P", "mm", "A4", "")
+						pdf.AddPage()
+						pdf.SetFont("Arial", "", 12)
+						pdf.SetFont("Arial", "", 12)
+						pdf.MultiCell(0, 10, t.Pdf.Content, "", "", false)
+						pdf.Ln(5)
+						w.Header().Set("content-type", "application/pdf")
+						err = pdf.Output(w)
+						if err != nil {
+							slog.Error("failed to generated pdf", "err", err)
+							http.Error(w, "failed to generate pdf", http.StatusBadRequest)
+							return
+						}
+						return
 					case *chalgen.Challenge_Maze:
 						if err := r.ParseForm(); err != nil {
 							http.Error(w, "Failed to parse the form", http.StatusBadRequest)
@@ -219,7 +240,6 @@ func (s *Handler) Handle() (string, http.Handler) {
 							SolvedPaths: solvedPaths,
 						}, t.Maze))).ServeHTTP(w, r)
 						return
-
 					case *chalgen.Challenge_Filemanager:
 						var sess tmpl.SessionState
 						chatState := s.manager.GetChalState(r.Context(), chalId)
@@ -261,22 +281,23 @@ func (s *Handler) Handle() (string, http.Handler) {
 							},
 						}, t.Filemanager))).ServeHTTP(w, r)
 						return
-
 					case *chalgen.Challenge_Exif:
-						// Returns an image file with the exif data embedded
+						// TODO breadchris generate exif image
 						w.Header().Set("Content-Type", "image/jpeg")
-						w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.jpg", s))
+						w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.jpg", "image"))
 						if err != nil {
 							http.Error(w, err.Error(), http.StatusInternalServerError)
 							return
 						}
+						return
 					case *chalgen.Challenge_Pcap:
 						w.Header().Set("Content-Type", "application/vnd.tcpdump.pcap")
-						w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.pcap", s))
+						w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.pcap", "asdf"))
 						err = s.NewPCAP(w, t.Pcap)
 						if err != nil {
 							http.Error(w, err.Error(), http.StatusInternalServerError)
 						}
+						return
 					case *chalgen.Challenge_Phone:
 						var sess tmpl.PhoneState
 						chatState := s.manager.GetChalState(r.Context(), chalId)
@@ -294,14 +315,12 @@ func (s *Handler) Handle() (string, http.Handler) {
 								switch t := app.Type.(type) {
 								case *chalgen.App_Tracker:
 									if t.Tracker.Password == password {
+										// TODO breadchris set message that user is logged in
 										sess.TrackerAuthed = true
 										s.manager.SetChalState(r.Context(), chalId, sess)
 									}
 								}
 							}
-							w.Header().Set("Location", baseURL)
-							w.WriteHeader(http.StatusFound)
-							return
 						}
 						for _, app := range t.Phone.Apps {
 							nt, err := ttemplate.New("app").Parse(app.Url)
@@ -384,6 +403,28 @@ func (s *Handler) Handle() (string, http.Handler) {
 							c = *t.Slack.Channels[cID]
 						}
 
+						for _, p := range t.Slack.Channels {
+							for _, n := range p.Messages {
+								nt, err := ttemplate.New("slack").Parse(n.Content)
+								if err != nil {
+									slog.Error("failed to parse slack message template", "channel", p.Name, "message", n.Content)
+									http.Error(w, err.Error(), http.StatusInternalServerError)
+									return
+								}
+								var buf bytes.Buffer
+								err = nt.Execute(&buf, struct {
+									Challenges map[string]string
+								}{
+									Challenges: challenges,
+								})
+								if err != nil {
+									http.Error(w, err.Error(), http.StatusInternalServerError)
+									return
+								}
+								n.Content = buf.String()
+							}
+						}
+
 						templ.Handler(tmpl.Page(tmpl.Chat(tmpl.ChatState{
 							Session: sess,
 							URL: tmpl.ChatURL{
@@ -453,10 +494,14 @@ func (s *Handler) Handle() (string, http.Handler) {
 						http.ServeFile(w, r, rsp.File)
 						return
 					}
+				default:
+					slog.Error("challenge type not defined", "compId", compId, "chalId", chalId, "name", n.Meta.Name)
+					http.NotFound(w, r)
+					return
 				}
 			}
 		}
-		slog.Warn("challenge not found", "compId", compId, "chalId", chalId)
+		slog.Error("challenge not found", "compId", compId, "chalId", chalId)
 		http.NotFound(w, r)
 	})
 }
@@ -468,6 +513,7 @@ func (s *Handler) NewPCAP(wr io.Writer, p *chalgen.PCAP) error {
 		return err
 	}
 
+	// TODO breadchris simulate http traffic?
 	for _, p := range p.Packets {
 		// Create a simple Ethernet/IP/TCP packet with payload
 		// You would typically want to construct the packet based on the actual data and protocol

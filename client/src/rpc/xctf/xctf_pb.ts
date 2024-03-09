@@ -8,6 +8,74 @@ import { DescriptorProto, EnumDescriptorProto, Message, proto3, protoInt64 } fro
 import { Node } from "../chalgen/graph_pb.js";
 
 /**
+ * @generated from message xctf.GetComputerRequest
+ */
+export class GetComputerRequest extends Message<GetComputerRequest> {
+  constructor(data?: PartialMessage<GetComputerRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.GetComputerRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetComputerRequest {
+    return new GetComputerRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetComputerRequest {
+    return new GetComputerRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetComputerRequest {
+    return new GetComputerRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetComputerRequest | PlainMessage<GetComputerRequest> | undefined, b: GetComputerRequest | PlainMessage<GetComputerRequest> | undefined): boolean {
+    return proto3.util.equals(GetComputerRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message xctf.GetComputerResponse
+ */
+export class GetComputerResponse extends Message<GetComputerResponse> {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  constructor(data?: PartialMessage<GetComputerResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.GetComputerResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetComputerResponse {
+    return new GetComputerResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetComputerResponse {
+    return new GetComputerResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetComputerResponse {
+    return new GetComputerResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetComputerResponse | PlainMessage<GetComputerResponse> | undefined, b: GetComputerResponse | PlainMessage<GetComputerResponse> | undefined): boolean {
+    return proto3.util.equals(GetComputerResponse, a, b);
+  }
+}
+
+/**
  * @generated from message xctf.ExportChallengeResponse
  */
 export class ExportChallengeResponse extends Message<ExportChallengeResponse> {

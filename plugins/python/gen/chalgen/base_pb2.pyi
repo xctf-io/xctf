@@ -6,7 +6,7 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class Challenge(_message.Message):
-    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone", "filemanager", "maze")
+    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone", "filemanager", "maze", "xor", "zip", "pdf", "search")
     BASE64_FIELD_NUMBER: _ClassVar[int]
     TWITTER_FIELD_NUMBER: _ClassVar[int]
     CAESAR_FIELD_NUMBER: _ClassVar[int]
@@ -16,6 +16,10 @@ class Challenge(_message.Message):
     PHONE_FIELD_NUMBER: _ClassVar[int]
     FILEMANAGER_FIELD_NUMBER: _ClassVar[int]
     MAZE_FIELD_NUMBER: _ClassVar[int]
+    XOR_FIELD_NUMBER: _ClassVar[int]
+    ZIP_FIELD_NUMBER: _ClassVar[int]
+    PDF_FIELD_NUMBER: _ClassVar[int]
+    SEARCH_FIELD_NUMBER: _ClassVar[int]
     base64: Base64
     twitter: Twitter
     caesar: CaesarCipher
@@ -25,7 +29,47 @@ class Challenge(_message.Message):
     phone: Phone
     filemanager: FileManager
     maze: Maze
-    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ..., maze: _Optional[_Union[Maze, _Mapping]] = ...) -> None: ...
+    xor: Xor
+    zip: Zip
+    pdf: Pdf
+    search: Search
+    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ..., maze: _Optional[_Union[Maze, _Mapping]] = ..., xor: _Optional[_Union[Xor, _Mapping]] = ..., zip: _Optional[_Union[Zip, _Mapping]] = ..., pdf: _Optional[_Union[Pdf, _Mapping]] = ..., search: _Optional[_Union[Search, _Mapping]] = ...) -> None: ...
+
+class Search(_message.Message):
+    __slots__ = ("entry",)
+    ENTRY_FIELD_NUMBER: _ClassVar[int]
+    entry: _containers.RepeatedScalarFieldContainer[str]
+    def __init__(self, entry: _Optional[_Iterable[str]] = ...) -> None: ...
+
+class Pdf(_message.Message):
+    __slots__ = ("content",)
+    CONTENT_FIELD_NUMBER: _ClassVar[int]
+    content: str
+    def __init__(self, content: _Optional[str] = ...) -> None: ...
+
+class Xor(_message.Message):
+    __slots__ = ("plaintext", "key")
+    PLAINTEXT_FIELD_NUMBER: _ClassVar[int]
+    KEY_FIELD_NUMBER: _ClassVar[int]
+    plaintext: str
+    key: str
+    def __init__(self, plaintext: _Optional[str] = ..., key: _Optional[str] = ...) -> None: ...
+
+class Zip(_message.Message):
+    __slots__ = ("files", "password")
+    FILES_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    files: _containers.RepeatedCompositeFieldContainer[File]
+    password: str
+    def __init__(self, files: _Optional[_Iterable[_Union[File, _Mapping]]] = ..., password: _Optional[str] = ...) -> None: ...
+
+class File(_message.Message):
+    __slots__ = ("url", "text")
+    URL_FIELD_NUMBER: _ClassVar[int]
+    TEXT_FIELD_NUMBER: _ClassVar[int]
+    url: str
+    text: str
+    def __init__(self, url: _Optional[str] = ..., text: _Optional[str] = ...) -> None: ...
 
 class Maze(_message.Message):
     __slots__ = ("rows", "columns", "paths")

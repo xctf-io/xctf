@@ -20,7 +20,7 @@ export const Competitions: React.FC = () => {
     const [curComp, setCurComp] = React.useState<Competition|undefined>(undefined);
     const [competitionList, setCompetitionList] = React.useState<CompetitionList|null>(null);
 
-    const tabs = ['edit', 'upload'];
+    const tabs = ['edit', 'upload', 'image'];
 
     const loadCompetitions = async () => {
         try {
@@ -121,6 +121,9 @@ export const Competitions: React.FC = () => {
                     </a>
                 ))}
             </div>
+            {activeTab === 'image' && (
+                <iframe className={"w-full h-screen"} src={"https://viliusle.github.io/miniPaint/"} />
+            )}
             {activeTab === 'edit' && curComp && (
                 <>
                     <div className={"flex flex-row space-x-2"}>
@@ -423,7 +426,7 @@ const Edit: React.FC<{
 
     return (
         <>
-            <div className="mx-[3vw] lg:mx-[6vw] mt-8">
+            <div className="mt-8">
                 <div className={"flex flex-row"}>
                     <div className={"flex-4"}>
                         {comp.graph ? (

@@ -67,6 +67,30 @@ export class Challenge extends Message$1<Challenge> {
      */
     value: Maze;
     case: "maze";
+  } | {
+    /**
+     * @generated from field: chalgen.Xor xor = 15;
+     */
+    value: Xor;
+    case: "xor";
+  } | {
+    /**
+     * @generated from field: chalgen.Zip zip = 16;
+     */
+    value: Zip;
+    case: "zip";
+  } | {
+    /**
+     * @generated from field: chalgen.Pdf pdf = 17;
+     */
+    value: Pdf;
+    case: "pdf";
+  } | {
+    /**
+     * @generated from field: chalgen.Search search = 18;
+     */
+    value: Search;
+    case: "search";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Challenge>) {
@@ -86,6 +110,10 @@ export class Challenge extends Message$1<Challenge> {
     { no: 12, name: "phone", kind: "message", T: Phone, oneof: "type" },
     { no: 13, name: "filemanager", kind: "message", T: FileManager, oneof: "type" },
     { no: 14, name: "maze", kind: "message", T: Maze, oneof: "type" },
+    { no: 15, name: "xor", kind: "message", T: Xor, oneof: "type" },
+    { no: 16, name: "zip", kind: "message", T: Zip, oneof: "type" },
+    { no: 17, name: "pdf", kind: "message", T: Pdf, oneof: "type" },
+    { no: 18, name: "search", kind: "message", T: Search, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Challenge {
@@ -102,6 +130,211 @@ export class Challenge extends Message$1<Challenge> {
 
   static equals(a: Challenge | PlainMessage<Challenge> | undefined, b: Challenge | PlainMessage<Challenge> | undefined): boolean {
     return proto3.util.equals(Challenge, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Search
+ */
+export class Search extends Message$1<Search> {
+  /**
+   * @generated from field: repeated string entry = 1;
+   */
+  entry: string[] = [];
+
+  constructor(data?: PartialMessage<Search>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Search";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "entry", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Search {
+    return new Search().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Search {
+    return new Search().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Search {
+    return new Search().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Search | PlainMessage<Search> | undefined, b: Search | PlainMessage<Search> | undefined): boolean {
+    return proto3.util.equals(Search, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Pdf
+ */
+export class Pdf extends Message$1<Pdf> {
+  /**
+   * TODO breadchris support attachments https://github.com/go-pdf/fpdf/blob/504c6dd8cc916cd7f2097877efd52cae5f1d8b18/fpdf_example_test.go#L2703
+   *
+   * @generated from field: string content = 1;
+   */
+  content = "";
+
+  constructor(data?: PartialMessage<Pdf>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Pdf";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Pdf {
+    return new Pdf().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Pdf {
+    return new Pdf().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Pdf {
+    return new Pdf().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Pdf | PlainMessage<Pdf> | undefined, b: Pdf | PlainMessage<Pdf> | undefined): boolean {
+    return proto3.util.equals(Pdf, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Xor
+ */
+export class Xor extends Message$1<Xor> {
+  /**
+   * @generated from field: string plaintext = 1;
+   */
+  plaintext = "";
+
+  /**
+   * @generated from field: string key = 2;
+   */
+  key = "";
+
+  constructor(data?: PartialMessage<Xor>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Xor";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "plaintext", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Xor {
+    return new Xor().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Xor {
+    return new Xor().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Xor {
+    return new Xor().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Xor | PlainMessage<Xor> | undefined, b: Xor | PlainMessage<Xor> | undefined): boolean {
+    return proto3.util.equals(Xor, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Zip
+ */
+export class Zip extends Message$1<Zip> {
+  /**
+   * @generated from field: repeated chalgen.File files = 1;
+   */
+  files: File[] = [];
+
+  /**
+   * @generated from field: string password = 2;
+   */
+  password = "";
+
+  constructor(data?: PartialMessage<Zip>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Zip";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "files", kind: "message", T: File, repeated: true },
+    { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Zip {
+    return new Zip().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Zip {
+    return new Zip().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Zip {
+    return new Zip().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Zip | PlainMessage<Zip> | undefined, b: Zip | PlainMessage<Zip> | undefined): boolean {
+    return proto3.util.equals(Zip, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.File
+ */
+export class File extends Message$1<File> {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  /**
+   * @generated from field: string text = 2;
+   */
+  text = "";
+
+  constructor(data?: PartialMessage<File>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.File";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): File {
+    return new File().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): File {
+    return new File().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): File {
+    return new File().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: File | PlainMessage<File> | undefined, b: File | PlainMessage<File> | undefined): boolean {
+    return proto3.util.equals(File, a, b);
   }
 }
 

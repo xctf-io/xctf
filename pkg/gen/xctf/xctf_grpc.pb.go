@@ -27,6 +27,7 @@ type BackendClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 	CurrentUser(ctx context.Context, in *CurrentUserRequest, opts ...grpc.CallOption) (*CurrentUserResponse, error)
+	GetComputer(ctx context.Context, in *GetComputerRequest, opts ...grpc.CallOption) (*GetComputerResponse, error)
 	SubmitFlag(ctx context.Context, in *SubmitFlagRequest, opts ...grpc.CallOption) (*SubmitFlagResponse, error)
 	SubmitEvidenceReport(ctx context.Context, in *SubmitEvidenceReportRequest, opts ...grpc.CallOption) (*SubmitEvidenceReportRequest, error)
 	GetDiscoveredEvidence(ctx context.Context, in *GetDiscoveredEvidenceRequest, opts ...grpc.CallOption) (*GetDiscoveredEvidenceResponse, error)
@@ -81,6 +82,15 @@ func (c *backendClient) Logout(ctx context.Context, in *Empty, opts ...grpc.Call
 func (c *backendClient) CurrentUser(ctx context.Context, in *CurrentUserRequest, opts ...grpc.CallOption) (*CurrentUserResponse, error) {
 	out := new(CurrentUserResponse)
 	err := c.cc.Invoke(ctx, "/xctf.Backend/CurrentUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *backendClient) GetComputer(ctx context.Context, in *GetComputerRequest, opts ...grpc.CallOption) (*GetComputerResponse, error) {
+	out := new(GetComputerResponse)
+	err := c.cc.Invoke(ctx, "/xctf.Backend/GetComputer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -221,6 +231,7 @@ type BackendServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Logout(context.Context, *Empty) (*Empty, error)
 	CurrentUser(context.Context, *CurrentUserRequest) (*CurrentUserResponse, error)
+	GetComputer(context.Context, *GetComputerRequest) (*GetComputerResponse, error)
 	SubmitFlag(context.Context, *SubmitFlagRequest) (*SubmitFlagResponse, error)
 	SubmitEvidenceReport(context.Context, *SubmitEvidenceReportRequest) (*SubmitEvidenceReportRequest, error)
 	GetDiscoveredEvidence(context.Context, *GetDiscoveredEvidenceRequest) (*GetDiscoveredEvidenceResponse, error)
@@ -252,6 +263,9 @@ func (UnimplementedBackendServer) Logout(context.Context, *Empty) (*Empty, error
 }
 func (UnimplementedBackendServer) CurrentUser(context.Context, *CurrentUserRequest) (*CurrentUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CurrentUser not implemented")
+}
+func (UnimplementedBackendServer) GetComputer(context.Context, *GetComputerRequest) (*GetComputerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetComputer not implemented")
 }
 func (UnimplementedBackendServer) SubmitFlag(context.Context, *SubmitFlagRequest) (*SubmitFlagResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitFlag not implemented")
@@ -375,6 +389,24 @@ func _Backend_CurrentUser_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BackendServer).CurrentUser(ctx, req.(*CurrentUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Backend_GetComputer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetComputerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BackendServer).GetComputer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Backend/GetComputer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BackendServer).GetComputer(ctx, req.(*GetComputerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -653,6 +685,10 @@ var Backend_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CurrentUser",
 			Handler:    _Backend_CurrentUser_Handler,
+		},
+		{
+			MethodName: "GetComputer",
+			Handler:    _Backend_GetComputer_Handler,
 		},
 		{
 			MethodName: "SubmitFlag",
