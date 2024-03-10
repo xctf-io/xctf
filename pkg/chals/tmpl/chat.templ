@@ -1,6 +1,7 @@
 package tmpl
 
 import (
+    "fmt"
     "time"
 	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 )
@@ -13,6 +14,7 @@ type ChatState struct {
     URL ChatURL
     Session SessionState
     Channel chalgen.Channel
+    UserLookup map[string]*chalgen.User
 }
 
 type ChatURL struct {
@@ -36,6 +38,10 @@ templ Page(contents templ.Component) {
           @contents
       </body>
     </html>
+}
+
+script openModal(id string) {
+    document.getElementById(id).showModal();
 }
 
 templ Chat(state ChatState, slack *chalgen.Slack) {
@@ -103,13 +109,23 @@ templ Chat(state ChatState, slack *chalgen.Slack) {
         <div class="px-4 py-6">
           <h1 class="text-3xl font-semibold">{state.Channel.Name}</h1>
           <p class="mt-4">
-          for _, m := range state.Channel.Messages {
+          for i, m := range state.Channel.Messages {
           <div class="flex items-start space-x-4">
             <div class="flex-shrink-0">
               <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/40" alt="User avatar" />
             </div>
             <div>
-              <div class="text-sm text-gray-700">{ m.Username }</div>
+              <div onclick={openModal(fmt.Sprintf("msg_bio_modal_%d", i))} class="pointer-cursor text-sm text-gray-700">
+              { m.Username }
+              </div>
+              <dialog id={fmt.Sprintf("msg_bio_modal_%d", i)} class="modal">
+                <div class="modal-box">
+                { state.UserLookup[m.Username].Bio }
+                </div>
+                <form method="dialog" class="modal-backdrop">
+                  <button>close</button>
+                </form>
+              </dialog>
               <div class="mt-1 text-sm font-medium  ">
               { m.Content }
               </div>

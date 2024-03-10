@@ -5,6 +5,7 @@ import (
 	"embed"
 	"encoding/base64"
 	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"github.com/a-h/templ"
 	"github.com/go-pdf/fpdf"
@@ -274,6 +275,27 @@ func (s *Handler) Handle() (string, http.Handler) {
 							return
 						}
 
+						var newUrls []string
+						for _, app := range t.Filemanager.Urls {
+							nt, err := ttemplate.New("app").Parse(app.Url)
+							if err != nil {
+								http.Error(w, err.Error(), http.StatusInternalServerError)
+								return
+							}
+							var buf bytes.Buffer
+							err = nt.Execute(&buf, struct {
+								Challenges map[string]string
+							}{
+								Challenges: challenges,
+							})
+							if err != nil {
+								http.Error(w, err.Error(), http.StatusInternalServerError)
+								return
+							}
+							newUrls = append(newUrls, buf.String())
+						}
+						t.Filemanager.Urls = newUrls
+
 						templ.Handler(tmpl.Page(tmpl.FileManager(tmpl.FileManagerState{
 							Session: sess,
 							URL: tmpl.FileManagerURL{
@@ -425,8 +447,14 @@ func (s *Handler) Handle() (string, http.Handler) {
 							}
 						}
 
+						userLookup := map[string]*chalgen.User{}
+						for _, u := range t.Slack.Users {
+							userLookup[u.Username] = u
+						}
+
 						templ.Handler(tmpl.Page(tmpl.Chat(tmpl.ChatState{
-							Session: sess,
+							UserLookup: userLookup,
+							Session:    sess,
 							URL: tmpl.ChatURL{
 								Channel: func(id int) templ.SafeURL {
 									return templ.URL(fmt.Sprintf("%s?channel_id=%d", baseURL, id))
@@ -473,6 +501,85 @@ func (s *Handler) Handle() (string, http.Handler) {
 						})
 						if err != nil {
 							http.Error(w, err.Error(), http.StatusInternalServerError)
+						}
+						return
+					case *chalgen.Challenge_Passshare:
+						st := tmpl.PassShareState{
+							BaseURL: baseURL,
+						}
+						if p == "solve" {
+							w.Header().Set("Content-Type", "application/json")
+							w.WriteHeader(http.StatusOK)
+							type req struct {
+								Hash string `json:"hash"`
+							}
+							type res struct {
+								Success  bool   `json:"success"`
+								Password string `json:"password"`
+							}
+							writeRes := func(s bool, p string) {
+								r := res{
+									Success:  s,
+									Password: p,
+								}
+								b, _ := json.Marshal(r)
+								w.Write(b)
+							}
+							var re req
+							if err := json.NewDecoder(r.Body).Decode(&re); err != nil {
+								writeRes(false, "")
+								return
+							}
+
+							if re.Hash != t.Passshare.Hash {
+								writeRes(false, "")
+								return
+							}
+							writeRes(true, t.Passshare.Password)
+							return
+						}
+						templ.Handler(tmpl.Page(tmpl.PassShare(st, t.Passshare))).ServeHTTP(w, r)
+						return
+					case *chalgen.Challenge_Search:
+						s := tmpl.SearchState{
+							SearchURL: templ.SafeURL(baseURL + "/search"),
+						}
+						if p == "search" {
+							err := r.ParseForm()
+							if err != nil {
+								http.Error(w, err.Error(), http.StatusBadRequest)
+								return
+							}
+							q := r.FormValue("query")
+							r, err := performSearch(t.Search, q)
+							if err != nil {
+								http.Error(w, err.Error(), http.StatusInternalServerError)
+								return
+							}
+							s.Results = r
+						}
+						templ.Handler(tmpl.Page(tmpl.Search(s, t.Search))).ServeHTTP(w, r)
+						return
+					case *chalgen.Challenge_Hashes:
+						s := GenerateMD5Hashes(t.Hashes)
+						w.Header().Set("Content-Disposition", "attachment; filename=hashes.txt")
+						w.Header().Set("Content-Type", "text/plain")
+						if p == "rainbow" {
+							for _, h := range s {
+								_, err := w.Write([]byte(fmt.Sprintf("%s,%s\n", h.Content, h.Hash)))
+								if err != nil {
+									http.Error(w, err.Error(), http.StatusInternalServerError)
+									return
+								}
+							}
+							return
+						}
+						for _, h := range s {
+							_, err := w.Write([]byte(h.Hash + "\n"))
+							if err != nil {
+								http.Error(w, err.Error(), http.StatusInternalServerError)
+								return
+							}
 						}
 						return
 					}

@@ -17,11 +17,31 @@ message Challenge {
     Zip zip = 16;
     Pdf pdf = 17;
     Search search = 18;
+    PassShare passshare = 19;
+    Hashes hashes = 20;
   }
+}
+
+message Hashes {
+  string seed = 1;
+  string format = 2;
+  int32 count = 3;
+  repeated Override overrides = 4;
+}
+
+message Override {
+  int32 index = 1;
+  string text = 2;
+}
+
+message PassShare {
+  string password = 1;
+  string hash = 2;
 }
 
 message Search {
   repeated string entry = 1;
+  string password = 2;
 }
 
 message Pdf {

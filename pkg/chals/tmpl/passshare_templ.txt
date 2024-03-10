@@ -1,0 +1,2 @@
+<div><script src=\"/build/vanilla.example.js\"></script><h1>PassShare</h1><p>Share your password with a friend!</p><canvas id=\"lock\"></canvas><h3>Forgot your pattern? No problem!</h3><p>Use the offline pattern recovery device we mailed you.</p>
+</div>

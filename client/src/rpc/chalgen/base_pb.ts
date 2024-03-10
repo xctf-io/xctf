@@ -91,6 +91,18 @@ export class Challenge extends Message$1<Challenge> {
      */
     value: Search;
     case: "search";
+  } | {
+    /**
+     * @generated from field: chalgen.PassShare passshare = 19;
+     */
+    value: PassShare;
+    case: "passshare";
+  } | {
+    /**
+     * @generated from field: chalgen.Hashes hashes = 20;
+     */
+    value: Hashes;
+    case: "hashes";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Challenge>) {
@@ -114,6 +126,8 @@ export class Challenge extends Message$1<Challenge> {
     { no: 16, name: "zip", kind: "message", T: Zip, oneof: "type" },
     { no: 17, name: "pdf", kind: "message", T: Pdf, oneof: "type" },
     { no: 18, name: "search", kind: "message", T: Search, oneof: "type" },
+    { no: 19, name: "passshare", kind: "message", T: PassShare, oneof: "type" },
+    { no: 20, name: "hashes", kind: "message", T: Hashes, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Challenge {
@@ -134,6 +148,147 @@ export class Challenge extends Message$1<Challenge> {
 }
 
 /**
+ * @generated from message chalgen.Hashes
+ */
+export class Hashes extends Message$1<Hashes> {
+  /**
+   * @generated from field: string seed = 1;
+   */
+  seed = "";
+
+  /**
+   * @generated from field: string format = 2;
+   */
+  format = "";
+
+  /**
+   * @generated from field: int32 count = 3;
+   */
+  count = 0;
+
+  /**
+   * @generated from field: repeated chalgen.Override overrides = 4;
+   */
+  overrides: Override[] = [];
+
+  constructor(data?: PartialMessage<Hashes>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Hashes";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "seed", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "format", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 4, name: "overrides", kind: "message", T: Override, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Hashes {
+    return new Hashes().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Hashes {
+    return new Hashes().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Hashes {
+    return new Hashes().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Hashes | PlainMessage<Hashes> | undefined, b: Hashes | PlainMessage<Hashes> | undefined): boolean {
+    return proto3.util.equals(Hashes, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Override
+ */
+export class Override extends Message$1<Override> {
+  /**
+   * @generated from field: int32 index = 1;
+   */
+  index = 0;
+
+  /**
+   * @generated from field: string text = 2;
+   */
+  text = "";
+
+  constructor(data?: PartialMessage<Override>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Override";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "index", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Override {
+    return new Override().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Override {
+    return new Override().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Override {
+    return new Override().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Override | PlainMessage<Override> | undefined, b: Override | PlainMessage<Override> | undefined): boolean {
+    return proto3.util.equals(Override, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.PassShare
+ */
+export class PassShare extends Message$1<PassShare> {
+  /**
+   * @generated from field: string password = 1;
+   */
+  password = "";
+
+  /**
+   * @generated from field: string hash = 2;
+   */
+  hash = "";
+
+  constructor(data?: PartialMessage<PassShare>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.PassShare";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "hash", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PassShare {
+    return new PassShare().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PassShare {
+    return new PassShare().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PassShare {
+    return new PassShare().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: PassShare | PlainMessage<PassShare> | undefined, b: PassShare | PlainMessage<PassShare> | undefined): boolean {
+    return proto3.util.equals(PassShare, a, b);
+  }
+}
+
+/**
  * @generated from message chalgen.Search
  */
 export class Search extends Message$1<Search> {
@@ -141,6 +296,11 @@ export class Search extends Message$1<Search> {
    * @generated from field: repeated string entry = 1;
    */
   entry: string[] = [];
+
+  /**
+   * @generated from field: string password = 2;
+   */
+  password = "";
 
   constructor(data?: PartialMessage<Search>) {
     super();
@@ -151,6 +311,7 @@ export class Search extends Message$1<Search> {
   static readonly typeName = "chalgen.Search";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "entry", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Search {

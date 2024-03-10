@@ -2,12 +2,17 @@ package chals
 
 import (
 	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"github.com/alexmullins/zip"
 	"github.com/dsoprea/go-exif/v2"
 	jpegstructure "github.com/dsoprea/go-jpeg-image-structure"
+	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 	"io"
+	"math/rand"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -84,4 +89,56 @@ func createEncryptedZip(zipFilename, password string, files map[string]string) e
 	}
 
 	return nil
+}
+
+type MD5Hash struct {
+	Hash    string
+	Content string
+}
+
+func GenerateMD5Hashes(hashes *chalgen.Hashes) []MD5Hash {
+	r := rand.New(rand.NewSource(int64(hashCode(hashes.Seed))))
+
+	var result []MD5Hash
+	for i := int32(0); i < hashes.Count; i++ {
+		str := generateRandomStringFromFormat(r, hashes.Format)
+		for _, override := range hashes.Overrides {
+			if override.Index == i {
+				str = override.Text
+				break
+			}
+		}
+		hash := md5.Sum([]byte(str))
+		result = append(result, MD5Hash{
+			Hash:    hex.EncodeToString(hash[:]),
+			Content: str,
+		})
+	}
+
+	return result
+}
+
+func generateRandomStringFromFormat(r *rand.Rand, format string) string {
+	var result strings.Builder
+	for _, char := range format {
+		if char == '#' {
+			result.WriteByte(randomChar(r))
+		} else {
+			result.WriteRune(char)
+		}
+	}
+	return result.String()
+}
+
+func randomChar(r *rand.Rand) byte {
+	charSet := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	return charSet[r.Intn(len(charSet))]
+}
+
+func hashCode(s string) int {
+	h := 0
+	for i := 0; i < len(s); i++ {
+		h = 31*h + int(s[i])
+	}
+	return h
 }

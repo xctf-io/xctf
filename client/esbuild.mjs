@@ -54,7 +54,7 @@ const options = {
 		"process.env": "{}",
 		"process.env.NODE_ENV": nodeEnv,
 	},
-	logLevel: "info"
+	logLevel: "info",
 };
 
 

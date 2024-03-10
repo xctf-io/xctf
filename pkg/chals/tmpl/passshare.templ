@@ -1,0 +1,49 @@
+package tmpl
+
+import (
+	"github.com/xctf-io/xctf/pkg/gen/chalgen"
+)
+
+type PassShareState struct {
+    BaseURL string
+    Password string
+}
+
+script lock(baseUrl string) {
+    const lock = new PatternLock({
+        $canvas: document.querySelector('#lock'),
+        width: 300,
+        height: 430,
+        grid: [ 6, 8 ],
+    });
+    lock.onComplete(({ hash }) => {
+        fetch(baseUrl + '/solve', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ hash }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Password: ${data.password}`);
+            } else {
+                alert('Failed');
+            }
+        });
+
+    });
+}
+
+templ PassShare(s PassShareState, ps *chalgen.PassShare) {
+    <div>
+        <script src="/build/vanilla.example.js"></script>
+        <h1>PassShare</h1>
+        <p>Share your password with a friend!</p>
+        <canvas id="lock"></canvas>
+        <h3>Forgot your pattern? No problem!</h3>
+        <p>Use the offline pattern recovery device we mailed you.</p>
+        @lock(s.BaseURL)
+    </div>
+}

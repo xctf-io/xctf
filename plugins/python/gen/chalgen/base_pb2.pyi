@@ -6,7 +6,7 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class Challenge(_message.Message):
-    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone", "filemanager", "maze", "xor", "zip", "pdf", "search")
+    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone", "filemanager", "maze", "xor", "zip", "pdf", "search", "passshare", "hashes")
     BASE64_FIELD_NUMBER: _ClassVar[int]
     TWITTER_FIELD_NUMBER: _ClassVar[int]
     CAESAR_FIELD_NUMBER: _ClassVar[int]
@@ -20,6 +20,8 @@ class Challenge(_message.Message):
     ZIP_FIELD_NUMBER: _ClassVar[int]
     PDF_FIELD_NUMBER: _ClassVar[int]
     SEARCH_FIELD_NUMBER: _ClassVar[int]
+    PASSSHARE_FIELD_NUMBER: _ClassVar[int]
+    HASHES_FIELD_NUMBER: _ClassVar[int]
     base64: Base64
     twitter: Twitter
     caesar: CaesarCipher
@@ -33,13 +35,45 @@ class Challenge(_message.Message):
     zip: Zip
     pdf: Pdf
     search: Search
-    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ..., maze: _Optional[_Union[Maze, _Mapping]] = ..., xor: _Optional[_Union[Xor, _Mapping]] = ..., zip: _Optional[_Union[Zip, _Mapping]] = ..., pdf: _Optional[_Union[Pdf, _Mapping]] = ..., search: _Optional[_Union[Search, _Mapping]] = ...) -> None: ...
+    passshare: PassShare
+    hashes: Hashes
+    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ..., maze: _Optional[_Union[Maze, _Mapping]] = ..., xor: _Optional[_Union[Xor, _Mapping]] = ..., zip: _Optional[_Union[Zip, _Mapping]] = ..., pdf: _Optional[_Union[Pdf, _Mapping]] = ..., search: _Optional[_Union[Search, _Mapping]] = ..., passshare: _Optional[_Union[PassShare, _Mapping]] = ..., hashes: _Optional[_Union[Hashes, _Mapping]] = ...) -> None: ...
+
+class Hashes(_message.Message):
+    __slots__ = ("seed", "format", "count", "overrides")
+    SEED_FIELD_NUMBER: _ClassVar[int]
+    FORMAT_FIELD_NUMBER: _ClassVar[int]
+    COUNT_FIELD_NUMBER: _ClassVar[int]
+    OVERRIDES_FIELD_NUMBER: _ClassVar[int]
+    seed: str
+    format: str
+    count: int
+    overrides: _containers.RepeatedCompositeFieldContainer[Override]
+    def __init__(self, seed: _Optional[str] = ..., format: _Optional[str] = ..., count: _Optional[int] = ..., overrides: _Optional[_Iterable[_Union[Override, _Mapping]]] = ...) -> None: ...
+
+class Override(_message.Message):
+    __slots__ = ("index", "text")
+    INDEX_FIELD_NUMBER: _ClassVar[int]
+    TEXT_FIELD_NUMBER: _ClassVar[int]
+    index: int
+    text: str
+    def __init__(self, index: _Optional[int] = ..., text: _Optional[str] = ...) -> None: ...
+
+class PassShare(_message.Message):
+    __slots__ = ("password", "hash")
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    HASH_FIELD_NUMBER: _ClassVar[int]
+    password: str
+    hash: str
+    def __init__(self, password: _Optional[str] = ..., hash: _Optional[str] = ...) -> None: ...
 
 class Search(_message.Message):
-    __slots__ = ("entry",)
+    __slots__ = ("entry", "password")
     ENTRY_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
     entry: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, entry: _Optional[_Iterable[str]] = ...) -> None: ...
+    password: str
+    def __init__(self, entry: _Optional[_Iterable[str]] = ..., password: _Optional[str] = ...) -> None: ...
 
 class Pdf(_message.Message):
     __slots__ = ("content",)
