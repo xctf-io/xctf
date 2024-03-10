@@ -27,6 +27,7 @@ message Hashes {
   string format = 2;
   int32 count = 3;
   repeated Override overrides = 4;
+  int32 length = 5;
 }
 
 message Override {

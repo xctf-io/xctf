@@ -171,6 +171,11 @@ export class Hashes extends Message$1<Hashes> {
    */
   overrides: Override[] = [];
 
+  /**
+   * @generated from field: int32 length = 5;
+   */
+  length = 0;
+
   constructor(data?: PartialMessage<Hashes>) {
     super();
     proto3.util.initPartial(data, this);
@@ -183,6 +188,7 @@ export class Hashes extends Message$1<Hashes> {
     { no: 2, name: "format", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 4, name: "overrides", kind: "message", T: Override, repeated: true },
+    { no: 5, name: "length", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Hashes {

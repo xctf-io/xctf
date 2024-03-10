@@ -40,16 +40,18 @@ class Challenge(_message.Message):
     def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ..., maze: _Optional[_Union[Maze, _Mapping]] = ..., xor: _Optional[_Union[Xor, _Mapping]] = ..., zip: _Optional[_Union[Zip, _Mapping]] = ..., pdf: _Optional[_Union[Pdf, _Mapping]] = ..., search: _Optional[_Union[Search, _Mapping]] = ..., passshare: _Optional[_Union[PassShare, _Mapping]] = ..., hashes: _Optional[_Union[Hashes, _Mapping]] = ...) -> None: ...
 
 class Hashes(_message.Message):
-    __slots__ = ("seed", "format", "count", "overrides")
+    __slots__ = ("seed", "format", "count", "overrides", "length")
     SEED_FIELD_NUMBER: _ClassVar[int]
     FORMAT_FIELD_NUMBER: _ClassVar[int]
     COUNT_FIELD_NUMBER: _ClassVar[int]
     OVERRIDES_FIELD_NUMBER: _ClassVar[int]
+    LENGTH_FIELD_NUMBER: _ClassVar[int]
     seed: str
     format: str
     count: int
     overrides: _containers.RepeatedCompositeFieldContainer[Override]
-    def __init__(self, seed: _Optional[str] = ..., format: _Optional[str] = ..., count: _Optional[int] = ..., overrides: _Optional[_Iterable[_Union[Override, _Mapping]]] = ...) -> None: ...
+    length: int
+    def __init__(self, seed: _Optional[str] = ..., format: _Optional[str] = ..., count: _Optional[int] = ..., overrides: _Optional[_Iterable[_Union[Override, _Mapping]]] = ..., length: _Optional[int] = ...) -> None: ...
 
 class Override(_message.Message):
     __slots__ = ("index", "text")

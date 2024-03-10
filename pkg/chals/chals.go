@@ -160,18 +160,14 @@ func (s *Handler) Handle() (string, http.Handler) {
 						c += " " + n.Meta.Flag
 					}
 					view = caesarCipher(c, int(t.Caesar.Shift))
-				case *chalgen.Challenge_Pcap:
-					view = chalURL
-				case *chalgen.Challenge_Slack:
-					view = chalURL
 				case *chalgen.Challenge_Xor:
 					view = string(xorEncryptDecrypt([]byte(t.Xor.Plaintext), []byte(t.Xor.Key)))
-				case *chalgen.Challenge_Pdf:
-					view = chalURL
 				}
 			}
 			if view != "" {
 				challenges[n.Meta.Name] = view
+			} else {
+				challenges[n.Meta.Name] = chalURL
 			}
 		}
 
@@ -276,8 +272,8 @@ func (s *Handler) Handle() (string, http.Handler) {
 						}
 
 						var newUrls []string
-						for _, app := range t.Filemanager.Urls {
-							nt, err := ttemplate.New("app").Parse(app.Url)
+						for _, ul := range t.Filemanager.Urls {
+							nt, err := ttemplate.New("app").Parse(ul)
 							if err != nil {
 								http.Error(w, err.Error(), http.StatusInternalServerError)
 								return

@@ -101,7 +101,7 @@ func GenerateMD5Hashes(hashes *chalgen.Hashes) []MD5Hash {
 
 	var result []MD5Hash
 	for i := int32(0); i < hashes.Count; i++ {
-		str := generateRandomStringFromFormat(r, hashes.Format)
+		str := generateRandomStringFromFormat(r, int(hashes.Length))
 		for _, override := range hashes.Overrides {
 			if override.Index == i {
 				str = override.Text
@@ -110,7 +110,7 @@ func GenerateMD5Hashes(hashes *chalgen.Hashes) []MD5Hash {
 		}
 		hash := md5.Sum([]byte(str))
 		result = append(result, MD5Hash{
-			Hash:    hex.EncodeToString(hash[:]),
+			Hash:    fmt.Sprintf(hashes.Format, i, hex.EncodeToString(hash[:])),
 			Content: str,
 		})
 	}
@@ -118,14 +118,10 @@ func GenerateMD5Hashes(hashes *chalgen.Hashes) []MD5Hash {
 	return result
 }
 
-func generateRandomStringFromFormat(r *rand.Rand, format string) string {
+func generateRandomStringFromFormat(r *rand.Rand, l int) string {
 	var result strings.Builder
-	for _, char := range format {
-		if char == '#' {
-			result.WriteByte(randomChar(r))
-		} else {
-			result.WriteRune(char)
-		}
+	for i := 0; i < l; i++ {
+		result.WriteByte(randomChar(r))
 	}
 	return result.String()
 }
