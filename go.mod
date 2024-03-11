@@ -15,8 +15,6 @@ require (
 	github.com/dsoprea/go-exif/v3 v3.0.0-20210512043655-120bcdb2a55e
 	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20221012074422-4f3f7e934102
 	github.com/dsoprea/go-jpeg-image-structure/v2 v2.0.0-20221012074422-4f3f7e934102
-	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd
-	github.com/dsoprea/go-png-image-structure/v2 v2.0.0-20210512210324-29b889a6093d
 	github.com/fsouza/go-dockerclient v1.10.0
 	github.com/glebarez/sqlite v1.10.0
 	github.com/go-pdf/fpdf v0.9.0
@@ -32,7 +30,7 @@ require (
 	github.com/rs/zerolog v1.31.0
 	github.com/samber/go-gpt-3-encoder v0.3.1
 	github.com/samber/lo v1.38.1
-	github.com/sashabaranov/go-openai v1.12.0
+	github.com/sashabaranov/go-openai v1.20.3
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/tmc/langchaingo v0.1.5
 	github.com/twitchtv/twirp v8.1.3+incompatible
@@ -41,7 +39,6 @@ require (
 	gocloud.dev v0.34.0
 	golang.org/x/crypto v0.21.0
 	golang.org/x/net v0.21.0
-	golang.org/x/text v0.14.0
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.32.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -84,6 +81,7 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dsoprea/go-iptc v0.0.0-20200609062250-162ae6b44feb // indirect
+	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-photoshop-info-format v0.0.0-20200609050348-3db9b63b202c // indirect
 	github.com/dsoprea/go-utility v0.0.0-20200711062821-fab8125e9bdf // indirect
 	github.com/dsoprea/go-utility/v2 v2.0.0-20200717064901-2fccff4aa15e // indirect
@@ -186,6 +184,7 @@ require (
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.18.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect

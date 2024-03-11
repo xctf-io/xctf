@@ -103,6 +103,12 @@ export class Challenge extends Message$1<Challenge> {
      */
     value: Hashes;
     case: "hashes";
+  } | {
+    /**
+     * @generated from field: chalgen.AudioPlayer audioplayer = 21;
+     */
+    value: AudioPlayer;
+    case: "audioplayer";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Challenge>) {
@@ -128,6 +134,7 @@ export class Challenge extends Message$1<Challenge> {
     { no: 18, name: "search", kind: "message", T: Search, oneof: "type" },
     { no: 19, name: "passshare", kind: "message", T: PassShare, oneof: "type" },
     { no: 20, name: "hashes", kind: "message", T: Hashes, oneof: "type" },
+    { no: 21, name: "audioplayer", kind: "message", T: AudioPlayer, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Challenge {
@@ -144,6 +151,92 @@ export class Challenge extends Message$1<Challenge> {
 
   static equals(a: Challenge | PlainMessage<Challenge> | undefined, b: Challenge | PlainMessage<Challenge> | undefined): boolean {
     return proto3.util.equals(Challenge, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.AudioPlayer
+ */
+export class AudioPlayer extends Message$1<AudioPlayer> {
+  /**
+   * @generated from field: repeated chalgen.Song songs = 1;
+   */
+  songs: Song[] = [];
+
+  constructor(data?: PartialMessage<AudioPlayer>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.AudioPlayer";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "songs", kind: "message", T: Song, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AudioPlayer {
+    return new AudioPlayer().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AudioPlayer {
+    return new AudioPlayer().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AudioPlayer {
+    return new AudioPlayer().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AudioPlayer | PlainMessage<AudioPlayer> | undefined, b: AudioPlayer | PlainMessage<AudioPlayer> | undefined): boolean {
+    return proto3.util.equals(AudioPlayer, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Song
+ */
+export class Song extends Message$1<Song> {
+  /**
+   * @generated from field: string title = 1;
+   */
+  title = "";
+
+  /**
+   * @generated from field: string artist = 2;
+   */
+  artist = "";
+
+  /**
+   * @generated from field: string url = 3;
+   */
+  url = "";
+
+  constructor(data?: PartialMessage<Song>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Song";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "artist", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Song {
+    return new Song().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Song {
+    return new Song().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Song {
+    return new Song().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Song | PlainMessage<Song> | undefined, b: Song | PlainMessage<Song> | undefined): boolean {
+    return proto3.util.equals(Song, a, b);
   }
 }
 

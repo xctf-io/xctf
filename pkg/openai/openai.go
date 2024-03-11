@@ -238,6 +238,24 @@ func (s *Agent) PromptStream(
 	return rxgo.FromChannel(events), nil
 }
 
+func (s *Agent) TextToSpeech(
+	ctx context.Context,
+	text string,
+) (io.Reader, error) {
+	client := gopenai.NewClient(s.config.APIKey)
+	res, err := client.CreateSpeech(ctx, gopenai.CreateSpeechRequest{
+		Model:          gopenai.TTSModel1,
+		Voice:          gopenai.VoiceAlloy,
+		ResponseFormat: gopenai.SpeechResponseFormatMp3,
+		Input:          text,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+
+}
+
 func (s *Agent) Ask(
 	prompt string,
 	content string,

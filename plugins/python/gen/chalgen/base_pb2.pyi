@@ -6,7 +6,7 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class Challenge(_message.Message):
-    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone", "filemanager", "maze", "xor", "zip", "pdf", "search", "passshare", "hashes")
+    __slots__ = ("base64", "twitter", "caesar", "pcap", "exif", "slack", "phone", "filemanager", "maze", "xor", "zip", "pdf", "search", "passshare", "hashes", "audioplayer")
     BASE64_FIELD_NUMBER: _ClassVar[int]
     TWITTER_FIELD_NUMBER: _ClassVar[int]
     CAESAR_FIELD_NUMBER: _ClassVar[int]
@@ -22,6 +22,7 @@ class Challenge(_message.Message):
     SEARCH_FIELD_NUMBER: _ClassVar[int]
     PASSSHARE_FIELD_NUMBER: _ClassVar[int]
     HASHES_FIELD_NUMBER: _ClassVar[int]
+    AUDIOPLAYER_FIELD_NUMBER: _ClassVar[int]
     base64: Base64
     twitter: Twitter
     caesar: CaesarCipher
@@ -37,7 +38,24 @@ class Challenge(_message.Message):
     search: Search
     passshare: PassShare
     hashes: Hashes
-    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ..., maze: _Optional[_Union[Maze, _Mapping]] = ..., xor: _Optional[_Union[Xor, _Mapping]] = ..., zip: _Optional[_Union[Zip, _Mapping]] = ..., pdf: _Optional[_Union[Pdf, _Mapping]] = ..., search: _Optional[_Union[Search, _Mapping]] = ..., passshare: _Optional[_Union[PassShare, _Mapping]] = ..., hashes: _Optional[_Union[Hashes, _Mapping]] = ...) -> None: ...
+    audioplayer: AudioPlayer
+    def __init__(self, base64: _Optional[_Union[Base64, _Mapping]] = ..., twitter: _Optional[_Union[Twitter, _Mapping]] = ..., caesar: _Optional[_Union[CaesarCipher, _Mapping]] = ..., pcap: _Optional[_Union[PCAP, _Mapping]] = ..., exif: _Optional[_Union[Exif, _Mapping]] = ..., slack: _Optional[_Union[Slack, _Mapping]] = ..., phone: _Optional[_Union[Phone, _Mapping]] = ..., filemanager: _Optional[_Union[FileManager, _Mapping]] = ..., maze: _Optional[_Union[Maze, _Mapping]] = ..., xor: _Optional[_Union[Xor, _Mapping]] = ..., zip: _Optional[_Union[Zip, _Mapping]] = ..., pdf: _Optional[_Union[Pdf, _Mapping]] = ..., search: _Optional[_Union[Search, _Mapping]] = ..., passshare: _Optional[_Union[PassShare, _Mapping]] = ..., hashes: _Optional[_Union[Hashes, _Mapping]] = ..., audioplayer: _Optional[_Union[AudioPlayer, _Mapping]] = ...) -> None: ...
+
+class AudioPlayer(_message.Message):
+    __slots__ = ("songs",)
+    SONGS_FIELD_NUMBER: _ClassVar[int]
+    songs: _containers.RepeatedCompositeFieldContainer[Song]
+    def __init__(self, songs: _Optional[_Iterable[_Union[Song, _Mapping]]] = ...) -> None: ...
+
+class Song(_message.Message):
+    __slots__ = ("title", "artist", "url")
+    TITLE_FIELD_NUMBER: _ClassVar[int]
+    ARTIST_FIELD_NUMBER: _ClassVar[int]
+    URL_FIELD_NUMBER: _ClassVar[int]
+    title: str
+    artist: str
+    url: str
+    def __init__(self, title: _Optional[str] = ..., artist: _Optional[str] = ..., url: _Optional[str] = ...) -> None: ...
 
 class Hashes(_message.Message):
     __slots__ = ("seed", "format", "count", "overrides", "length")

@@ -19,7 +19,18 @@ message Challenge {
     Search search = 18;
     PassShare passshare = 19;
     Hashes hashes = 20;
+    AudioPlayer audioplayer = 21;
   }
+}
+
+message AudioPlayer {
+  repeated Song songs = 1;
+}
+
+message Song {
+  string title = 1;
+  string artist = 2;
+  string url = 3;
 }
 
 message Hashes {
