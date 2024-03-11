@@ -65,7 +65,7 @@ func ChalURL(scheme, compId, chalID, host string) string {
 	}
 	u := url.URL{
 		// TODO breadchris check if the original request was https
-		Scheme: "http",
+		Scheme: scheme,
 		Host:   host,
 		Path:   path,
 	}
