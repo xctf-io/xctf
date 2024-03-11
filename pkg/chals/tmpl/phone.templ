@@ -7,6 +7,7 @@ import (
 )
 
 type PhoneState struct {
+  Flag string
   TrackerLogin templ.SafeURL
   TrackerAuthed bool
 }
@@ -66,30 +67,36 @@ templ App(state PhoneState, i int, a *chalgen.App) {
 }
 
 templ Phone(state PhoneState, phone *chalgen.Phone) {
-    <div class="flex h-screen">
+    <div class="flex h-screen flex-col space-y-4">
         <div class="mockup-phone overflow-y-scroll h-fit">
           <div class="camera"></div>
           <div class="display overflow-y-scroll">
             <div class="artboard artboard-demo phone-1 overflow-y-scroll">
-                <div class="grid grid-cols-3 gap-4">
-                  for i, a := range phone.Apps {
-                    <a onclick={openApp(fmt.Sprintf("my_modal_%d", i))} class="btn w-20 h-20 bg-blue-500 flex justify-center items-center text-white">
-                        {a.Name}
-                    </a>
-                    <dialog id={fmt.Sprintf("my_modal_%d", i)} class="modal">
-                      <div class="modal-box">
-                        @App(state, i, a)
-                        <div class="modal-action">
-                          <form method="dialog">
-                            <button class="btn">Close</button>
-                          </form>
-                        </div>
-                      </div>
-                    </dialog>
-                  }
+                <div class="flex flex-col items-center space-y-12">
+                    <h1 class="text-2xl font-bold">{phone.Name}</h1>
+                    <div class="grid grid-cols-3 gap-4">
+                      for i, a := range phone.Apps {
+                        <a onclick={openApp(fmt.Sprintf("my_modal_%d", i))} class="btn w-20 h-20 bg-blue-500 flex justify-center items-center text-white">
+                            {a.Name}
+                        </a>
+                        <dialog id={fmt.Sprintf("my_modal_%d", i)} class="modal">
+                          <div class="modal-box">
+                            @App(state, i, a)
+                            <div class="modal-action">
+                              <form method="dialog">
+                                <button class="btn">Close</button>
+                              </form>
+                            </div>
+                          </div>
+                        </dialog>
+                      }
+                    </div>
                 </div>
             </div>
           </div>
+        </div>
+        <div class="text-center">
+          <p>{state.Flag}</p>
         </div>
     </div>
 }

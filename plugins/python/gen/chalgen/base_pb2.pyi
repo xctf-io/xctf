@@ -140,10 +140,12 @@ class FileManager(_message.Message):
     def __init__(self, urls: _Optional[_Iterable[str]] = ..., password: _Optional[str] = ...) -> None: ...
 
 class Phone(_message.Message):
-    __slots__ = ("apps",)
+    __slots__ = ("apps", "name")
     APPS_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
     apps: _containers.RepeatedCompositeFieldContainer[App]
-    def __init__(self, apps: _Optional[_Iterable[_Union[App, _Mapping]]] = ...) -> None: ...
+    name: str
+    def __init__(self, apps: _Optional[_Iterable[_Union[App, _Mapping]]] = ..., name: _Optional[str] = ...) -> None: ...
 
 class App(_message.Message):
     __slots__ = ("name", "url", "html", "tracker", "photogallery")

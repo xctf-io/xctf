@@ -21,8 +21,8 @@ type PassShareState struct {
 
 func lock(baseUrl string) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_lock_6461`,
-		Function: `function __templ_lock_6461(baseUrl){const lock = new PatternLock({
+		Name: `__templ_lock_a78e`,
+		Function: `function __templ_lock_a78e(baseUrl){const lock = new PatternLock({
         $canvas: document.querySelector('#lock'),
         width: 300,
         height: 430,
@@ -39,7 +39,7 @@ func lock(baseUrl string) templ.ComponentScript {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert(` + "`" + `Password: ${data.password}` + "`" + `);
+                alert(` + "`" + `${data.flag} Password: ${data.password}` + "`" + `);
             } else {
                 alert('Failed');
             }
@@ -47,8 +47,8 @@ func lock(baseUrl string) templ.ComponentScript {
 
     });
 }`,
-		Call:       templ.SafeScript(`__templ_lock_6461`, baseUrl),
-		CallInline: templ.SafeScriptInline(`__templ_lock_6461`, baseUrl),
+		Call:       templ.SafeScript(`__templ_lock_a78e`, baseUrl),
+		CallInline: templ.SafeScriptInline(`__templ_lock_a78e`, baseUrl),
 	}
 }
 
@@ -65,7 +65,7 @@ func PassShare(s PassShareState, ps *chalgen.PassShare) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><script src=\"/build/vanilla.example.js\"></script><h1>PassShare</h1><p>Share your password with a friend!</p><canvas id=\"lock\"></canvas><h3>Forgot your pattern? No problem!</h3><p>Use the offline pattern recovery device we mailed you.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -73,7 +73,7 @@ func PassShare(s PassShareState, ps *chalgen.PassShare) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

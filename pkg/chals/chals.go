@@ -293,11 +293,20 @@ func (s *Handler) Handle() (string, http.Handler) {
 						t.Filemanager.Urls = newUrls
 
 						templ.Handler(tmpl.Page(tmpl.FileManager(tmpl.FileManagerState{
+							Flag:    n.Meta.Flag,
 							Session: sess,
 							URL: tmpl.FileManagerURL{
 								Login: templ.URL(baseURL + "/login"),
 							},
-						}, t.Filemanager))).ServeHTTP(w, r)
+						}, t.Filemanager)), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
+							slog.Error("failed to template phone", "err", err)
+							return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+								w.WriteHeader(http.StatusBadRequest)
+								if _, err := io.WriteString(w, err.Error()); err != nil {
+									slog.Error("failed to write response", "err", err)
+								}
+							})
+						})).ServeHTTP(w, r)
 						return
 					case *chalgen.Challenge_Exif:
 						// TODO breadchris generate exif image
@@ -359,9 +368,18 @@ func (s *Handler) Handle() (string, http.Handler) {
 							app.Url = buf.String()
 						}
 						templ.Handler(tmpl.Page(tmpl.Phone(tmpl.PhoneState{
+							Flag:          n.Meta.Flag,
 							TrackerLogin:  templ.URL(baseURL + "/tracker/login"),
 							TrackerAuthed: sess.TrackerAuthed,
-						}, t.Phone))).ServeHTTP(w, r)
+						}, t.Phone)), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
+							slog.Error("failed to template phone", "err", err)
+							return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+								w.WriteHeader(http.StatusBadRequest)
+								if _, err := io.WriteString(w, err.Error()); err != nil {
+									slog.Error("failed to write response", "err", err)
+								}
+							})
+						})).ServeHTTP(w, r)
 						return
 					case *chalgen.Challenge_Slack:
 						var sess tmpl.SessionState
@@ -449,6 +467,7 @@ func (s *Handler) Handle() (string, http.Handler) {
 						}
 
 						templ.Handler(tmpl.Page(tmpl.Chat(tmpl.ChatState{
+							Flag:       n.Meta.Flag,
 							UserLookup: userLookup,
 							Session:    sess,
 							URL: tmpl.ChatURL{
@@ -512,11 +531,13 @@ func (s *Handler) Handle() (string, http.Handler) {
 							type res struct {
 								Success  bool   `json:"success"`
 								Password string `json:"password"`
+								Flag     string `json:"flag"`
 							}
 							writeRes := func(s bool, p string) {
 								r := res{
 									Success:  s,
 									Password: p,
+									Flag:     n.Meta.Flag,
 								}
 								b, _ := json.Marshal(r)
 								w.Write(b)
@@ -534,7 +555,15 @@ func (s *Handler) Handle() (string, http.Handler) {
 							writeRes(true, t.Passshare.Password)
 							return
 						}
-						templ.Handler(tmpl.Page(tmpl.PassShare(st, t.Passshare))).ServeHTTP(w, r)
+						templ.Handler(tmpl.Page(tmpl.PassShare(st, t.Passshare)), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
+							slog.Error("failed to template passshare", "err", err)
+							return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+								w.WriteHeader(http.StatusBadRequest)
+								if _, err := io.WriteString(w, err.Error()); err != nil {
+									slog.Error("failed to write response", "err", err)
+								}
+							})
+						})).ServeHTTP(w, r)
 						return
 					case *chalgen.Challenge_Search:
 						s := tmpl.SearchState{
@@ -547,7 +576,7 @@ func (s *Handler) Handle() (string, http.Handler) {
 								return
 							}
 							q := r.FormValue("query")
-							r, err := performSearch(t.Search, q)
+							r, err := performSearch(n.Meta.Flag, t.Search, q)
 							if err != nil {
 								http.Error(w, err.Error(), http.StatusInternalServerError)
 								return

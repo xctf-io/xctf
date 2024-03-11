@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-func performSearch(s *chalgen.Search, query string) ([]string, error) {
+func performSearch(flag string, s *chalgen.Search, query string) ([]string, error) {
 	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		return nil, err
@@ -32,6 +32,11 @@ func performSearch(s *chalgen.Search, query string) ([]string, error) {
 			return nil, err
 		}
 	}
+	_, err = db.Exec(insertSQL, flag)
+	if err != nil {
+		return nil, err
+	}
+
 	var q string
 	if query == "" {
 		q = "SELECT value FROM entries"

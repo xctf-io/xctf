@@ -1,34 +1,39 @@
 package chals
 
 import (
-	"github.com/dsoprea/go-exif/v2"
+	exifcommon "github.com/dsoprea/go-exif/v2/common"
+	"github.com/dsoprea/go-exif/v3"
+	jis "github.com/dsoprea/go-jpeg-image-structure/v2"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestCreateImage(t *testing.T) {
 	// TODO breadchris how do you handle files during tests?
 	// where do they go? folder names? outputs? cleanup?
-	f, err := os.Open("/Users/hacked/Downloads/1999 Happy Meal Lego.jpg")
-	if err != nil {
-		t.Fatal(err)
-	}
-	o, err := os.Create("/tmp/out.jpg")
-	if err != nil {
-		t.Fatal(err)
-	}
-	r, err := exif.SearchAndExtractExifWithReader(f)
-	if err != nil {
-		t.Fatal(err)
-	}
-	eh, err := exif.ParseExifHeader(r)
-	if err != nil {
-		t.Fatal(err)
-	}
-	println(eh.String())
+	fi := "/Users/hacked/Downloads/1999 Happy Meal Lego.jpg"
 
-	err = modifyAndWriteImage(o, f)
+	intfc, _ := jis.NewJpegMediaParser().ParseFile(fi)
+	sl := intfc.(*jis.SegmentList)
+	ib, _ := sl.ConstructExifBuilder()
+	ifd0Ib, _ := exif.GetOrCreateIbFromRootIb(ib, "IFD0")
+	ifdIb, _ := exif.GetOrCreateIbFromRootIb(ib, "IFD")
+
+	g := exif.GpsDegrees{
+		Degrees: 11,
+		Minutes: 22,
+		Seconds: 33,
+	}
+	_ = ifd0Ib.SetStandardWithName("Artist", "Test")
+	_ = ifdIb.SetStandardWithName("DateTimeOriginal", time.Date(2021, time.January, 1, 0, 0, 0, 0, time.UTC))
+	err := ib.AddStandard(exifcommon.IfdPathStandardGps.TagId(), g.Raw())
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	_ = sl.SetExif(ib)
+	f, _ := os.OpenFile("/tmp/1999 Happy Meal Lego.jpg", os.O_RDWR|os.O_CREATE, 0755)
+	defer f.Close()
+	_ = sl.Write(f)
 }

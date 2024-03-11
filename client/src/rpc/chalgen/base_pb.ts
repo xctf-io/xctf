@@ -692,6 +692,11 @@ export class Phone extends Message$1<Phone> {
    */
   apps: App[] = [];
 
+  /**
+   * @generated from field: string name = 2;
+   */
+  name = "";
+
   constructor(data?: PartialMessage<Phone>) {
     super();
     proto3.util.initPartial(data, this);
@@ -701,6 +706,7 @@ export class Phone extends Message$1<Phone> {
   static readonly typeName = "chalgen.Phone";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "apps", kind: "message", T: App, repeated: true },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Phone {

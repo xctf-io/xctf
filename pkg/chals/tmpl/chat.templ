@@ -11,6 +11,7 @@ type SessionState struct {
 }
 
 type ChatState struct {
+    Flag string
     URL ChatURL
     Session SessionState
     Channel chalgen.Channel
@@ -52,6 +53,7 @@ templ Chat(state ChatState, slack *chalgen.Slack) {
           </div>
           <div class="flex-none">
             <ul class="menu menu-horizontal px-1 space-x-2">
+              <li><a>{state.Flag}</a></li>
               if state.Session.User != nil {
                   <li><button onclick="my_modal_2.showModal()">{ state.Session.User.Username }</button></li>
                   <dialog id="my_modal_2" class="modal">

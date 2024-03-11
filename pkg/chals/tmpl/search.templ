@@ -12,30 +12,11 @@ type SearchState struct {
     Results []string
 }
 
-templ SecurityServer(s SearchState, cs *chalgen.Search) {
-    <div class="max-w-2xl py-32 sm:py-48 lg:py-56 space-y-4 mx-10 text-gray-400">
-        <h1 class="text-3xl">Security Server</h1>
-        <p>Search for security servers.</p>
-        @templ.Raw(fmt.Sprintf("<!-- %s -->", cs.Password))
-        <form action={s.LoginURL} method="post" class="flex flex-row space-x-2">
-            <label class="input input-bordered flex items-center gap-2">
-              <input type="password" name="password" class="grow"  />
-            </label>
-            <input class="btn" type="submit" value="Login" />
-        </form>
-        <ul>
-            for _, result := range s.Results {
-                <li>{result}</li>
-            }
-        </ul>
-    </div>
-
-}
-
 templ Search(s SearchState, cs *chalgen.Search) {
     <div class="max-w-2xl py-32 sm:py-48 lg:py-56 space-y-4 mx-10 text-gray-400">
-        <h1 class="text-3xl">Exact Search</h1>
+        <h1 class="text-3xl">Security Search</h1>
         <p>Only find exactly what you're looking for.</p>
+        @templ.Raw(fmt.Sprintf("<!-- %s -->", cs.Password))
         <form action={s.SearchURL} method="get" class="flex flex-row space-x-2">
             <label class="input input-bordered flex items-center gap-2">
               <input type="text" name="query" class="grow" value={s.Query} placeholder="Search" />

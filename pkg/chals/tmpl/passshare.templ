@@ -27,7 +27,7 @@ script lock(baseUrl string) {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert(`Password: ${data.password}`);
+                alert(`${data.flag} Password: ${data.password}`);
             } else {
                 alert('Failed');
             }
