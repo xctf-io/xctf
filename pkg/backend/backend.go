@@ -484,7 +484,7 @@ func (b *Backend) GetHomePage(
 		if node.Meta.Entrypoint {
 			entrypoints = append(entrypoints, &xctf.Entrypoint{
 				Name:  node.Meta.Name,
-				Route: chals.ChalURL(id, node.Meta.Id, ""),
+				Route: chals.ChalURL("https", id, node.Meta.Id, ""),
 			})
 		}
 	}

@@ -58,7 +58,7 @@ func init() {
 	gob.Register(tmpl.PhoneState{})
 }
 
-func ChalURL(compId, chalID, host string) string {
+func ChalURL(scheme, compId, chalID, host string) string {
 	path := fmt.Sprintf("/play/%s/%s", compId, chalID)
 	if host == "" {
 		return path
@@ -144,7 +144,7 @@ func (s *Handler) Handle() (string, http.Handler) {
 		challenges := map[string]string{}
 		for _, n := range graph.Nodes {
 			view := ""
-			chalURL := ChalURL(compId, n.Meta.Id, r.Host)
+			chalURL := ChalURL(r.URL.Scheme, compId, n.Meta.Id, r.Host)
 			switch u := n.Challenge.(type) {
 			case *chalgen.Node_Base:
 				switch t := u.Base.Type.(type) {
