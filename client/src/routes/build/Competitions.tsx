@@ -9,7 +9,14 @@ import {Spinner} from "@/components/Spinner";
 import {FileManager} from "@/routes/build/FileManager";
 import toast from "react-hot-toast";
 import {generateUUID} from "@/util/uuid";
-import {Bars3Icon, DocumentPlusIcon, DocumentTextIcon, PlusIcon, TrashIcon} from "@heroicons/react/24/outline";
+import {
+    Bars3Icon,
+    DocumentArrowDownIcon,
+    DocumentPlusIcon,
+    DocumentTextIcon,
+    PlusIcon,
+    TrashIcon
+} from "@heroicons/react/24/outline";
 import {Save} from "lucide-react";
 import {copyTextToClipboard} from "@/util/copy";
 import {Simulate} from "react-dom/test-utils";
@@ -19,6 +26,7 @@ export const Competitions: React.FC = () => {
     const [activeTab, setActiveTab] = React.useState<string|undefined>(undefined);
     const [curComp, setCurComp] = React.useState<Competition|undefined>(undefined);
     const [competitionList, setCompetitionList] = React.useState<CompetitionList|null>(null);
+    const [yaml, setYaml] = useState('');
 
     const tabs = ['edit', 'upload', 'image'];
 
@@ -72,6 +80,16 @@ export const Competitions: React.FC = () => {
         await updateCompetition();
         await loadCompetitions();
     }
+
+    const importCompetition = async () => {
+        try {
+            setCurComp(Competition.fromJsonString(yaml));
+        } catch (e: any) {
+            toast.error(e.toString());
+        }
+        closeEvidenceModal();
+    }
+
     const onCompDelete = async () => {
         if (!curComp) {
             toast.error('No competition selected');
@@ -108,6 +126,15 @@ export const Competitions: React.FC = () => {
         }
     }, [activeTab]);
 
+    const openEvidenceModal = () => {
+        (
+            document.getElementById("import-modal") as HTMLDialogElement
+        ).showModal();
+    };
+    const closeEvidenceModal = () => {
+        (document.getElementById("import-modal") as HTMLDialogElement).close();
+    };
+
     return (
         <div className={"mx-8 space-y-6"}>
             <div className="w-full tabs tabs-bordered my-6">
@@ -129,7 +156,33 @@ export const Competitions: React.FC = () => {
                     <div className={"flex flex-row space-x-2"}>
                         <p>Competitions</p>
                         <DocumentPlusIcon onClick={newCompetition} className={"h-6 w-6 mouse-pointer"} />
+                        <DocumentArrowDownIcon onClick={openEvidenceModal} className={"h-6 w-6 mouse-pointer"} />
                     </div>
+                    <dialog
+                        id="import-modal"
+                        aria-labelledby="modal-title"
+                        className="modal modal-bottom sm:modal-middle"
+                    >
+                        <div className="modal-box">
+                            <h3 id="modal-title" className="font-bold text-xl">
+                                import competition
+                            </h3>
+                            <textarea className="textarea textarea-bordered w-full h-72" value={yaml} onChange={(e) => {
+                                setYaml(e.target.value);
+                            }} placeholder="json"></textarea>
+                            <div className="modal-action">
+                                <button
+                                    onClick={importCompetition}
+                                    className="btn btn-primary"
+                                >
+                                    import
+                                </button>
+                            </div>
+                            <form method="dialog" className="modal-backdrop">
+                                <button>close</button>
+                            </form>
+                        </div>
+                    </dialog>
                     <div className={"flex flex-row space-x-4"}>
                         {competitionList ? (
                             <>

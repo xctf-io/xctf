@@ -479,6 +479,13 @@ func (b *Backend) GetHomePage(
 		return nil, err
 	}
 
+	if graph == nil {
+		return connect.NewResponse(&xctf.GetHomePageResponse{
+			Content:     "no competition graph",
+			Entrypoints: []*xctf.Entrypoint{},
+		}), nil
+	}
+
 	var entrypoints []*xctf.Entrypoint
 	for _, node := range graph.Nodes {
 		if node.Meta.Entrypoint {
