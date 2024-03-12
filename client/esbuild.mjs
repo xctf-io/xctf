@@ -35,6 +35,7 @@ const runTailwindBuild = (watch) => {
 const options = {
 	entryPoints: [
 		"./src/index.tsx",
+		"./src/vanilla.example.js",
 	],
 	outdir: "public/build/",
 	format: "esm",

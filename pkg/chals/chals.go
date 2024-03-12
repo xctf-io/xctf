@@ -163,6 +163,8 @@ func (s *Handler) Handle() (string, http.Handler) {
 					view = caesarCipher(c, int(t.Caesar.Shift))
 				case *chalgen.Challenge_Xor:
 					view = string(xorEncryptDecrypt([]byte(t.Xor.Plaintext), []byte(t.Xor.Key)))
+				case *chalgen.Challenge_Passshare:
+					view = base64.StdEncoding.EncodeToString([]byte(chalURL))
 				}
 			}
 			if view != "" {

@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"embed"
 	"fmt"
 	"github.com/benbjohnson/litestream"
 	lsgcs "github.com/benbjohnson/litestream/gcs"
@@ -23,9 +22,6 @@ import (
 
 	"github.com/glebarez/sqlite"
 )
-
-//go:embed Home.md
-var Home embed.FS
 
 var ProviderSet = wire.NewSet(
 	NewConfig,
@@ -160,17 +156,6 @@ func (s *Service) Migrate() error {
 			return err
 		}
 	}
-
-	content, err := Home.ReadFile("Home.md")
-	if err != nil {
-		panic(err)
-	}
-	homePage := models.HomePage{
-		Id:      "home",
-		Content: string(content),
-	}
-	s.DB.Save(&homePage)
-	slog.Debug("creating home page")
 	return nil
 }
 

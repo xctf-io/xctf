@@ -40,11 +40,13 @@ script lock(baseUrl string) {
 templ PassShare(s PassShareState, ps *chalgen.PassShare) {
     <div>
         <script src="/build/vanilla.example.js"></script>
-        <h1>PassShare</h1>
-        <p>Share your password with a friend!</p>
-        <input id="id" type="number" name="id" placeholder="id" />
-        <canvas id="lock"></canvas>
-        <p>{ps.Message}</p>
-        @lock(s.BaseURL)
+        <div class="space-y-2 p-4">
+            <h1>PassShare</h1>
+            <p>Share your password with a friend!</p>
+            <input id="id" type="number" name="id" placeholder="id" />
+            <canvas id="lock"></canvas>
+            <p>{ps.Message}</p>
+            @lock(s.BaseURL)
+        </div>
     </div>
 }

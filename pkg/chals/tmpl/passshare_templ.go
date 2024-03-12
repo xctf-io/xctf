@@ -66,14 +66,14 @@ func PassShare(s PassShareState, ps *chalgen.PassShare) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><script src=\"/build/vanilla.example.js\"></script><h1>PassShare</h1><p>Share your password with a friend!</p><input id=\"id\" type=\"number\" name=\"id\" placeholder=\"id\"><canvas id=\"lock\"></canvas><p>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><script src=\"/build/vanilla.example.js\"></script><div class=\"space-y-2 p-4\"><h1>PassShare</h1><p>Share your password with a friend!</p><input id=\"id\" type=\"number\" name=\"id\" placeholder=\"id\"><canvas id=\"lock\"></canvas><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(ps.Message)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/chals/tmpl/passshare.templ`, Line: 46, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/chals/tmpl/passshare.templ`, Line: 47, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -87,7 +87,7 @@ func PassShare(s PassShareState, ps *chalgen.PassShare) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
