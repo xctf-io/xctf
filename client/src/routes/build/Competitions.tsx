@@ -36,8 +36,6 @@ export const Competitions: React.FC = () => {
             setCompetitionList(res);
             if (res.competitions.length > 0) {
                 setCurComp(res.competitions[0]);
-            } else {
-                newCompetition();
             }
         } catch (e: any) {
             console.error(e);
@@ -151,7 +149,7 @@ export const Competitions: React.FC = () => {
             {activeTab === 'image' && (
                 <iframe className={"w-full h-screen"} src={"https://viliusle.github.io/miniPaint/"} />
             )}
-            {activeTab === 'edit' && curComp && (
+            {activeTab === 'edit' && (
                 <>
                     <div className={"flex flex-row space-x-2"}>
                         <p>Competitions</p>
@@ -233,7 +231,7 @@ export const Competitions: React.FC = () => {
                     </div>
                     <div className={"flex flex-row"}>
                     </div>
-                    <Edit comp={curComp} onUpdate={setCurComp} />
+                    {curComp && <Edit comp={curComp} onUpdate={setCurComp} />}
                 </>
             )}
             {activeTab === 'upload' && <FileManager />}

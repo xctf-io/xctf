@@ -13,8 +13,8 @@ import (
 	"github.com/xctf-io/xctf/pkg/bucket"
 	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 	"github.com/xctf-io/xctf/pkg/models"
-	"github.com/xctf-io/xctf/pkg/sqlitefs"
 	"google.golang.org/protobuf/encoding/protojson"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log/slog"
 	"os"
@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	"github.com/glebarez/sqlite"
-	"gorm.io/driver/postgres"
 )
 
 //go:embed Home.md
@@ -41,8 +40,9 @@ type Service struct {
 }
 
 func OpenDB(c Config) (*sql.DB, error) {
-	if strings.Contains(c.DSN, "postgres") {
-		return sql.Open("postgres", c.DSN)
+	// TODO breadchris how should db be configured for postgres
+	if strings.HasPrefix(c.DSN, "postgres://") {
+		return sql.Open("pgx", c.DSN)
 	} else {
 		dir, _ := path.Split(c.DSN)
 		if err := os.MkdirAll(dir, 0755); err != nil {
@@ -54,9 +54,11 @@ func OpenDB(c Config) (*sql.DB, error) {
 
 // TODO breadchris clean this up
 func OpenGorm(c Config, db *sql.DB) (*gorm.DB, error) {
-	if strings.Contains(c.DSN, "postgres") {
+	// TODO breadchris how should db be configured for postgres
+	if strings.HasPrefix(c.DSN, "postgres://") {
 		return gorm.Open(postgres.New(postgres.Config{
-			Conn: db,
+			Conn:                 db,
+			PreferSimpleProtocol: true,
 		}), &gorm.Config{})
 	} else {
 		return gorm.Open(sqlite.Dialector{
@@ -111,10 +113,10 @@ func New(c Config, bc bucket.Config) (*Service, error) {
 	}
 
 	// TODO breadchris migrates sqlitefs
-	_, err = sqlitefs.NewSQLiteFS(db)
-	if err != nil {
-		return nil, err
-	}
+	//_, err = sqlitefs.NewSQLiteFS(db)
+	//if err != nil {
+	//	return nil, err
+	//}
 	slog.Debug("database migrated")
 
 	// TODO breadchris make this configurable
