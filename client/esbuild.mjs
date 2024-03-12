@@ -1,9 +1,21 @@
 import esbuild from "esbuild";
 import { spawn, spawnSync } from "child_process";
+import fs from "fs/promises";
 
 const devBuild = process.env.DEV === "true";
 const minify = !devBuild;
 const nodeEnv = devBuild ? '"development"' : '"production"';
+
+async function copyFile(source, destination) {
+	try {
+		await fs.copyFile(source, destination);
+		console.log(`File copied from ${source} to ${destination}`);
+	} catch (error) {
+		console.error('Error occurred while copying the file:', error);
+	}
+}
+
+void copyFile("./src/vanilla.example.js", "./public/build/vanilla.example.js");
 
 const runTailwindBuild = (watch) => {
 	console.log("Building Tailwind CSS...");
@@ -35,7 +47,6 @@ const runTailwindBuild = (watch) => {
 const options = {
 	entryPoints: [
 		"./src/index.tsx",
-		"./src/vanilla.example.js",
 	],
 	outdir: "public/build/",
 	format: "esm",
@@ -44,7 +55,7 @@ const options = {
 		".ts": "tsx",
 		".tsx": "tsx",
 		".woff2": "file",
-		".woff": "file"
+		".woff": "file",
 	},
 	plugins: [],
 	minify: minify,
