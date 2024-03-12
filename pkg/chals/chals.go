@@ -176,6 +176,10 @@ func (s *Handler) Handle() (string, http.Handler) {
 				switch u := n.Challenge.(type) {
 				case *chalgen.Node_Base:
 					switch t := u.Base.Type.(type) {
+					case *chalgen.Challenge_Data:
+						w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
+						w.Write([]byte(t.Data.Data))
+						return
 					case *chalgen.Challenge_Pdf:
 						pdf := fpdf.New("P", "mm", "A4", "")
 						pdf.AddPage()
@@ -526,6 +530,7 @@ func (s *Handler) Handle() (string, http.Handler) {
 							w.Header().Set("Content-Type", "application/json")
 							w.WriteHeader(http.StatusOK)
 							type req struct {
+								ID   int    `json:"id"`
 								Hash string `json:"hash"`
 							}
 							type res struct {
@@ -548,11 +553,13 @@ func (s *Handler) Handle() (string, http.Handler) {
 								return
 							}
 
-							if re.Hash != t.Passshare.Hash {
-								writeRes(false, "")
-								return
+							for _, sl := range t.Passshare.Solutions {
+								if re.ID == int(sl.Id) && re.Hash == sl.Hash {
+									writeRes(true, t.Passshare.Password)
+									return
+								}
 							}
-							writeRes(true, t.Passshare.Password)
+							writeRes(false, t.Passshare.Password)
 							return
 						}
 						templ.Handler(tmpl.Page(tmpl.PassShare(st, t.Passshare)), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {

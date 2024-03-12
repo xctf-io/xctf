@@ -88,7 +88,7 @@ export const InputFormContents: FC<InputFormContentsProps> = (props) => {
     if (field.type === FieldDescriptorProto_Type.STRING) {
         return (
             <div key={field.number}>
-                <input aria-label={"field-input"} value={fieldValue} {...register(fieldFormName)} />
+                <textarea aria-label={"field-input"} value={fieldValue} {...register(fieldFormName)} />
             </div>
         )
     }

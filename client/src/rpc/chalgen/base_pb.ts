@@ -109,6 +109,12 @@ export class Challenge extends Message$1<Challenge> {
      */
     value: AudioPlayer;
     case: "audioplayer";
+  } | {
+    /**
+     * @generated from field: chalgen.Data data = 22;
+     */
+    value: Data;
+    case: "data";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Challenge>) {
@@ -135,6 +141,7 @@ export class Challenge extends Message$1<Challenge> {
     { no: 19, name: "passshare", kind: "message", T: PassShare, oneof: "type" },
     { no: 20, name: "hashes", kind: "message", T: Hashes, oneof: "type" },
     { no: 21, name: "audioplayer", kind: "message", T: AudioPlayer, oneof: "type" },
+    { no: 22, name: "data", kind: "message", T: Data, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Challenge {
@@ -151,6 +158,43 @@ export class Challenge extends Message$1<Challenge> {
 
   static equals(a: Challenge | PlainMessage<Challenge> | undefined, b: Challenge | PlainMessage<Challenge> | undefined): boolean {
     return proto3.util.equals(Challenge, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Data
+ */
+export class Data extends Message$1<Data> {
+  /**
+   * @generated from field: string data = 1;
+   */
+  data = "";
+
+  constructor(data?: PartialMessage<Data>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Data";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Data {
+    return new Data().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Data {
+    return new Data().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Data {
+    return new Data().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Data | PlainMessage<Data> | undefined, b: Data | PlainMessage<Data> | undefined): boolean {
+    return proto3.util.equals(Data, a, b);
   }
 }
 
@@ -354,9 +398,14 @@ export class PassShare extends Message$1<PassShare> {
   password = "";
 
   /**
-   * @generated from field: string hash = 2;
+   * @generated from field: repeated chalgen.Solution solutions = 2;
    */
-  hash = "";
+  solutions: Solution[] = [];
+
+  /**
+   * @generated from field: string message = 3;
+   */
+  message = "";
 
   constructor(data?: PartialMessage<PassShare>) {
     super();
@@ -367,7 +416,8 @@ export class PassShare extends Message$1<PassShare> {
   static readonly typeName = "chalgen.PassShare";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "hash", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "solutions", kind: "message", T: Solution, repeated: true },
+    { no: 3, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PassShare {
@@ -384,6 +434,49 @@ export class PassShare extends Message$1<PassShare> {
 
   static equals(a: PassShare | PlainMessage<PassShare> | undefined, b: PassShare | PlainMessage<PassShare> | undefined): boolean {
     return proto3.util.equals(PassShare, a, b);
+  }
+}
+
+/**
+ * @generated from message chalgen.Solution
+ */
+export class Solution extends Message$1<Solution> {
+  /**
+   * @generated from field: int32 id = 1;
+   */
+  id = 0;
+
+  /**
+   * @generated from field: string hash = 2;
+   */
+  hash = "";
+
+  constructor(data?: PartialMessage<Solution>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chalgen.Solution";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "hash", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Solution {
+    return new Solution().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Solution {
+    return new Solution().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Solution {
+    return new Solution().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Solution | PlainMessage<Solution> | undefined, b: Solution | PlainMessage<Solution> | undefined): boolean {
+    return proto3.util.equals(Solution, a, b);
   }
 }
 
@@ -1440,6 +1533,11 @@ export class User extends Message$1<User> {
    */
   password = "";
 
+  /**
+   * @generated from field: string image = 4;
+   */
+  image = "";
+
   constructor(data?: PartialMessage<User>) {
     super();
     proto3.util.initPartial(data, this);
@@ -1451,6 +1549,7 @@ export class User extends Message$1<User> {
     { no: 1, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "bio", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): User {

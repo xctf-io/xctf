@@ -114,7 +114,7 @@ templ Chat(state ChatState, slack *chalgen.Slack) {
           for i, m := range state.Channel.Messages {
           <div class="flex items-start space-x-4">
             <div class="flex-shrink-0">
-              <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/40" alt="User avatar" />
+              <img class="h-10 w-10 rounded-full" src={state.UserLookup[m.Username].Image} alt="User avatar" />
             </div>
             <div>
               <div onclick={openModal(fmt.Sprintf("msg_bio_modal_%d", i))} class="pointer-cursor text-sm text-gray-700">

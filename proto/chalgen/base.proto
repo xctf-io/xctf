@@ -20,7 +20,12 @@ message Challenge {
     PassShare passshare = 19;
     Hashes hashes = 20;
     AudioPlayer audioplayer = 21;
+    Data data = 22;
   }
+}
+
+message Data {
+  string data = 1;
 }
 
 message AudioPlayer {
@@ -48,6 +53,12 @@ message Override {
 
 message PassShare {
   string password = 1;
+  repeated Solution solutions = 2;
+  string message = 3;
+}
+
+message Solution {
+  int32 id = 1;
   string hash = 2;
 }
 
@@ -177,6 +188,7 @@ message User {
   string username = 1;
   string bio = 2;
   string password = 3;
+  string image = 4;
 }
 
 // Post represents a user's post.

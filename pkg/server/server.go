@@ -26,6 +26,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 )
 
 var ProviderSet = wire.NewSet(
@@ -96,6 +97,12 @@ func New(
 
 	muxRoot.Handle("/upload", http.HandlerFunc(fileUploadHandler(s)))
 
+	type cacheEntry struct {
+		time time.Time
+		data []byte
+	}
+	dlCache := map[string]cacheEntry{}
+
 	// TODO breadchris there has to be a better way to handle routes than this
 	muxRoot.Handle("/", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		filePath := r.URL.Path
@@ -106,6 +113,19 @@ func New(
 		if strings.Index(r.URL.Path, "/download") == 0 {
 			// Remove "/download/"
 			p := r.URL.Path[10:]
+
+			if dl, ok := dlCache[p]; ok {
+				if time.Since(dl.time) < time.Minute {
+					_, err = rw.Write(dl.data)
+					if err != nil {
+						rw.WriteHeader(http.StatusNotFound)
+						slog.Debug("failed to write file", "err", err)
+						return
+					}
+					return
+				}
+			}
+
 			r, err := s.Bucket.NewReader(r.Context(), p, nil)
 			if err != nil {
 				rw.WriteHeader(http.StatusNotFound)
@@ -113,7 +133,18 @@ func New(
 				return
 			}
 			defer r.Close()
-			_, err = r.WriteTo(rw)
+
+			data, err := io.ReadAll(r)
+			if err != nil {
+				rw.WriteHeader(http.StatusNotFound)
+				slog.Debug("failed to read file", "err", err)
+				return
+			}
+			dlCache[p] = cacheEntry{
+				time.Now(),
+				data,
+			}
+			_, err = rw.Write(data)
 			if err != nil {
 				rw.WriteHeader(http.StatusNotFound)
 				slog.Debug("failed to write file", "err", err)
