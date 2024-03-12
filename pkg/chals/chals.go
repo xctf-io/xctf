@@ -58,10 +58,15 @@ func init() {
 	gob.Register(tmpl.PhoneState{})
 }
 
-func ChalURL(scheme, compId, chalID, host string) string {
+// TODO breadchris base url should be configured from the environment?
+func ChalURL(isHttps bool, compId, chalID, host string) string {
 	path := fmt.Sprintf("/play/%s/%s", compId, chalID)
 	if host == "" {
 		return path
+	}
+	scheme := "http"
+	if isHttps {
+		scheme = "https"
 	}
 	u := url.URL{
 		// TODO breadchris check if the original request was https
@@ -142,9 +147,10 @@ func (s *Handler) Handle() (string, http.Handler) {
 
 		// TODO breadchris find dependencies of referenced challenge and build those
 		challenges := map[string]string{}
+		isHttps := r.TLS != nil
 		for _, n := range graph.Nodes {
 			view := ""
-			chalURL := ChalURL(r.URL.Scheme, compId, n.Meta.Id, r.Host)
+			chalURL := ChalURL(isHttps, compId, n.Meta.Id, r.Host)
 			switch u := n.Challenge.(type) {
 			case *chalgen.Node_Base:
 				switch t := u.Base.Type.(type) {
@@ -169,6 +175,23 @@ func (s *Handler) Handle() (string, http.Handler) {
 			} else {
 				challenges[n.Meta.Name] = chalURL
 			}
+		}
+
+		templChals := func(tl string) (string, error) {
+			nt, err := ttemplate.New("templ").Parse(tl)
+			if err != nil {
+				return "", err
+			}
+			var buf bytes.Buffer
+			err = nt.Execute(&buf, struct {
+				Challenges map[string]string
+			}{
+				Challenges: challenges,
+			})
+			if err != nil {
+				return "", err
+			}
+			return buf.String(), nil
 		}
 
 		for _, n := range graph.Nodes {
@@ -277,22 +300,12 @@ func (s *Handler) Handle() (string, http.Handler) {
 
 						var newUrls []string
 						for _, ul := range t.Filemanager.Urls {
-							nt, err := ttemplate.New("app").Parse(ul)
+							ul, err = templChals(ul)
 							if err != nil {
 								http.Error(w, err.Error(), http.StatusInternalServerError)
 								return
 							}
-							var buf bytes.Buffer
-							err = nt.Execute(&buf, struct {
-								Challenges map[string]string
-							}{
-								Challenges: challenges,
-							})
-							if err != nil {
-								http.Error(w, err.Error(), http.StatusInternalServerError)
-								return
-							}
-							newUrls = append(newUrls, buf.String())
+							newUrls = append(newUrls, ul)
 						}
 						t.Filemanager.Urls = newUrls
 
@@ -354,22 +367,11 @@ func (s *Handler) Handle() (string, http.Handler) {
 							}
 						}
 						for _, app := range t.Phone.Apps {
-							nt, err := ttemplate.New("app").Parse(app.Url)
+							app.Url, err = templChals(app.Url)
 							if err != nil {
 								http.Error(w, err.Error(), http.StatusInternalServerError)
 								return
 							}
-							var buf bytes.Buffer
-							err = nt.Execute(&buf, struct {
-								Challenges map[string]string
-							}{
-								Challenges: challenges,
-							})
-							if err != nil {
-								http.Error(w, err.Error(), http.StatusInternalServerError)
-								return
-							}
-							app.Url = buf.String()
 						}
 						templ.Handler(tmpl.Page(tmpl.Phone(tmpl.PhoneState{
 							Flag:          n.Meta.Flag,
@@ -445,23 +447,11 @@ func (s *Handler) Handle() (string, http.Handler) {
 
 						for _, p := range t.Slack.Channels {
 							for _, n := range p.Messages {
-								nt, err := ttemplate.New("slack").Parse(n.Content)
-								if err != nil {
-									slog.Error("failed to parse slack message template", "channel", p.Name, "message", n.Content)
-									http.Error(w, err.Error(), http.StatusInternalServerError)
-									return
-								}
-								var buf bytes.Buffer
-								err = nt.Execute(&buf, struct {
-									Challenges map[string]string
-								}{
-									Challenges: challenges,
-								})
+								n.Content, err = templChals(n.Content)
 								if err != nil {
 									http.Error(w, err.Error(), http.StatusInternalServerError)
 									return
 								}
-								n.Content = buf.String()
 							}
 						}
 
@@ -494,22 +484,11 @@ func (s *Handler) Handle() (string, http.Handler) {
 						return
 					case *chalgen.Challenge_Twitter:
 						for _, p := range t.Twitter.Posts {
-							nt, err := ttemplate.New("twitter").Parse(p.Content)
+							p.Content, err = templChals(p.Content)
 							if err != nil {
 								http.Error(w, err.Error(), http.StatusInternalServerError)
 								return
 							}
-							var buf bytes.Buffer
-							err = nt.Execute(&buf, struct {
-								Challenges map[string]string
-							}{
-								Challenges: challenges,
-							})
-							if err != nil {
-								http.Error(w, err.Error(), http.StatusInternalServerError)
-								return
-							}
-							p.Content = buf.String()
 						}
 						err := twitterTmpl.Execute(w, struct {
 							Twitter *chalgen.Twitter
@@ -576,6 +555,23 @@ func (s *Handler) Handle() (string, http.Handler) {
 						s := tmpl.SearchState{
 							SearchURL: templ.SafeURL(baseURL + "/search"),
 						}
+						t.Search.Password, err = templChals(t.Search.Password)
+						if err != nil {
+							http.Error(w, err.Error(), http.StatusInternalServerError)
+							return
+						}
+
+						var newEntries []string
+						for _, se := range t.Search.Entry {
+							se, err = templChals(se)
+							if err != nil {
+								http.Error(w, err.Error(), http.StatusInternalServerError)
+								return
+							}
+							newEntries = append(newEntries, se)
+						}
+						t.Search.Entry = newEntries
+
 						if p == "search" {
 							err := r.ParseForm()
 							if err != nil {
@@ -604,6 +600,11 @@ func (s *Handler) Handle() (string, http.Handler) {
 									return
 								}
 							}
+							return
+						}
+						_, err := w.Write([]byte(n.Meta.Flag + "\n"))
+						if err != nil {
+							http.Error(w, err.Error(), http.StatusInternalServerError)
 							return
 						}
 						for _, h := range s {

@@ -198,7 +198,7 @@ func App(state PhoneState, i int, a *chalgen.App) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"w-full h-full\"></iframe>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"w-full h-96\"></iframe>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

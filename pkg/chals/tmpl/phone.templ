@@ -61,7 +61,7 @@ templ App(state PhoneState, i int, a *chalgen.App) {
         if a.Html != "" {
           @templ.Raw(a.Html)
         } else {
-          <iframe src={a.Url} class="w-full h-full"></iframe>
+          <iframe src={a.Url} class="w-full h-96"></iframe>
         }
     }
 }
