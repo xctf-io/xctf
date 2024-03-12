@@ -59,14 +59,10 @@ func init() {
 }
 
 // TODO breadchris base url should be configured from the environment?
-func ChalURL(isHttps bool, compId, chalID, host string) string {
+func ChalURL(scheme, compId, chalID, host string) string {
 	path := fmt.Sprintf("/play/%s/%s", compId, chalID)
 	if host == "" {
 		return path
-	}
-	scheme := "http"
-	if isHttps {
-		scheme = "https"
 	}
 	u := url.URL{
 		// TODO breadchris check if the original request was https
@@ -147,10 +143,9 @@ func (s *Handler) Handle() (string, http.Handler) {
 
 		// TODO breadchris find dependencies of referenced challenge and build those
 		challenges := map[string]string{}
-		isHttps := r.TLS != nil
 		for _, n := range graph.Nodes {
 			view := ""
-			chalURL := ChalURL(isHttps, compId, n.Meta.Id, r.Host)
+			chalURL := ChalURL(s.c.Scheme, compId, n.Meta.Id, r.Host)
 			switch u := n.Challenge.(type) {
 			case *chalgen.Node_Base:
 				switch t := u.Base.Type.(type) {
@@ -355,15 +350,24 @@ func (s *Handler) Handle() (string, http.Handler) {
 						}
 						if p == "tracker/login" {
 							password := r.FormValue("password")
+							if sess.NextAttempt.After(time.Now()) {
+								http.Error(w, "You must wait 1 minute before trying again", http.StatusBadRequest)
+								return
+							}
 							for _, app := range t.Phone.Apps {
 								switch t := app.Type.(type) {
 								case *chalgen.App_Tracker:
 									if t.Tracker.Password == password {
 										// TODO breadchris set message that user is logged in
 										sess.TrackerAuthed = true
+										sess.NextAttempt = time.Now()
 										s.manager.SetChalState(r.Context(), chalId, sess)
 									}
 								}
+							}
+							if !sess.TrackerAuthed {
+								sess.NextAttempt = time.Now().Add(1 * time.Minute)
+								s.manager.SetChalState(r.Context(), chalId, sess)
 							}
 						}
 						for _, app := range t.Phone.Apps {
@@ -377,6 +381,7 @@ func (s *Handler) Handle() (string, http.Handler) {
 							Flag:          n.Meta.Flag,
 							TrackerLogin:  templ.URL(baseURL + "/tracker/login"),
 							TrackerAuthed: sess.TrackerAuthed,
+							NextAttempt:   sess.NextAttempt,
 						}, t.Phone)), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
 							slog.Error("failed to template phone", "err", err)
 							return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

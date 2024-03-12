@@ -30,6 +30,7 @@ type Backend struct {
 	h       *chals.Handler
 	openai  *openai.Agent
 	b       *bucket.Builder
+	c       chals.Config
 }
 
 var _ xctfconnect.BackendHandler = (*Backend)(nil)
@@ -40,6 +41,7 @@ func NewBackend(
 	h *chals.Handler,
 	openai *openai.Agent,
 	b *bucket.Builder,
+	c chals.Config,
 ) *Backend {
 	return &Backend{
 		s:       s,
@@ -47,6 +49,7 @@ func NewBackend(
 		h:       h,
 		openai:  openai,
 		b:       b,
+		c:       c,
 	}
 }
 
@@ -372,12 +375,26 @@ func (b *Backend) CurrentUser(ctx context.Context, request *connect.Request[xctf
 }
 
 func (b *Backend) GetComputer(ctx context.Context, c *connect.Request[xctf.GetComputerRequest]) (*connect.Response[xctf.GetComputerResponse], error) {
-	_, _, err := b.manager.GetUserFromSession(ctx)
+	uid, _, err := b.manager.GetUserFromSession(ctx)
 	if err != nil {
 		return nil, err
 	}
+
+	u := models.User{}
+	res := b.s.DB.Where(models.User{Model: gorm.Model{ID: uid}}).First(&u)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	if u.ComputerPassword == "" {
+		return connect.NewResponse(&xctf.GetComputerResponse{
+			Loading: true,
+		}), nil
+	}
+	// TODO breadchris configure domain
+	// TODO breadchris auto deploy computer
 	return connect.NewResponse(&xctf.GetComputerResponse{
-		Url: "https://shells.mcpshsf.com/1/vnc_lite.html?path=/1/websockify&password=MrIhxjrh4Fkftmnl",
+		Url:     fmt.Sprintf("https://shells.mcpshsf.com/%d/vnc_lite.html?path=/%d/websockify&password=%s", uid, uid, u.ComputerPassword),
+		Loading: false,
 	}), nil
 }
 
@@ -491,7 +508,7 @@ func (b *Backend) GetHomePage(
 		if node.Meta.Entrypoint {
 			entrypoints = append(entrypoints, &xctf.Entrypoint{
 				Name:  node.Meta.Name,
-				Route: chals.ChalURL(true, id, node.Meta.Id, ""),
+				Route: chals.ChalURL(b.c.Scheme, id, node.Meta.Id, ""),
 			})
 		}
 	}

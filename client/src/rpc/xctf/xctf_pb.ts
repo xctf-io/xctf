@@ -8,6 +8,49 @@ import { DescriptorProto, EnumDescriptorProto, Message, proto3, protoInt64 } fro
 import { Node } from "../chalgen/graph_pb.js";
 
 /**
+ * @generated from message xctf.SetComputerRequest
+ */
+export class SetComputerRequest extends Message<SetComputerRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string password = 2;
+   */
+  password = "";
+
+  constructor(data?: PartialMessage<SetComputerRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "xctf.SetComputerRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SetComputerRequest {
+    return new SetComputerRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SetComputerRequest {
+    return new SetComputerRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SetComputerRequest {
+    return new SetComputerRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SetComputerRequest | PlainMessage<SetComputerRequest> | undefined, b: SetComputerRequest | PlainMessage<SetComputerRequest> | undefined): boolean {
+    return proto3.util.equals(SetComputerRequest, a, b);
+  }
+}
+
+/**
  * @generated from message xctf.GetComputerRequest
  */
 export class GetComputerRequest extends Message<GetComputerRequest> {
@@ -47,6 +90,11 @@ export class GetComputerResponse extends Message<GetComputerResponse> {
    */
   url = "";
 
+  /**
+   * @generated from field: bool loading = 2;
+   */
+  loading = false;
+
   constructor(data?: PartialMessage<GetComputerResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -56,6 +104,7 @@ export class GetComputerResponse extends Message<GetComputerResponse> {
   static readonly typeName = "xctf.GetComputerResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "loading", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetComputerResponse {

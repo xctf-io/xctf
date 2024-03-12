@@ -7,12 +7,13 @@ import (
 
 type User struct {
 	gorm.Model
-	Username   string `gorm:"unique"`
-	Email      string `gorm:"unique"`
-	Password   string
-	Type       string `gorm:"default:user"`
-	HasWriteup bool   `gorm:"default:false"`
-	Grade      int    `gorm:"default:0"`
+	Username         string `gorm:"unique"`
+	Email            string `gorm:"unique"`
+	Password         string
+	Type             string `gorm:"default:user"`
+	HasWriteup       bool   `gorm:"default:false"`
+	Grade            int    `gorm:"default:0"`
+	ComputerPassword string
 }
 
 func (user *User) HashPassword(password string) error {

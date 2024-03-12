@@ -10,6 +10,8 @@ import (
 	"github.com/xctf-io/xctf/pkg/gen/chalgen"
 	"github.com/xctf-io/xctf/pkg/gen/xctf"
 	"github.com/xctf-io/xctf/pkg/gen/xctf/xctfconnect"
+	"gorm.io/gorm"
+	"strconv"
 
 	"github.com/xctf-io/xctf/pkg/models"
 	"gorm.io/gorm/clause"
@@ -28,6 +30,26 @@ func NewAdmin(db *db.Service, b *bucket.Builder) *Admin {
 }
 
 var _ xctfconnect.AdminHandler = &Admin{}
+
+func (s *Admin) SetComputer(ctx context.Context, c *connect.Request[xctf.SetComputerRequest]) (*connect.Response[xctf.Empty], error) {
+	var user models.User
+	parsedId, err := strconv.Atoi(c.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
+	resp := s.db.DB.Where(&models.User{Model: gorm.Model{
+		ID: uint(parsedId),
+	}}).First(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	user.ComputerPassword = c.Msg.Password
+	resp = s.db.DB.Save(&user)
+	if resp.Error != nil {
+		return nil, resp.Error
+	}
+	return connect.NewResponse(&xctf.Empty{}), nil
+}
 
 func (s *Admin) ImportChallenge(ctx context.Context, c *connect.Request[xctf.ImportChallengeRequest]) (*connect.Response[xctf.ImportChallengeResponse], error) {
 	options := protoyaml.UnmarshalOptions{

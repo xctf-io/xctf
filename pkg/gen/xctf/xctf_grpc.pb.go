@@ -765,6 +765,7 @@ type AdminClient interface {
 	SubmitComment(ctx context.Context, in *SubmitCommentRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
 	GetUserGraph(ctx context.Context, in *GetUserGraphRequest, opts ...grpc.CallOption) (*GetUserGraphResponse, error)
+	SetComputer(ctx context.Context, in *SetComputerRequest, opts ...grpc.CallOption) (*Empty, error)
 	ExportChallenge(ctx context.Context, in *chalgen.Node, opts ...grpc.CallOption) (*ExportChallengeResponse, error)
 	ImportChallenge(ctx context.Context, in *ImportChallengeRequest, opts ...grpc.CallOption) (*ImportChallengeResponse, error)
 	Readdir(ctx context.Context, in *ReaddirRequest, opts ...grpc.CallOption) (*ReaddirResponse, error)
@@ -869,6 +870,15 @@ func (c *adminClient) GetUserGraph(ctx context.Context, in *GetUserGraphRequest,
 	return out, nil
 }
 
+func (c *adminClient) SetComputer(ctx context.Context, in *SetComputerRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/xctf.Admin/SetComputer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) ExportChallenge(ctx context.Context, in *chalgen.Node, opts ...grpc.CallOption) (*ExportChallengeResponse, error) {
 	out := new(ExportChallengeResponse)
 	err := c.cc.Invoke(ctx, "/xctf.Admin/ExportChallenge", in, out, opts...)
@@ -919,6 +929,7 @@ type AdminServer interface {
 	SubmitComment(context.Context, *SubmitCommentRequest) (*Empty, error)
 	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
 	GetUserGraph(context.Context, *GetUserGraphRequest) (*GetUserGraphResponse, error)
+	SetComputer(context.Context, *SetComputerRequest) (*Empty, error)
 	ExportChallenge(context.Context, *chalgen.Node) (*ExportChallengeResponse, error)
 	ImportChallenge(context.Context, *ImportChallengeRequest) (*ImportChallengeResponse, error)
 	Readdir(context.Context, *ReaddirRequest) (*ReaddirResponse, error)
@@ -958,6 +969,9 @@ func (UnimplementedAdminServer) GetComments(context.Context, *GetCommentsRequest
 }
 func (UnimplementedAdminServer) GetUserGraph(context.Context, *GetUserGraphRequest) (*GetUserGraphResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserGraph not implemented")
+}
+func (UnimplementedAdminServer) SetComputer(context.Context, *SetComputerRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetComputer not implemented")
 }
 func (UnimplementedAdminServer) ExportChallenge(context.Context, *chalgen.Node) (*ExportChallengeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportChallenge not implemented")
@@ -1163,6 +1177,24 @@ func _Admin_GetUserGraph_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_SetComputer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetComputerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).SetComputer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/xctf.Admin/SetComputer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).SetComputer(ctx, req.(*SetComputerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_ExportChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(chalgen.Node)
 	if err := dec(in); err != nil {
@@ -1281,6 +1313,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserGraph",
 			Handler:    _Admin_GetUserGraph_Handler,
+		},
+		{
+			MethodName: "SetComputer",
+			Handler:    _Admin_SetComputer_Handler,
 		},
 		{
 			MethodName: "ExportChallenge",

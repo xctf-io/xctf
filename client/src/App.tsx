@@ -22,6 +22,7 @@ import {Competitions} from "@/routes/build/Competitions";
 import {Toaster} from "react-hot-toast";
 import {Deploy} from "@/routes/Deploy";
 import {Computer} from "@/routes/Computer";
+import {Chat} from "@/routes/Chat";
 
 interface Props {}
 
@@ -104,6 +105,14 @@ function App() {
 			label: "Computer",
 			to: "/computer",
 			Component: Computer,
+			showWhenAuthed: true,
+			showWhenAdmin: false,
+			hideWhenUnauthed: true,
+		},
+		{
+			label: "Chat",
+			to: "/chat",
+			Component: Chat,
 			showWhenAuthed: true,
 			showWhenAdmin: false,
 			hideWhenUnauthed: true,

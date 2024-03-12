@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChallengeTypeResponse, CurrentUserRequest, CurrentUserResponse, DeleteChallengeRequest, Empty, ExportChallengeResponse, ForgotPasswordRequest, GetAllChallengesRequest, GetAllChallengesResponse, GetCommentsRequest, GetCommentsResponse, GetComputerRequest, GetComputerResponse, GetDiscoveredEvidenceRequest, GetDiscoveredEvidenceResponse, GetHomePageRequest, GetHomePageResponse, GetTeamsProgressRequest, GetTeamsProgressResponse, GetUserGraphRequest, GetUserGraphResponse, GetUserWriteupResponse, GetWriteupRequest, GetWriteupResponse, ImportChallengeRequest, ImportChallengeResponse, LoginRequest, LoginResponse, ReaddirRequest, ReaddirResponse, RegisterRequest, RegisterResponse, RemoveRequest, RemoveResponse, SetHomePageRequest, SignedURLRequest, SignedURLResponse, SubmitCommentRequest, SubmitEvidenceConnectionRequest, SubmitEvidenceConnectionResponse, SubmitEvidenceReportRequest, SubmitEvidenceRequest, SubmitEvidenceResponse, SubmitFlagRequest, SubmitFlagResponse, SubmitGradeRequest, SubmitWriteupRequest, UpsertChallengeRequest } from "./xctf_pb.js";
+import { ChallengeTypeResponse, CurrentUserRequest, CurrentUserResponse, DeleteChallengeRequest, Empty, ExportChallengeResponse, ForgotPasswordRequest, GetAllChallengesRequest, GetAllChallengesResponse, GetCommentsRequest, GetCommentsResponse, GetComputerRequest, GetComputerResponse, GetDiscoveredEvidenceRequest, GetDiscoveredEvidenceResponse, GetHomePageRequest, GetHomePageResponse, GetTeamsProgressRequest, GetTeamsProgressResponse, GetUserGraphRequest, GetUserGraphResponse, GetUserWriteupResponse, GetWriteupRequest, GetWriteupResponse, ImportChallengeRequest, ImportChallengeResponse, LoginRequest, LoginResponse, ReaddirRequest, ReaddirResponse, RegisterRequest, RegisterResponse, RemoveRequest, RemoveResponse, SetComputerRequest, SetHomePageRequest, SignedURLRequest, SignedURLResponse, SubmitCommentRequest, SubmitEvidenceConnectionRequest, SubmitEvidenceConnectionResponse, SubmitEvidenceReportRequest, SubmitEvidenceRequest, SubmitEvidenceResponse, SubmitFlagRequest, SubmitFlagResponse, SubmitGradeRequest, SubmitWriteupRequest, UpsertChallengeRequest } from "./xctf_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 import { Competition, CompetitionList, Node } from "../chalgen/graph_pb.js";
 
@@ -281,6 +281,15 @@ export const Admin = {
       name: "GetUserGraph",
       I: GetUserGraphRequest,
       O: GetUserGraphResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc xctf.Admin.SetComputer
+     */
+    setComputer: {
+      name: "SetComputer",
+      I: SetComputerRequest,
+      O: Empty,
       kind: MethodKind.Unary,
     },
     /**

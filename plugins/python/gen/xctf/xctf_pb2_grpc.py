@@ -720,6 +720,11 @@ class AdminStub(object):
                 request_serializer=xctf_dot_xctf__pb2.GetUserGraphRequest.SerializeToString,
                 response_deserializer=xctf_dot_xctf__pb2.GetUserGraphResponse.FromString,
                 )
+        self.SetComputer = channel.unary_unary(
+                '/xctf.Admin/SetComputer',
+                request_serializer=xctf_dot_xctf__pb2.SetComputerRequest.SerializeToString,
+                response_deserializer=xctf_dot_xctf__pb2.Empty.FromString,
+                )
         self.ExportChallenge = channel.unary_unary(
                 '/xctf.Admin/ExportChallenge',
                 request_serializer=chalgen_dot_graph__pb2.Node.SerializeToString,
@@ -805,6 +810,12 @@ class AdminServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SetComputer(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def ExportChallenge(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -881,6 +892,11 @@ def add_AdminServicer_to_server(servicer, server):
                     servicer.GetUserGraph,
                     request_deserializer=xctf_dot_xctf__pb2.GetUserGraphRequest.FromString,
                     response_serializer=xctf_dot_xctf__pb2.GetUserGraphResponse.SerializeToString,
+            ),
+            'SetComputer': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetComputer,
+                    request_deserializer=xctf_dot_xctf__pb2.SetComputerRequest.FromString,
+                    response_serializer=xctf_dot_xctf__pb2.Empty.SerializeToString,
             ),
             'ExportChallenge': grpc.unary_unary_rpc_method_handler(
                     servicer.ExportChallenge,
@@ -1079,6 +1095,23 @@ class Admin(object):
         return grpc.experimental.unary_unary(request, target, '/xctf.Admin/GetUserGraph',
             xctf_dot_xctf__pb2.GetUserGraphRequest.SerializeToString,
             xctf_dot_xctf__pb2.GetUserGraphResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SetComputer(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/xctf.Admin/SetComputer',
+            xctf_dot_xctf__pb2.SetComputerRequest.SerializeToString,
+            xctf_dot_xctf__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

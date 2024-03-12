@@ -46,11 +46,18 @@ service Admin {
   rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
   rpc GetUserGraph(GetUserGraphRequest) returns (GetUserGraphResponse);
 
+  rpc SetComputer(SetComputerRequest) returns (Empty);
+
   rpc ExportChallenge(chalgen.Node) returns (ExportChallengeResponse);
   rpc ImportChallenge(ImportChallengeRequest) returns (ImportChallengeResponse);
 
   rpc Readdir(ReaddirRequest) returns (ReaddirResponse);
   rpc Remove(RemoveRequest) returns (RemoveResponse);
+}
+
+message SetComputerRequest {
+  string id = 1;
+  string password = 2;
 }
 
 message GetComputerRequest {
@@ -59,6 +66,7 @@ message GetComputerRequest {
 
 message GetComputerResponse {
   string url = 1;
+  bool loading = 2;
 }
 
 message ExportChallengeResponse {

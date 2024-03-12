@@ -82,7 +82,7 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	backendBackend := backend.NewBackend(service, store, handler, agent, builder)
+	backendBackend := backend.NewBackend(service, store, handler, agent, builder, chalsConfig)
 	adminAdmin := admin.NewAdmin(service, builder)
 	httpHandler, err := server.New(serverConfig, store, kubesService, backendBackend, adminAdmin, builder, handler)
 	if err != nil {

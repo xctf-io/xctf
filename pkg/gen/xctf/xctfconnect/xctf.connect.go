@@ -99,6 +99,8 @@ const (
 	AdminGetCommentsProcedure = "/xctf.Admin/GetComments"
 	// AdminGetUserGraphProcedure is the fully-qualified name of the Admin's GetUserGraph RPC.
 	AdminGetUserGraphProcedure = "/xctf.Admin/GetUserGraph"
+	// AdminSetComputerProcedure is the fully-qualified name of the Admin's SetComputer RPC.
+	AdminSetComputerProcedure = "/xctf.Admin/SetComputer"
 	// AdminExportChallengeProcedure is the fully-qualified name of the Admin's ExportChallenge RPC.
 	AdminExportChallengeProcedure = "/xctf.Admin/ExportChallenge"
 	// AdminImportChallengeProcedure is the fully-qualified name of the Admin's ImportChallenge RPC.
@@ -619,6 +621,7 @@ type AdminClient interface {
 	SubmitComment(context.Context, *connect_go.Request[xctf.SubmitCommentRequest]) (*connect_go.Response[xctf.Empty], error)
 	GetComments(context.Context, *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error)
 	GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error)
+	SetComputer(context.Context, *connect_go.Request[xctf.SetComputerRequest]) (*connect_go.Response[xctf.Empty], error)
 	ExportChallenge(context.Context, *connect_go.Request[chalgen.Node]) (*connect_go.Response[xctf.ExportChallengeResponse], error)
 	ImportChallenge(context.Context, *connect_go.Request[xctf.ImportChallengeRequest]) (*connect_go.Response[xctf.ImportChallengeResponse], error)
 	Readdir(context.Context, *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error)
@@ -685,6 +688,11 @@ func NewAdminClient(httpClient connect_go.HTTPClient, baseURL string, opts ...co
 			baseURL+AdminGetUserGraphProcedure,
 			opts...,
 		),
+		setComputer: connect_go.NewClient[xctf.SetComputerRequest, xctf.Empty](
+			httpClient,
+			baseURL+AdminSetComputerProcedure,
+			opts...,
+		),
 		exportChallenge: connect_go.NewClient[chalgen.Node, xctf.ExportChallengeResponse](
 			httpClient,
 			baseURL+AdminExportChallengeProcedure,
@@ -720,6 +728,7 @@ type adminClient struct {
 	submitComment    *connect_go.Client[xctf.SubmitCommentRequest, xctf.Empty]
 	getComments      *connect_go.Client[xctf.GetCommentsRequest, xctf.GetCommentsResponse]
 	getUserGraph     *connect_go.Client[xctf.GetUserGraphRequest, xctf.GetUserGraphResponse]
+	setComputer      *connect_go.Client[xctf.SetComputerRequest, xctf.Empty]
 	exportChallenge  *connect_go.Client[chalgen.Node, xctf.ExportChallengeResponse]
 	importChallenge  *connect_go.Client[xctf.ImportChallengeRequest, xctf.ImportChallengeResponse]
 	readdir          *connect_go.Client[xctf.ReaddirRequest, xctf.ReaddirResponse]
@@ -776,6 +785,11 @@ func (c *adminClient) GetUserGraph(ctx context.Context, req *connect_go.Request[
 	return c.getUserGraph.CallUnary(ctx, req)
 }
 
+// SetComputer calls xctf.Admin.SetComputer.
+func (c *adminClient) SetComputer(ctx context.Context, req *connect_go.Request[xctf.SetComputerRequest]) (*connect_go.Response[xctf.Empty], error) {
+	return c.setComputer.CallUnary(ctx, req)
+}
+
 // ExportChallenge calls xctf.Admin.ExportChallenge.
 func (c *adminClient) ExportChallenge(ctx context.Context, req *connect_go.Request[chalgen.Node]) (*connect_go.Response[xctf.ExportChallengeResponse], error) {
 	return c.exportChallenge.CallUnary(ctx, req)
@@ -808,6 +822,7 @@ type AdminHandler interface {
 	SubmitComment(context.Context, *connect_go.Request[xctf.SubmitCommentRequest]) (*connect_go.Response[xctf.Empty], error)
 	GetComments(context.Context, *connect_go.Request[xctf.GetCommentsRequest]) (*connect_go.Response[xctf.GetCommentsResponse], error)
 	GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error)
+	SetComputer(context.Context, *connect_go.Request[xctf.SetComputerRequest]) (*connect_go.Response[xctf.Empty], error)
 	ExportChallenge(context.Context, *connect_go.Request[chalgen.Node]) (*connect_go.Response[xctf.ExportChallengeResponse], error)
 	ImportChallenge(context.Context, *connect_go.Request[xctf.ImportChallengeRequest]) (*connect_go.Response[xctf.ImportChallengeResponse], error)
 	Readdir(context.Context, *connect_go.Request[xctf.ReaddirRequest]) (*connect_go.Response[xctf.ReaddirResponse], error)
@@ -870,6 +885,11 @@ func NewAdminHandler(svc AdminHandler, opts ...connect_go.HandlerOption) (string
 		svc.GetUserGraph,
 		opts...,
 	)
+	adminSetComputerHandler := connect_go.NewUnaryHandler(
+		AdminSetComputerProcedure,
+		svc.SetComputer,
+		opts...,
+	)
 	adminExportChallengeHandler := connect_go.NewUnaryHandler(
 		AdminExportChallengeProcedure,
 		svc.ExportChallenge,
@@ -912,6 +932,8 @@ func NewAdminHandler(svc AdminHandler, opts ...connect_go.HandlerOption) (string
 			adminGetCommentsHandler.ServeHTTP(w, r)
 		case AdminGetUserGraphProcedure:
 			adminGetUserGraphHandler.ServeHTTP(w, r)
+		case AdminSetComputerProcedure:
+			adminSetComputerHandler.ServeHTTP(w, r)
 		case AdminExportChallengeProcedure:
 			adminExportChallengeHandler.ServeHTTP(w, r)
 		case AdminImportChallengeProcedure:
@@ -967,6 +989,10 @@ func (UnimplementedAdminHandler) GetComments(context.Context, *connect_go.Reques
 
 func (UnimplementedAdminHandler) GetUserGraph(context.Context, *connect_go.Request[xctf.GetUserGraphRequest]) (*connect_go.Response[xctf.GetUserGraphResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.GetUserGraph is not implemented"))
+}
+
+func (UnimplementedAdminHandler) SetComputer(context.Context, *connect_go.Request[xctf.SetComputerRequest]) (*connect_go.Response[xctf.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("xctf.Admin.SetComputer is not implemented"))
 }
 
 func (UnimplementedAdminHandler) ExportChallenge(context.Context, *connect_go.Request[chalgen.Node]) (*connect_go.Response[xctf.ExportChallengeResponse], error) {

@@ -7,15 +7,25 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class SetComputerRequest(_message.Message):
+    __slots__ = ("id", "password")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    id: str
+    password: str
+    def __init__(self, id: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
+
 class GetComputerRequest(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...
 
 class GetComputerResponse(_message.Message):
-    __slots__ = ("url",)
+    __slots__ = ("url", "loading")
     URL_FIELD_NUMBER: _ClassVar[int]
+    LOADING_FIELD_NUMBER: _ClassVar[int]
     url: str
-    def __init__(self, url: _Optional[str] = ...) -> None: ...
+    loading: bool
+    def __init__(self, url: _Optional[str] = ..., loading: bool = ...) -> None: ...
 
 class ExportChallengeResponse(_message.Message):
     __slots__ = ("yaml",)
