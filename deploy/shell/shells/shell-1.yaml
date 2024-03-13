@@ -9,7 +9,7 @@ spec:
   containers:
   - env:
     - name: VNC_PW
-      value: MrIhxjrh4Fkftmnl
+      value: RFO7mFpdZsM2Gr5O
     image: justluk/xfce-desktop
     imagePullPolicy: Always
     livenessProbe:

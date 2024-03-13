@@ -43,7 +43,12 @@ func (s *Admin) SetComputer(ctx context.Context, c *connect.Request[xctf.SetComp
 	if resp.Error != nil {
 		return nil, resp.Error
 	}
-	user.ComputerPassword = c.Msg.Password
+	if c.Msg.ComputerId != "" {
+		user.ComputerID = c.Msg.ComputerId
+	}
+	if c.Msg.Password != "" {
+		user.ComputerPassword = c.Msg.Password
+	}
 	resp = s.db.DB.Save(&user)
 	if resp.Error != nil {
 		return nil, resp.Error

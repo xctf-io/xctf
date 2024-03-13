@@ -2,6 +2,8 @@ package backend
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
@@ -21,6 +23,7 @@ import (
 	"github.com/xctf-io/xctf/pkg/openai"
 	"google.golang.org/protobuf/encoding/protojson"
 	"gorm.io/gorm"
+	"math/rand"
 	"time"
 )
 
@@ -51,6 +54,26 @@ func NewBackend(
 		b:       b,
 		c:       c,
 	}
+}
+
+const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+func generateRandomString(length int, secret, identifier string) string {
+	seedData := fmt.Sprintf("%s-%s", secret, identifier)
+
+	hash := sha256.Sum256([]byte(seedData))
+	seed := int64(0)
+	for _, b := range hash[:8] {
+		seed = (seed << 8) | int64(b)
+	}
+
+	r := rand.New(rand.NewSource(seed))
+
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[r.Intn(len(charset))]
+	}
+	return string(b)
 }
 
 func (b *Backend) SignedURL(ctx context.Context, c *connect.Request[xctf.SignedURLRequest]) (*connect.Response[xctf.SignedURLResponse], error) {
@@ -275,11 +298,26 @@ func (b *Backend) SubmitEvidenceReport(ctx context.Context, req *connect.Request
 	return connect.NewResponse(&xctf.SubmitEvidenceReportRequest{}), nil
 }
 
+func GenerateRandomString(length int, secret, identifier string) (string, error) {
+	if length <= 0 {
+		return "", fmt.Errorf("invalid length: %d", length)
+	}
+
+	bytes := make([]byte, (length+1)/2) // +1 to handle odd lengths
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+
+	str := hex.EncodeToString(bytes)
+	return str[:length], nil
+}
+
 func (b *Backend) Register(ctx context.Context, request *connect.Request[xctf.RegisterRequest]) (*connect.Response[xctf.RegisterResponse], error) {
 	user := models.User{
-		Model:    gorm.Model{},
-		Username: request.Msg.Username,
-		Email:    request.Msg.Email,
+		Model:            gorm.Model{},
+		Username:         request.Msg.Username,
+		Email:            request.Msg.Email,
+		ComputerPassword: generateRandomString(16, b.c.Scheme, request.Msg.Username),
 	}
 	if len(request.Msg.Password) == 0 || len(request.Msg.Username) == 0 || len(request.Msg.Password) == 0 {
 		return nil, errors.New("fields cannot be empty")
@@ -385,7 +423,7 @@ func (b *Backend) GetComputer(ctx context.Context, c *connect.Request[xctf.GetCo
 	if res.Error != nil {
 		return nil, res.Error
 	}
-	if u.ComputerPassword == "" {
+	if u.ComputerID == "" {
 		return connect.NewResponse(&xctf.GetComputerResponse{
 			Loading: true,
 		}), nil
@@ -393,7 +431,7 @@ func (b *Backend) GetComputer(ctx context.Context, c *connect.Request[xctf.GetCo
 	// TODO breadchris configure domain
 	// TODO breadchris auto deploy computer
 	return connect.NewResponse(&xctf.GetComputerResponse{
-		Url:     fmt.Sprintf("https://shells.mcpshsf.com/%d/vnc_lite.html?path=/%d/websockify&password=%s", uid, uid, u.ComputerPassword),
+		Url:     fmt.Sprintf("https://shells.mcpshsf.com/%s/vnc_lite.html?path=/%s/websockify&password=%s", u.ComputerID, u.ComputerID, u.ComputerPassword),
 		Loading: false,
 	}), nil
 }

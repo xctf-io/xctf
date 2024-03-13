@@ -17,13 +17,12 @@ script lock(baseUrl string) {
         grid: [ 6, 8 ],
     });
     lock.onComplete(({ hash }) => {
-        const id = parseInt(document.querySelector('#id').value);
         fetch(baseUrl + '/solve', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ hash, id }),
+            body: JSON.stringify({ hash }),
         })
         .then(res => res.json())
         .then(data => {
@@ -40,11 +39,14 @@ script lock(baseUrl string) {
 templ PassShare(s PassShareState, ps *chalgen.PassShare) {
     <div>
         <script src="/build/vanilla.example.js"></script>
-        <div class="space-y-2 p-4">
+        <div class="space-y-2 p-4 flex flex-col text-center">
             <h1>PassShare</h1>
             <p>Share your password with a friend!</p>
-            <input id="id" type="number" name="id" placeholder="id" />
-            <canvas id="lock"></canvas>
+            <div class="flex flex-col w-96 self-center">
+                <p class="flex justify-start">start</p>
+                <canvas id="lock" class="self-center"></canvas>
+                <p class="flex justify-end">end</p>
+            </div>
             <p>{ps.Message}</p>
             @lock(s.BaseURL)
         </div>

@@ -7,6 +7,17 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"io"
+	"log/slog"
+	"net"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
+	ttemplate "text/template"
+	"time"
+
 	"github.com/a-h/templ"
 	"github.com/go-pdf/fpdf"
 	"github.com/google/gopacket"
@@ -23,16 +34,6 @@ import (
 	shttp "github.com/xctf-io/xctf/pkg/http"
 	"github.com/xctf-io/xctf/pkg/models"
 	"google.golang.org/protobuf/encoding/protojson"
-	"html/template"
-	"io"
-	"log/slog"
-	"net"
-	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
-	ttemplate "text/template"
-	"time"
 )
 
 //go:embed tmpl/*
@@ -516,7 +517,6 @@ func (s *Handler) Handle() (string, http.Handler) {
 							w.Header().Set("Content-Type", "application/json")
 							w.WriteHeader(http.StatusOK)
 							type req struct {
-								ID   int    `json:"id"`
 								Hash string `json:"hash"`
 							}
 							type res struct {
@@ -525,12 +525,14 @@ func (s *Handler) Handle() (string, http.Handler) {
 								Flag     string `json:"flag"`
 							}
 							writeRes := func(s bool, p string) {
-								r := res{
-									Success:  s,
-									Password: p,
-									Flag:     n.Meta.Flag,
+								re := res{
+									Success: s,
 								}
-								b, _ := json.Marshal(r)
+								if s {
+									re.Password = p
+									re.Flag = n.Meta.Flag
+								}
+								b, _ := json.Marshal(re)
 								w.Write(b)
 							}
 							var re req
@@ -540,7 +542,7 @@ func (s *Handler) Handle() (string, http.Handler) {
 							}
 
 							for _, sl := range t.Passshare.Solutions {
-								if re.ID == int(sl.Id) && re.Hash == sl.Hash {
+								if re.Hash == sl.Hash {
 									writeRes(true, t.Passshare.Password)
 									return
 								}

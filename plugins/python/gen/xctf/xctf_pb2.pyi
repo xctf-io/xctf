@@ -8,12 +8,14 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class SetComputerRequest(_message.Message):
-    __slots__ = ("id", "password")
+    __slots__ = ("id", "password", "computer_id")
     ID_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    COMPUTER_ID_FIELD_NUMBER: _ClassVar[int]
     id: str
     password: str
-    def __init__(self, id: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
+    computer_id: str
+    def __init__(self, id: _Optional[str] = ..., password: _Optional[str] = ..., computer_id: _Optional[str] = ...) -> None: ...
 
 class GetComputerRequest(_message.Message):
     __slots__ = ()

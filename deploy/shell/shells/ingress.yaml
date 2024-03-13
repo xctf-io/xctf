@@ -33,8 +33,1361 @@ spec:
               number: 80
         path: /1(/|$)(.*)
         pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-2-svc
+            port:
+              number: 80
+        path: /2(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-3-svc
+            port:
+              number: 80
+        path: /3(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-4-svc
+            port:
+              number: 80
+        path: /4(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-5-svc
+            port:
+              number: 80
+        path: /5(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-6-svc
+            port:
+              number: 80
+        path: /6(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-7-svc
+            port:
+              number: 80
+        path: /7(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-8-svc
+            port:
+              number: 80
+        path: /8(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-9-svc
+            port:
+              number: 80
+        path: /9(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-10-svc
+            port:
+              number: 80
+        path: /10(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-11-svc
+            port:
+              number: 80
+        path: /11(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-12-svc
+            port:
+              number: 80
+        path: /12(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-13-svc
+            port:
+              number: 80
+        path: /13(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-14-svc
+            port:
+              number: 80
+        path: /14(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-15-svc
+            port:
+              number: 80
+        path: /15(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-16-svc
+            port:
+              number: 80
+        path: /16(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-17-svc
+            port:
+              number: 80
+        path: /17(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-18-svc
+            port:
+              number: 80
+        path: /18(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-19-svc
+            port:
+              number: 80
+        path: /19(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-20-svc
+            port:
+              number: 80
+        path: /20(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-21-svc
+            port:
+              number: 80
+        path: /21(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-22-svc
+            port:
+              number: 80
+        path: /22(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-23-svc
+            port:
+              number: 80
+        path: /23(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-24-svc
+            port:
+              number: 80
+        path: /24(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-25-svc
+            port:
+              number: 80
+        path: /25(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-26-svc
+            port:
+              number: 80
+        path: /26(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-27-svc
+            port:
+              number: 80
+        path: /27(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-28-svc
+            port:
+              number: 80
+        path: /28(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-29-svc
+            port:
+              number: 80
+        path: /29(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-30-svc
+            port:
+              number: 80
+        path: /30(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-31-svc
+            port:
+              number: 80
+        path: /31(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-32-svc
+            port:
+              number: 80
+        path: /32(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-33-svc
+            port:
+              number: 80
+        path: /33(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-34-svc
+            port:
+              number: 80
+        path: /34(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-35-svc
+            port:
+              number: 80
+        path: /35(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-36-svc
+            port:
+              number: 80
+        path: /36(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-37-svc
+            port:
+              number: 80
+        path: /37(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-38-svc
+            port:
+              number: 80
+        path: /38(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-39-svc
+            port:
+              number: 80
+        path: /39(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-40-svc
+            port:
+              number: 80
+        path: /40(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-41-svc
+            port:
+              number: 80
+        path: /41(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-42-svc
+            port:
+              number: 80
+        path: /42(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-43-svc
+            port:
+              number: 80
+        path: /43(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-44-svc
+            port:
+              number: 80
+        path: /44(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-45-svc
+            port:
+              number: 80
+        path: /45(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-46-svc
+            port:
+              number: 80
+        path: /46(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-47-svc
+            port:
+              number: 80
+        path: /47(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-48-svc
+            port:
+              number: 80
+        path: /48(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-49-svc
+            port:
+              number: 80
+        path: /49(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-50-svc
+            port:
+              number: 80
+        path: /50(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-51-svc
+            port:
+              number: 80
+        path: /51(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-52-svc
+            port:
+              number: 80
+        path: /52(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-53-svc
+            port:
+              number: 80
+        path: /53(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-54-svc
+            port:
+              number: 80
+        path: /54(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-55-svc
+            port:
+              number: 80
+        path: /55(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-56-svc
+            port:
+              number: 80
+        path: /56(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-57-svc
+            port:
+              number: 80
+        path: /57(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-58-svc
+            port:
+              number: 80
+        path: /58(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-59-svc
+            port:
+              number: 80
+        path: /59(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-60-svc
+            port:
+              number: 80
+        path: /60(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-61-svc
+            port:
+              number: 80
+        path: /61(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-62-svc
+            port:
+              number: 80
+        path: /62(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-63-svc
+            port:
+              number: 80
+        path: /63(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-64-svc
+            port:
+              number: 80
+        path: /64(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-65-svc
+            port:
+              number: 80
+        path: /65(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-66-svc
+            port:
+              number: 80
+        path: /66(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-67-svc
+            port:
+              number: 80
+        path: /67(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-68-svc
+            port:
+              number: 80
+        path: /68(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-69-svc
+            port:
+              number: 80
+        path: /69(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-70-svc
+            port:
+              number: 80
+        path: /70(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-71-svc
+            port:
+              number: 80
+        path: /71(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-72-svc
+            port:
+              number: 80
+        path: /72(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-73-svc
+            port:
+              number: 80
+        path: /73(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-74-svc
+            port:
+              number: 80
+        path: /74(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-75-svc
+            port:
+              number: 80
+        path: /75(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-76-svc
+            port:
+              number: 80
+        path: /76(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-77-svc
+            port:
+              number: 80
+        path: /77(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-78-svc
+            port:
+              number: 80
+        path: /78(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-79-svc
+            port:
+              number: 80
+        path: /79(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-80-svc
+            port:
+              number: 80
+        path: /80(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-81-svc
+            port:
+              number: 80
+        path: /81(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-82-svc
+            port:
+              number: 80
+        path: /82(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-83-svc
+            port:
+              number: 80
+        path: /83(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-84-svc
+            port:
+              number: 80
+        path: /84(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-85-svc
+            port:
+              number: 80
+        path: /85(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-86-svc
+            port:
+              number: 80
+        path: /86(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-87-svc
+            port:
+              number: 80
+        path: /87(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-88-svc
+            port:
+              number: 80
+        path: /88(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-89-svc
+            port:
+              number: 80
+        path: /89(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-90-svc
+            port:
+              number: 80
+        path: /90(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-91-svc
+            port:
+              number: 80
+        path: /91(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-92-svc
+            port:
+              number: 80
+        path: /92(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-93-svc
+            port:
+              number: 80
+        path: /93(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-94-svc
+            port:
+              number: 80
+        path: /94(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-95-svc
+            port:
+              number: 80
+        path: /95(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-96-svc
+            port:
+              number: 80
+        path: /96(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-97-svc
+            port:
+              number: 80
+        path: /97(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-98-svc
+            port:
+              number: 80
+        path: /98(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-99-svc
+            port:
+              number: 80
+        path: /99(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-100-svc
+            port:
+              number: 80
+        path: /100(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-101-svc
+            port:
+              number: 80
+        path: /101(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-102-svc
+            port:
+              number: 80
+        path: /102(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-103-svc
+            port:
+              number: 80
+        path: /103(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-104-svc
+            port:
+              number: 80
+        path: /104(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-105-svc
+            port:
+              number: 80
+        path: /105(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-106-svc
+            port:
+              number: 80
+        path: /106(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-107-svc
+            port:
+              number: 80
+        path: /107(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-108-svc
+            port:
+              number: 80
+        path: /108(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-109-svc
+            port:
+              number: 80
+        path: /109(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-110-svc
+            port:
+              number: 80
+        path: /110(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-111-svc
+            port:
+              number: 80
+        path: /111(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-112-svc
+            port:
+              number: 80
+        path: /112(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-113-svc
+            port:
+              number: 80
+        path: /113(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-114-svc
+            port:
+              number: 80
+        path: /114(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-115-svc
+            port:
+              number: 80
+        path: /115(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-116-svc
+            port:
+              number: 80
+        path: /116(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-117-svc
+            port:
+              number: 80
+        path: /117(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-118-svc
+            port:
+              number: 80
+        path: /118(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-119-svc
+            port:
+              number: 80
+        path: /119(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-120-svc
+            port:
+              number: 80
+        path: /120(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-121-svc
+            port:
+              number: 80
+        path: /121(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-122-svc
+            port:
+              number: 80
+        path: /122(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-123-svc
+            port:
+              number: 80
+        path: /123(/|$)(.*)
+        pathType: ImplementationSpecific
+  - host: shells.mcpshsf.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: shell-124-svc
+            port:
+              number: 80
+        path: /124(/|$)(.*)
+        pathType: ImplementationSpecific
   tls:
   - hosts:
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
+    - shells.mcpshsf.com
     - shells.mcpshsf.com
     - shells.mcpshsf.com
     secretName: shells-cert-secret

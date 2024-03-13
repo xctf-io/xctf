@@ -5,12 +5,14 @@ import "go.uber.org/config"
 type Config struct {
 	PythonPluginURL string `yaml:"python_plugin_url"`
 	Scheme          string `yaml:"scheme"`
+	Secret          string `yaml:"secret"`
 }
 
 func NewDefaultConfig() Config {
 	return Config{
 		PythonPluginURL: "localhost:50051",
 		Scheme:          "https",
+		Secret:          "${CHAL_SECRET:\"\"}",
 	}
 }
 

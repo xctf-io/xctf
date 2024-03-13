@@ -58,6 +58,7 @@ service Admin {
 message SetComputerRequest {
   string id = 1;
   string password = 2;
+  string computer_id = 3;
 }
 
 message GetComputerRequest {

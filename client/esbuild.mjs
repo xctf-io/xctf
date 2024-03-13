@@ -6,6 +6,12 @@ const devBuild = process.env.DEV === "true";
 const minify = !devBuild;
 const nodeEnv = devBuild ? '"development"' : '"production"';
 
+try {
+	await fs.mkdir("public/build", { recursive: true });
+}  catch (error) {
+	console.error('Error occurred while creating the build directory:', error);
+}
+
 async function copyFile(source, destination) {
 	try {
 		await fs.copyFile(source, destination);

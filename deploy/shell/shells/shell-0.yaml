@@ -9,7 +9,7 @@ spec:
   containers:
   - env:
     - name: VNC_PW
-      value: zw0Y7vxzY1liENSP
+      value: 29tg2JbhoWN1mJu6
     image: justluk/xfce-desktop
     imagePullPolicy: Always
     livenessProbe:
@@ -28,7 +28,7 @@ spec:
     resources:
       limits:
         cpu: 750m
-        memory: 1024Mi
+        memory: 750Mi
       requests:
         cpu: 250m
         memory: 250Mi

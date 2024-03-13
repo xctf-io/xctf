@@ -13,6 +13,7 @@ type User struct {
 	Type             string `gorm:"default:user"`
 	HasWriteup       bool   `gorm:"default:false"`
 	Grade            int    `gorm:"default:0"`
+	ComputerID       string
 	ComputerPassword string
 }
 

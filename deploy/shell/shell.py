@@ -170,11 +170,11 @@ if __name__ == "__main__":
     for i in range(shell_count):
         name = f"shell-{i}"
 
-        password = passwords.get(name)
+        password = passwords.get(i)
         if password is None:
             password = generate_password()
 
-        passwords[name] = password
+        passwords[i] = password
 
         deployment = create_pod(name, password)
         service = create_service(name)

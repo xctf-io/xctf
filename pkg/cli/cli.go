@@ -73,6 +73,34 @@ func New(
 				},
 				Subcommands: []*cli.Command{
 					{
+						Name: "shells",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name: "id",
+							},
+							&cli.StringFlag{
+								Name: "password",
+							},
+							&cli.StringFlag{
+								Name: "computer-id",
+							},
+						},
+						Action: func(c *cli.Context) error {
+							url := c.String("url")
+							id := c.String("id")
+							password := c.String("password")
+							computerId := c.String("computer-id")
+
+							client := xctfconnect.NewAdminClient(http.DefaultClient, url)
+							_, err := client.SetComputer(c.Context, connect.NewRequest(&xctf.SetComputerRequest{
+								Id:         id,
+								Password:   password,
+								ComputerId: computerId,
+							}))
+							return err
+						},
+					},
+					{
 						Name: "flags",
 						Subcommands: []*cli.Command{
 							{
