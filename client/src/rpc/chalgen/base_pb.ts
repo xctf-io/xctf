@@ -240,9 +240,9 @@ export class AudioPlayer extends Message$1<AudioPlayer> {
  */
 export class Song extends Message$1<Song> {
   /**
-   * @generated from field: string title = 1;
+   * @generated from field: string name = 1;
    */
-  title = "";
+  name = "";
 
   /**
    * @generated from field: string artist = 2;
@@ -250,9 +250,19 @@ export class Song extends Message$1<Song> {
   artist = "";
 
   /**
-   * @generated from field: string url = 3;
+   * @generated from field: string album = 3;
+   */
+  album = "";
+
+  /**
+   * @generated from field: string url = 4;
    */
   url = "";
+
+  /**
+   * @generated from field: string cover_art_url = 5;
+   */
+  coverArtUrl = "";
 
   constructor(data?: PartialMessage<Song>) {
     super();
@@ -262,9 +272,11 @@ export class Song extends Message$1<Song> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chalgen.Song";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "artist", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "album", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "cover_art_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Song {

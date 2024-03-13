@@ -16,12 +16,21 @@ import (
 
 type AudioPlayerState struct {
 	BaseURL string
+	Songs   []Song
 }
 
-func Player() templ.ComponentScript {
+type Song struct {
+	Name        string
+	Artist      string
+	Album       string
+	URL         string
+	CoverArtURL string
+}
+
+func Player(songs []*chalgen.Song) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_Player_b3b7`,
-		Function: `function __templ_Player_b3b7(){let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		Name: `__templ_Player_d13a`,
+		Function: `function __templ_Player_d13a(songs){let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
     if( theme == 'dark' ){
         document.documentElement.classList.add('dark')
@@ -59,51 +68,15 @@ func Player() templ.ComponentScript {
                 slider.style.backgroundSize = percentage + '% 100%';
             }
         },
-        "songs": [
-            {
-                "name": "First Snow",
-                "artist": "Emancipator",
-                "album": "Soon It Will Be Cold Enough",
-                "url": "https://521dimensions.com/song/FirstSnow-Emancipator.mp3",
-                "cover_art_url": "https://521dimensions.com/img/open-source/amplitudejs/album-art/soon-it-will-be-cold-enough.jpg"
-            },
-            {
-                "name": "Intro / Sweet Glory",
-                "artist": "Jimkata",
-                "album": "Die Digital",
-                "url": "https://521dimensions.com/song/IntroSweetGlory-Jimkata.mp3",
-                "cover_art_url": "https://521dimensions.com/img/open-source/amplitudejs/album-art/die-digital.jpg"
-            },
-            {
-                "name": "Offcut #6",
-                "artist": "Little People",
-                "album": "We Are But Hunks of Wood Remixes",
-                "url": "https://521dimensions.com/song/Offcut6-LittlePeople.mp3",
-                "cover_art_url": "https://521dimensions.com/img/open-source/amplitudejs/album-art/we-are-but-hunks-of-wood.jpg"
-            },
-            {
-                "name": "Dusk To Dawn",
-                "artist": "Emancipator",
-                "album": "Dusk To Dawn",
-                "url": "https://521dimensions.com/song/DuskToDawn-Emancipator.mp3",
-                "cover_art_url": "https://521dimensions.com/img/open-source/amplitudejs/album-art/from-dusk-to-dawn.jpg"
-            },
-            {
-                "name": "Anthem",
-                "artist": "Emancipator",
-                "album": "Soon It Will Be Cold Enough",
-                "url": "https://521dimensions.com/song/Anthem-Emancipator.mp3",
-                "cover_art_url": "https://521dimensions.com/img/open-source/amplitudejs/album-art/soon-it-will-be-cold-enough.jpg"
-            }
-        ]
+        "songs": songs,
     });
 
     window.onkeydown = function(e) {
         return !(e.keyCode == 32);
     };
 }`,
-		Call:       templ.SafeScript(`__templ_Player_b3b7`),
-		CallInline: templ.SafeScriptInline(`__templ_Player_b3b7`),
+		Call:       templ.SafeScript(`__templ_Player_d13a`, songs),
+		CallInline: templ.SafeScriptInline(`__templ_Player_d13a`, songs),
 	}
 }
 
@@ -124,7 +97,7 @@ func AudioPlayer(a *chalgen.AudioPlayer) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Player().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Player(a.Songs).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

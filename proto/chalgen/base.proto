@@ -33,9 +33,11 @@ message AudioPlayer {
 }
 
 message Song {
-  string title = 1;
+  string name = 1;
   string artist = 2;
-  string url = 3;
+  string album = 3;
+  string url = 4;
+  string cover_art_url = 5;
 }
 
 message Hashes {

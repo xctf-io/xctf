@@ -56,14 +56,18 @@ class AudioPlayer(_message.Message):
     def __init__(self, songs: _Optional[_Iterable[_Union[Song, _Mapping]]] = ...) -> None: ...
 
 class Song(_message.Message):
-    __slots__ = ("title", "artist", "url")
-    TITLE_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("name", "artist", "album", "url", "cover_art_url")
+    NAME_FIELD_NUMBER: _ClassVar[int]
     ARTIST_FIELD_NUMBER: _ClassVar[int]
+    ALBUM_FIELD_NUMBER: _ClassVar[int]
     URL_FIELD_NUMBER: _ClassVar[int]
-    title: str
+    COVER_ART_URL_FIELD_NUMBER: _ClassVar[int]
+    name: str
     artist: str
+    album: str
     url: str
-    def __init__(self, title: _Optional[str] = ..., artist: _Optional[str] = ..., url: _Optional[str] = ...) -> None: ...
+    cover_art_url: str
+    def __init__(self, name: _Optional[str] = ..., artist: _Optional[str] = ..., album: _Optional[str] = ..., url: _Optional[str] = ..., cover_art_url: _Optional[str] = ...) -> None: ...
 
 class Hashes(_message.Message):
     __slots__ = ("seed", "format", "count", "overrides", "length")

@@ -198,6 +198,10 @@ func (s *Handler) Handle() (string, http.Handler) {
 				case *chalgen.Node_Base:
 					switch t := u.Base.Type.(type) {
 					case *chalgen.Challenge_Audioplayer:
+						t.Audioplayer.Songs = append(t.Audioplayer.Songs, &chalgen.Song{
+							Name:   n.Meta.Flag,
+							Artist: "flag",
+						})
 						templ.Handler(tmpl.Page(tmpl.AudioPlayer(t.Audioplayer))).ServeHTTP(w, r)
 						return
 					case *chalgen.Challenge_Data:
