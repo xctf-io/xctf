@@ -197,6 +197,9 @@ func (s *Handler) Handle() (string, http.Handler) {
 				switch u := n.Challenge.(type) {
 				case *chalgen.Node_Base:
 					switch t := u.Base.Type.(type) {
+					case *chalgen.Challenge_Audioplayer:
+						templ.Handler(tmpl.Page(tmpl.AudioPlayer(t.Audioplayer))).ServeHTTP(w, r)
+						return
 					case *chalgen.Challenge_Data:
 						w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
 						w.Write([]byte(t.Data.Data))
