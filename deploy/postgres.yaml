@@ -87,3 +87,12 @@ spec:
     requests:
       storage: 200Mi
 status: {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  postgresql.conf: |
+    max_connections = 300
+    shared_buffers = 80MB

@@ -109,8 +109,8 @@ def create_pod(name, password):
                             "cpu": "250m"
                         },
                         "limits": {
-                            "memory": "750Mi",
-                            "cpu": "750m"
+                            "memory": "500Mi",
+                            "cpu": "500m"
                         }
                     }
                 }

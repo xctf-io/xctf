@@ -370,14 +370,9 @@ func (s *Handler) Handle() (string, http.Handler) {
 									if t.Tracker.Password == password {
 										// TODO breadchris set message that user is logged in
 										sess.TrackerAuthed = true
-										sess.NextAttempt = time.Now()
 										s.manager.SetChalState(r.Context(), chalId, sess)
 									}
 								}
-							}
-							if !sess.TrackerAuthed {
-								sess.NextAttempt = time.Now().Add(1 * time.Minute)
-								s.manager.SetChalState(r.Context(), chalId, sess)
 							}
 						}
 						for _, app := range t.Phone.Apps {
@@ -391,7 +386,6 @@ func (s *Handler) Handle() (string, http.Handler) {
 							Flag:          n.Meta.Flag,
 							TrackerLogin:  templ.URL(baseURL + "/tracker/login"),
 							TrackerAuthed: sess.TrackerAuthed,
-							NextAttempt:   sess.NextAttempt,
 						}, t.Phone)), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
 							slog.Error("failed to template phone", "err", err)
 							return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
