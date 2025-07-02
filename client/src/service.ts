@@ -9,7 +9,7 @@ import {KubesService} from "@/rpc/kubes/kubes_connect";
 // export const baseURL = process.env.BASE_URL;
 
 export const transport = createConnectTransport({
-	baseUrl: `/api`,
+	baseUrl: `http://localhost:8000/api`,
 });
 
 export const xctf = createPromiseClient(Backend, transport);

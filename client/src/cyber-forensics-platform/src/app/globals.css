@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* Force light theme - remove dark mode override */
+html, body {
+  color: #171717;
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ReactFlow styles */
+.react-flow__node {
+  font-size: 12px;
+}
+
+.react-flow__node-challenge {
+  background: white;
+  border: 2px solid #4f46e5;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  transition: all 0.2s;
+}
+
+.react-flow__node-challenge:hover {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  transform: translateY(-1px);
+}
+
+.react-flow__node-challenge.selected {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgb(124 58 237 / 0.1);
+}
+
+.react-flow__edge-default {
+  stroke: #6b7280;
+  stroke-width: 2;
+}
+
+.react-flow__edge-default.selected {
+  stroke: #7c3aed;
+  stroke-width: 3;
+}
+
+.react-flow__controls {
+  background: white;
+  border: 1px solid #e5e7eb;
+}
+
+.react-flow__minimap {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
