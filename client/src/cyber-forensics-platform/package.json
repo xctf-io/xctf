@@ -5,10 +5,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/build-hook.js && next build",
     "start": "next start",
     "lint": "next lint",
     "db:init": "node scripts/init-db.js",
+    "db:init:postgres": "node scripts/init-db-postgres.js",
     "db:migrate": "node scripts/migrate-db.js",
     "db:seed": "node scripts/seed-db.js"
   },
@@ -17,6 +18,7 @@
     "lucide-react": "^0.263.1",
     "next": "15.3.4",
     "openai": "^5.5.1",
+    "pg": "^8.11.3",
     "postcss": "^8.5.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -28,6 +30,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
+    "@types/pg": "^8.11.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/sqlite3": "^3.1.8",

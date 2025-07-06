@@ -1,106 +1,78 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const { Pool } = require('pg');
 
-// Import PostgreSQL manager for production
-const PostgresDatabaseManager = process.env.NODE_ENV === 'production' ? 
-  require('./database-postgres') : null;
-
-class DatabaseManager {
+class PostgresDatabaseManager {
   constructor() {
-    this.dbPath = path.join(process.cwd(), 'database.sqlite');
-    this.db = null;
+    this.pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    });
   }
 
   // Initialize database connection
-  connect() {
-    return new Promise((resolve, reject) => {
-      this.db = new sqlite3.Database(this.dbPath, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          console.log('📊 Connected to SQLite database');
-          resolve();
-        }
-      });
-    });
+  async connect() {
+    try {
+      await this.pool.query('SELECT NOW()');
+      console.log('📊 Connected to PostgreSQL database');
+    } catch (err) {
+      console.error('Database connection error:', err);
+      throw err;
+    }
   }
 
   // Close database connection
-  close() {
-    return new Promise((resolve, reject) => {
-      if (this.db) {
-        try {
-          this.db.close((err) => {
-            if (err && err.code !== 'SQLITE_MISUSE') {
-              reject(err);
-            } else {
-              console.log('📊 Database connection closed');
-              this.db = null;
-              resolve();
-            }
-          });
-        } catch (err) {
-          // Already closed
-          this.db = null;
-          resolve();
-        }
-      } else {
-        resolve();
-      }
-    });
+  async close() {
+    try {
+      await this.pool.end();
+      console.log('📊 Database connection closed');
+    } catch (err) {
+      console.error('Database close error:', err);
+    }
   }
 
   // Generic query execution
-  query(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.db.all(sql, params, (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
-    });
+  async query(sql, params = []) {
+    try {
+      const result = await this.pool.query(sql, params);
+      return result.rows;
+    } catch (err) {
+      console.error('Query error:', err);
+      throw err;
+    }
   }
 
   // Generic single row query
-  get(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.db.get(sql, params, (err, row) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(row);
-        }
-      });
-    });
+  async get(sql, params = []) {
+    const rows = await this.query(sql, params);
+    return rows[0] || null;
   }
 
   // Generic insert/update/delete
-  run(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.db.run(sql, params, function(err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({ id: this.lastID, changes: this.changes });
-        }
-      });
-    });
+  async run(sql, params = []) {
+    try {
+      const result = await this.pool.query(sql, params);
+      return { 
+        id: result.rows[0]?.id || null,
+        changes: result.rowCount 
+      };
+    } catch (err) {
+      console.error('Run error:', err);
+      throw err;
+    }
   }
 
   // Competition methods
   async createCompetition(name, description = null, metadata = null) {
     const sql = `
       INSERT INTO competitions (name, description, metadata)
-      VALUES (?, ?, ?)
+      VALUES ($1, $2, $3)
+      RETURNING id
     `;
-    const result = await this.run(sql, [name, description, JSON.stringify(metadata)]);
-    return result.id;
+    const result = await this.pool.query(sql, [name, description, JSON.stringify(metadata)]);
+    return result.rows[0].id;
   }
 
   async getCompetition(id) {
-    const sql = 'SELECT * FROM competitions WHERE id = ?';
+    const sql = 'SELECT * FROM competitions WHERE id = $1';
     const competition = await this.get(sql, [id]);
     if (competition && competition.metadata) {
       competition.metadata = JSON.parse(competition.metadata);
@@ -122,15 +94,17 @@ class DatabaseManager {
   async updateCompetition(id, updates) {
     const fields = [];
     const values = [];
+    let paramIndex = 1;
     
     Object.entries(updates).forEach(([key, value]) => {
-      fields.push(`${key} = ?`);
+      fields.push(`${key} = $${paramIndex}`);
       values.push(key === 'metadata' ? JSON.stringify(value) : value);
+      paramIndex++;
     });
     
     if (fields.length === 0) return;
     
-    const sql = `UPDATE competitions SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`;
+    const sql = `UPDATE competitions SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = $${paramIndex}`;
     values.push(id);
     
     return await this.run(sql, values);
@@ -143,7 +117,8 @@ class DatabaseManager {
         competition_id, name, description, challenge_type, difficulty,
         flag, flag_location, hiding_technique, interaction_required,
         visual_cues, html_content, analysis_data
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      RETURNING id
     `;
     
     const params = [
@@ -161,12 +136,12 @@ class DatabaseManager {
       JSON.stringify(challengeData.analysis_data)
     ];
     
-    const result = await this.run(sql, params);
-    return result.id;
+    const result = await this.pool.query(sql, params);
+    return result.rows[0].id;
   }
 
   async getChallenge(id) {
-    const sql = 'SELECT * FROM challenges WHERE id = ?';
+    const sql = 'SELECT * FROM challenges WHERE id = $1';
     const challenge = await this.get(sql, [id]);
     if (challenge && challenge.analysis_data) {
       challenge.analysis_data = JSON.parse(challenge.analysis_data);
@@ -175,7 +150,7 @@ class DatabaseManager {
   }
 
   async getChallengesByCompetition(competitionId) {
-    const sql = 'SELECT * FROM challenges WHERE competition_id = ? ORDER BY created_at';
+    const sql = 'SELECT * FROM challenges WHERE competition_id = $1 ORDER BY created_at';
     const challenges = await this.query(sql, [competitionId]);
     return challenges.map(challenge => {
       if (challenge.analysis_data) {
@@ -191,7 +166,8 @@ class DatabaseManager {
       INSERT INTO nodes (
         competition_id, challenge_id, position_x, position_y,
         width, height, color, is_start_node, is_end_node
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      RETURNING id
     `;
     
     const params = [
@@ -206,8 +182,8 @@ class DatabaseManager {
       nodeData.is_end_node || false
     ];
     
-    const result = await this.run(sql, params);
-    return result.id;
+    const result = await this.pool.query(sql, params);
+    return result.rows[0].id;
   }
 
   async getNodesByCompetition(competitionId) {
@@ -215,13 +191,13 @@ class DatabaseManager {
       SELECT n.*, c.name as challenge_name, c.challenge_type
       FROM nodes n
       JOIN challenges c ON n.challenge_id = c.id
-      WHERE n.competition_id = ?
+      WHERE n.competition_id = $1
     `;
     return await this.query(sql, [competitionId]);
   }
 
   async updateNodePosition(nodeId, x, y) {
-    const sql = 'UPDATE nodes SET position_x = ?, position_y = ? WHERE id = ?';
+    const sql = 'UPDATE nodes SET position_x = $1, position_y = $2 WHERE id = $3';
     return await this.run(sql, [x, y, nodeId]);
   }
 
@@ -231,7 +207,8 @@ class DatabaseManager {
       INSERT INTO edges (
         competition_id, from_node_id, to_node_id,
         connection_type, clue_text, unlock_condition
-      ) VALUES (?, ?, ?, ?, ?, ?)
+      ) VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id
     `;
     
     const params = [
@@ -243,12 +220,12 @@ class DatabaseManager {
       edgeData.unlock_condition
     ];
     
-    const result = await this.run(sql, params);
-    return result.id;
+    const result = await this.pool.query(sql, params);
+    return result.rows[0].id;
   }
 
   async getEdgesByCompetition(competitionId) {
-    const sql = 'SELECT * FROM edges WHERE competition_id = ?';
+    const sql = 'SELECT * FROM edges WHERE competition_id = $1';
     return await this.query(sql, [competitionId]);
   }
 
@@ -257,7 +234,8 @@ class DatabaseManager {
     const sql = `
       INSERT INTO challenge_pages (
         challenge_id, page_name, page_path, html_content, is_main_page
-      ) VALUES (?, ?, ?, ?, ?)
+      ) VALUES ($1, $2, $3, $4, $5)
+      RETURNING id
     `;
     
     const params = [
@@ -268,12 +246,12 @@ class DatabaseManager {
       pageData.is_main_page || false
     ];
     
-    const result = await this.run(sql, params);
-    return result.id;
+    const result = await this.pool.query(sql, params);
+    return result.rows[0].id;
   }
 
   async getChallengePages(challengeId) {
-    const sql = 'SELECT * FROM challenge_pages WHERE challenge_id = ? ORDER BY page_name';
+    const sql = 'SELECT * FROM challenge_pages WHERE challenge_id = $1 ORDER BY page_name';
     return await this.query(sql, [challengeId]);
   }
 
@@ -283,7 +261,8 @@ class DatabaseManager {
       INSERT INTO placeholder_links (
         challenge_id, page_id, placeholder_id, link_text,
         context, target_challenge_id, target_page_path
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id
     `;
     
     const params = [
@@ -296,8 +275,8 @@ class DatabaseManager {
       linkData.target_page_path || '/'
     ];
     
-    const result = await this.run(sql, params);
-    return result.id;
+    const result = await this.pool.query(sql, params);
+    return result.rows[0].id;
   }
 
   async getUnresolvedPlaceholders(challengeId = null) {
@@ -305,7 +284,7 @@ class DatabaseManager {
     const params = [];
     
     if (challengeId) {
-      sql += ' AND challenge_id = ?';
+      sql += ' AND challenge_id = $1';
       params.push(challengeId);
     }
     
@@ -315,8 +294,8 @@ class DatabaseManager {
   async resolvePlaceholderLink(linkId, targetChallengeId, targetPagePath = '/') {
     const sql = `
       UPDATE placeholder_links 
-      SET target_challenge_id = ?, target_page_path = ?, is_resolved = TRUE
-      WHERE id = ?
+      SET target_challenge_id = $1, target_page_path = $2, is_resolved = TRUE
+      WHERE id = $3
     `;
     return await this.run(sql, [targetChallengeId, targetPagePath, linkId]);
   }
@@ -325,14 +304,15 @@ class DatabaseManager {
   async createChallengeContext(challengeId, contextType, contextData) {
     const sql = `
       INSERT INTO challenge_context (challenge_id, context_type, context_data)
-      VALUES (?, ?, ?)
+      VALUES ($1, $2, $3)
+      RETURNING id
     `;
-    const result = await this.run(sql, [challengeId, contextType, JSON.stringify(contextData)]);
-    return result.id;
+    const result = await this.pool.query(sql, [challengeId, contextType, JSON.stringify(contextData)]);
+    return result.rows[0].id;
   }
 
   async getChallengeContext(challengeId) {
-    const sql = 'SELECT * FROM challenge_context WHERE challenge_id = ?';
+    const sql = 'SELECT * FROM challenge_context WHERE challenge_id = $1';
     const contexts = await this.query(sql, [challengeId]);
     return contexts.map(ctx => {
       ctx.context_data = JSON.parse(ctx.context_data);
@@ -341,22 +321,4 @@ class DatabaseManager {
   }
 }
 
-// Singleton instance
-let dbManager = null;
-
-function getDatabase() {
-  if (!dbManager) {
-    // Use PostgreSQL in production, SQLite in development
-    if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
-      dbManager = new PostgresDatabaseManager();
-    } else {
-      dbManager = new DatabaseManager();
-    }
-  }
-  return dbManager;
-}
-
-module.exports = {
-  DatabaseManager,
-  getDatabase
-};
+module.exports = PostgresDatabaseManager;
