@@ -2,8 +2,14 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 // Import PostgreSQL manager for production
-const PostgresDatabaseManager = process.env.NODE_ENV === 'production' ? 
-  require('./database-postgres') : null;
+let PostgresDatabaseManager = null;
+if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
+  try {
+    PostgresDatabaseManager = require('./database-postgres');
+  } catch (error) {
+    console.error('Failed to load PostgreSQL manager:', error);
+  }
+}
 
 class DatabaseManager {
   constructor() {

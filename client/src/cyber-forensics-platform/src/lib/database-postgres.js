@@ -19,11 +19,12 @@ class PostgresDatabaseManager {
     }
   }
 
-  // Close database connection
+  // Close database connection - for PostgreSQL with connection pooling, we don't actually close
   async close() {
     try {
-      await this.pool.end();
-      console.log('📊 Database connection closed');
+      // Don't close the pool as it's shared across requests
+      // await this.pool.end();
+      console.log('📊 Database connection closed (pool maintained)');
     } catch (err) {
       console.error('Database close error:', err);
     }
@@ -51,7 +52,7 @@ class PostgresDatabaseManager {
     try {
       const result = await this.pool.query(sql, params);
       return { 
-        id: result.rows[0]?.id || null,
+        id: result.rows[0]?.id || result.insertId || null,
         changes: result.rowCount 
       };
     } catch (err) {

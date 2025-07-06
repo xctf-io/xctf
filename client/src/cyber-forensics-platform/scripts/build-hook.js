@@ -11,7 +11,14 @@ async function buildHook() {
   // Only initialize database if DATABASE_URL is present (production)
   if (process.env.DATABASE_URL) {
     console.log('🗄️  Initializing production database...');
-    await initializeDatabase();
+    try {
+      await initializeDatabase();
+      console.log('✅ Database initialization successful');
+    } catch (error) {
+      console.error('❌ Database initialization failed:', error);
+      // Don't exit - let the build continue, database might already be initialized
+      console.log('⚠️  Continuing with build despite database error');
+    }
   } else {
     console.log('⚠️  DATABASE_URL not found, skipping database initialization');
   }

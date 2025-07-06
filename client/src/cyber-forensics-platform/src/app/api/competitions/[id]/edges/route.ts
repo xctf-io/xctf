@@ -57,7 +57,7 @@ export async function POST(
     });
     
     // Return the created edge
-    const edge = await db.query('SELECT * FROM edges WHERE id = ?', [edgeId]);
+    const edge = await db.query('SELECT * FROM edges WHERE id = $1', [edgeId]);
     
     await db.close();
     return NextResponse.json(edge[0], { status: 201 });

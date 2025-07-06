@@ -43,7 +43,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Description and competition ID are required' }, { status: 400 });
     }
 
+    console.log('🔗 Environment:', {
+      NODE_ENV: process.env.NODE_ENV,
+      DATABASE_URL: process.env.DATABASE_URL ? 'Present' : 'Missing',
+      OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Present' : 'Missing'
+    });
+    
     const db = getDatabase();
+    console.log('📊 Database instance created:', db.constructor.name);
     await db.connect();
 
     // Build context for intelligent linking
@@ -438,7 +445,7 @@ Create complete, professional websites with realistic business content.`
     if (linkToPrevious && previousChallengeData) {
       // Find the previous challenge's node
       const previousNodes = await db.query(
-        'SELECT * FROM nodes WHERE challenge_id = (SELECT id FROM challenges WHERE id = ?)',
+        'SELECT * FROM nodes WHERE challenge_id = $1',
         [previousChallengeData.id]
       );
       
@@ -474,11 +481,21 @@ Create complete, professional websites with realistic business content.`
   } catch (error) {
     console.group(`❌ [${requestId}] Challenge Generation Error`);
     console.error('Error:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     console.groupEnd();
+    
+    // Close database connection if it was opened
+    try {
+      const db = getDatabase();
+      await db.close();
+    } catch (closeError) {
+      console.error('Error closing database:', closeError);
+    }
     
     return NextResponse.json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
       requestId 
     }, { status: 500 });
   }
