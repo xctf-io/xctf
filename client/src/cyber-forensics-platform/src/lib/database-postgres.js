@@ -2,17 +2,51 @@ const { Pool } = require('pg');
 
 class PostgresDatabaseManager {
   constructor() {
-    this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { 
-        rejectUnauthorized: false 
-      } : false
-    });
+    // Parse DATABASE_URL to get individual components
+    let config;
+    
+    if (process.env.DATABASE_URL) {
+      const url = new URL(process.env.DATABASE_URL);
+      config = {
+        user: url.username,
+        password: url.password,
+        host: url.hostname,
+        port: parseInt(url.port),
+        database: url.pathname.slice(1), // Remove leading slash
+        ssl: process.env.NODE_ENV === 'production' ? {
+          rejectUnauthorized: false,
+          ca: process.env.CA_CERT || process.env.CACERT
+        } : false
+      };
+    } else {
+      // Fallback to individual environment variables
+      config = {
+        user: process.env.PGUSER,
+        password: process.env.PGPASSWORD,
+        host: process.env.PGHOST,
+        port: process.env.PGPORT,
+        database: process.env.PGDATABASE,
+        ssl: process.env.NODE_ENV === 'production' ? {
+          rejectUnauthorized: false,
+          ca: process.env.CA_CERT || process.env.CACERT
+        } : false
+      };
+    }
+    
+    this.pool = new Pool(config);
   }
 
   // Initialize database connection
   async connect() {
     try {
+      // Debug: Log available cert environment variables
+      console.log('🔍 SSL Debug:', {
+        CA_CERT_available: !!process.env.CA_CERT,
+        CACERT_available: !!process.env.CACERT,
+        NODE_ENV: process.env.NODE_ENV,
+        DATABASE_URL_present: !!process.env.DATABASE_URL
+      });
+      
       await this.pool.query('SELECT NOW()');
       console.log('📊 Connected to PostgreSQL database');
     } catch (err) {

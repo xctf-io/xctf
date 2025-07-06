@@ -8,10 +8,27 @@ async function initializeDatabase() {
     throw new Error('DATABASE_URL is required for PostgreSQL initialization');
   }
 
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-  });
+  // Parse DATABASE_URL to get individual components for better SSL handling
+  let config;
+  
+  if (process.env.DATABASE_URL) {
+    const url = new URL(process.env.DATABASE_URL);
+    config = {
+      user: url.username,
+      password: url.password,
+      host: url.hostname,
+      port: parseInt(url.port),
+      database: url.pathname.slice(1), // Remove leading slash
+      ssl: process.env.NODE_ENV === 'production' ? {
+        rejectUnauthorized: false,
+        ca: process.env.CA_CERT || process.env.CACERT
+      } : false
+    };
+  } else {
+    throw new Error('DATABASE_URL is required');
+  }
+  
+  const pool = new Pool(config);
 
   try {
     console.log('🚀 Initializing PostgreSQL database...');
