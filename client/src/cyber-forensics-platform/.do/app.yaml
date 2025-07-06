@@ -5,6 +5,7 @@ services:
   github:
     repo: xctf-io/xctf
     branch: main
+  build_command: npm install && npm run build
   run_command: npm start
   environment_slug: node-js
   instance_count: 1
@@ -18,7 +19,7 @@ services:
     scope: RUN_TIME
     type: SECRET
   - key: DATABASE_URL
-    scope: RUN_TIME
+    scope: RUN_AND_BUILD_TIME
     type: SECRET
 databases:
 - name: cyber-forensics-db

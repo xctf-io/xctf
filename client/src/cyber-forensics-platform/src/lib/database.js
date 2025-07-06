@@ -1,15 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-// Import PostgreSQL manager for production
-let PostgresDatabaseManager = null;
-if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
-  try {
-    PostgresDatabaseManager = require('./database-postgres');
-  } catch (error) {
-    console.error('Failed to load PostgreSQL manager:', error);
-  }
-}
+// Import PostgreSQL manager dynamically
 
 class DatabaseManager {
   constructor() {
@@ -352,10 +344,23 @@ let dbManager = null;
 
 function getDatabase() {
   if (!dbManager) {
-    // Use PostgreSQL in production, SQLite in development
-    if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
-      dbManager = new PostgresDatabaseManager();
+    console.log('🔍 Database selection debug:', {
+      NODE_ENV: process.env.NODE_ENV,
+      DATABASE_URL_exists: !!process.env.DATABASE_URL
+    });
+    
+    // Use PostgreSQL if DATABASE_URL is present (indicates production/cloud environment)
+    if (process.env.DATABASE_URL) {
+      console.log('📊 DATABASE_URL detected, using PostgreSQL database manager');
+      try {
+        const PostgresDatabaseManager = require('./database-postgres');
+        dbManager = new PostgresDatabaseManager();
+      } catch (error) {
+        console.error('❌ Failed to load PostgreSQL manager, falling back to SQLite:', error);
+        dbManager = new DatabaseManager();
+      }
     } else {
+      console.log('📊 No DATABASE_URL, using SQLite database manager');
       dbManager = new DatabaseManager();
     }
   }
