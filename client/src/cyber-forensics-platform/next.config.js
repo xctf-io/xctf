@@ -4,9 +4,10 @@ const nextConfig = {
     domains: ['oaidalleapiprodscus.blob.core.windows.net'],
   },
   webpack: (config, { isServer }) => {
-    // Handle SQLite3 on the server side
+    // Handle SQLite3 and PostgreSQL on the server side
     if (isServer) {
       config.externals.push('sqlite3');
+      config.externals.push('pg');
     }
     return config;
   },
