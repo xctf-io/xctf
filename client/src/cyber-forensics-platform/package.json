@@ -10,6 +10,7 @@
     "lint": "next lint",
     "db:init": "node scripts/init-db.js",
     "db:init:postgres": "node scripts/init-db-postgres.js",
+    "db:init:production": "node scripts/init-production-db.js",
     "db:migrate": "node scripts/migrate-db.js",
     "db:seed": "node scripts/seed-db.js"
   },

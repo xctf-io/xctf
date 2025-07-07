@@ -49,9 +49,90 @@ class PostgresDatabaseManager {
       
       await this.pool.query('SELECT NOW()');
       console.log('📊 Connected to PostgreSQL database');
+      console.log('🔍 Database info:', {
+        current_time: result.rows[0].current_time,
+        version: result.rows[0].pg_version.split(' ')[0]
+      });
     } catch (err) {
       console.error('Database connection error:', err);
       throw err;
+    }
+  }
+
+  // Ensure database schema exists
+  async ensureSchema() {
+    try {
+      // Test if competitions table exists
+      await this.pool.query('SELECT 1 FROM competitions LIMIT 1');
+      console.log('📊 Database schema verified');
+    } catch (error) {
+      if (error.code === '42P01') {
+        console.log('🔧 Database schema missing, creating tables...');
+        try {
+          await this.initializeSchema();
+        } catch (initError) {
+          console.error('❌ Failed to initialize schema:', initError);
+          // Re-throw with more context
+          throw new Error(`Schema initialization failed: ${initError.message}`);
+        }
+      } else {
+        console.error('❌ Unexpected error checking schema:', error);
+        throw error;
+      }
+    }
+  }
+
+  // Initialize database schema
+  async initializeSchema() {
+    try {
+      const fs = require('fs').promises;
+      const path = require('path');
+      
+      const schemaPath = path.join(process.cwd(), 'database_schema_postgres.sql');
+      console.log('📄 Reading schema from:', schemaPath);
+      
+      let schema;
+      try {
+        schema = await fs.readFile(schemaPath, 'utf8');
+      } catch (fileError) {
+        console.error('❌ Failed to read schema file:', fileError);
+        throw new Error(`Could not read schema file: ${fileError.message}`);
+      }
+      
+      console.log('🚀 Executing database schema...');
+      try {
+        // Execute schema creation - PostgreSQL can handle the entire script at once
+        await this.pool.query(schema);
+        console.log('✅ Database schema created successfully');
+      } catch (schemaError) {
+        console.error('❌ Failed to execute schema:', schemaError);
+        throw new Error(`Schema execution failed: ${schemaError.message}`);
+      }
+      
+      // Create default competition if none exists
+      try {
+        const existingCompetitions = await this.pool.query('SELECT COUNT(*) as count FROM competitions');
+        if (parseInt(existingCompetitions.rows[0].count) === 0) {
+          await this.pool.query(`
+            INSERT INTO competitions (name, description, metadata) 
+            VALUES ($1, $2, $3)
+          `, [
+            'Default Competition',
+            'Default competition for cyber forensics challenges',
+            JSON.stringify({ theme: 'default', difficulty: 'mixed' })
+          ]);
+          console.log('✅ Default competition created');
+        } else {
+          console.log('ℹ️  Database already contains competitions');
+        }
+      } catch (compError) {
+        console.error('❌ Failed to create default competition:', compError);
+        // Don't throw here - schema is created, just default data failed
+        console.log('⚠️  Schema created but default competition creation failed');
+      }
+    } catch (error) {
+      console.error('❌ Schema initialization failed:', error);
+      throw error;
     }
   }
 

@@ -208,3 +208,4 @@ generated-images/
 # Lock files (choose one)
 # package-lock.json  # uncomment if using yarn
 yarn.lock         # uncomment if using npm
+.do/app.yaml
