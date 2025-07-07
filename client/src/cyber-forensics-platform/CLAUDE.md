@@ -97,36 +97,13 @@ nodes (many:many) edges (for graph connections)
 
 ## Environment Setup
 
-Requires `OPENAI_API_KEY` in `.env.local`. The platform uses:
+The platform runs locally using SQLite for data storage. Required environment variable in `.env.local`:
+- `OPENAI_API_KEY`: OpenAI API key for challenge generation
+
+The platform uses:
 - GPT-4o for all text generation (analysis and HTML creation)
 - DALL-E 3 for image generation (when enabled)
-- SQLite database stored at `./database.sqlite` (development)
-- PostgreSQL database via `DATABASE_URL` (production)
-
-## DigitalOcean Deployment
-
-The platform is configured for DigitalOcean App Platform deployment:
-
-### Database Configuration
-- **Development**: Uses SQLite (`database.sqlite`)
-- **Production**: Uses PostgreSQL managed database
-- Database selection is automatic based on `NODE_ENV` and `DATABASE_URL` environment variables
-
-### Required Environment Variables
-- `OPENAI_API_KEY`: OpenAI API key for challenge generation
-- `DATABASE_URL`: PostgreSQL connection string (auto-configured by DigitalOcean)
-- `NODE_ENV`: Set to `production` for production deployment
-
-### Deployment Configuration
-- App configuration: `.do/app.yaml`
-- PostgreSQL schema: `database_schema_postgres.sql`
-- Database initialization: `npm run db:init:postgres`
-
-### DigitalOcean Setup Steps
-1. Create new App Platform app from this repository
-2. Configure environment variables in App Platform dashboard
-3. App Platform will automatically provision PostgreSQL database
-4. Database tables will be created automatically on first deployment
+- SQLite database stored at `./database.sqlite`
 
 ## API Route Patterns
 

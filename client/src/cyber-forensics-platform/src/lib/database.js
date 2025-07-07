@@ -344,25 +344,8 @@ let dbManager = null;
 
 function getDatabase() {
   if (!dbManager) {
-    console.log('🔍 Database selection debug:', {
-      NODE_ENV: process.env.NODE_ENV,
-      DATABASE_URL_exists: !!process.env.DATABASE_URL
-    });
-    
-    // Use PostgreSQL if DATABASE_URL is present (indicates production/cloud environment)
-    if (process.env.DATABASE_URL) {
-      console.log('📊 DATABASE_URL detected, using PostgreSQL database manager');
-      try {
-        const PostgresDatabaseManager = require('./database-postgres');
-        dbManager = new PostgresDatabaseManager();
-      } catch (error) {
-        console.error('❌ Failed to load PostgreSQL manager, falling back to SQLite:', error);
-        dbManager = new DatabaseManager();
-      }
-    } else {
-      console.log('📊 No DATABASE_URL, using SQLite database manager');
-      dbManager = new DatabaseManager();
-    }
+    console.log('📊 Using SQLite database manager');
+    dbManager = new DatabaseManager();
   }
   return dbManager;
 }
